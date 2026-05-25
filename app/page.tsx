@@ -38,7 +38,7 @@ export default function HomePage() {
               A cinematic second-screen dashboard for fixtures, scores, groups, knockout routes and fullscreen matchday atmosphere.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <a href="#dashboard" className="rounded-full bg-cyan-300 px-7 py-4 font-black text-black shadow-[0_0_36px_rgba(0,229,255,.65)]">Get Access — £4.99</a>
+              <a href="https://buy.stripe.com/test_eVq5kw6FVfCk9cL97K6oo00" className="rounded-full bg-cyan-300 px-7 py-4 font-black text-black shadow-[0_0_36px_rgba(0,229,255,.65)]">Get Access — £4.99</a>
               <a href="#tv" className="rounded-full border border-white/20 bg-white/10 px-7 py-4 font-bold text-white">Preview TV Mode</a>
             </div>
           </div>
