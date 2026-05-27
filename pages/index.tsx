@@ -1,46 +1,49 @@
+import type { CSSProperties } from "react";
+
+const groups = [
+  ["Group A", [["MEX", 6], ["CAN", 5], ["KOR", 4], ["SWE", 3]]],
+  ["Group B", [["ENG", 6], ["USA", 5], ["MAR", 4], ["JPN", 3]]],
+  ["Group C", [["BRA", 6], ["GER", 5], ["SEN", 4], ["PER", 3]]],
+];
+
+const matches = [
+  ["LIVE 78'", "BRA", "2", "ARG", "1"],
+  ["HT", "USA", "2", "JPN", "2"],
+  ["TODAY 20:00", "ENG", "-", "FRA", "-"],
+];
+
 export default function Home() {
   return (
     <main
       style={{
         minHeight: "100vh",
         background:
-          "radial-gradient(circle at top, #0ea5e9 0%, #020617 40%, #000000 100%)",
+          "radial-gradient(circle at top, #0ea5e9 0%, #020617 40%, #000 100%)",
         color: "white",
         fontFamily: "Arial, sans-serif",
-        overflow: "hidden",
+        padding: 32,
       }}
     >
-      {/* Top Bar */}
-      <div
+      <header
         style={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          padding: "30px 40px",
-          borderBottom: "1px solid rgba(255,255,255,0.1)",
+          marginBottom: 32,
         }}
       >
         <div>
           <p
             style={{
               color: "#67e8f9",
-              letterSpacing: "0.4em",
-              fontSize: "12px",
-              marginBottom: "10px",
+              letterSpacing: "0.35em",
+              fontSize: 12,
             }}
           >
             FIFA WORLD CUP 2026
           </p>
 
-          <h1
-            style={{
-              fontSize: "56px",
-              margin: 0,
-              fontWeight: 900,
-            }}
-          >
-            LiveBoard
-          </h1>
+          <h1 style={{ fontSize: 56, margin: 0 }}>LiveBoard</h1>
         </div>
 
         <a
@@ -50,253 +53,202 @@ export default function Home() {
             background: "#22d3ee",
             color: "black",
             padding: "16px 28px",
-            borderRadius: "999px",
+            borderRadius: 999,
             fontWeight: "bold",
             textDecoration: "none",
-            boxShadow: "0 0 30px rgba(34,211,238,.6)",
           }}
         >
           Get Access — £4.99
         </a>
-      </div>
+      </header>
 
-      {/* Hero Section */}
-      <div
+      <section
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
-          gap: "30px",
-          padding: "40px",
+          gap: 24,
         }}
       >
-        {/* Left Panel */}
-        <div
-          style={{
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(34,211,238,0.2)",
-            borderRadius: "30px",
-            padding: "30px",
-            backdropFilter: "blur(20px)",
-          }}
-        >
-          <div
-            style={{
-              display: "inline-block",
-              background: "#ef4444",
-              padding: "6px 14px",
-              borderRadius: "999px",
-              fontWeight: "bold",
-              fontSize: "12px",
-              marginBottom: "20px",
-            }}
-          >
-            LIVE
-          </div>
+        <div style={card}>
+          <span style={live}>LIVE</span>
 
-          <h2
-            style={{
-              fontSize: "42px",
-              lineHeight: 1.1,
-              marginBottom: "20px",
-            }}
-          >
-            Premium World Cup Dashboard
-          </h2>
+          <h2 style={{ fontSize: 42 }}>Premium World Cup Dashboard</h2>
 
-          <p
-            style={{
-              color: "#cbd5e1",
-              lineHeight: 1.8,
-              fontSize: "18px",
-            }}
-          >
-            Real-time fixtures, live scores, knockout brackets,
-            standings, statistics and futuristic football visuals.
+          <p style={muted}>
+            Real-time fixtures, scores, standings and knockout routes in a
+            cinematic TV dashboard.
           </p>
 
-          {/* Stats */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3,1fr)",
-              gap: "15px",
-              marginTop: "30px",
-            }}
-          >
-            {[
-              ["Matches", "104"],
-              ["Teams", "48"],
-              ["Live", "12"],
-            ].map(([label, value]) => (
-              <div
-                key={label}
-                style={{
-                  background: "rgba(34,211,238,0.08)",
-                  border: "1px solid rgba(34,211,238,0.2)",
-                  borderRadius: "20px",
-                  padding: "20px",
-                }}
-              >
-                <p
-                  style={{
-                    color: "#a5f3fc",
-                    marginBottom: "10px",
-                  }}
-                >
-                  {label}
-                </p>
+          <div style={row}>
+            <div style={bracket}>
+              <p style={muted}>Matches</p>
+              <h3>104</h3>
+            </div>
 
-                <h3
-                  style={{
-                    fontSize: "36px",
-                    margin: 0,
-                  }}
-                >
-                  {value}
-                </h3>
-              </div>
-            ))}
+            <div style={bracket}>
+              <p style={muted}>Teams</p>
+              <h3>48</h3>
+            </div>
+
+            <div style={bracket}>
+              <p style={muted}>Live</p>
+              <h3>12</h3>
+            </div>
           </div>
         </div>
 
-        {/* Right Panel */}
-        <div
-          style={{
-            background:
-              "linear-gradient(to bottom right, rgba(250,204,21,.12), rgba(34,211,238,.12))",
-            border: "1px solid rgba(250,204,21,0.2)",
-            borderRadius: "30px",
-            padding: "30px",
-            backdropFilter: "blur(20px)",
-          }}
-        >
+        <div style={cardGold}>
           <p
             style={{
               color: "#fde047",
               letterSpacing: "0.3em",
-              fontSize: "12px",
+              fontSize: 14,
             }}
           >
             WORLD CUP FINAL
           </p>
 
-          <h2
-            style={{
-              fontSize: "52px",
-              lineHeight: 1.1,
-              marginTop: "20px",
-            }}
-          >
+          <h2 style={{ fontSize: 64, marginBottom: 20 }}>
             Brazil 2 — 1 Argentina
           </h2>
 
-          <p
-            style={{
-              color: "#cbd5e1",
-              marginTop: "20px",
-              fontSize: "18px",
-            }}
-          >
-            MetLife Stadium • New Jersey
-          </p>
+          <p style={muted}>MetLife Stadium • New Jersey</p>
 
-          {/* Match Status */}
           <div
             style={{
-              marginTop: "40px",
-              background: "rgba(0,0,0,0.35)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              borderRadius: "24px",
-              padding: "30px",
+              background: "rgba(0,0,0,.5)",
+              borderRadius: 28,
+              padding: 32,
+              marginTop: 30,
               display: "flex",
               justifyContent: "space-between",
-              alignItems: "center",
             }}
           >
             <div>
-              <p style={{ color: "#94a3b8" }}>Minute</p>
-
-              <h3
-                style={{
-                  fontSize: "54px",
-                  color: "#f87171",
-                  margin: 0,
-                }}
-              >
-                78’
-              </h3>
+              <p style={muted}>Minute</p>
+              <h2 style={{ color: "#fb7185", fontSize: 64 }}>78’</h2>
             </div>
 
-            <div
-              style={{
-                width: "1px",
-                height: "70px",
-                background: "rgba(255,255,255,0.1)",
-              }}
-            />
-
             <div>
-              <p style={{ color: "#94a3b8" }}>Status</p>
-
-              <h3
-                style={{
-                  fontSize: "54px",
-                  color: "#67e8f9",
-                  margin: 0,
-                }}
-              >
-                LIVE
-              </h3>
+              <p style={muted}>Status</p>
+              <h2 style={{ color: "#67e8f9", fontSize: 64 }}>LIVE</h2>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Bottom Grid */}
-      <div
+      <section
         style={{
+          marginTop: 32,
           display: "grid",
-          gridTemplateColumns: "repeat(3,1fr)",
-          gap: "20px",
-          padding: "0 40px 40px",
+          gridTemplateColumns: "1fr 1fr 1fr",
+          gap: 24,
         }}
       >
-        {[
-          "Group Stage",
-          "Knockout Bracket",
-          "Live Standings",
-        ].map((item) => (
-          <div
-            key={item}
-            style={{
-              background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              borderRadius: "24px",
-              padding: "30px",
-              minHeight: "180px",
-            }}
-          >
-            <h3
-              style={{
-                fontSize: "28px",
-                marginBottom: "20px",
-              }}
-            >
-              {item}
-            </h3>
+        <div style={card}>
+          <h2>Live Matches</h2>
 
-            <p
+          {matches.map((m, i) => (
+            <div
+              key={i}
               style={{
-                color: "#94a3b8",
-                lineHeight: 1.7,
+                background: "rgba(255,255,255,.05)",
+                borderRadius: 20,
+                padding: 20,
+                marginTop: 16,
               }}
             >
-              Advanced World Cup tournament visualisation system
-              coming next.
-            </p>
+              <p style={{ color: "#22d3ee" }}>{m[0]}</p>
+
+              <h3>
+                {m[1]} {m[2]} — {m[4]} {m[3]}
+              </h3>
+            </div>
+          ))}
+        </div>
+
+        <div style={card}>
+          <h2>Group Stage</h2>
+
+          {groups.map((g, i) => (
+            <div key={i} style={{ marginTop: 24 }}>
+              <h3 style={{ color: "#67e8f9" }}>{g[0]}</h3>
+
+              {(g[1] as any[]).map((team: any, j: number) => (
+                <div
+                  key={j}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "10px 0",
+                    borderBottom: "1px solid rgba(255,255,255,.08)",
+                  }}
+                >
+                  <span>{team[0]}</span>
+                  <strong>{team[1]} pts</strong>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        <div style={card}>
+          <h2>Knockout Bracket</h2>
+
+          <div style={{ marginTop: 24 }}>
+            <div style={bracket}>BRA 2 — 1 ARG</div>
+            <div style={bracket}>ENG 3 — 2 FRA</div>
+            <div style={bracket}>USA 1 — 0 GER</div>
+            <div style={bracket}>POR 2 — 0 SEN</div>
           </div>
-        ))}
-      </div>
+        </div>
+      </section>
     </main>
   );
 }
+
+const card: CSSProperties = {
+  background:
+    "linear-gradient(135deg, rgba(2,6,23,.96), rgba(15,23,42,.85))",
+  border: "1px solid rgba(34,211,238,.2)",
+  borderRadius: 32,
+  padding: 36,
+  boxShadow: "0 0 40px rgba(14,165,233,.15)",
+};
+
+const cardGold: CSSProperties = {
+  background:
+    "linear-gradient(135deg, rgba(250,204,21,.15), rgba(8,47,73,.8))",
+  border: "1px solid rgba(250,204,21,.25)",
+  borderRadius: 32,
+  padding: 36,
+  boxShadow: "0 0 40px rgba(250,204,21,.1)",
+};
+
+const muted: CSSProperties = {
+  color: "#94a3b8",
+  lineHeight: 1.7,
+};
+
+const live: CSSProperties = {
+  background: "#ef4444",
+  display: "inline-block",
+  padding: "10px 16px",
+  borderRadius: 999,
+  fontWeight: "bold",
+};
+
+const row: CSSProperties = {
+  display: "flex",
+  gap: 16,
+  marginTop: 32,
+};
+
+const bracket: CSSProperties = {
+  flex: 1,
+  background: "rgba(15,23,42,.9)",
+  border: "1px solid rgba(34,211,238,.2)",
+  borderRadius: 24,
+  padding: 24,
+  marginBottom: 16,
+};
