@@ -1,6 +1,6 @@
-import GroupTable from "./components/GroupTable"
-import MatchCard from "./components/MatchCard"
-import Panel from "./components/Panel"
+import GroupTable from "../components/GroupTable"
+import MatchCard from "../components/MatchCard"
+import Panel from "../components/Panel"
 
 const leftGroups = [
   {
