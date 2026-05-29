@@ -30,7 +30,8 @@ export default function Home() {
       background: "radial-gradient(circle at top,#0d2340 0%,#07111f 45%,#02050a 100%)",
       color: "white",
       padding: 24,
-      fontFamily: "Arial, sans-serif"
+      fontFamily: "Arial, sans-serif",
+      overflowX: "hidden"
     }}>
       <header style={{
         display: "flex",
@@ -44,7 +45,7 @@ export default function Home() {
       }}>
         <div>
           <div style={{ color: "#ffd54a", letterSpacing: 4, fontSize: 12 }}>FIFA WORLD CUP 2026</div>
-          <h1 style={{ fontSize: 60, margin: 0, fontWeight: 900 }}>FIFA WORLD CUP 26</h1>
+          <h1 style={{ fontSize: 52, margin: 0, fontWeight: 900 }}>FIFA WORLD CUP 26</h1>
           <div style={{ marginTop: 10, color: "#3fe0ff", letterSpacing: 3 }}>UNITED STATES • CANADA • MEXICO</div>
         </div>
 
@@ -61,7 +62,7 @@ export default function Home() {
         </a>
       </header>
 
-      <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 300px", gap: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "260px minmax(560px, 1fr) 260px", gap: 20 }}>
         <aside>
           <h2 style={sideTitle}>GROUP STAGE</h2>
           {leftGroups.map(group => <GroupTable key={group.title} title={group.title} teams={group.teams} />)}
@@ -73,8 +74,8 @@ export default function Home() {
           <Panel title="">
             <div style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1.6fr 1fr",
-              gap: 20,
+              gridTemplateColumns: "120px minmax(300px, 1fr) 120px",
+              gap: 18,
               alignItems: "center"
             }}>
               <div>{leftBracket.map(match => <BracketCard key={match} match={match} />)}</div>
@@ -83,25 +84,25 @@ export default function Home() {
                 textAlign: "center",
                 border: "1px solid rgba(255,213,74,.35)",
                 borderRadius: 28,
-                padding: 28,
+                padding: 24,
                 boxShadow: "0 0 45px rgba(255,213,74,.15)"
               }}>
-                <div style={{ fontSize: 92 }}>🏆</div>
-                <h2 style={{ fontSize: 54, margin: "12px 0", color: "#ffd54a" }}>FINAL</h2>
-                <div style={{ color: "#9cc7e8", marginBottom: 24 }}>JULY 19, 2026 • METLIFE STADIUM</div>
+                <div style={{ fontSize: 84 }}>🏆</div>
+                <h2 style={{ fontSize: 48, margin: "10px 0", color: "#ffd54a" }}>FINAL</h2>
+                <div style={{ color: "#9cc7e8", marginBottom: 22 }}>JULY 19, 2026 • METLIFE STADIUM</div>
 
                 <div style={{
                   background: "rgba(0,0,0,.6)",
                   borderRadius: 24,
-                  padding: 28,
-                  display: "flex",
+                  padding: 24,
+                  display: "grid",
+                  gridTemplateColumns: "1fr auto 1fr",
                   alignItems: "center",
-                  justifyContent: "space-between",
                   gap: 18
                 }}>
-                  <div style={finalTeam}>🇧🇷 BRAZIL</div>
+                  <div style={{ ...finalTeam, textAlign: "left" }}>🇧🇷 BRAZIL</div>
                   <div style={finalScore}>2 - 1</div>
-                  <div style={finalTeam}>ARGENTINA 🇦🇷</div>
+                  <div style={{ ...finalTeam, textAlign: "right" }}>ARGENTINA 🇦🇷</div>
                 </div>
 
                 <div style={{ marginTop: 20, color: "#9cc7e8" }}>
@@ -115,8 +116,8 @@ export default function Home() {
 
           <div style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
-            gap: 24,
+            gridTemplateColumns: "1.4fr 1fr 1fr",
+            gap: 18,
             marginTop: 24
           }}>
             <MatchCard home="BRAZIL" away="ARGENTINA" homeFlag="🇧🇷" awayFlag="🇦🇷" homeScore={2} awayScore={1} />
@@ -131,7 +132,7 @@ export default function Home() {
             </Panel>
 
             <Panel title="TOURNAMENT STATS">
-              <div style={{ fontSize: 22, lineHeight: 1.8 }}>
+              <div style={{ fontSize: 20, lineHeight: 1.8 }}>
                 <div>48 Matches</div>
                 <div>128 Goals</div>
                 <div>2.67 Avg Goals</div>
@@ -157,16 +158,16 @@ function BracketCard({ match }: { match: string }) {
       style={{
         background: "rgba(0,0,0,.45)",
         border: "1px solid rgba(34,211,238,.25)",
-        borderRadius: 18,
-        padding: "18px 20px",
-        marginBottom: 16,
+        borderRadius: 16,
+        padding: "14px 16px",
+        marginBottom: 14,
         fontWeight: "bold",
-        minWidth: 130,
+        minWidth: 100,
         boxShadow: "0 0 20px rgba(34,211,238,.08)",
       }}
     >
-      <div style={{ fontSize: 16, marginBottom: 8 }}>{parts[0]}</div>
-      <div style={{ fontSize: 16 }}>{parts[1]}</div>
+      <div style={{ fontSize: 15, marginBottom: 6 }}>{parts[0]}</div>
+      <div style={{ fontSize: 15 }}>{parts[1]}</div>
     </div>
   );
 }
@@ -188,12 +189,14 @@ const centerTitle = {
 };
 
 const finalTeam = {
-  fontSize: 30,
-  fontWeight: "bold"
+  fontSize: 24,
+  fontWeight: "bold",
+  whiteSpace: "nowrap" as const
 };
 
 const finalScore = {
-  fontSize: 42,
+  fontSize: 34,
   fontWeight: "bold",
-  color: "#ffd54a"
+  color: "#ffd54a",
+  whiteSpace: "nowrap" as const
 };
