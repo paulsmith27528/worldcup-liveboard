@@ -76,8 +76,12 @@ export default function Home() {
               display: "grid",
               gridTemplateColumns: "120px minmax(300px, 1fr) 120px",
               gap: 18,
-              alignItems: "center"
+              alignItems: "center",
+              position: "relative"
             }}>
+              <div style={connectorLeft}></div>
+              <div style={connectorRight}></div>
+
               <div>{leftBracket.map(match => <BracketCard key={match} match={match} />)}</div>
 
               <div style={{
@@ -85,7 +89,9 @@ export default function Home() {
                 border: "1px solid rgba(255,213,74,.35)",
                 borderRadius: 28,
                 padding: 24,
-                boxShadow: "0 0 45px rgba(255,213,74,.15)"
+                boxShadow: "0 0 45px rgba(255,213,74,.15)",
+                position: "relative",
+                zIndex: 2
               }}>
                 <div style={{ fontSize: 84 }}>🏆</div>
                 <h2 style={{ fontSize: 48, margin: "10px 0", color: "#ffd54a" }}>FINAL</h2>
@@ -164,6 +170,8 @@ function BracketCard({ match }: { match: string }) {
         fontWeight: "bold",
         minWidth: 100,
         boxShadow: "0 0 20px rgba(34,211,238,.08)",
+        position: "relative",
+        zIndex: 2
       }}
     >
       <div style={{ fontSize: 15, marginBottom: 6 }}>{parts[0]}</div>
@@ -199,4 +207,26 @@ const finalScore = {
   fontWeight: "bold",
   color: "#ffd54a",
   whiteSpace: "nowrap" as const
+};
+
+const connectorLeft = {
+  position: "absolute" as const,
+  left: "112px",
+  top: "50%",
+  width: "80px",
+  height: "2px",
+  background: "linear-gradient(90deg, rgba(34,211,238,.15), rgba(255,213,74,.75))",
+  boxShadow: "0 0 14px rgba(34,211,238,.5)",
+  zIndex: 1
+};
+
+const connectorRight = {
+  position: "absolute" as const,
+  right: "112px",
+  top: "50%",
+  width: "80px",
+  height: "2px",
+  background: "linear-gradient(90deg, rgba(255,213,74,.75), rgba(34,211,238,.15))",
+  boxShadow: "0 0 14px rgba(34,211,238,.5)",
+  zIndex: 1
 };
