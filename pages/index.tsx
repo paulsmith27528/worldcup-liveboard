@@ -20,19 +20,8 @@ const rightGroups = [
   { title: "GROUP L", teams: [{ name: "CRO", points: 6, flag: "🇭🇷" }, { name: "BLR", points: 5, flag: "🇧🇾" }, { name: "ALG", points: 4, flag: "🇩🇿" }, { name: "CHN", points: 3, flag: "🇨🇳" }] },
 ];
 
-const leftBracket = [
-  "🇲🇽 MEX 2 — 1 MAR 🇲🇦",
-  "🇨🇴 COL 3 — 2 ESP 🇪🇸",
-  "🇨🇦 CAN 1 — 0 PER 🇵🇪",
-  "🇩🇪 GER 2 — 1 AUT 🇦🇹",
-];
-
-const rightBracket = [
-  "🏴 ENG 2 — 1 POR 🇵🇹",
-  "🇦🇷 ARG 2 — 0 DEN 🇩🇰",
-  "🇮🇹 ITA 2 — 1 BEL 🇧🇪",
-  "🇧🇷 BRA 3 — 1 KOR 🇰🇷",
-];
+const leftBracket = ["🇲🇽 MEX 2 — 1 MAR 🇲🇦", "🇨🇴 COL 3 — 2 ESP 🇪🇸", "🇨🇦 CAN 1 — 0 PER 🇵🇪", "🇩🇪 GER 2 — 1 AUT 🇦🇹", "🇫🇷 FRA 3 — 1 IRN 🇮🇷", "🇧🇷 BRA 4 — 1 JPN 🇯🇵"];
+const rightBracket = ["🏴 ENG 2 — 1 POR 🇵🇹", "🇦🇷 ARG 2 — 0 DEN 🇩🇰", "🇮🇹 ITA 2 — 1 BEL 🇧🇪", "🇺🇾 URU 0 — 1 POR 🇵🇹", "🇵🇹 POR 2 — 0 SEN 🇸🇳", "🇰🇷 KOR 1 — 3 BRA 🇧🇷"];
 
 export default function Home() {
   return (
@@ -54,124 +43,83 @@ export default function Home() {
         background: "rgba(0,0,0,.35)"
       }}>
         <div>
-          <div style={{ color: "#ffd54a", letterSpacing: 4, fontSize: 12 }}>
-            FIFA WORLD CUP 2026
-          </div>
-          <h1 style={{ fontSize: 60, margin: 0, fontWeight: 900 }}>
-            FIFA WORLD CUP 26
-          </h1>
-          <div style={{ marginTop: 10, color: "#3fe0ff", letterSpacing: 3 }}>
-            UNITED STATES • CANADA • MEXICO
-          </div>
+          <div style={{ color: "#ffd54a", letterSpacing: 4, fontSize: 12 }}>FIFA WORLD CUP 2026</div>
+          <h1 style={{ fontSize: 60, margin: 0, fontWeight: 900 }}>FIFA WORLD CUP 26</h1>
+          <div style={{ marginTop: 10, color: "#3fe0ff", letterSpacing: 3 }}>UNITED STATES • CANADA • MEXICO</div>
         </div>
 
-        <a href="https://buy.stripe.com/test_eVq5kw6FVfCk9cL97K6oo00" target="_blank"
-          style={{
-            background: "#34dfff",
-            color: "black",
-            padding: "18px 34px",
-            borderRadius: 999,
-            textDecoration: "none",
-            fontWeight: "bold",
-            fontSize: 20
-          }}>
+        <a href="https://buy.stripe.com/test_eVq5kw6FVfCk9cL97K6oo00" target="_blank" style={{
+          background: "#34dfff",
+          color: "black",
+          padding: "18px 34px",
+          borderRadius: 999,
+          textDecoration: "none",
+          fontWeight: "bold",
+          fontSize: 20
+        }}>
           GET ACCESS
         </a>
       </header>
 
       <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 300px", gap: 24 }}>
         <aside>
-          {leftGroups.map(group => (
-            <GroupTable key={group.title} title={group.title} teams={group.teams} />
-          ))}
+          <h2 style={sideTitle}>GROUP STAGE</h2>
+          {leftGroups.map(group => <GroupTable key={group.title} title={group.title} teams={group.teams} />)}
         </aside>
 
         <section>
-          <Panel title="KNOCKOUT STAGE">
+          <h2 style={centerTitle}>KNOCKOUT STAGE</h2>
+
+          <Panel title="">
             <div style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1.5fr 1fr",
+              gridTemplateColumns: "1fr 1.6fr 1fr",
               gap: 20,
               alignItems: "center"
             }}>
-              <div>
-                {leftBracket.map(match => (
-                  <div key={match} style={{
-                    background: "rgba(0,0,0,.45)",
-                    border: "1px solid rgba(34,211,238,.25)",
-                    borderRadius: 16,
-                    padding: 16,
-                    marginBottom: 16,
-                    fontWeight: "bold"
-                  }}>
-                    {match}
-                  </div>
-                ))}
-              </div>
+              <div>{leftBracket.map(match => <BracketCard key={match} match={match} />)}</div>
 
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 90 }}>🏆</div>
-                <h2 style={{ fontSize: 50, marginBottom: 10 }}>FINAL</h2>
-                <div style={{ color: "#9cc7e8" }}>
-                  JULY 19, 2026 • METLIFE STADIUM
-                </div>
+              <div style={{
+                textAlign: "center",
+                border: "1px solid rgba(255,213,74,.35)",
+                borderRadius: 28,
+                padding: 28,
+                boxShadow: "0 0 45px rgba(255,213,74,.15)"
+              }}>
+                <div style={{ fontSize: 92 }}>🏆</div>
+                <h2 style={{ fontSize: 54, margin: "12px 0", color: "#ffd54a" }}>FINAL</h2>
+                <div style={{ color: "#9cc7e8", marginBottom: 24 }}>JULY 19, 2026 • METLIFE STADIUM</div>
 
                 <div style={{
-                  marginTop: 30,
-                  background: "rgba(0,0,0,.55)",
+                  background: "rgba(0,0,0,.6)",
                   borderRadius: 24,
                   padding: 28,
-                  boxShadow: "0 0 45px rgba(255,213,74,.15)"
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 18
                 }}>
-                  <div style={{
-                    display: "flex",
-                    justifyContent: "space-around",
-                    alignItems: "center",
-                    fontSize: 38,
-                    fontWeight: "bold"
-                  }}>
-                    <div>🇧🇷 BRAZIL</div>
-                    <div style={{ color: "#ffd54a" }}>2 - 1</div>
-                    <div>ARGENTINA 🇦🇷</div>
-                  </div>
+                  <div style={finalTeam}>🇧🇷 BRAZIL</div>
+                  <div style={finalScore}>2 - 1</div>
+                  <div style={finalTeam}>ARGENTINA 🇦🇷</div>
+                </div>
 
-                  <div style={{ marginTop: 20, color: "#9cc7e8" }}>
-                    ⚽ VINI JR. 27&apos; • RAPHINHA 72&apos;
-                  </div>
+                <div style={{ marginTop: 20, color: "#9cc7e8" }}>
+                  ⚽ VINI JR. 27&apos; • RAPHINHA 72&apos;
                 </div>
               </div>
 
-              <div>
-                {rightBracket.map(match => (
-                  <div key={match} style={{
-                    background: "rgba(0,0,0,.45)",
-                    border: "1px solid rgba(34,211,238,.25)",
-                    borderRadius: 16,
-                    padding: 16,
-                    marginBottom: 16,
-                    fontWeight: "bold"
-                  }}>
-                    {match}
-                  </div>
-                ))}
-              </div>
+              <div>{rightBracket.map(match => <BracketCard key={match} match={match} />)}</div>
             </div>
           </Panel>
 
           <div style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
+            gridTemplateColumns: "1fr 1fr 1fr",
             gap: 24,
             marginTop: 24
           }}>
-            <MatchCard
-              home="BRAZIL"
-              away="ARGENTINA"
-              homeFlag="🇧🇷"
-              awayFlag="🇦🇷"
-              homeScore={2}
-              awayScore={1}
-            />
+            <MatchCard home="BRAZIL" away="ARGENTINA" homeFlag="🇧🇷" awayFlag="🇦🇷" homeScore={2} awayScore={1} />
 
             <Panel title="TOP SCORERS">
               <div style={{ lineHeight: 2 }}>
@@ -181,15 +129,65 @@ export default function Home() {
                 <div>H. Kane — 3</div>
               </div>
             </Panel>
+
+            <Panel title="TOURNAMENT STATS">
+              <div style={{ fontSize: 22, lineHeight: 1.8 }}>
+                <div>48 Matches</div>
+                <div>128 Goals</div>
+                <div>2.67 Avg Goals</div>
+              </div>
+            </Panel>
           </div>
         </section>
 
         <aside>
-          {rightGroups.map(group => (
-            <GroupTable key={group.title} title={group.title} teams={group.teams} />
-          ))}
+          <h2 style={sideTitle}>GROUP STAGE</h2>
+          {rightGroups.map(group => <GroupTable key={group.title} title={group.title} teams={group.teams} />)}
         </aside>
       </div>
     </main>
   );
 }
+
+function BracketCard({ match }: { match: string }) {
+  return (
+    <div style={{
+      background: "rgba(0,0,0,.45)",
+      border: "1px solid rgba(34,211,238,.25)",
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 16,
+      fontWeight: "bold",
+      boxShadow: "0 0 20px rgba(34,211,238,.08)"
+    }}>
+      {match}
+    </div>
+  );
+}
+
+const sideTitle = {
+  color: "#38dfff",
+  textAlign: "center" as const,
+  letterSpacing: 4,
+  fontSize: 18,
+  marginBottom: 24
+};
+
+const centerTitle = {
+  color: "#38dfff",
+  textAlign: "center" as const,
+  letterSpacing: 4,
+  fontSize: 18,
+  marginBottom: 24
+};
+
+const finalTeam = {
+  fontSize: 30,
+  fontWeight: "bold"
+};
+
+const finalScore = {
+  fontSize: 42,
+  fontWeight: "bold",
+  color: "#ffd54a"
+};
