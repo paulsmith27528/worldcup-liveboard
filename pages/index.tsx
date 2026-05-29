@@ -5,11 +5,19 @@ import Panel from "../components/Panel";
 const leftGroups = [
   { title: "GROUP A", teams: [{ name: "MEX", points: 6, flag: "🇲🇽" }, { name: "CAN", points: 5, flag: "🇨🇦" }, { name: "KOR", points: 4, flag: "🇰🇷" }, { name: "SWE", points: 3, flag: "🇸🇪" }] },
   { title: "GROUP B", teams: [{ name: "ENG", points: 6, flag: "🏴" }, { name: "USA", points: 5, flag: "🇺🇸" }, { name: "MAR", points: 4, flag: "🇲🇦" }, { name: "JPN", points: 3, flag: "🇯🇵" }] },
+  { title: "GROUP C", teams: [{ name: "BRA", points: 6, flag: "🇧🇷" }, { name: "GER", points: 5, flag: "🇩🇪" }, { name: "SEN", points: 4, flag: "🇸🇳" }, { name: "PER", points: 3, flag: "🇵🇪" }] },
+  { title: "GROUP D", teams: [{ name: "ARG", points: 6, flag: "🇦🇷" }, { name: "FRA", points: 5, flag: "🇫🇷" }, { name: "NED", points: 4, flag: "🇳🇱" }, { name: "AUS", points: 3, flag: "🇦🇺" }] },
+  { title: "GROUP E", teams: [{ name: "ESP", points: 6, flag: "🇪🇸" }, { name: "POR", points: 5, flag: "🇵🇹" }, { name: "URU", points: 4, flag: "🇺🇾" }, { name: "TUN", points: 3, flag: "🇹🇳" }] },
+  { title: "GROUP F", teams: [{ name: "COL", points: 6, flag: "🇨🇴" }, { name: "ITA", points: 5, flag: "🇮🇹" }, { name: "CIV", points: 4, flag: "🇨🇮" }, { name: "KSA", points: 3, flag: "🇸🇦" }] },
 ];
 
 const rightGroups = [
   { title: "GROUP G", teams: [{ name: "BEL", points: 6, flag: "🇧🇪" }, { name: "IRN", points: 5, flag: "🇮🇷" }, { name: "EGY", points: 4, flag: "🇪🇬" }, { name: "NZL", points: 3, flag: "🇳🇿" }] },
   { title: "GROUP H", teams: [{ name: "FRA", points: 6, flag: "🇫🇷" }, { name: "AUT", points: 5, flag: "🇦🇹" }, { name: "QAT", points: 4, flag: "🇶🇦" }, { name: "CHI", points: 3, flag: "🇨🇱" }] },
+  { title: "GROUP I", teams: [{ name: "ARG", points: 6, flag: "🇦🇷" }, { name: "PER", points: 5, flag: "🇵🇪" }, { name: "NGA", points: 4, flag: "🇳🇬" }, { name: "ISL", points: 3, flag: "🇮🇸" }] },
+  { title: "GROUP J", teams: [{ name: "ENG", points: 6, flag: "🏴" }, { name: "DEN", points: 5, flag: "🇩🇰" }, { name: "SRB", points: 4, flag: "🇷🇸" }, { name: "PAN", points: 3, flag: "🇵🇦" }] },
+  { title: "GROUP K", teams: [{ name: "POR", points: 6, flag: "🇵🇹" }, { name: "UZB", points: 5, flag: "🇺🇿" }, { name: "GHA", points: 4, flag: "🇬🇭" }, { name: "SUI", points: 3, flag: "🇨🇭" }] },
+  { title: "GROUP L", teams: [{ name: "CRO", points: 6, flag: "🇭🇷" }, { name: "BLR", points: 5, flag: "🇧🇾" }, { name: "ALG", points: 4, flag: "🇩🇿" }, { name: "CHN", points: 3, flag: "🇨🇳" }] },
 ];
 
 const leftBracket = [
