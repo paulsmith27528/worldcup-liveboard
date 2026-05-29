@@ -150,17 +150,23 @@ export default function Home() {
 }
 
 function BracketCard({ match }: { match: string }) {
+  const parts = match.split(" — ");
+
   return (
-    <div style={{
-      background: "rgba(0,0,0,.45)",
-      border: "1px solid rgba(34,211,238,.25)",
-      borderRadius: 16,
-      padding: 16,
-      marginBottom: 16,
-      fontWeight: "bold",
-      boxShadow: "0 0 20px rgba(34,211,238,.08)"
-    }}>
-      {match}
+    <div
+      style={{
+        background: "rgba(0,0,0,.45)",
+        border: "1px solid rgba(34,211,238,.25)",
+        borderRadius: 18,
+        padding: "18px 20px",
+        marginBottom: 16,
+        fontWeight: "bold",
+        minWidth: 130,
+        boxShadow: "0 0 20px rgba(34,211,238,.08)",
+      }}
+    >
+      <div style={{ fontSize: 16, marginBottom: 8 }}>{parts[0]}</div>
+      <div style={{ fontSize: 16 }}>{parts[1]}</div>
     </div>
   );
 }
