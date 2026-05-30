@@ -121,7 +121,7 @@ export default function Home() {
   src="/world-cup-trophy.png"
   alt="FIFA World Cup Trophy"
   style={{
-    width: "320px"
+    width: "320px",
     height: "auto",
     marginBottom: "10px",
     filter: "drop-shadow(0 0 25px rgba(255,215,0,.8))",
