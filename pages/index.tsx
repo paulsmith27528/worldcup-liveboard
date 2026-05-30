@@ -119,6 +119,20 @@ export default function Home() {
   <div>{leftBracket.slice(14, 15).map((match, index) => <BracketCard key={index} match={match} />)}</div>
 </div>
 
+              <div style={miniFinalPanel}>
+  <div style={{ color: "#ffd54a", fontWeight: "bold", fontSize: 18 }}>
+    FINAL
+  </div>
+
+  <div style={{ fontSize: 13, color: "#9cc7e8", marginTop: 6 }}>
+    JULY 19 • METLIFE
+  </div>
+
+  <div style={{ marginTop: 12, fontWeight: "bold" }}>
+    🇧🇷 BRA 2 - 1 ARG 🇦🇷
+  </div>
+</div>
+              
               <div style={roundColumns}>
   <div>{rightBracket.slice(14, 15).map((match, index) => <BracketCard key={index} match={match} />)}</div>
   <div>{rightBracket.slice(12, 14).map((match, index) => <BracketCard key={index} match={match} />)}</div>
@@ -349,6 +363,17 @@ const roundColumns = {
   gridTemplateColumns: "1fr 1fr 1fr 1fr",
   gap: 8,
   alignItems: "center",
+};
+const miniFinalPanel = {
+  minWidth: 150,
+  padding: "18px 14px",
+  border: "1px solid rgba(255,213,74,.45)",
+  borderRadius: 16,
+  textAlign: "center" as const,
+  background: "rgba(0,0,0,.58)",
+  boxShadow: "0 0 30px rgba(255,213,74,.16)",
+  position: "relative" as const,
+  zIndex: 2,
 };
 
 const bracketCard = {
