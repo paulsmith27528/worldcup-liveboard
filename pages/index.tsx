@@ -64,10 +64,10 @@ const rightBracket = [
 
 export default function Home() {
   return (
-    <div style={page}>
-      <header style={topHeader}>
-        <div style={logoBlock}>
-          <img src="world-cup-trophy.png" alt="FIFA World Cup" />
+    <>
+      <main style={page}>
+        <header style={topHeader}>
+          <div style={logoBlock}>
           <div>
             <div style={{ fontWeight: 900, fontSize: 18 }}>FIFA</div>
             <div style={{ color: "#ffd54a", fontSize: 12 }}>WORLD CUP 2026</div>
