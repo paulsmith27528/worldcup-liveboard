@@ -112,11 +112,12 @@ export default function Home() {
   <div style={connectorLeft}></div>
   <div style={connectorRight}></div>
 
-              <div>
-                {leftBracket.map((match, index) => (
-                  <BracketCard key={index} match={match} />
-                ))}
-              </div>
+              <div style={roundColumns}>
+  <div>{leftBracket.slice(0, 8).map((match, index) => <BracketCard key={index} match={match} />)}</div>
+  <div>{leftBracket.slice(8, 12).map((match, index) => <BracketCard key={index} match={match} />)}</div>
+  <div>{leftBracket.slice(12, 14).map((match, index) => <BracketCard key={index} match={match} />)}</div>
+  <div>{leftBracket.slice(14, 15).map((match, index) => <BracketCard key={index} match={match} />)}</div>
+</div>
 
               <div style={finalPanel}>
                 <img
@@ -146,11 +147,12 @@ export default function Home() {
                 </div>
               </div>
 
-              <div>
-                {rightBracket.map((match, index) => (
-                  <BracketCard key={index} match={match} />
-                ))}
-              </div>
+              <div style={roundColumns}>
+  <div>{rightBracket.slice(14, 15).map((match, index) => <BracketCard key={index} match={match} />)}</div>
+  <div>{rightBracket.slice(12, 14).map((match, index) => <BracketCard key={index} match={match} />)}</div>
+  <div>{rightBracket.slice(8, 12).map((match, index) => <BracketCard key={index} match={match} />)}</div>
+  <div>{rightBracket.slice(0, 8).map((match, index) => <BracketCard key={index} match={match} />)}</div>
+</div>
             </div>
           </div>
 
@@ -368,6 +370,13 @@ const bracketGrid = {
   gap: 12,
   alignItems: "center",
   position: "relative" as const,
+};
+
+const roundColumns = {
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr 1fr 1fr",
+  gap: 8,
+  alignItems: "center",
 };
 
 const bracketCard = {
