@@ -55,7 +55,7 @@ export default function Home() {
         </div>
 
         <div style={{ textAlign: "center" }}>
-          <h1 style={title}>20 FIFA WORLD CUP 2026</h1>
+          <h1 style={title}>FIFA WORLD CUP 2026</h1>
           <div style={subtitle}>UNITED STATES • CANADA • MEXICO</div>
         </div>
 
@@ -188,7 +188,35 @@ export default function Home() {
     </main>
   );
 }
+function BracketLines() {
+  return (
+    <svg
+      style={{
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "100%",
+        pointerEvents: "none",
+        zIndex: 1,
+      }}
+      viewBox="0 0 1000 620"
+      preserveAspectRatio="none"
+    >
+      <path d="M150 80 H250 V190 H330" style={lineStyle} />
+      <path d="M150 190 H250 V190 H330" style={lineStyle} />
+      <path d="M150 300 H250 V260 H330" style={lineStyle} />
+      <path d="M150 410 H250 V260 H330" style={lineStyle} />
 
+      <path d="M850 80 H750 V190 H670" style={lineStyle} />
+      <path d="M850 190 H750 V190 H670" style={lineStyle} />
+      <path d="M850 300 H750 V260 H670" style={lineStyle} />
+      <path d="M850 410 H750 V260 H670" style={lineStyle} />
+
+      <path d="M330 225 H430" style={goldLineStyle} />
+      <path d="M670 225 H570" style={goldLineStyle} />
+    </svg>
+  );
+}
 function BracketCard({ match }: { match: string[] }) {
   return (
     <div style={bracketCard}>
@@ -478,4 +506,17 @@ const footer = {
 const sync = {
   color: "#22c55e",
   fontWeight: "bold",
+};
+const lineStyle = {
+  fill: "none",
+  stroke: "rgba(56,223,255,.55)",
+  strokeWidth: 2,
+  filter: "drop-shadow(0 0 6px rgba(56,223,255,.8))",
+};
+
+const goldLineStyle = {
+  fill: "none",
+  stroke: "rgba(255,213,74,.8)",
+  strokeWidth: 2,
+  filter: "drop-shadow(0 0 8px rgba(255,213,74,.8))",
 };
