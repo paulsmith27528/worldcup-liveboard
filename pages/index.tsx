@@ -124,10 +124,10 @@ export default function Home() {
   src="/world-cup-trophy.png"
   alt="FIFA World Cup Trophy"
   style={{
-    width: "360px",
+    width: "220px",
     height: "auto",
     marginBottom: "10px",
-    filter: "drop-shadow(0 0 25px rgba(255,215,0,.8))",
+    filter: "drop-shadow(0 0 15px rgba(255,215,0,.6))",
   }}
 />
                 <h2 style={finalTitle}>FINAL</h2>
@@ -325,7 +325,7 @@ const liveBadge = {
 
 const mainGrid = {
   display: "grid",
-  gridTemplateColumns: "210px minmax(820px, 1fr) 210px",
+  gridTemplateColumns: "220px minmax(1000px, 1fr) 220px",
   gap: 12,
 };
 
