@@ -357,6 +357,7 @@ const roundLabels = {
   letterSpacing: 2,
   marginBottom: 8,
   textAlign: "center" as const,
+  textTransform: "uppercase" as const,
 };
 
 const bracketGrid = {
