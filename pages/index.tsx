@@ -5,7 +5,7 @@ import Panel from "../components/Panel";
 const leftGroups = [
   { title: "GROUP A", teams: [{ name: "MEX", points: 6, flag: "🇲🇽" }, { name: "CAN", points: 5, flag: "🇨🇦" }, { name: "KOR", points: 4, flag: "🇰🇷" }, { name: "SWE", points: 3, flag: "🇸🇪" }] },
   { title: "GROUP B", teams: [{ name: "CAN", points: 4, flag: "🇨🇦" }, { name: "ITA", points: 3, flag: "🇮🇹" }, { name: "ECU", points: 3, flag: "🇪🇨" }, { name: "CRO", points: 1, flag: "🇭🇷" }] },
-  { title: "GROUP C", teams: [{ name: "BRA", points: 6, flag: "🇧🇷" }, { name: "MAR", points: 3, flag: "🇲🇦" }, { name: "SCO", points: 1, flag: "🏴" }, { name: "HAI", points: 1, flag: "🇭🇹" }] },
+  { title: "GROUP C", teams: [{ name: "BRA", points: 6, flag: "🇧🇷" }, { name: "MAR", points: 3, flag: "🇲🇦" }, { name: "SCO", points: 1, flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" }, { name: "HAI", points: 1, flag: "🇭🇹" }] },
   { title: "GROUP D", teams: [{ name: "USA", points: 6, flag: "🇺🇸" }, { name: "NED", points: 3, flag: "🇳🇱" }, { name: "JPN", points: 3, flag: "🇯🇵" }, { name: "GAM", points: 0, flag: "🇬🇲" }] },
   { title: "GROUP E", teams: [{ name: "GER", points: 6, flag: "🇩🇪" }, { name: "ESP", points: 3, flag: "🇪🇸" }, { name: "URU", points: 3, flag: "🇺🇾" }, { name: "TUN", points: 0, flag: "🇹🇳" }] },
   { title: "GROUP F", teams: [{ name: "COL", points: 4, flag: "🇨🇴" }, { name: "POR", points: 4, flag: "🇵🇹" }, { name: "CIV", points: 1, flag: "🇨🇮" }, { name: "KSA", points: 0, flag: "🇸🇦" }] },
@@ -15,7 +15,7 @@ const rightGroups = [
   { title: "GROUP G", teams: [{ name: "BEL", points: 4, flag: "🇧🇪" }, { name: "IRN", points: 4, flag: "🇮🇷" }, { name: "EGY", points: 3, flag: "🇪🇬" }, { name: "NZL", points: 0, flag: "🇳🇿" }] },
   { title: "GROUP H", teams: [{ name: "FRA", points: 6, flag: "🇫🇷" }, { name: "AUT", points: 3, flag: "🇦🇹" }, { name: "SEN", points: 3, flag: "🇸🇳" }, { name: "QAT", points: 0, flag: "🇶🇦" }] },
   { title: "GROUP I", teams: [{ name: "ARG", points: 6, flag: "🇦🇷" }, { name: "PER", points: 3, flag: "🇵🇪" }, { name: "NGA", points: 1, flag: "🇳🇬" }, { name: "ISR", points: 1, flag: "🇮🇱" }] },
-  { title: "GROUP J", teams: [{ name: "ENG", points: 6, flag: "🏴" }, { name: "DEN", points: 3, flag: "🇩🇰" }, { name: "SRB", points: 1, flag: "🇷🇸" }, { name: "PAN", points: 1, flag: "🇵🇦" }] },
+  { title: "GROUP J", teams: [{ name: "ENG", points: 6, flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" }, { name: "DEN", points: 3, flag: "🇩🇰" }, { name: "SRB", points: 1, flag: "🇷🇸" }, { name: "PAN", points: 1, flag: "🇵🇦" }] },
   { title: "GROUP K", teams: [{ name: "POR", points: 4, flag: "🇵🇹" }, { name: "UZB", points: 4, flag: "🇺🇿" }, { name: "CHI", points: 3, flag: "🇨🇱" }, { name: "GHA", points: 1, flag: "🇬🇭" }] },
   { title: "GROUP L", teams: [{ name: "CRO", points: 4, flag: "🇭🇷" }, { name: "BLR", points: 4, flag: "🇧🇾" }, { name: "ALG", points: 3, flag: "🇩🇿" }, { name: "SHN", points: 0, flag: "🇨🇳" }] },
 ];
@@ -55,7 +55,7 @@ export default function Home() {
         </div>
 
         <div style={{ textAlign: "center" }}>
-          <h1 style={title}>20 FIFA WORLD CUP 26</h1>
+          <h1 style={title}>20 FIFA WORLD CUP 2026</h1>
           <div style={subtitle}>UNITED STATES • CANADA • MEXICO</div>
         </div>
 
