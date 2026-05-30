@@ -105,7 +105,16 @@ export default function Home() {
               </div>
 
               <div style={finalPanel}>
-                <WorldCupTrophy />
+                <img
+  src="/world-cup-trophy.png"
+  alt="FIFA World Cup Trophy"
+  style={{
+    width: "180px",
+    height: "auto",
+    marginBottom: "10px",
+    filter: "drop-shadow(0 0 25px rgba(255,215,0,.8))",
+  }}
+/>
                 <h2 style={finalTitle}>FINAL</h2>
                 <div style={finalMeta}>JULY 19, 2026 • METLIFE STADIUM • NEW JERSEY</div>
 
@@ -196,28 +205,7 @@ export default function Home() {
     </main>
   );
 }
-function WorldCupTrophy() {
-  return (
-    <div style={trophyWrap}>
-      <div style={trophyGlow}></div>
 
-      <img
-        src="/world-cup-trophy.png"
-        alt="FIFA World Cup Trophy"
-        style={{
-          height: "230px",
-          width: "auto",
-          display: "block",
-          margin: "0 auto",
-          position: "relative",
-          zIndex: 2,
-          filter:
-            "drop-shadow(0 0 20px rgba(255,215,0,.85)) drop-shadow(0 0 55px rgba(255,215,0,.45))",
-        }}
-      />
-    </div>
-  );
-}
 function BracketLines() {
   return (
     <svg
