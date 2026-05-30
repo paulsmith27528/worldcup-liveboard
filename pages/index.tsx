@@ -48,7 +48,7 @@ export default function Home() {
       <header style={topHeader}>
         <div style={logoBlock}>
           <img
-  src="/world-cup-trophy.png"
+  src="world-cup-trophy.png"
   alt="FIFA World Cup"
   style={{
     height: "48px",
