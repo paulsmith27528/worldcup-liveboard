@@ -64,7 +64,7 @@ const rightBracket = [
 
 export default function Home() {
   return (
-    <>
+
       <main style={page}>
         <header style={topHeader}>
           <div style={logoBlock}>
