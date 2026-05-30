@@ -47,7 +47,15 @@ export default function Home() {
     <main style={page}>
       <header style={topHeader}>
         <div style={logoBlock}>
-          <div style={{ fontSize: 36 }}>🏆</div>
+          <img
+  src="/world-cup-trophy.png"
+  alt="FIFA World Cup"
+  style={{
+    height: "48px",
+    width: "auto",
+    filter: "drop-shadow(0 0 8px rgba(255,215,0,.6))",
+  }}
+/>
           <div>
             <div style={{ fontWeight: 900, fontSize: 18 }}>FIFA</div>
             <div style={{ color: "#ffd54a", fontSize: 12 }}>WORLD CUP 2026</div>
@@ -193,23 +201,20 @@ function WorldCupTrophy() {
     <div style={trophyWrap}>
       <div style={trophyGlow}></div>
 
-      <svg width="130" height="165" viewBox="0 0 130 165">
-        <defs>
-          <linearGradient id="goldTrophy" x1="0" x2="1">
-            <stop offset="0%" stopColor="#7a4b00" />
-            <stop offset="35%" stopColor="#ffcf4d" />
-            <stop offset="60%" stopColor="#fff1a8" />
-            <stop offset="100%" stopColor="#b77900" />
-          </linearGradient>
-        </defs>
-
-        <path d="M65 8 C42 14 31 35 34 58 C36 77 48 88 51 104 H79 C82 88 94 77 96 58 C99 35 88 14 65 8Z" fill="url(#goldTrophy)" />
-        <path d="M36 38 C17 38 16 66 39 74" fill="none" stroke="url(#goldTrophy)" strokeWidth="8" />
-        <path d="M94 38 C113 38 114 66 91 74" fill="none" stroke="url(#goldTrophy)" strokeWidth="8" />
-        <path d="M51 104 H79 L84 124 H46 Z" fill="url(#goldTrophy)" />
-        <rect x="35" y="124" width="60" height="15" rx="5" fill="url(#goldTrophy)" />
-        <rect x="25" y="139" width="80" height="12" rx="4" fill="#5f3900" />
-      </svg>
+      <img
+        src="/world-cup-trophy.png"
+        alt="FIFA World Cup Trophy"
+        style={{
+          height: "230px",
+          width: "auto",
+          display: "block",
+          margin: "0 auto",
+          position: "relative",
+          zIndex: 2,
+          filter:
+            "drop-shadow(0 0 20px rgba(255,215,0,.85)) drop-shadow(0 0 55px rgba(255,215,0,.45))",
+        }}
+      />
     </div>
   );
 }
