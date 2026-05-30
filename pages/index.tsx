@@ -67,15 +67,7 @@ export default function Home() {
     <main style={page}>
       <header style={topHeader}>
         <div style={logoBlock}>
-          <img
-  src={"world-cup-trophy.png"}
-  alt="FIFA World Cup"
-  style={{
-    height: "48px",
-    width: "auto",
-    filter: "drop-shadow(0 0 8px rgba(255,215,0,.6))",
-  }}
-/>
+          <img src="world-cup-trophy.png" alt="FIFA World Cup" />
           <div>
             <div style={{ fontWeight: 900, fontSize: 18 }}>FIFA</div>
             <div style={{ color: "#ffd54a", fontSize: 12 }}>WORLD CUP 2026</div>
