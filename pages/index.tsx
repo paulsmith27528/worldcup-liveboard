@@ -29,6 +29,16 @@ const leftBracket = [
   ["🇫🇷 FRA", "3", "🇮🇷 IRN", "1"],
   ["🇧🇷 BRA", "4", "🇯🇵 JPN", "1"],
   ["🇺🇸 USA", "2", "🇧🇾 BLR", "0"],
+
+  ["🇲🇽 MEX", "1", "🇨🇴 COL", "2"],
+  ["🇨🇦 CAN", "0", "🇳🇱 NED", "1"],
+  ["🇩🇪 GER", "2", "🇫🇷 FRA", "3"],
+  ["🇧🇷 BRA", "3", "🇺🇸 USA", "1"],
+
+  ["🇨🇴 COL", "1", "🇳🇱 NED", "2"],
+  ["🇫🇷 FRA", "1", "🇧🇷 BRA", "2"],
+
+  ["🇳🇱 NED", "0", "🇧🇷 BRA", "2"],
 ];
 
 const rightBracket = [
@@ -40,6 +50,16 @@ const rightBracket = [
   ["🇺🇾 URU", "0", "🇵🇹 POR", "1"],
   ["🇵🇹 POR", "3", "🇰🇷 KOR", "1"],
   ["🇪🇬 EGY", "1", "🇸🇳 SEN", "3"],
+
+  ["🏴 ENG", "2", "🇦🇷 ARG", "3"],
+  ["🇧🇪 BEL", "1", "🇮🇹 ITA", "2"],
+  ["🇵🇹 POR", "2", "🇭🇷 CRO", "1"],
+  ["🇸🇳 SEN", "1", "🇵🇹 POR", "2"],
+
+  ["🇦🇷 ARG", "2", "🇮🇹 ITA", "0"],
+  ["🇵🇹 POR", "1", "🇵🇹 POR", "0"],
+
+  ["🇦🇷 ARG", "2", "🇵🇹 POR", "1"],
 ];
 
 export default function Home() {
@@ -109,7 +129,7 @@ export default function Home() {
   src="/world-cup-trophy.png"
   alt="FIFA World Cup Trophy"
   style={{
-    width: "180px",
+    width: "260px",
     height: "auto",
     marginBottom: "10px",
     filter: "drop-shadow(0 0 25px rgba(255,215,0,.8))",
@@ -349,7 +369,7 @@ const roundLabels = {
 
 const bracketGrid = {
   display: "grid",
-  gridTemplateColumns: "120px minmax(390px, 1fr) 120px",
+  gridTemplateColumns: "170px minmax(500px,1fr) 170px",
   gap: 12,
   alignItems: "center",
   position: "relative" as const,
@@ -384,7 +404,7 @@ const finalPanel = {
   textAlign: "center" as const,
   border: "1px solid rgba(255,213,74,.38)",
   borderRadius: 24,
-  padding: 18,
+  padding: 30,
   boxShadow: "0 0 55px rgba(255,213,74,.18)",
   position: "relative" as const,
   zIndex: 2,
