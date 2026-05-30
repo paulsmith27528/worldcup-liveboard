@@ -85,8 +85,10 @@ export default function Home() {
             </div>
 
             <div style={bracketGrid}>
-              <div style={connectorLeft}></div>
-              <div style={connectorRight}></div>
+  <BracketLines />
+
+  <div style={connectorLeft}></div>
+  <div style={connectorRight}></div>
 
               <div>
                 {leftBracket.map((match, index) => (
