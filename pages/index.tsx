@@ -64,7 +64,7 @@ const rightBracket = [
 
 export default function Home() {
   return (
-    <main style={page}>
+    <div style={page}>
       <header style={topHeader}>
         <div style={logoBlock}>
           <img src="world-cup-trophy.png" alt="FIFA World Cup" />
@@ -214,7 +214,7 @@ export default function Home() {
         <span style={sync}>● LIVE SYNC</span>
         <span>Data automatically updates every 20 seconds</span>
       </footer>
-    </main>
+    </div>
   );
 }
 
