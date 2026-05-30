@@ -214,7 +214,7 @@ export default function Home() {
         <span style={sync}>● LIVE SYNC</span>
         <span>Data automatically updates every 20 seconds</span>
       </footer>
-    </div>
+    </main>
   );
 }
 
