@@ -119,34 +119,6 @@ export default function Home() {
   <div>{leftBracket.slice(14, 15).map((match, index) => <BracketCard key={index} match={match} />)}</div>
 </div>
 
-              <div style={finalPanel}>
-                <img
-  src="/world-cup-trophy.png"
-  alt="FIFA World Cup Trophy"
-  style={{
-    width: "220px",
-    height: "auto",
-    marginBottom: "10px",
-    filter: "drop-shadow(0 0 15px rgba(255,215,0,.6))",
-  }}
-/>
-                <h2 style={finalTitle}>FINAL</h2>
-                <div style={finalMeta}>JULY 19, 2026 • METLIFE STADIUM • NEW JERSEY</div>
-
-                <div style={finalScoreCard}>
-                  <div style={{ ...finalTeam, textAlign: "left" }}>🇧🇷 BRAZIL</div>
-                  <div style={finalScore}>2 - 1</div>
-                  <div style={{ ...finalTeam, textAlign: "right" }}>ARGENTINA 🇦🇷</div>
-                </div>
-
-                <div style={scorers}>⚽ VINI JR. 27&apos; • RAPHINHA 72&apos; • M. ALVAREZ 45+1&apos;</div>
-
-                <div style={thirdPlace}>
-                  THIRD PLACE PLAYOFF<br />
-                  🇵🇹 PORTUGAL 2 - 1 URUGUAY 🇺🇾
-                </div>
-              </div>
-
               <div style={roundColumns}>
   <div>{rightBracket.slice(14, 15).map((match, index) => <BracketCard key={index} match={match} />)}</div>
   <div>{rightBracket.slice(12, 14).map((match, index) => <BracketCard key={index} match={match} />)}</div>
