@@ -321,7 +321,7 @@ const liveBadge = {
 
 const mainGrid = {
   display: "grid",
-  gridTemplateColumns: "230px minmax(720px, 1fr) 230px",
+  gridTemplateColumns: "210px minmax(820px, 1fr) 210px",
   gap: 12,
 };
 
