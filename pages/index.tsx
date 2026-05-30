@@ -99,10 +99,12 @@ export default function Home() {
 
           <div style={bracketShell}>
             <div style={roundLabels}>
-              <span>ROUND OF 32</span>
-              <span>FINAL</span>
-              <span>ROUND OF 32</span>
-            </div>
+  <span>ROUND OF 32</span>
+  <span>ROUND OF 16</span>
+  <span>FINAL</span>
+  <span>ROUND OF 16</span>
+  <span>ROUND OF 32</span>
+</div>
 
             <div style={bracketGrid}>
   <BracketLines />
@@ -351,7 +353,7 @@ const bracketShell = {
 
 const roundLabels = {
   display: "grid",
-  gridTemplateColumns: "1fr 1fr 1fr",
+  gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr",
   color: "#9cc7e8",
   fontSize: 10,
   letterSpacing: 2,
