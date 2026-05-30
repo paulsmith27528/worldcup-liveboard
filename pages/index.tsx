@@ -129,7 +129,7 @@ export default function Home() {
   src="/world-cup-trophy.png"
   alt="FIFA World Cup Trophy"
   style={{
-    width: "260px",
+    width: "320px"
     height: "auto",
     marginBottom: "10px",
     filter: "drop-shadow(0 0 25px rgba(255,215,0,.8))",
@@ -404,7 +404,7 @@ const finalPanel = {
   textAlign: "center" as const,
   border: "1px solid rgba(255,213,74,.38)",
   borderRadius: 24,
-  padding: 30,
+  padding: 40,
   boxShadow: "0 0 55px rgba(255,213,74,.18)",
   position: "relative" as const,
   zIndex: 2,
