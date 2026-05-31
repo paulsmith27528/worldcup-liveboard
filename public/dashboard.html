@@ -244,6 +244,18 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,14,.92);backdrop-fil
 /* ─── FOOTER ─────────────────────────────────────────────────────────── */
 footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;background:rgba(0,0,0,.68);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:8.5px}
 
+/* ─── COUNTDOWN ──────────────────────────────────────────────────────── */
+.countdown-bar{background:linear-gradient(135deg,rgba(5,12,28,.97),rgba(2,8,20,.99));border-bottom:1px solid rgba(255,213,74,.2);padding:14px 20px;display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap}
+.cd-label{font-size:10px;color:#ffd54a;font-weight:700;letter-spacing:3px;text-transform:uppercase;flex-shrink:0}
+.cd-units{display:flex;gap:10px;align-items:center}
+.cd-unit{display:flex;flex-direction:column;align-items:center;gap:3px}
+.cd-num{font-size:38px;font-weight:900;color:#fff;line-height:1;letter-spacing:-1px;min-width:52px;text-align:center;background:linear-gradient(180deg,rgba(255,213,74,.1),rgba(0,0,0,.4));border:1px solid rgba(255,213,74,.3);border-radius:8px;padding:6px 4px;box-shadow:0 0 20px rgba(255,213,74,.15)}
+.cd-unit-lbl{font-size:8px;color:#475569;letter-spacing:2px;font-weight:700;text-transform:uppercase}
+.cd-sep{font-size:28px;font-weight:900;color:#ffd54a;opacity:.5;margin-bottom:16px}
+.cd-started{font-size:16px;font-weight:900;color:#22c55e;letter-spacing:3px}
+@keyframes cdPulse{0%,100%{box-shadow:0 0 20px rgba(255,213,74,.15)}50%{box-shadow:0 0 35px rgba(255,213,74,.4),0 0 60px rgba(255,213,74,.15)}}
+.cd-num{animation:cdPulse 2s ease-in-out infinite}
+
 /* ─── MOBILE ─────────────────────────────────────────────────────────── */
 @media(max-width:900px){
   .hdr-main{grid-template-columns:auto 1fr;gap:8px;padding:8px 10px}
@@ -324,6 +336,21 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
     <button class="tab" onclick="showTab('stats')">&#128200; Stats</button>
   </div>
 </header>
+
+<!-- ════ COUNTDOWN ════ -->
+<div class="countdown-bar" id="countdown-bar">
+  <div class="cd-label">&#127942; WORLD CUP KICKS OFF IN</div>
+  <div class="cd-units">
+    <div class="cd-unit"><div class="cd-num" id="cd-d">--</div><div class="cd-unit-lbl">Days</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><div class="cd-num" id="cd-h">--</div><div class="cd-unit-lbl">Hours</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><div class="cd-num" id="cd-m">--</div><div class="cd-unit-lbl">Mins</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><div class="cd-num" id="cd-s">--</div><div class="cd-unit-lbl">Secs</div></div>
+  </div>
+  <div class="cd-label" style="color:#94a3b8;font-weight:400;letter-spacing:1px">11 JUN 2026 &bull; MEXICO CITY</div>
+</div>
 
 <!-- ════ BRACKET VIEW ════ -->
 <div id="bracket-view" class="view active">
@@ -806,7 +833,6 @@ function makeCol(ms,gold){
 function makeFinal(){
   return '<div class="final-col">'+
     '<div class="final-inner gold-glow">'+
-      '<img src="/trophy.png" alt="Trophy" onerror="this.style.display=\'none\'" style="width:85px;height:auto;margin-bottom:4px;filter:drop-shadow(0 0 20px rgba(255,213,74,.9)) drop-shadow(0 0 40px rgba(255,180,0,.5));animation:tFloat 3.5s ease-in-out infinite">'+
       '<div style="color:#ffd54a;font-weight:900;font-size:14px;letter-spacing:4px;margin-bottom:4px">FINAL</div>'+
       '<div style="color:#475569;font-size:8px">JULY 19, 2026</div>'+
       '<div style="color:#334155;font-size:7px;margin-bottom:10px">METLIFE STADIUM &middot; NEW JERSEY</div>'+
@@ -921,6 +947,33 @@ window.addEventListener('DOMContentLoaded',function(){
 
   /* Init API key status */
   initApiKey();
+
+  /* ── Countdown to World Cup opening match: Jun 11 2026 21:00 UTC ── */
+  var kickoff = new Date('2026-06-11T21:00:00Z').getTime();
+  function updateCountdown(){
+    var now = Date.now();
+    var diff = kickoff - now;
+    var bar = document.getElementById('countdown-bar');
+    if(diff <= 0){
+      if(bar) bar.innerHTML = '<div class="cd-label" style="color:#22c55e">&#9917; THE WORLD CUP HAS STARTED!</div><div class="cd-started">&#127942; IT\'S HAPPENING &#127942;</div>';
+      return;
+    }
+    var d = Math.floor(diff / 86400000);
+    var h = Math.floor((diff % 86400000) / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+    var pad = function(n){ return n < 10 ? '0'+n : ''+n; };
+    var dEl=document.getElementById('cd-d');
+    var hEl=document.getElementById('cd-h');
+    var mEl=document.getElementById('cd-m');
+    var sEl=document.getElementById('cd-s');
+    if(dEl) dEl.textContent = pad(d);
+    if(hEl) hEl.textContent = pad(h);
+    if(mEl) mEl.textContent = pad(m);
+    if(sEl) sEl.textContent = pad(s);
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
 });
 
 /* ─── TABS ────────────────────────────────────────────────────────── */
