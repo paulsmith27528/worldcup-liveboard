@@ -43,8 +43,8 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,12,.95);border-botto
 .sec-lbl{color:#38dfff;font-size:9px;letter-spacing:3px;text-align:center;margin-bottom:6px;font-weight:700;text-transform:uppercase}
 
 /* GROUP CARDS */
-.g-card{background:linear-gradient(150deg,rgba(4,16,34,.97),rgba(2,9,20,.99));border:1px solid rgba(34,211,238,.18);border-radius:9px;padding:7px 8px;margin-bottom:6px;box-shadow:0 0 14px rgba(34,211,238,.05);transition:box-shadow .2s}
-.g-card:hover{box-shadow:0 0 20px rgba(34,211,238,.15)}
+.g-card{background:linear-gradient(150deg,rgba(4,16,34,.97),rgba(2,9,20,.99));border:1px solid rgba(34,211,238,.3);border-radius:9px;padding:7px 8px;margin-bottom:6px;animation:neonBlue 3s ease-in-out infinite;transition:border-color .2s}
+.g-card:hover{border-color:rgba(34,211,238,.7)}
 .g-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;padding-bottom:4px;border-bottom:1px solid rgba(34,211,238,.1)}
 .g-ltr{color:#38dfff;font-weight:900;font-size:9px;letter-spacing:2px}
 .g-cols{display:flex;gap:1px;color:#1e3a5f;font-size:7px}
@@ -81,7 +81,10 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,12,.95);border-botto
 .conn-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5}
 .final-col{height:520px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px 12px;position:relative;z-index:3}
 @keyframes innerGold{0%,100%{box-shadow:0 0 30px rgba(255,213,74,.4),0 0 60px rgba(255,213,74,.15),0 0 100px rgba(255,180,0,.08)}50%{box-shadow:0 0 50px rgba(255,213,74,.7),0 0 90px rgba(255,213,74,.3),0 0 130px rgba(255,180,0,.18)}}
+@keyframes neonBlue{0%,100%{box-shadow:0 0 18px rgba(34,211,238,.3),0 0 40px rgba(34,211,238,.12),0 0 70px rgba(34,211,238,.06)}50%{box-shadow:0 0 32px rgba(34,211,238,.6),0 0 65px rgba(34,211,238,.28),0 0 100px rgba(34,211,238,.12)}}
 .final-inner{animation:innerGold 3s ease-in-out infinite}
+.glow-gold-live{animation:innerGold 3s ease-in-out infinite}
+.glow-blue{animation:neonBlue 3s ease-in-out infinite}
 
 /* LEGEND */
 .legend{display:flex;gap:10px;flex-wrap:wrap;padding:5px 0;border-top:1px solid rgba(34,211,238,.08);margin-top:8px}
@@ -380,8 +383,8 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
   <!-- BOTTOM ROW - full width below the 3 columns -->
   <div class="bot-row">
 
-        <!-- LIVE MATCH CENTER - neon blue glow -->
-        <div class="panel" style="border-color:rgba(34,211,238,.6);box-shadow:0 0 25px rgba(34,211,238,.35),0 0 50px rgba(34,211,238,.15),inset 0 0 20px rgba(34,211,238,.04)">
+        <!-- LIVE MATCH CENTER - gold glow matching final -->
+        <div class="panel glow-gold-live" style="border-color:rgba(255,213,74,.5);background:radial-gradient(ellipse at 50% 0%,rgba(255,213,74,.07),rgba(4,16,34,.97))">
           <div class="ptitle">&#9917;&nbsp; LIVE MATCH CENTER</div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
             <span class="lmc-live">&#9679; LIVE 78'</span>
