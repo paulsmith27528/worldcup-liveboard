@@ -65,10 +65,10 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,12,.95);border-botto
 
 /* BRACKET */
 .b-shell{border:1px solid rgba(34,211,238,.18);border-radius:14px;padding:10px;background:linear-gradient(180deg,rgba(3,10,22,.97),rgba(1,5,12,.99));box-shadow:0 0 40px rgba(34,211,238,.06)}
-.r-lbls{display:grid;grid-template-columns:115px 100px 88px 58px 212px 58px 88px 100px 115px;gap:6px;color:#1e3a5f;font-size:8px;letter-spacing:1px;margin-bottom:8px;text-align:center;text-transform:uppercase}
+.r-lbls{display:grid;grid-template-columns:115px 100px 88px 76px 180px 76px 88px 100px 115px;gap:6px;color:#1e3a5f;font-size:7.5px;letter-spacing:.8px;margin-bottom:8px;text-align:center;text-transform:uppercase;white-space:nowrap;overflow:hidden}
 .b-outer{width:100%;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .b-wrap{position:relative;width:986px;transform-origin:top left}
-.b-grid{display:grid;grid-template-columns:115px 100px 88px 58px 212px 58px 88px 100px 115px;gap:6px}
+.b-grid{display:grid;grid-template-columns:115px 100px 88px 76px 180px 76px 88px 100px 115px;gap:6px}
 .b-col{height:520px;display:flex;flex-direction:column;justify-content:space-around}
 .bc{height:55px;background:rgba(2,8,20,.9);border:1px solid rgba(34,211,238,.22);border-radius:8px;padding:4px 9px;display:flex;flex-direction:column;justify-content:space-around;cursor:pointer;transition:all .18s}
 .bc:hover{border-color:rgba(34,211,238,.6);box-shadow:0 0 18px rgba(34,211,238,.2);transform:translateY(-1px)}
@@ -207,9 +207,9 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
       <div class="sec-lbl">KNOCKOUT STAGE</div>
       <div class="b-shell">
         <div class="r-lbls">
-          <span>ROUND OF 32</span><span>ROUND OF 16</span><span>QUARTER-FINALS</span><span>SEMI-FINALS</span>
-          <span style="color:rgba(255,213,74,.6);font-weight:700">FINAL</span>
-          <span>SEMI-FINALS</span><span>QUARTER-FINALS</span><span>ROUND OF 16</span><span>ROUND OF 32</span>
+          <span>ROUND OF 32</span><span>ROUND OF 16</span><span>QTR-FINALS</span><span>SEMI-FINALS</span>
+          <span style="color:rgba(255,213,74,.65);font-weight:700">FINAL</span>
+          <span>SEMI-FINALS</span><span>QTR-FINALS</span><span>ROUND OF 16</span><span>ROUND OF 32</span>
         </div>
         <div class="b-outer" id="bouter">
         <div class="b-wrap" id="bwrap">
@@ -291,9 +291,8 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
             </g>
             <g fill="none" stroke="rgba(34,211,238,.92)" stroke-width="2.5" filter="url(#cg)">
               <path d="M315,130 H318 V260 H321"/><path d="M315,390 H318 V260"/>
-              <path d="M379,130 H376 V260 H373"/><path d="M379,390 H376 V260"/>
             </g>
-            <path fill="none" stroke="rgba(255,213,74,.98)" stroke-width="3" filter="url(#gg)" d="M379,260 H385"/>
+            <path fill="none" stroke="rgba(255,213,74,.98)" stroke-width="3" filter="url(#gg)" d="M397,260 H403"/>
             <g fill="none" stroke="rgba(34,211,238,.65)" stroke-width="1.8" filter="url(#cg)">
               <path d="M871,32.5 H868 V65 H865"/><path d="M871,97.5 H868 V65"/>
               <path d="M871,162.5 H868 V195 H865"/><path d="M871,227.5 H868 V195"/>
@@ -307,7 +306,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
             <g fill="none" stroke="rgba(34,211,238,.92)" stroke-width="2.5" filter="url(#cg)">
               <path d="M671,130 H668 V260 H665"/><path d="M671,390 H668 V260"/>
             </g>
-            <path fill="none" stroke="rgba(255,213,74,.98)" stroke-width="3" filter="url(#gg)" d="M603,260 H597"/>
+            <path fill="none" stroke="rgba(255,213,74,.98)" stroke-width="3" filter="url(#gg)" d="M589,260 H583"/>
           </svg>
           <div class="b-grid" id="bgrid"></div>
         </div>
