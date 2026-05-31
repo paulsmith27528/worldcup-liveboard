@@ -124,7 +124,7 @@ export default function Home() {
 </div>
 
               <div style={miniFinalPanel}>
-  <div style={{ color: "#ffd54a", fontWeight: "bold", fontSize: 18 }}>
+  <div style={{ color: "#ffd54a", fontWeight: "bold", fontSize: 28}}>
     FINAL
   </div>
 
@@ -369,7 +369,8 @@ const roundColumns = {
   alignItems: "center",
 };
 const miniFinalPanel = {
-  minWidth: 150,
+  minWidth: 260,
+  minHeight: 120,
   padding: "18px 14px",
   border: "1px solid rgba(255,213,74,.45)",
   borderRadius: 16,
