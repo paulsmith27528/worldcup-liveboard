@@ -98,10 +98,14 @@ export default function Home() {
           <h2 style={centerTitle}>KNOCKOUT STAGE</h2>
 
           <div style={bracketShell}>
-            <div style={roundLabels}>
+       <div style={roundLabels}>
   <span>ROUND OF 32</span>
   <span>ROUND OF 16</span>
+  <span>QUARTER-FINALS</span>
+  <span>SEMI-FINALS</span>
   <span>FINAL</span>
+  <span>SEMI-FINALS</span>
+  <span>QUARTER-FINALS</span>
   <span>ROUND OF 16</span>
   <span>ROUND OF 32</span>
 </div>
