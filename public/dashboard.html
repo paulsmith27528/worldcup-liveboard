@@ -37,7 +37,7 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,12,.95);border-botto
 .tab.active{color:#22d3ee;border-bottom-color:#22d3ee;font-weight:700}
 
 /* LAYOUT */
-.main-grid{display:grid;grid-template-columns:185px minmax(0,1fr) 185px;gap:8px;padding:8px}
+.main-grid{display:grid;grid-template-columns:160px minmax(0,1fr) 160px;gap:8px;padding:8px}
 .sec-lbl{color:#38dfff;font-size:9px;letter-spacing:3px;text-align:center;margin-bottom:6px;font-weight:700;text-transform:uppercase}
 
 /* GROUP CARDS */
@@ -84,7 +84,7 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,12,.95);border-botto
 .ldot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 
 /* BOTTOM ROW */
-.bot-row{display:grid;grid-template-columns:1.6fr 1fr 1fr 0.9fr 1.2fr;gap:8px;margin-top:8px}
+.bot-row{display:grid;grid-template-columns:1.6fr 1fr 1fr 0.9fr 1.2fr;gap:8px;padding:0 8px 8px}
 .panel{background:linear-gradient(150deg,rgba(4,16,34,.97),rgba(2,9,20,.99));border:1px solid rgba(34,211,238,.16);border-radius:12px;padding:11px 12px}
 .ptitle{color:#67e8f9;font-weight:700;font-size:9px;letter-spacing:2px;margin-bottom:8px;text-transform:uppercase}
 
@@ -250,8 +250,8 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
         <span class="leg"><span style="font-size:8px">(P)</span> Penalty</span>
         <span class="leg"><span style="font-size:8px">VAR</span> VAR Review</span>
       </div>
-      <!-- BOTTOM ROW -->
-      <div class="bot-row">
+      <!-- BOTTOM ROW PLACEHOLDER - moved below grid -->
+      <div style="display:none">
 
         <!-- LIVE MATCH CENTER -->
         <div class="panel" style="border-color:rgba(34,211,238,.25)">
@@ -356,10 +356,96 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
           </div>
         </div>
 
-      </div><!-- end bot-row -->
+      </div><!-- end hidden placeholder -->
     </section>
     <aside><div class="sec-lbl">GROUP STAGE &middot; G&ndash;L</div><div id="rg"></div></aside>
   </div>
+  <!-- BOTTOM ROW - full width below the 3 columns -->
+  <div class="bot-row">
+
+        <!-- LIVE MATCH CENTER - neon blue glow -->
+        <div class="panel" style="border-color:rgba(34,211,238,.6);box-shadow:0 0 25px rgba(34,211,238,.35),0 0 50px rgba(34,211,238,.15),inset 0 0 20px rgba(34,211,238,.04)">
+          <div class="ptitle">&#9917;&nbsp; LIVE MATCH CENTER</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <span class="lmc-live">&#9679; LIVE 78'</span>
+            <span style="font-size:8px;color:#334155">MetLife Stadium, NJ</span>
+          </div>
+          <div class="lmc-teams">
+            <div class="lmc-team">
+              <div class="lmc-flag-circle">&#127463;&#127479;</div>
+              <div class="lmc-tname">BRAZIL</div>
+            </div>
+            <div class="lmc-score-box">
+              <div class="lmc-score">2 - 1</div>
+              <div style="font-size:8px;color:#22d3ee;letter-spacing:1px;margin-top:2px">LIVE</div>
+            </div>
+            <div class="lmc-team">
+              <div class="lmc-flag-circle">&#127462;&#127479;</div>
+              <div class="lmc-tname">ARGENTINA</div>
+            </div>
+          </div>
+          <div class="lmc-scorers">
+            <div class="lmc-scorer"><span>&#9917;</span><span style="color:#67e8f9">27'</span><span>Vini Jr.</span><span style="margin-left:auto;color:#475569">45+1'</span><span>M. Alvarez</span><span>&#9917;</span></div>
+            <div class="lmc-scorer"><span>&#9917;</span><span style="color:#67e8f9">72'</span><span>Raphinha</span></div>
+          </div>
+          <div style="display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:5px;margin-top:4px">
+            <div class="lmc-cards card-group"><span class="ycard"></span><span>3</span><span class="rcard"></span><span>1</span></div>
+            <div><div class="poss-track"><div class="poss-fill" style="width:56%"></div></div></div>
+            <div class="lmc-cards card-group"><span>2</span><span class="ycard"></span><span>2</span><span class="rcard"></span></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:8px;color:#475569;margin-top:2px">
+            <span>56%</span><span style="color:#334155;letter-spacing:1px">POSSESSION</span><span>44%</span>
+          </div>
+          <div class="lmc-stadium">&#127967; MetLife Stadium, New Jersey</div>
+        </div>
+
+        <!-- TOP SCORERS -->
+        <div class="panel">
+          <div class="ptitle">&#128094; TOP SCORERS</div>
+          <div id="scorers-mini"></div>
+          <button onclick="showTab('stats')" style="margin-top:7px;width:100%;background:rgba(34,211,238,.07);border:1px solid rgba(34,211,238,.2);color:#22d3ee;border-radius:5px;padding:5px;font-size:8px;font-weight:700;cursor:pointer;letter-spacing:1px">VIEW ALL</button>
+        </div>
+
+        <!-- TOURNAMENT STATS -->
+        <div class="panel">
+          <div class="ptitle">&#128202; TOURNAMENT STATS</div>
+          <div class="stat-2col">
+            <div class="stat-big"><div class="stat-val" style="color:#22d3ee">48</div><div class="stat-lbl">MATCHES PLAYED</div></div>
+            <div class="stat-big"><div class="stat-val" style="color:#ffd54a">128</div><div class="stat-lbl">GOALS</div></div>
+          </div>
+          <div class="stat-big" style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:8px;margin-bottom:6px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div><div class="stat-val stat-avg">2.67</div><div class="stat-lbl">AVG GOALS / GAME</div></div>
+              <div style="text-align:right"><div class="stat-val" style="color:#a78bfa;font-size:16px">2.1M+</div><div class="stat-lbl">ATTENDANCE</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FEATURES -->
+        <div class="panel">
+          <div class="ptitle">&#10024; FEATURES</div>
+          <div style="font-size:9px;color:#64748b;line-height:1.95">
+            <div>&#128308; Live Scores</div>
+            <div>&#128200; Team Stats</div>
+            <div>&#128100; Player Stats</div>
+            <div>&#128197; Fixtures</div>
+            <div>&#127942; Standings</div>
+            <div>&#128240; News &amp; Highlights</div>
+          </div>
+        </div>
+
+        <!-- MOBILE APP PREVIEW -->
+        <div class="panel">
+          <div class="ptitle">&#128241; MOBILE APP PREVIEW</div>
+          <div class="mob-phones">
+            <div class="mob-phone"><div class="mob-lbl">Home</div><div style="font-size:9px;color:#475569">&#9917; LIVE 78'</div><div class="mob-val">&#127463;&#127479; 2-1 &#127462;&#127479;</div><div class="mob-sub">BRA vs ARG</div></div>
+            <div class="mob-phone"><div class="mob-lbl">Bracket</div><div class="mob-val">FINAL</div><div class="mob-sub">MetLife Stadium</div></div>
+            <div class="mob-phone"><div class="mob-lbl">Standings</div><div style="font-size:8px;color:#22d3ee;font-weight:700">GROUP A</div><div style="font-size:8px;color:#94a3b8">MEX top</div></div>
+            <div class="mob-phone"><div class="mob-lbl">&#127463;&#127479; Brazil</div><div class="mob-val">&#127942; #1</div><div style="font-size:8px;color:#ffd54a;margin-top:2px">Champions</div></div>
+          </div>
+        </div>
+
+  </div><!-- end bot-row -->
 </div>
 
 <!-- GROUPS VIEW -->
