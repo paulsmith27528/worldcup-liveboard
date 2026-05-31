@@ -65,10 +65,10 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,12,.95);border-botto
 
 /* BRACKET */
 .b-shell{border:1px solid rgba(34,211,238,.18);border-radius:14px;padding:10px;background:linear-gradient(180deg,rgba(3,10,22,.97),rgba(1,5,12,.99));box-shadow:0 0 40px rgba(34,211,238,.06)}
-.r-lbls{display:grid;grid-template-columns:115px 100px 88px 76px 180px 76px 88px 100px 115px;gap:6px;color:#1e3a5f;font-size:8px;letter-spacing:1px;margin-bottom:8px;text-align:center;text-transform:uppercase}
+.r-lbls{display:grid;grid-template-columns:115px 100px 88px 58px 212px 58px 88px 100px 115px;gap:6px;color:#1e3a5f;font-size:8px;letter-spacing:1px;margin-bottom:8px;text-align:center;text-transform:uppercase}
 .b-outer{width:100%;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .b-wrap{position:relative;width:986px;transform-origin:top left}
-.b-grid{display:grid;grid-template-columns:115px 100px 88px 76px 180px 76px 88px 100px 115px;gap:6px}
+.b-grid{display:grid;grid-template-columns:115px 100px 88px 58px 212px 58px 88px 100px 115px;gap:6px}
 .b-col{height:520px;display:flex;flex-direction:column;justify-content:space-around}
 .bc{height:55px;background:rgba(2,8,20,.9);border:1px solid rgba(34,211,238,.22);border-radius:8px;padding:4px 9px;display:flex;flex-direction:column;justify-content:space-around;cursor:pointer;transition:all .18s}
 .bc:hover{border-color:rgba(34,211,238,.6);box-shadow:0 0 18px rgba(34,211,238,.2);transform:translateY(-1px)}
@@ -291,8 +291,9 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
             </g>
             <g fill="none" stroke="rgba(34,211,238,.92)" stroke-width="2.5" filter="url(#cg)">
               <path d="M315,130 H318 V260 H321"/><path d="M315,390 H318 V260"/>
+              <path d="M379,130 H376 V260 H373"/><path d="M379,390 H376 V260"/>
             </g>
-            <path fill="none" stroke="rgba(255,213,74,.98)" stroke-width="3" filter="url(#gg)" d="M397,260 H403"/>
+            <path fill="none" stroke="rgba(255,213,74,.98)" stroke-width="3" filter="url(#gg)" d="M379,260 H385"/>
             <g fill="none" stroke="rgba(34,211,238,.65)" stroke-width="1.8" filter="url(#cg)">
               <path d="M871,32.5 H868 V65 H865"/><path d="M871,97.5 H868 V65"/>
               <path d="M871,162.5 H868 V195 H865"/><path d="M871,227.5 H868 V195"/>
@@ -306,7 +307,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
             <g fill="none" stroke="rgba(34,211,238,.92)" stroke-width="2.5" filter="url(#cg)">
               <path d="M671,130 H668 V260 H665"/><path d="M671,390 H668 V260"/>
             </g>
-            <path fill="none" stroke="rgba(255,213,74,.98)" stroke-width="3" filter="url(#gg)" d="M589,260 H583"/>
+            <path fill="none" stroke="rgba(255,213,74,.98)" stroke-width="3" filter="url(#gg)" d="M603,260 H597"/>
           </svg>
           <div class="b-grid" id="bgrid"></div>
         </div>
@@ -630,8 +631,8 @@ var B={
   LSF:[["NED","&#127475;&#127473;","0","BRA","&#127463;&#127479;","2","FT"]],
   RSF:[["ARG","&#127462;&#127479;","2","POR","&#127477;&#127481;","1","FT"]],
   RQF:[["ARG","&#127462;&#127479;","3","ITA","&#127470;&#127481;","1","FT"],["POR","&#127477;&#127481;","2","URU","&#127482;&#127486;","0","FT"]],
-  RR16:[["ENG","&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;","1","ARG","&#127462;&#127479;","2","FT"],["BEL","&#127463;&#127466;","0","ITA","&#127470;&#127481;","2","FT"],["POR","&#127477;&#127481;","2","CRO","&#127469;&#127479;","1","FT"],["SEN","&#127480;&#127475;","1(3)","POR","&#127477;&#127481;","1(1)","PEN"]],
-  RR32:[["ENG","&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;","2","POR","&#127477;&#127481;","1","FT","1J","2K"],["ARG","&#127462;&#127479;","2","DEN","&#127465;&#127472;","0","FT","1I","2J"],["BEL","&#127463;&#127466;","1","SRB","&#127479;&#127480;","0","FT","1G","2J"],["ITA","&#127470;&#127481;","2","UZB","&#127482;&#127487;","1","FT","1B","2K"],["CRO","&#127469;&#127479;","1","ITA","&#127470;&#127481;","0","FT","1L","3G/H/I"],["URU","&#127482;&#127486;","0","POR","&#127477;&#127481;","1","FT","2F","2K"],["POR","&#127477;&#127481;","3","KOR","&#127472;&#127479;","1","FT","1K","3J/K/L"],["EGY","&#127466;&#127468;","1","SEN","&#127480;&#127475;","3","FT","2G","2H"]]
+  RR16:[["ENG","&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;","1","ARG","&#127462;&#127479;","2","FT"],["BEL","&#127463;&#127466;","0","ITA","&#127470;&#127481;","2","FT"],["POR","&#127477;&#127481;","2","CRO","&#127469;&#127479;","1","FT"],["URU","&#127482;&#127486;","2","SEN","&#127480;&#127475;","1","FT"]],
+  RR32:[["ENG","&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;","2","DEN","&#127465;&#127472;","0","FT","1J","2J"],["ARG","&#127462;&#127479;","2","PER","&#127477;&#127466;","0","FT","1I","2I"],["BEL","&#127463;&#127466;","1","SRB","&#127479;&#127480;","0","FT","1G","3J"],["ITA","&#127470;&#127481;","2","UZB","&#127482;&#127487;","1","FT","2B","2K"],["CRO","&#127469;&#127479;","1","AUT","&#127462;&#127481;","0","FT","1L","2H"],["SEN","&#127480;&#127475;","3","EGY","&#127466;&#127468;","1","FT","3H","3G"],["URU","&#127482;&#127486;","2","IRN","&#127470;&#127479;","0","FT","3E","2G"],["POR","&#127477;&#127481;","3","KOR","&#127472;&#127479;","1","FT","1K","3A/B/C"]]
 };
 var SC=[{n:"K. Mbappé",f:"&#127467;&#127479;",c:"France",g:5,a:3},{n:"L. Messi",f:"&#127462;&#127479;",c:"Argentina",g:4,a:5},{n:"Vini Jr.",f:"&#127463;&#127479;",c:"Brazil",g:4,a:4},{n:"H. Kane",f:"&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;",c:"England",g:3,a:2},{n:"M. Alvarez",f:"&#127462;&#127479;",c:"Argentina",g:3,a:1}];
 var LM=[
@@ -647,8 +648,8 @@ function gc(g){
     var gd=t.gs-t.ga,gds=(gd>0?'+':'')+gd,gdc=gd>0?'#4ade80':gd<0?'#f87171':'#475569';
     h+='<div class="t-row'+(i<2?' q':'')+'" onclick=\'openPop('+JSON.stringify(t)+')\'>'+
       '<span class="t-num">'+(i+1)+'</span>'+
+      '<span class="t-name '+(i<2?'top':'bot')+'" style="min-width:24px">'+t.a+'</span>'+
       '<span class="t-flag">'+t.f+'</span>'+
-      '<span class="t-name '+(i<2?'top':'bot')+'">'+t.a+'</span>'+
       '<span class="t-stat">'+t.p+'</span><span class="t-stat">'+t.w+'</span><span class="t-stat">'+t.d+'</span><span class="t-stat">'+t.l+'</span>'+
       '<span class="t-stat" style="color:'+gdc+'">'+gds+'</span>'+
       '<span class="t-stat t-pts '+(i<2?'top':'')+'">'+t.pts+'</span></div>';
