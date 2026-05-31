@@ -113,8 +113,6 @@ export default function Home() {
             <div style={bracketGrid}>
   <BracketLines />
 
-  <div style={connectorLeft}></div>
-  <div style={connectorRight}></div>
 
               <div style={roundColumns}>
   <div>{leftBracket.slice(0, 8).map((match, index) => <BracketCard key={index} match={match} />)}</div>
@@ -369,7 +367,7 @@ const roundColumns = {
   alignItems: "center",
 };
 const miniFinalPanel = {
-  minWidth: 260,
+  minWidth: 320,
   minHeight: 120,
   padding: "18px 14px",
   border: "1px solid rgba(255,213,74,.45)",
