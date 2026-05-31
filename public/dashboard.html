@@ -92,7 +92,8 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,12,.95);border-botto
 .ldot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 
 /* BOTTOM ROW */
-.bot-row{display:grid;grid-template-columns:1.6fr 1fr 1fr 0.9fr 1.2fr;gap:8px;padding:0 8px 8px}
+.bot-row{display:grid;grid-template-columns:1.6fr 1fr 1fr 0.9fr 1.2fr;gap:8px;padding:0 8px 8px;align-items:stretch}
+.bot-row .panel{display:flex;flex-direction:column}
 .panel{background:linear-gradient(150deg,rgba(4,16,34,.97),rgba(2,9,20,.99));border:1px solid rgba(34,211,238,.16);border-radius:12px;padding:11px 12px}
 .ptitle{color:#67e8f9;font-weight:700;font-size:9px;letter-spacing:2px;margin-bottom:8px;text-transform:uppercase}
 
@@ -316,21 +317,29 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
         <!-- TOP SCORERS -->
         <div class="panel">
           <div class="ptitle">&#128094; TOP SCORERS</div>
-          <div id="scorers-mini"></div>
-          <button onclick="showTab('stats')" style="margin-top:7px;width:100%;background:rgba(34,211,238,.07);border:1px solid rgba(34,211,238,.2);color:#22d3ee;border-radius:5px;padding:5px;font-size:8px;font-weight:700;cursor:pointer;letter-spacing:1px">VIEW ALL</button>
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between">
+            <div>
+              <div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">1</span><span style="font-size:13px">&#127467;&#127479;</span><span style="flex:1;font-size:10px;color:#e2e8f0">K. Mbappé</span><span style="color:#ffd54a;font-weight:700;font-size:11px">5 &#9917;</span></div>
+              <div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">2</span><span style="font-size:13px">&#127462;&#127479;</span><span style="flex:1;font-size:10px;color:#e2e8f0">L. Messi</span><span style="color:#ffd54a;font-weight:700;font-size:11px">4 &#9917;</span></div>
+              <div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">3</span><span style="font-size:13px">&#127463;&#127479;</span><span style="flex:1;font-size:10px;color:#e2e8f0">Vini Jr.</span><span style="color:#ffd54a;font-weight:700;font-size:11px">4 &#9917;</span></div>
+              <div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">4</span><span style="font-size:13px">&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;</span><span style="flex:1;font-size:10px;color:#e2e8f0">H. Kane</span><span style="color:#ffd54a;font-weight:700;font-size:11px">3 &#9917;</span></div>
+              <div style="display:flex;align-items:center;gap:7px;padding:7px 0"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">5</span><span style="font-size:13px">&#127462;&#127479;</span><span style="flex:1;font-size:10px;color:#e2e8f0">M. Alvarez</span><span style="color:#ffd54a;font-weight:700;font-size:11px">3 &#9917;</span></div>
+            </div>
+            <button onclick="showTab('stats')" style="width:100%;background:rgba(34,211,238,.07);border:1px solid rgba(34,211,238,.25);color:#22d3ee;border-radius:6px;padding:7px;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:1px;margin-top:8px">VIEW ALL</button>
+          </div>
         </div>
 
         <!-- TOURNAMENT STATS -->
         <div class="panel">
           <div class="ptitle">&#128202; TOURNAMENT STATS</div>
-          <div class="stat-2col">
-            <div class="stat-big"><div class="stat-val" style="color:#22d3ee">48</div><div class="stat-lbl">MATCHES PLAYED</div></div>
-            <div class="stat-big"><div class="stat-val" style="color:#ffd54a">128</div><div class="stat-lbl">GOALS</div></div>
-          </div>
-          <div class="stat-big" style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:8px;margin-bottom:6px">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div><div class="stat-val stat-avg">2.67</div><div class="stat-lbl">AVG GOALS / GAME</div></div>
-              <div style="text-align:right"><div class="stat-val" style="color:#a78bfa;font-size:16px">2.1M+</div><div class="stat-lbl">ATTENDANCE</div></div>
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:space-around">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:12px 10px;text-align:center"><div style="font-size:28px;font-weight:900;color:#22d3ee">48</div><div style="font-size:8px;color:#475569;letter-spacing:1px;margin-top:3px">MATCHES PLAYED</div></div>
+              <div style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:12px 10px;text-align:center"><div style="font-size:28px;font-weight:900;color:#ffd54a">128</div><div style="font-size:8px;color:#475569;letter-spacing:1px;margin-top:3px">GOALS</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+              <div style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:12px 10px;text-align:center"><div style="font-size:24px;font-weight:900;color:#4ade80">2.67</div><div style="font-size:8px;color:#475569;letter-spacing:1px;margin-top:3px">AVG GOALS/GAME</div></div>
+              <div style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:12px 10px;text-align:center"><div style="font-size:22px;font-weight:900;color:#a78bfa">2.1M+</div><div style="font-size:8px;color:#475569;letter-spacing:1px;margin-top:3px">ATTENDANCE</div></div>
             </div>
           </div>
         </div>
@@ -338,13 +347,13 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
         <!-- FEATURES -->
         <div class="panel">
           <div class="ptitle">&#10024; FEATURES</div>
-          <div style="font-size:9px;color:#64748b;line-height:1.95">
-            <div>&#128308; Live Scores</div>
-            <div>&#128200; Team Stats</div>
-            <div>&#128100; Player Stats</div>
-            <div>&#128197; Fixtures</div>
-            <div>&#127942; Standings</div>
-            <div>&#128240; News &amp; Highlights</div>
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:space-around">
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#128308; Live Scores</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#128200; Team Stats</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#128100; Player Stats</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#128197; Fixtures</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#127942; Standings</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:10px;color:#94a3b8">&#128240; News &amp; Highlights</div>
           </div>
         </div>
 
@@ -422,21 +431,29 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
         <!-- TOP SCORERS -->
         <div class="panel">
           <div class="ptitle">&#128094; TOP SCORERS</div>
-          <div id="scorers-mini"></div>
-          <button onclick="showTab('stats')" style="margin-top:7px;width:100%;background:rgba(34,211,238,.07);border:1px solid rgba(34,211,238,.2);color:#22d3ee;border-radius:5px;padding:5px;font-size:8px;font-weight:700;cursor:pointer;letter-spacing:1px">VIEW ALL</button>
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between">
+            <div>
+              <div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">1</span><span style="font-size:13px">&#127467;&#127479;</span><span style="flex:1;font-size:10px;color:#e2e8f0">K. Mbappé</span><span style="color:#ffd54a;font-weight:700;font-size:11px">5 &#9917;</span></div>
+              <div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">2</span><span style="font-size:13px">&#127462;&#127479;</span><span style="flex:1;font-size:10px;color:#e2e8f0">L. Messi</span><span style="color:#ffd54a;font-weight:700;font-size:11px">4 &#9917;</span></div>
+              <div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">3</span><span style="font-size:13px">&#127463;&#127479;</span><span style="flex:1;font-size:10px;color:#e2e8f0">Vini Jr.</span><span style="color:#ffd54a;font-weight:700;font-size:11px">4 &#9917;</span></div>
+              <div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">4</span><span style="font-size:13px">&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;</span><span style="flex:1;font-size:10px;color:#e2e8f0">H. Kane</span><span style="color:#ffd54a;font-weight:700;font-size:11px">3 &#9917;</span></div>
+              <div style="display:flex;align-items:center;gap:7px;padding:7px 0"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">5</span><span style="font-size:13px">&#127462;&#127479;</span><span style="flex:1;font-size:10px;color:#e2e8f0">M. Alvarez</span><span style="color:#ffd54a;font-weight:700;font-size:11px">3 &#9917;</span></div>
+            </div>
+            <button onclick="showTab('stats')" style="width:100%;background:rgba(34,211,238,.07);border:1px solid rgba(34,211,238,.25);color:#22d3ee;border-radius:6px;padding:7px;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:1px;margin-top:8px">VIEW ALL</button>
+          </div>
         </div>
 
         <!-- TOURNAMENT STATS -->
         <div class="panel">
           <div class="ptitle">&#128202; TOURNAMENT STATS</div>
-          <div class="stat-2col">
-            <div class="stat-big"><div class="stat-val" style="color:#22d3ee">48</div><div class="stat-lbl">MATCHES PLAYED</div></div>
-            <div class="stat-big"><div class="stat-val" style="color:#ffd54a">128</div><div class="stat-lbl">GOALS</div></div>
-          </div>
-          <div class="stat-big" style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:8px;margin-bottom:6px">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div><div class="stat-val stat-avg">2.67</div><div class="stat-lbl">AVG GOALS / GAME</div></div>
-              <div style="text-align:right"><div class="stat-val" style="color:#a78bfa;font-size:16px">2.1M+</div><div class="stat-lbl">ATTENDANCE</div></div>
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:space-around">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:12px 10px;text-align:center"><div style="font-size:28px;font-weight:900;color:#22d3ee">48</div><div style="font-size:8px;color:#475569;letter-spacing:1px;margin-top:3px">MATCHES PLAYED</div></div>
+              <div style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:12px 10px;text-align:center"><div style="font-size:28px;font-weight:900;color:#ffd54a">128</div><div style="font-size:8px;color:#475569;letter-spacing:1px;margin-top:3px">GOALS</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+              <div style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:12px 10px;text-align:center"><div style="font-size:24px;font-weight:900;color:#4ade80">2.67</div><div style="font-size:8px;color:#475569;letter-spacing:1px;margin-top:3px">AVG GOALS/GAME</div></div>
+              <div style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:12px 10px;text-align:center"><div style="font-size:22px;font-weight:900;color:#a78bfa">2.1M+</div><div style="font-size:8px;color:#475569;letter-spacing:1px;margin-top:3px">ATTENDANCE</div></div>
             </div>
           </div>
         </div>
@@ -444,13 +461,13 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
         <!-- FEATURES -->
         <div class="panel">
           <div class="ptitle">&#10024; FEATURES</div>
-          <div style="font-size:9px;color:#64748b;line-height:1.95">
-            <div>&#128308; Live Scores</div>
-            <div>&#128200; Team Stats</div>
-            <div>&#128100; Player Stats</div>
-            <div>&#128197; Fixtures</div>
-            <div>&#127942; Standings</div>
-            <div>&#128240; News &amp; Highlights</div>
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:space-around">
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#128308; Live Scores</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#128200; Team Stats</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#128100; Player Stats</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#128197; Fixtures</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#127942; Standings</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:10px;color:#94a3b8">&#128240; News &amp; Highlights</div>
           </div>
         </div>
 
