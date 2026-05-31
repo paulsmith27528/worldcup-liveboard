@@ -43,8 +43,9 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,12,.95);border-botto
 .sec-lbl{color:#38dfff;font-size:9px;letter-spacing:3px;text-align:center;margin-bottom:6px;font-weight:700;text-transform:uppercase}
 
 /* GROUP CARDS */
-.g-card{background:linear-gradient(150deg,rgba(4,16,34,.97),rgba(2,9,20,.99));border:1px solid rgba(34,211,238,.3);border-radius:9px;padding:7px 8px;margin-bottom:6px;animation:neonBlue 3s ease-in-out infinite;transition:border-color .2s}
-.g-card:hover{border-color:rgba(34,211,238,.7)}
+.g-card{background:linear-gradient(150deg,rgba(4,16,34,.97),rgba(2,9,20,.99));border:1px solid rgba(34,211,238,.2);border-radius:9px;padding:7px 8px;margin-bottom:6px;transition:border-color .2s,box-shadow .2s}
+.g-card:hover{border-color:rgba(34,211,238,.5)}
+.g-card.live-group{animation:neonBlue 1.8s ease-in-out infinite;border-color:rgba(34,211,238,.6)}
 .g-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;padding-bottom:4px;border-bottom:1px solid rgba(34,211,238,.1)}
 .g-ltr{color:#38dfff;font-weight:900;font-size:9px;letter-spacing:2px}
 .g-cols{display:flex;gap:1px;color:#1e3a5f;font-size:7px}
@@ -177,9 +178,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
     </div>
     <div class="hdr-title">
       <div class="title-line">
-        <span class="t-num">20</span>
-        <span class="t-main">FIFA WORLD CUP</span>
-        <span class="t-num">26</span>
+        <span style="font-size:34px;font-weight:900;letter-spacing:5px;color:#fff">FIFA WORLD CUP 2026</span>
       </div>
       <div class="t-sub">UNITED STATES &middot; <span style="color:#f87171">CANADA</span> &middot; MEXICO</div>
     </div>
@@ -588,7 +587,7 @@ var LM=[
 ];
 
 function gc(g){
-  var h='<div class="g-card"><div class="g-hdr"><span class="g-ltr">GROUP '+g.id+'</span><div class="g-cols"><span class="g-col">P</span><span class="g-col">W</span><span class="g-col">D</span><span class="g-col">L</span><span class="g-col" style="width:22px">GD</span><span class="g-col" style="width:22px">PTS</span></div></div>';
+  var h='<div class="g-card" id="gc-'+g.id+'"><div class="g-hdr"><span class="g-ltr">GROUP '+g.id+'</span><div class="g-cols"><span class="g-col">P</span><span class="g-col">W</span><span class="g-col">D</span><span class="g-col">L</span><span class="g-col" style="width:22px">GD</span><span class="g-col" style="width:22px">PTS</span></div></div>';
   g.t.forEach(function(t,i){
     var gd=t.gs-t.ga,gds=(gd>0?'+':'')+gd,gdc=gd>0?'#4ade80':gd<0?'#f87171':'#475569';
     h+='<div class="t-row'+(i<2?' q':'')+'" onclick=\'openPop('+JSON.stringify(t)+')\'>'+
@@ -614,9 +613,12 @@ function bCol(ms,gold){
   return h+'</div>';
 }
 
+var FINAL_IS_LIVE = LM.some(function(m){return m.status==='LIVE' && (m.hTeam==='Brazil'||m.aTeam==='Brazil');}) && false; // set true when final is live
+
 function bFinal(){
+  var glowClass = FINAL_IS_LIVE ? ' final-inner' : '';
   return '<div class="final-col">'+
-    '<div class="final-inner" style="width:100%;background:radial-gradient(ellipse at 50% 20%,rgba(255,213,74,.14),rgba(0,0,0,.7));border:1px solid rgba(255,213,74,.6);border-radius:14px;padding:14px 12px">'+
+    '<div class="'+glowClass+'" style="width:100%;background:radial-gradient(ellipse at 50% 20%,rgba(255,213,74,.14),rgba(0,0,0,.7));border:1px solid rgba(255,213,74,.6);border-radius:14px;padding:14px 12px">'+
       '<div style="color:#ffd54a;font-weight:900;font-size:14px;letter-spacing:4px;margin-bottom:4px">FINAL</div>'+
       '<div style="color:#64748b;font-size:8px">JULY 19, 2026</div>'+
       '<div style="color:#475569;font-size:7px;margin-bottom:12px">METLIFE STADIUM &middot; NEW JERSEY</div>'+
@@ -679,6 +681,21 @@ window.addEventListener('DOMContentLoaded',function(){
   document.getElementById('sc-full').innerHTML=sf;
 
   document.getElementById('live-ind').style.display='flex';
+
+  // Pulse group cards whose teams are currently playing
+  var liveTeams=[];
+  LM.forEach(function(m){
+    if(m.status==='LIVE'||m.status==='HT'){
+      liveTeams.push(m.hTeam.toLowerCase());
+      liveTeams.push(m.aTeam.toLowerCase());
+    }
+  });
+  G.forEach(function(g){
+    var card=document.getElementById('gc-'+g.id);
+    if(!card)return;
+    var hasLive=g.t.some(function(t){return liveTeams.indexOf(t.n.toLowerCase())>=0;});
+    if(hasLive)card.classList.add('live-group');
+  });
 
   function tick(){
     var n=new Date(),h=n.getHours().toString().padStart(2,'0'),m=n.getMinutes().toString().padStart(2,'0'),s=n.getSeconds().toString().padStart(2,'0');
