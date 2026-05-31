@@ -5,170 +5,202 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FIFA World Cup 2026 LiveBoard</title>
 <style>
+/* ─── RESET & BASE ─────────────────────────────────────────────────── */
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:#020810;color:#fff;font-family:Arial,sans-serif;min-height:100vh;overflow-x:hidden}
-body{background:radial-gradient(ellipse at 40% 0%,#0c2340,#051425 30%,#020c1a 60%,#010508)}
-::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:rgba(34,211,238,.3);border-radius:2px}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+body{background:radial-gradient(ellipse at 40% 0%,#0d2847 0%,#061020 35%,#030b18 65%,#010508 100%)}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:rgba(34,211,238,.3);border-radius:2px}
+
+/* ─── ANIMATIONS ───────────────────────────────────────────────────── */
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.12}}
+@keyframes goldPulse{0%,100%{box-shadow:0 0 22px rgba(255,213,74,.35),0 0 50px rgba(255,213,74,.12)}50%{box-shadow:0 0 45px rgba(255,213,74,.75),0 0 90px rgba(255,213,74,.3)}}
+@keyframes cyanPulse{0%,100%{box-shadow:0 0 14px rgba(34,211,238,.25),0 0 30px rgba(34,211,238,.1)}50%{box-shadow:0 0 28px rgba(34,211,238,.55),0 0 60px rgba(34,211,238,.22)}}
+@keyframes livering{0%{box-shadow:0 0 0 0 rgba(239,68,68,.7)}70%{box-shadow:0 0 0 8px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
 @keyframes tFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-@keyframes tGlow{0%,100%{filter:drop-shadow(0 0 20px rgba(255,213,74,.8))}50%{filter:drop-shadow(0 0 40px gold)}}
-@keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(239,68,68,.7)}70%{box-shadow:0 0 0 6px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
-@keyframes neonPulse{0%,100%{box-shadow:0 0 18px rgba(34,211,238,.25),0 0 40px rgba(34,211,238,.1)}50%{box-shadow:0 0 28px rgba(34,211,238,.45),0 0 60px rgba(34,211,238,.2)}}
-@keyframes goldPulse{0%,100%{box-shadow:0 0 25px rgba(255,213,74,.2),0 0 50px rgba(255,213,74,.08)}50%{box-shadow:0 0 45px rgba(255,213,74,.5),0 0 80px rgba(255,213,74,.2)}}
 .blink{animation:blink 1.2s ease-in-out infinite}
-.trophy-anim{animation:tFloat 3.5s ease-in-out infinite,tGlow 3.5s ease-in-out infinite;display:inline-block}
+.gold-glow{animation:goldPulse 3s ease-in-out infinite}
+.cyan-glow{animation:cyanPulse 2.5s ease-in-out infinite}
+.live-ring{animation:livering 1.8s ease-in-out infinite}
 
-/* HEADER */
-header{position:sticky;top:0;z-index:90;background:rgba(1,4,12,.95);border-bottom:1px solid rgba(34,211,238,.2)}
-.hdr-top{display:flex;justify-content:space-between;align-items:center;padding:4px 16px;border-bottom:1px solid rgba(34,211,238,.08);font-size:9px;color:#334155}
-.hdr-main{display:grid;grid-template-columns:220px 1fr 220px;align-items:center;gap:12px;padding:8px 16px}
-.hdr-logo{display:flex;gap:8px;align-items:center}
-.fifa-badge{background:linear-gradient(135deg,#1d4ed8,#1e3a8a);border:1px solid rgba(34,211,238,.4);border-radius:8px;padding:6px 10px;text-align:center;line-height:1.2}
-.hdr-title{text-align:center}
-.title-line{display:flex;align-items:center;justify-content:center;gap:6px;line-height:1}
-.t-num{font-size:42px;font-weight:900;color:#ffd54a;text-shadow:0 0 30px rgba(255,213,74,.6)}
-.t-main{font-size:26px;font-weight:900;letter-spacing:4px;color:#fff}
-.t-sub{font-size:10px;color:#38dfff;letter-spacing:5px;margin-top:3px;text-align:center}
-.hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
-.live-clock-box{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.5);border:1px solid rgba(34,211,238,.2);border-radius:8px;padding:5px 12px}
-.live-badge-red{background:#ef4444;color:#fff;font-weight:900;font-size:9px;padding:3px 7px;border-radius:4px;letter-spacing:1px}
-.clock-num{font-weight:900;font-size:16px;letter-spacing:1px}
-.cta{display:inline-block;background:linear-gradient(135deg,#22d3ee,#0ea5e9);color:#000;font-weight:900;font-size:13px;padding:8px 18px;border-radius:22px;text-decoration:none;white-space:nowrap;box-shadow:0 0 24px rgba(34,211,238,.5)}
+/* ─── HEADER ───────────────────────────────────────────────────────── */
+header{position:sticky;top:0;z-index:90;background:rgba(1,4,14,.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(34,211,238,.15)}
+.hdr-top{display:flex;justify-content:space-between;align-items:center;padding:4px 16px;border-bottom:1px solid rgba(34,211,238,.07);font-size:9px;color:#334155}
+.hdr-main{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;padding:9px 16px}
+.fifa-badge{background:linear-gradient(135deg,#1d4ed8,#1e3a8a);border:1px solid rgba(34,211,238,.45);border-radius:9px;padding:7px 11px;text-align:center;line-height:1.25;flex-shrink:0}
+.hdr-logo{display:flex;gap:9px;align-items:center}
+.main-title{text-align:center;font-size:28px;font-weight:900;letter-spacing:4px;color:#fff}
+.title-sub{font-size:10px;color:#38dfff;letter-spacing:6px;margin-top:3px;text-align:center}
+.hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:7px}
+.clock-box{display:flex;align-items:center;gap:7px;background:rgba(0,0,0,.5);border:1px solid rgba(34,211,238,.2);border-radius:7px;padding:5px 12px}
+.cta-btn{display:inline-block;background:linear-gradient(135deg,#22d3ee,#0ea5e9);color:#000;font-weight:900;font-size:13px;padding:8px 18px;border-radius:22px;text-decoration:none;white-space:nowrap;box-shadow:0 0 24px rgba(34,211,238,.5)}
 .tabs{display:flex;border-top:1px solid rgba(34,211,238,.08)}
-.tab{padding:9px 20px;background:transparent;border:none;color:#334155;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent}
+.tab{padding:9px 20px;background:transparent;border:none;color:#334155;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:all .18s}
 .tab.active{color:#22d3ee;border-bottom-color:#22d3ee;font-weight:700}
+.tab:hover{color:#22d3ee}
 
-/* LAYOUT */
-.main-grid{display:grid;grid-template-columns:160px minmax(0,1fr) 160px;gap:8px;padding:8px}
-.sec-lbl{color:#38dfff;font-size:9px;letter-spacing:3px;text-align:center;margin-bottom:6px;font-weight:700;text-transform:uppercase}
+/* ─── MAIN LAYOUT ──────────────────────────────────────────────────── */
+.main-grid{display:grid;grid-template-columns:160px minmax(0,1fr) 160px;gap:8px;padding:8px;align-items:start}
+.sec-lbl{color:#38dfff;font-size:9px;letter-spacing:3px;text-align:center;margin-bottom:7px;font-weight:700;text-transform:uppercase}
 
-/* GROUP CARDS */
-.g-card{background:linear-gradient(150deg,rgba(4,16,34,.97),rgba(2,9,20,.99));border:1px solid rgba(34,211,238,.2);border-radius:9px;padding:7px 8px;margin-bottom:6px;transition:border-color .2s,box-shadow .2s}
-.g-card:hover{border-color:rgba(34,211,238,.5)}
-.g-card.live-group{animation:neonBlue 1.8s ease-in-out infinite;border-color:rgba(34,211,238,.6)}
-.g-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;padding-bottom:4px;border-bottom:1px solid rgba(34,211,238,.1)}
-.g-ltr{color:#38dfff;font-weight:900;font-size:9px;letter-spacing:2px}
-.g-cols{display:flex;gap:1px;color:#1e3a5f;font-size:7px}
-.g-col{width:20px;text-align:center}
-.t-row{display:flex;align-items:center;gap:2px;padding:3px 0;border-top:1px solid rgba(255,255,255,.04);cursor:pointer}
+/* ─── GROUP CARDS ──────────────────────────────────────────────────── */
+.g-card{background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid rgba(34,211,238,.18);border-radius:10px;padding:7px 8px;margin-bottom:7px;transition:border-color .2s}
+.g-card.cyan-glow{border-color:rgba(34,211,238,.5)}
+.g-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;padding-bottom:4px;border-bottom:1px solid rgba(34,211,238,.12)}
+.g-id{color:#38dfff;font-weight:900;font-size:9px;letter-spacing:2px}
+.g-cols{display:flex;gap:2px;color:#1e3a5f;font-size:7px}
+.g-col{width:19px;text-align:center}
+.t-row{display:flex;align-items:center;gap:2px;padding:3px 0;border-top:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .12s}
 .t-row:first-child{border-top:none}
 .t-row:hover{background:rgba(34,211,238,.07)}
-.t-row.q{border-left:2px solid rgba(34,211,238,.5);padding-left:4px;margin-left:-2px}
-.t-num{color:#1e3a5f;font-size:8px;min-width:10px}
+.t-row.q{border-left:2px solid rgba(34,211,238,.55);padding-left:4px;margin-left:-2px}
+.t-pos{color:#1e3a5f;font-size:7px;min-width:9px}
+.t-abbr{font-size:8px;min-width:22px;font-weight:400}
+.t-abbr.top{font-weight:700;color:#e2e8f0}
+.t-abbr.bot{color:#64748b}
 .t-flag{font-size:10px}
-.t-name{font-size:8px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-left:2px}
-.t-name.top{font-weight:700;color:#e2e8f0}
-.t-name.bot{color:#64748b}
-.t-stat{width:20px;text-align:center;font-size:7px;color:#475569}
+.t-stat{width:19px;text-align:center;font-size:7px;color:#475569}
 .t-pts{font-weight:700}
 .t-pts.top{color:#22d3ee}
 
-/* BRACKET */
-.b-shell{border:1px solid rgba(34,211,238,.18);border-radius:14px;padding:10px;background:linear-gradient(180deg,rgba(3,10,22,.97),rgba(1,5,12,.99));box-shadow:0 0 40px rgba(34,211,238,.06)}
-.r-lbls{display:grid;grid-template-columns:115px 100px 88px 76px 180px 76px 88px 100px 115px;gap:6px;color:#1e3a5f;font-size:7.5px;letter-spacing:.8px;margin-bottom:8px;text-align:center;text-transform:uppercase;white-space:nowrap;width:986px;flex-shrink:0}
-.b-outer{width:100%;overflow:hidden}
-.b-wrap{position:relative;width:986px;transform-origin:top left;display:flex;flex-direction:column}
-.b-grid{display:grid;grid-template-columns:115px 100px 88px 76px 180px 76px 88px 100px 115px;gap:6px}
-.b-col{height:600px;display:flex;flex-direction:column;justify-content:space-around}
-.bc{height:55px;background:rgba(2,8,20,.9);border:1px solid rgba(34,211,238,.22);border-radius:8px;padding:4px 9px;display:flex;flex-direction:column;justify-content:space-around;cursor:pointer;transition:all .18s}
-.bc:hover{border-color:rgba(34,211,238,.6);box-shadow:0 0 18px rgba(34,211,238,.2);transform:translateY(-1px)}
-.bc.gold{border-color:rgba(255,213,74,.45);box-shadow:0 0 12px rgba(255,213,74,.15)}
-.bc-row{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:rgba(255,255,255,.35)}
-.bc-row.win{color:#e2e8f0;font-weight:700}
-.bc-t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-.bc-s{color:rgba(255,255,255,.22);min-width:18px;text-align:right;flex-shrink:0}
-.bc-s.w{color:#22d3ee;text-shadow:0 0 8px rgba(34,211,238,.6)}.bc-s.g{color:#ffd54a;text-shadow:0 0 8px rgba(255,213,74,.6)}
-.bc-st{font-size:7px;color:#1e3a5f;text-align:right;letter-spacing:.5px}
-.conn-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5}
-.final-col{height:600px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px 12px;position:relative;z-index:3}
-@keyframes innerGold{0%,100%{box-shadow:0 0 30px rgba(255,213,74,.4),0 0 60px rgba(255,213,74,.15),0 0 100px rgba(255,180,0,.08)}50%{box-shadow:0 0 50px rgba(255,213,74,.7),0 0 90px rgba(255,213,74,.3),0 0 130px rgba(255,180,0,.18)}}
-@keyframes neonBlue{0%,100%{box-shadow:0 0 18px rgba(34,211,238,.3),0 0 40px rgba(34,211,238,.12),0 0 70px rgba(34,211,238,.06)}50%{box-shadow:0 0 32px rgba(34,211,238,.6),0 0 65px rgba(34,211,238,.28),0 0 100px rgba(34,211,238,.12)}}
-.final-inner{animation:innerGold 3s ease-in-out infinite}
-.glow-gold-live{animation:innerGold 3s ease-in-out infinite}
-.glow-blue{animation:neonBlue 3s ease-in-out infinite}
+/* ─── BRACKET SHELL ────────────────────────────────────────────────── */
+.b-shell{border:1px solid rgba(34,211,238,.16);border-radius:13px;padding:9px;background:linear-gradient(180deg,rgba(3,10,22,.97),rgba(1,5,12,.99));overflow:hidden}
 
-/* LEGEND */
-.legend{display:flex;gap:10px;flex-wrap:wrap;padding:5px 0;border-top:1px solid rgba(34,211,238,.08);margin-top:8px}
+/* ─── BRACKET — CSS fr units, no JS transform ──────────────────────── */
+.bracket-outer{width:100%;display:flex;flex-direction:column}
+
+/* Round labels & bracket grid share the SAME fr column template */
+.r-lbls,.b-grid{display:grid;grid-template-columns:115fr 100fr 88fr 76fr 180fr 76fr 88fr 100fr 115fr;gap:6px}
+.r-lbls{color:#1e3a5f;font-size:7.5px;letter-spacing:.8px;margin-bottom:7px;text-align:center;text-transform:uppercase;white-space:nowrap}
+.r-lbl-final{color:rgba(255,213,74,.65);font-weight:700}
+
+/* Bracket grid wrapper — position:relative so SVG overlay aligns */
+.b-grid-wrap{position:relative}
+
+/* SVG overlay sits exactly over the grid */
+.conn-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5}
+
+/* Each round column */
+.b-col{height:600px;display:flex;flex-direction:column;justify-content:space-around}
+
+/* Match cards */
+.bc{height:55px;background:rgba(2,7,18,.88);border:1px solid rgba(34,211,238,.2);border-radius:7px;padding:3px 8px;display:flex;flex-direction:column;justify-content:space-around;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.bc:hover{border-color:rgba(34,211,238,.55);box-shadow:0 0 14px rgba(34,211,238,.18)}
+.bc.gold{border-color:rgba(255,213,74,.4)}
+.bc-row{display:flex;justify-content:space-between;align-items:center;gap:3px;font-size:9px;color:rgba(255,255,255,.32)}
+.bc-row.win{color:#e2e8f0;font-weight:700}
+.bc-team{display:flex;align-items:center;gap:3px;overflow:hidden;flex:1}
+.bc-code{color:#1e3a5f;font-size:7px;min-width:18px;flex-shrink:0}
+.bc-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bc-score{color:rgba(255,255,255,.2);flex-shrink:0;min-width:14px;text-align:right}
+.bc-score.win{color:#22d3ee;text-shadow:0 0 7px rgba(34,211,238,.6)}
+.bc-score.gold{color:#ffd54a;text-shadow:0 0 7px rgba(255,213,74,.6)}
+.bc-st{font-size:6.5px;color:#1e3a5f;text-align:right;letter-spacing:.4px}
+
+/* Final column */
+.final-col{height:600px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12px 10px}
+.final-inner{width:100%;background:radial-gradient(ellipse at 50% 20%,rgba(255,213,74,.16),rgba(0,0,0,.75));border:1px solid rgba(255,213,74,.6);border-radius:14px;padding:14px 10px;display:flex;flex-direction:column;align-items:center}
+.final-inner.gold-glow{animation:goldPulse 3s ease-in-out infinite}
+
+/* ─── STADIUM BACKGROUND ───────────────────────────────────────────── */
+.stad-bg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.stad-glow{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:520px;height:400px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,80,220,.18),transparent 70%);filter:blur(10px)}
+
+/* ─── LEGEND ───────────────────────────────────────────────────────── */
+.legend{display:flex;gap:10px;flex-wrap:wrap;padding:6px 0;border-top:1px solid rgba(34,211,238,.09);margin-top:7px}
 .leg{display:flex;align-items:center;gap:3px;font-size:8px;color:#475569}
 .ldot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.lpill{padding:1px 6px;border-radius:3px;font-size:7px;font-weight:700}
 
-/* BOTTOM ROW */
-.bot-row{display:grid;grid-template-columns:1.6fr 1fr 1fr 0.9fr 1.2fr;gap:8px;padding:0 8px 8px;align-items:stretch}
-.bot-row .panel{display:flex;flex-direction:column}
-.panel{background:linear-gradient(150deg,rgba(4,16,34,.97),rgba(2,9,20,.99));border:1px solid rgba(34,211,238,.16);border-radius:12px;padding:11px 12px}
-.ptitle{color:#67e8f9;font-weight:700;font-size:9px;letter-spacing:2px;margin-bottom:8px;text-transform:uppercase}
+/* ─── BOTTOM ROW ───────────────────────────────────────────────────── */
+.bot-row{display:grid;grid-template-columns:1.6fr 1fr 1fr 0.85fr 1.1fr;gap:8px;padding:0 8px 8px;align-items:stretch}
+.panel{background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid rgba(34,211,238,.17);border-radius:13px;padding:12px 13px;display:flex;flex-direction:column}
+.panel.gold-glow{border-color:rgba(255,213,74,.5);background:radial-gradient(ellipse at 50% 0%,rgba(255,213,74,.07),rgba(4,15,34,.97))}
+.ptitle{color:#67e8f9;font-weight:700;font-size:10px;letter-spacing:2px;margin-bottom:8px;text-transform:uppercase;flex-shrink:0}
 
-/* LIVE MATCH CENTER */
-.lmc-minute{font-size:22px;font-weight:900;color:#ef4444;text-align:center;letter-spacing:1px}
-.lmc-teams{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;margin:8px 0}
+/* Live Match Center */
+.lmc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.live-badge{display:inline-flex;align-items:center;gap:5px;background:#ef4444;color:#fff;font-weight:700;font-size:9px;padding:3px 9px;border-radius:4px;letter-spacing:1.5px}
+.lmc-teams{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;margin:6px 0}
 .lmc-team{text-align:center}
-.lmc-flag-circle{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto;border:2px solid rgba(255,255,255,.15);background:rgba(0,0,0,.3)}
-.lmc-tname{font-weight:700;font-size:11px;margin-top:4px;letter-spacing:1px}
-.lmc-score-box{text-align:center}
-.lmc-score{font-size:36px;font-weight:900;color:#fff;letter-spacing:3px;line-height:1}
-.lmc-live{display:inline-block;background:#ef4444;color:#fff;font-weight:700;font-size:9px;padding:2px 10px;border-radius:4px;letter-spacing:1.5px;margin-top:4px;animation:livePulse 1.8s ease-in-out infinite}
-.lmc-scorers{display:flex;flex-direction:column;gap:2px;margin:6px 0;padding:5px 0;border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07)}
-.lmc-scorer{display:flex;align-items:center;gap:4px;font-size:8px;color:#94a3b8}
-.lmc-poss-row{display:grid;grid-template-columns:28px 1fr 28px;align-items:center;gap:5px;margin-top:5px}
-.poss-track{height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;position:relative}
-.poss-fill{height:100%;background:linear-gradient(90deg,rgba(34,211,238,.8),rgba(14,165,233,.5));border-radius:3px}
-.lmc-cards{display:flex;justify-content:space-between;margin-top:5px;font-size:8px;color:#64748b}
-.card-group{display:flex;align-items:center;gap:4px}
+.lmc-flag-circle{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto;border:2px solid rgba(255,255,255,.12);background:rgba(0,0,0,.3)}
+.lmc-score{text-align:center;font-size:32px;font-weight:900;color:#fff;letter-spacing:3px;line-height:1}
+.lmc-tname{font-weight:700;font-size:11px;margin-top:3px;letter-spacing:1px}
+.lmc-scorers{display:flex;flex-direction:column;gap:1px;margin:5px 0;padding:4px 0;border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07)}
+.lmc-scorer{font-size:8px;color:#94a3b8}
+.poss-row{display:grid;grid-template-columns:28px 1fr 28px;align-items:center;gap:5px;margin-top:5px}
+.poss-bar{height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.poss-fill{height:100%;background:linear-gradient(90deg,rgba(34,211,238,.75),rgba(34,211,238,.4));border-radius:3px}
+.poss-lbl{font-size:8px;color:#475569}
+.card-stat{display:flex;align-items:center;gap:3px;font-size:8px;color:#64748b}
 .ycard{width:8px;height:10px;background:#fbbf24;border-radius:1px;display:inline-block}
 .rcard{width:8px;height:10px;background:#ef4444;border-radius:1px;display:inline-block}
-.lmc-stadium{font-size:8px;color:#334155;text-align:center;margin-top:5px}
+.lmc-venue{font-size:7.5px;color:#1e3a5f;text-align:center;margin-top:4px}
+.lmc-stats-row{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
 
-/* TOP SCORERS */
-.sc-row{display:flex;align-items:center;gap:5px;padding:5px 0;border-top:1px solid rgba(255,255,255,.05)}
+/* Scorers */
+.sc-row{display:flex;align-items:center;gap:6px;padding:5px 0;border-top:1px solid rgba(255,255,255,.05);font-size:9px;flex-grow:0}
 .sc-row:first-child{border-top:none}
+.sc-num{color:#1e3a5f;min-width:12px;font-weight:700}
+.sc-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e2e8f0}
+.sc-g{color:#ffd54a;font-weight:700}
+.view-all-btn{margin-top:auto;padding-top:7px;width:100%;background:rgba(34,211,238,.07);border:1px solid rgba(34,211,238,.22);color:#22d3ee;border-radius:6px;padding:6px;font-size:8.5px;font-weight:700;cursor:pointer;letter-spacing:1px}
 
-/* STATS */
-.stat-2col{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px}
-.stat-big{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:8px}
-.stat-val{font-size:22px;font-weight:900}
-.stat-lbl{font-size:7px;color:#334155;letter-spacing:1px;margin-top:1px}
-.stat-avg{font-size:16px;color:#4ade80;font-weight:700;margin-top:4px}
+/* Stats */
+.stat-2col{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px}
+.stat-box{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:10px 10px;text-align:center;display:flex;flex-direction:column;justify-content:center}
+.stat-val{font-size:26px;font-weight:900;line-height:1}
+.stat-lbl{font-size:7.5px;color:#334155;letter-spacing:1px;margin-top:3px}
 
-/* MOBILE PREVIEW */
+/* Features */
+.feat-item{display:flex;align-items:center;gap:7px;font-size:9.5px;color:#94a3b8;padding:5px 0;border-top:1px solid rgba(255,255,255,.05)}
+.feat-item:first-child{border-top:none}
+
+/* Mobile */
 .mob-phones{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-.mob-phone{background:rgba(0,0,0,.4);border:1px solid rgba(34,211,238,.15);border-radius:8px;padding:7px;text-align:center;min-height:70px}
-.mob-lbl{font-size:7px;color:#38dfff;font-weight:700;letter-spacing:1px;margin-bottom:3px}
+.mob-phone{background:rgba(0,0,0,.4);border:1px solid rgba(34,211,238,.15);border-radius:8px;padding:8px;text-align:center}
+.mob-lbl{font-size:7.5px;color:#38dfff;font-weight:700;letter-spacing:1px;margin-bottom:3px}
 .mob-val{font-size:11px;font-weight:700}
-.mob-sub{font-size:7px;color:#334155;margin-top:1px}
+.mob-sub{font-size:7.5px;color:#334155;margin-top:1px}
 
-/* VIEWS */
-.view{display:none}.view.active{display:block}
+/* ─── VIEWS ─────────────────────────────────────────────────────────── */
+.view{display:none}
+.view.active{display:block}
 
-/* POPUP */
+/* ─── POPUP ─────────────────────────────────────────────────────────── */
 #pop-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:999;align-items:center;justify-content:center}
 #pop-ov.open{display:flex}
-#pop-box{background:linear-gradient(150deg,#07182e,#040e1e);border:1px solid rgba(34,211,238,.35);border-radius:18px;padding:24px;width:320px;max-width:92vw}
-.pop-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:14px}
-.pop-stat{background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.13);border-radius:9px;padding:8px 0;text-align:center}
+#pop-box{background:linear-gradient(150deg,#071a30,#040e1e);border:1px solid rgba(34,211,238,.38);border-radius:18px;padding:24px;width:320px;max-width:92vw}
+.pop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:14px}
+.pop-stat{background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.14);border-radius:9px;padding:9px 0;text-align:center}
 
-/* FOOTER */
-footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;background:rgba(0,0,0,.68);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:8px}
+/* ─── FOOTER ─────────────────────────────────────────────────────────── */
+footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;background:rgba(0,0,0,.68);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:8.5px}
 </style>
 </head>
 <body>
 
+<!-- ════ HEADER ════ -->
 <header>
   <div class="hdr-top">
     <div style="display:flex;gap:12px;align-items:center">
-      <span id="live-ind" style="display:none;align-items:center;gap:4px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:4px;padding:2px 7px;font-weight:700;color:#ef4444;font-size:9px">
-        <span class="blink" style="width:5px;height:5px;border-radius:50%;background:#ef4444;display:inline-block"></span> 2 LIVE MATCHES
+      <span id="live-ind" style="display:none;align-items:center;gap:4px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:4px;padding:2px 7px;font-weight:700;color:#ef4444;font-size:8.5px">
+        <span class="blink" style="width:5px;height:5px;border-radius:50%;background:#ef4444;display:inline-block"></span>
+        2 LIVE MATCHES
       </span>
       <span>Updated: <span id="last-sync">--:--</span></span>
     </div>
     <div style="display:flex;gap:14px">
-      <span>&#127760; Auto-timezone</span><span>&#127758; EN | ES | FR | PT</span><span>&#128225; Live Sync</span>
+      <span>&#127760; Auto-timezone</span>
+      <span>&#127758; EN | ES | FR | PT</span>
+      <span>&#128225; Live Sync</span>
     </div>
   </div>
   <div class="hdr-main">
     <div class="hdr-logo">
       <div class="fifa-badge">
-        <div style="font-weight:700;font-size:13px;letter-spacing:2px">FIFA</div>
-        <div style="font-size:7px;color:#ffd54a;letter-spacing:1px">WORLD CUP</div>
+        <div style="font-weight:900;font-size:13px;letter-spacing:2px">FIFA</div>
+        <div style="font-size:7.5px;color:#ffd54a;letter-spacing:1px">WORLD CUP</div>
         <div style="font-size:10px;font-weight:700;color:#38dfff">2026</div>
       </div>
       <div>
@@ -176,19 +208,17 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
         <div style="font-size:8px;color:#1e3a5f">TOURNAMENT DASHBOARD</div>
       </div>
     </div>
-    <div class="hdr-title">
-      <div class="title-line">
-        <span style="font-size:34px;font-weight:900;letter-spacing:5px;color:#fff">FIFA WORLD CUP 2026</span>
-      </div>
-      <div class="t-sub">UNITED STATES &middot; <span style="color:#f87171">CANADA</span> &middot; MEXICO</div>
+    <div>
+      <div class="main-title">FIFA WORLD CUP 2026</div>
+      <div class="title-sub">UNITED STATES &middot; <span style="color:#f87171">CANADA</span> &middot; MEXICO</div>
     </div>
     <div class="hdr-right">
-      <div class="live-clock-box">
-        <span class="live-badge-red">LIVE</span>
-        <span id="clock" class="clock-num">--:--:--</span>
-        <span style="color:#334155;font-size:8px">LOCAL TIME</span>
+      <div class="clock-box">
+        <span class="blink" style="width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block"></span>
+        <span id="clock" style="font-weight:700;font-size:15px;letter-spacing:1px;font-variant-numeric:tabular-nums">--:--:--</span>
+        <span style="color:#1e3a5f;font-size:8.5px">LOCAL TIME</span>
       </div>
-      <a href="https://buy.stripe.com/test_eVq5kw6FVfCk9cL97K6oo00" target="_blank" class="cta">Get Access &mdash; &pound;4.99</a>
+      <a href="https://buy.stripe.com/test_eVq5kw6FVfCk9cL97K6oo00" target="_blank" class="cta-btn">Get Access &mdash; &pound;4.99</a>
     </div>
   </div>
   <div class="tabs">
@@ -199,371 +229,271 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
   </div>
 </header>
 
-<!-- BRACKET VIEW -->
+<!-- ════ BRACKET VIEW ════ -->
 <div id="bracket-view" class="view active">
   <div class="main-grid">
-    <aside><div class="sec-lbl">GROUP STAGE &middot; A&ndash;F</div><div id="lg"></div></aside>
+
+    <!-- LEFT: Groups A–F -->
+    <aside>
+      <div class="sec-lbl">GROUP STAGE &middot; A&ndash;F</div>
+      <div id="lg"></div>
+    </aside>
+
+    <!-- CENTRE: Knockout Stage -->
     <section>
       <div class="sec-lbl">KNOCKOUT STAGE</div>
       <div class="b-shell">
-        <div class="b-outer" id="bouter">
-        <div class="b-wrap" id="bwrap">
-          <div class="r-lbls" style="position:relative;z-index:10;flex-shrink:0">
-            <span>ROUND OF 32</span><span>ROUND OF 16</span><span>QTR-FINALS</span><span>SEMI-FINALS</span>
-            <span style="color:rgba(255,213,74,.65);font-weight:700">FINAL</span>
-            <span>SEMI-FINALS</span><span>QTR-FINALS</span><span>ROUND OF 16</span><span>ROUND OF 32</span>
+
+        <!-- bracket-outer: labels + grid in same parent, same fr columns -->
+        <div class="bracket-outer">
+
+          <!-- Round labels row — identical fr columns -->
+          <div class="r-lbls">
+            <span>ROUND OF 32</span>
+            <span>ROUND OF 16</span>
+            <span>QTR-FINALS</span>
+            <span>SEMI-FINALS</span>
+            <span class="r-lbl-final">FINAL</span>
+            <span>SEMI-FINALS</span>
+            <span>QTR-FINALS</span>
+            <span>ROUND OF 16</span>
+            <span>ROUND OF 32</span>
           </div>
-          <!-- STADIUM BACKGROUND GRAPHIC -->
-          <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden">
-            <!-- Central atmospheric glow -->
-            <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:500px;height:380px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,80,220,.18) 0%,rgba(0,50,180,.08) 45%,transparent 70%);filter:blur(10px)"></div>
-            <!-- Football stadium / pitch from above -->
-            <svg viewBox="0 0 986 600" preserveAspectRatio="none" style="position:absolute;top:0;left:0;width:100%;height:100%">
+
+          <!-- Grid wrapper: position:relative so SVG aligns correctly -->
+          <div class="b-grid-wrap">
+
+            <!-- Stadium background (absolute, behind everything) -->
+            <div class="stad-bg">
+              <div class="stad-glow"></div>
+              <svg viewBox="0 0 986 600" preserveAspectRatio="none" style="position:absolute;top:0;left:0;width:100%;height:100%">
+                <g fill="none" stroke="rgba(28,130,255,.15)" stroke-width="1.5">
+                  <ellipse cx="493" cy="300" rx="470" ry="285"/>
+                  <ellipse cx="493" cy="300" rx="415" ry="238"/>
+                  <rect x="218" y="115" width="550" height="370" rx="3"/>
+                  <line x1="493" y1="115" x2="493" y2="485"/>
+                  <circle cx="493" cy="300" r="60"/>
+                  <circle cx="493" cy="300" r="3" fill="rgba(28,130,255,.18)" stroke="none"/>
+                  <rect x="218" y="180" width="108" height="240"/>
+                  <rect x="218" y="225" width="48" height="150"/>
+                  <rect x="620" y="180" width="108" height="240"/>
+                  <rect x="620" y="225" width="48" height="150"/>
+                  <rect x="203" y="258" width="15" height="84"/>
+                  <rect x="768" y="258" width="15" height="84"/>
+                  <path d="M326,198 A60,60,0,0,0,326,402"/>
+                  <path d="M660,198 A60,60,0,0,1,660,402"/>
+                  <path d="M218,127 A13,13,0,0,1,231,115"/>
+                  <path d="M755,115 A13,13,0,0,1,768,127"/>
+                  <path d="M218,473 A13,13,0,0,0,231,485"/>
+                  <path d="M755,485 A13,13,0,0,0,768,473"/>
+                  <circle cx="283" cy="300" r="3" fill="rgba(28,130,255,.18)" stroke="none"/>
+                  <circle cx="703" cy="300" r="3" fill="rgba(28,130,255,.18)" stroke="none"/>
+                  <ellipse cx="493" cy="300" rx="348" ry="195" stroke-dasharray="5 4" stroke-opacity=".5"/>
+                </g>
+              </svg>
+            </div>
+
+            <!-- Glowing connector SVG — position:absolute, covers exact grid area -->
+            <svg class="conn-svg" viewBox="0 0 986 600" preserveAspectRatio="none">
               <defs>
-                <filter id="stadGlow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="b"/>
+                <filter id="cg" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="b"/>
+                  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <filter id="gg" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b"/>
                   <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
                 </filter>
               </defs>
-              <g fill="none" stroke="rgba(30,140,255,.16)" stroke-width="1.5" filter="url(#stadGlow)">
-                <!-- Outer stadium oval -->
-                <ellipse cx="493" cy="300" rx="465" ry="248"/>
-                <!-- Inner stadium oval (stands inner edge) -->
-                <ellipse cx="493" cy="300" rx="410" ry="207"/>
-                <!-- Pitch outline -->
-                <rect x="233" y="110" width="520" height="300" rx="3"/>
-                <!-- Center line (vertical, portrait pitch horizontal) -->
-                <line x1="493" y1="110" x2="493" y2="410"/>
-                <!-- Center circle -->
-                <circle cx="493" cy="300" r="56"/>
-                <!-- Center spot -->
-                <circle cx="493" cy="300" r="3" fill="rgba(30,140,255,.18)" stroke="none"/>
-                <!-- Left penalty area -->
-                <rect x="233" y="178" width="100" height="164"/>
-                <!-- Left goal area -->
-                <rect x="233" y="215" width="44" height="90"/>
-                <!-- Left goal (behind line) -->
-                <rect x="218" y="232" width="15" height="56"/>
-                <!-- Left penalty arc (outside box only) -->
-                <path d="M333,207 A56,56,0,0,0,333,313"/>
-                <!-- Left penalty spot -->
-                <circle cx="283" cy="260" r="2.5" fill="rgba(30,140,255,.18)" stroke="none"/>
-                <!-- Right penalty area -->
-                <rect x="653" y="178" width="100" height="164"/>
-                <!-- Right goal area -->
-                <rect x="709" y="215" width="44" height="90"/>
-                <!-- Right goal -->
-                <rect x="753" y="232" width="15" height="56"/>
-                <!-- Right penalty arc -->
-                <path d="M653,207 A56,56,0,0,1,653,313"/>
-                <!-- Right penalty spot -->
-                <circle cx="703" cy="260" r="2.5" fill="rgba(30,140,255,.18)" stroke="none"/>
-                <!-- Corner arcs (small quarter circles) -->
-                <path d="M233,122 A12,12,0,0,1,245,110"/>
-                <path d="M741,110 A12,12,0,0,1,753,122"/>
-                <path d="M233,398 A12,12,0,0,0,245,410"/>
-                <path d="M741,410 A12,12,0,0,0,753,398"/>
-                <!-- Stadium seating arc lines (tiers) -->
-                <ellipse cx="493" cy="300" rx="355" ry="176" stroke-dasharray="4,3" stroke-opacity=".5"/>
+              <!-- LEFT: R32 → R16 -->
+              <g fill="none" stroke="rgba(34,211,238,.62)" stroke-width="1.8" filter="url(#cg)">
+                <path d="M115,37.5 H118 V75 H121"/><path d="M115,112.5 H118 V75"/>
+                <path d="M115,187.5 H118 V225 H121"/><path d="M115,262.5 H118 V225"/>
+                <path d="M115,337.5 H118 V375 H121"/><path d="M115,412.5 H118 V375"/>
+                <path d="M115,487.5 H118 V525 H121"/><path d="M115,562.5 H118 V525"/>
               </g>
+              <!-- LEFT: R16 → QF -->
+              <g fill="none" stroke="rgba(34,211,238,.75)" stroke-width="2" filter="url(#cg)">
+                <path d="M221,75 H224 V150 H227"/><path d="M221,225 H224 V150"/>
+                <path d="M221,375 H224 V450 H227"/><path d="M221,525 H224 V450"/>
+              </g>
+              <!-- LEFT: QF → SF -->
+              <g fill="none" stroke="rgba(34,211,238,.9)" stroke-width="2.4" filter="url(#cg)">
+                <path d="M315,150 H318 V300 H321"/><path d="M315,450 H318 V300"/>
+              </g>
+              <!-- LEFT: SF → Final -->
+              <path fill="none" stroke="rgba(255,213,74,.95)" stroke-width="3" filter="url(#gg)" d="M397,300 H403"/>
+              <!-- RIGHT: R32 → R16 -->
+              <g fill="none" stroke="rgba(34,211,238,.62)" stroke-width="1.8" filter="url(#cg)">
+                <path d="M871,37.5 H868 V75 H865"/><path d="M871,112.5 H868 V75"/>
+                <path d="M871,187.5 H868 V225 H865"/><path d="M871,262.5 H868 V225"/>
+                <path d="M871,337.5 H868 V375 H865"/><path d="M871,412.5 H868 V375"/>
+                <path d="M871,487.5 H868 V525 H865"/><path d="M871,562.5 H868 V525"/>
+              </g>
+              <!-- RIGHT: R16 → QF -->
+              <g fill="none" stroke="rgba(34,211,238,.75)" stroke-width="2" filter="url(#cg)">
+                <path d="M765,75 H762 V150 H759"/><path d="M765,225 H762 V150"/>
+                <path d="M765,375 H762 V450 H759"/><path d="M765,525 H762 V450"/>
+              </g>
+              <!-- RIGHT: QF → SF -->
+              <g fill="none" stroke="rgba(34,211,238,.9)" stroke-width="2.4" filter="url(#cg)">
+                <path d="M671,150 H668 V300 H665"/><path d="M671,450 H668 V300"/>
+              </g>
+              <!-- RIGHT: SF → Final -->
+              <path fill="none" stroke="rgba(255,213,74,.95)" stroke-width="3" filter="url(#gg)" d="M589,300 H583"/>
             </svg>
-          </div>
-          <svg class="conn-svg" viewBox="0 0 986 600" preserveAspectRatio="none">
-            <defs>
-              <filter id="cg" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="b"/>
-                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-              </filter>
-              <filter id="gg" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b"/>
-                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-              </filter>
-            </defs>
-            <g fill="none" stroke="rgba(34,211,238,.65)" stroke-width="1.8" filter="url(#cg)">
-              <path d="M115,37.5 H118 V75 H121"/><path d="M115,112.5 H118 V75"/>
-              <path d="M115,187.5 H118 V225 H121"/><path d="M115,262.5 H118 V225"/>
-              <path d="M115,337.5 H118 V375 H121"/><path d="M115,412.5 H118 V375"/>
-              <path d="M115,487.5 H118 V525 H121"/><path d="M115,562.5 H118 V525"/>
-            </g>
-            <g fill="none" stroke="rgba(34,211,238,.78)" stroke-width="2" filter="url(#cg)">
-              <path d="M221,75 H224 V150 H227"/><path d="M221,225 H224 V150"/>
-              <path d="M221,375 H224 V450 H227"/><path d="M221,525 H224 V450"/>
-            </g>
-            <g fill="none" stroke="rgba(34,211,238,.92)" stroke-width="2.5" filter="url(#cg)">
-              <path d="M315,150 H318 V300 H321"/><path d="M315,450 H318 V300"/>
-            </g>
-            <path fill="none" stroke="rgba(255,213,74,.98)" stroke-width="3" filter="url(#gg)" d="M397,300 H403"/>
-            <g fill="none" stroke="rgba(34,211,238,.65)" stroke-width="1.8" filter="url(#cg)">
-              <path d="M871,37.5 H868 V75 H865"/><path d="M871,112.5 H868 V75"/>
-              <path d="M871,187.5 H868 V225 H865"/><path d="M871,262.5 H868 V225"/>
-              <path d="M871,337.5 H868 V375 H865"/><path d="M871,412.5 H868 V375"/>
-              <path d="M871,487.5 H868 V525 H865"/><path d="M871,562.5 H868 V525"/>
-            </g>
-            <g fill="none" stroke="rgba(34,211,238,.78)" stroke-width="2" filter="url(#cg)">
-              <path d="M765,75 H762 V150 H759"/><path d="M765,225 H762 V150"/>
-              <path d="M765,375 H762 V450 H759"/><path d="M765,525 H762 V450"/>
-            </g>
-            <g fill="none" stroke="rgba(34,211,238,.92)" stroke-width="2.5" filter="url(#cg)">
-              <path d="M671,150 H668 V300 H665"/><path d="M671,450 H668 V300"/>
-            </g>
-            <path fill="none" stroke="rgba(255,213,74,.98)" stroke-width="3" filter="url(#gg)" d="M589,300 H583"/>
-          </svg>
-          <div class="b-grid" id="bgrid"></div>
-        </div>
-        </div>
-      </div>
+
+            <!-- Bracket grid — identical fr columns to r-lbls -->
+            <div class="b-grid" id="bgrid"></div>
+
+          </div><!-- b-grid-wrap -->
+        </div><!-- bracket-outer -->
+      </div><!-- b-shell -->
+
       <!-- Legend -->
       <div class="legend">
         <span class="leg"><span class="ldot" style="background:#ef4444"></span>Live Match</span>
-        <span class="leg"><span class="ldot" style="background:#f59e0b"></span>HT</span>
-        <span class="leg"><span class="ldot" style="background:#6b7280"></span>Full Time</span>
-        <span class="leg"><span class="ldot" style="background:#22d3ee"></span>Extra Time</span>
-        <span class="leg"><span class="ldot" style="background:#a78bfa"></span>Penalties</span>
+        <span class="leg"><span class="lpill" style="background:rgba(251,191,36,.2);border:1px solid #f59e0b;color:#f59e0b">HT</span></span>
+        <span class="leg"><span class="lpill" style="background:rgba(100,116,139,.2);border:1px solid #64748b;color:#94a3b8">FT</span></span>
+        <span class="leg"><span class="lpill" style="background:rgba(34,211,238,.15);border:1px solid #22d3ee;color:#22d3ee">ET</span></span>
+        <span class="leg"><span class="lpill" style="background:rgba(167,139,250,.2);border:1px solid #a78bfa;color:#a78bfa">PEN</span></span>
         <span class="leg"><span class="ldot" style="background:#fbbf24"></span>Yellow Card</span>
-        <span class="leg"><span class="ldot" style="background:#ef4444;width:4px;height:6px;border-radius:1px"></span>Red Card</span>
-        <span class="leg"><span class="ldot" style="background:#4ade80"></span>Goal</span>
-        <span class="leg"><span style="font-size:8px">(P)</span> Penalty</span>
-        <span class="leg"><span style="font-size:8px">VAR</span> VAR Review</span>
+        <span class="leg"><span class="ldot" style="background:#ef4444;border-radius:1px;width:5px;height:7px"></span>Red Card</span>
+        <span class="leg"><span style="font-size:9px">&#9917;</span>Goal</span>
+        <span class="leg"><span style="font-size:8px">(P)</span>Penalty</span>
+        <span class="leg"><span style="font-size:8px;font-weight:700;color:#22d3ee">VAR</span>VAR Review</span>
       </div>
-      <!-- BOTTOM ROW PLACEHOLDER - moved below grid -->
-      <div style="display:none">
-
-        <!-- LIVE MATCH CENTER -->
-        <div class="panel" style="border-color:rgba(34,211,238,.25)">
-          <div class="ptitle">&#9917;&nbsp; LIVE MATCH CENTER</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <span class="lmc-live">&#9679; LIVE 78'</span>
-            <span style="font-size:8px;color:#334155">MetLife Stadium, NJ</span>
-          </div>
-          <div class="lmc-teams">
-            <div class="lmc-team">
-              <div class="lmc-flag-circle">&#127463;&#127479;</div>
-              <div class="lmc-tname">BRAZIL</div>
-            </div>
-            <div class="lmc-score-box">
-              <div class="lmc-score">2 - 1</div>
-              <div style="font-size:8px;color:#22d3ee;letter-spacing:1px;margin-top:2px">LIVE</div>
-            </div>
-            <div class="lmc-team">
-              <div class="lmc-flag-circle">&#127462;&#127479;</div>
-              <div class="lmc-tname">ARGENTINA</div>
-            </div>
-          </div>
-          <div class="lmc-scorers">
-            <div class="lmc-scorer"><span>&#9917;</span><span style="color:#67e8f9">27'</span><span>Vini Jr.</span><span style="margin-left:auto;color:#475569">45+1'</span><span>M. Alvarez</span><span>&#9917;</span></div>
-            <div class="lmc-scorer"><span>&#9917;</span><span style="color:#67e8f9">72'</span><span>Raphinha</span></div>
-          </div>
-          <div style="display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:5px;margin-top:4px">
-            <div class="lmc-cards card-group"><span class="ycard"></span><span>3</span><span class="rcard"></span><span>1</span></div>
-            <div>
-              <div class="poss-track">
-                <div class="poss-fill" style="width:56%"></div>
-              </div>
-            </div>
-            <div class="lmc-cards card-group"><span>2</span><span class="ycard"></span><span>2</span><span class="rcard"></span></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:8px;color:#475569;margin-top:2px">
-            <span>56%</span><span style="color:#334155;letter-spacing:1px">POSSESSION</span><span>44%</span>
-          </div>
-          <div class="lmc-stadium">&#127967; MetLife Stadium, New Jersey</div>
-        </div>
-
-        <!-- TOP SCORERS -->
-        <div class="panel">
-          <div class="ptitle">&#128094; TOP SCORERS</div>
-          <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between">
-            <div>
-              <div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">1</span><span style="font-size:13px">&#127467;&#127479;</span><span style="flex:1;font-size:10px;color:#e2e8f0">K. Mbappé</span><span style="color:#ffd54a;font-weight:700;font-size:11px">5 &#9917;</span></div>
-              <div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">2</span><span style="font-size:13px">&#127462;&#127479;</span><span style="flex:1;font-size:10px;color:#e2e8f0">L. Messi</span><span style="color:#ffd54a;font-weight:700;font-size:11px">4 &#9917;</span></div>
-              <div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">3</span><span style="font-size:13px">&#127463;&#127479;</span><span style="flex:1;font-size:10px;color:#e2e8f0">Vini Jr.</span><span style="color:#ffd54a;font-weight:700;font-size:11px">4 &#9917;</span></div>
-              <div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">4</span><span style="font-size:13px">&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;</span><span style="flex:1;font-size:10px;color:#e2e8f0">H. Kane</span><span style="color:#ffd54a;font-weight:700;font-size:11px">3 &#9917;</span></div>
-              <div style="display:flex;align-items:center;gap:7px;padding:7px 0"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">5</span><span style="font-size:13px">&#127462;&#127479;</span><span style="flex:1;font-size:10px;color:#e2e8f0">M. Alvarez</span><span style="color:#ffd54a;font-weight:700;font-size:11px">3 &#9917;</span></div>
-            </div>
-            <button onclick="showTab('stats')" style="width:100%;background:rgba(34,211,238,.07);border:1px solid rgba(34,211,238,.25);color:#22d3ee;border-radius:6px;padding:7px;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:1px;margin-top:8px">VIEW ALL</button>
-          </div>
-        </div>
-
-        <!-- TOURNAMENT STATS -->
-        <div class="panel">
-          <div class="ptitle">&#128202; TOURNAMENT STATS</div>
-          <div style="flex:1;display:flex;flex-direction:column;justify-content:space-around">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-              <div style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:12px 10px;text-align:center"><div style="font-size:28px;font-weight:900;color:#22d3ee">48</div><div style="font-size:8px;color:#475569;letter-spacing:1px;margin-top:3px">MATCHES PLAYED</div></div>
-              <div style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:12px 10px;text-align:center"><div style="font-size:28px;font-weight:900;color:#ffd54a">128</div><div style="font-size:8px;color:#475569;letter-spacing:1px;margin-top:3px">GOALS</div></div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
-              <div style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:12px 10px;text-align:center"><div style="font-size:24px;font-weight:900;color:#4ade80">2.67</div><div style="font-size:8px;color:#475569;letter-spacing:1px;margin-top:3px">AVG GOALS/GAME</div></div>
-              <div style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:12px 10px;text-align:center"><div style="font-size:22px;font-weight:900;color:#a78bfa">2.1M+</div><div style="font-size:8px;color:#475569;letter-spacing:1px;margin-top:3px">ATTENDANCE</div></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- FEATURES -->
-        <div class="panel">
-          <div class="ptitle">&#10024; FEATURES</div>
-          <div style="flex:1;display:flex;flex-direction:column;justify-content:space-around">
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#128308; Live Scores</div>
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#128200; Team Stats</div>
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#128100; Player Stats</div>
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#128197; Fixtures</div>
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#127942; Standings</div>
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:10px;color:#94a3b8">&#128240; News &amp; Highlights</div>
-          </div>
-        </div>
-
-        <!-- MOBILE APP PREVIEW -->
-        <div class="panel">
-          <div class="ptitle">&#128241; MOBILE APP PREVIEW</div>
-          <div class="mob-phones">
-            <div class="mob-phone">
-              <div class="mob-lbl">Home</div>
-              <div style="font-size:9px;color:#475569">&#9917; LIVE 78'</div>
-              <div class="mob-val">&#127463;&#127479; 2-1 &#127462;&#127479;</div>
-              <div class="mob-sub">BRA vs ARG</div>
-            </div>
-            <div class="mob-phone">
-              <div class="mob-lbl">Bracket</div>
-              <div class="mob-val">FINAL</div>
-              <div class="mob-sub">MetLife Stadium</div>
-            </div>
-            <div class="mob-phone">
-              <div class="mob-lbl">Standings</div>
-              <div style="font-size:8px;color:#22d3ee;font-weight:700">GROUP A</div>
-              <div style="font-size:8px;color:#94a3b8">MEX top</div>
-            </div>
-            <div class="mob-phone">
-              <div class="mob-lbl">&#127463;&#127479; Brazil</div>
-              <div class="mob-val">&#127942; #1</div>
-              <div style="font-size:8px;color:#ffd54a;margin-top:2px">Champions</div>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- end hidden placeholder -->
     </section>
-    <aside><div class="sec-lbl">GROUP STAGE &middot; G&ndash;L</div><div id="rg"></div></aside>
+
+    <!-- RIGHT: Groups G–L -->
+    <aside>
+      <div class="sec-lbl">GROUP STAGE &middot; G&ndash;L</div>
+      <div id="rg"></div>
+    </aside>
   </div>
-  <!-- BOTTOM ROW - full width below the 3 columns -->
+
+  <!-- Bottom row — full width below the grid -->
   <div class="bot-row">
 
-        <!-- LIVE MATCH CENTER - gold glow matching final -->
-        <div class="panel glow-gold-live" style="border-color:rgba(255,213,74,.5);background:radial-gradient(ellipse at 50% 0%,rgba(255,213,74,.07),rgba(4,16,34,.97))">
-          <div class="ptitle">&#9917;&nbsp; LIVE MATCH CENTER</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <span class="lmc-live">&#9679; LIVE 78'</span>
-            <span style="font-size:8px;color:#334155">MetLife Stadium, NJ</span>
-          </div>
-          <div class="lmc-teams">
-            <div class="lmc-team">
-              <div class="lmc-flag-circle">&#127463;&#127479;</div>
-              <div class="lmc-tname">BRAZIL</div>
-            </div>
-            <div class="lmc-score-box">
-              <div class="lmc-score">2 - 1</div>
-              <div style="font-size:8px;color:#22d3ee;letter-spacing:1px;margin-top:2px">LIVE</div>
-            </div>
-            <div class="lmc-team">
-              <div class="lmc-flag-circle">&#127462;&#127479;</div>
-              <div class="lmc-tname">ARGENTINA</div>
-            </div>
-          </div>
-          <div class="lmc-scorers">
-            <div class="lmc-scorer"><span>&#9917;</span><span style="color:#67e8f9">27'</span><span>Vini Jr.</span><span style="margin-left:auto;color:#475569">45+1'</span><span>M. Alvarez</span><span>&#9917;</span></div>
-            <div class="lmc-scorer"><span>&#9917;</span><span style="color:#67e8f9">72'</span><span>Raphinha</span></div>
-          </div>
-          <div style="display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:5px;margin-top:4px">
-            <div class="lmc-cards card-group"><span class="ycard"></span><span>3</span><span class="rcard"></span><span>1</span></div>
-            <div><div class="poss-track"><div class="poss-fill" style="width:56%"></div></div></div>
-            <div class="lmc-cards card-group"><span>2</span><span class="ycard"></span><span>2</span><span class="rcard"></span></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:8px;color:#475569;margin-top:2px">
-            <span>56%</span><span style="color:#334155;letter-spacing:1px">POSSESSION</span><span>44%</span>
-          </div>
-          <div class="lmc-stadium">&#127967; MetLife Stadium, New Jersey</div>
+    <!-- Live Match Center — always gold glow -->
+    <div class="panel gold-glow" style="border-color:rgba(255,213,74,.5)">
+      <div class="ptitle">&#9917;&nbsp; LIVE MATCH CENTER</div>
+      <div class="lmc-header">
+        <span class="live-badge live-ring"><span class="blink" style="width:5px;height:5px;border-radius:50%;background:#fff;display:inline-block"></span>LIVE 78'</span>
+        <span style="font-size:7.5px;color:#334155">MetLife Stadium, NJ</span>
+      </div>
+      <div class="lmc-teams">
+        <div class="lmc-team">
+          <div class="lmc-flag-circle">&#127463;&#127479;</div>
+          <div class="lmc-tname">BRAZIL</div>
         </div>
-
-        <!-- TOP SCORERS -->
-        <div class="panel">
-          <div class="ptitle">&#128094; TOP SCORERS</div>
-          <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between">
-            <div>
-              <div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">1</span><span style="font-size:13px">&#127467;&#127479;</span><span style="flex:1;font-size:10px;color:#e2e8f0">K. Mbappé</span><span style="color:#ffd54a;font-weight:700;font-size:11px">5 &#9917;</span></div>
-              <div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">2</span><span style="font-size:13px">&#127462;&#127479;</span><span style="flex:1;font-size:10px;color:#e2e8f0">L. Messi</span><span style="color:#ffd54a;font-weight:700;font-size:11px">4 &#9917;</span></div>
-              <div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">3</span><span style="font-size:13px">&#127463;&#127479;</span><span style="flex:1;font-size:10px;color:#e2e8f0">Vini Jr.</span><span style="color:#ffd54a;font-weight:700;font-size:11px">4 &#9917;</span></div>
-              <div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">4</span><span style="font-size:13px">&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;</span><span style="flex:1;font-size:10px;color:#e2e8f0">H. Kane</span><span style="color:#ffd54a;font-weight:700;font-size:11px">3 &#9917;</span></div>
-              <div style="display:flex;align-items:center;gap:7px;padding:7px 0"><span style="color:#475569;min-width:14px;font-size:9px;font-weight:700">5</span><span style="font-size:13px">&#127462;&#127479;</span><span style="flex:1;font-size:10px;color:#e2e8f0">M. Alvarez</span><span style="color:#ffd54a;font-weight:700;font-size:11px">3 &#9917;</span></div>
-            </div>
-            <button onclick="showTab('stats')" style="width:100%;background:rgba(34,211,238,.07);border:1px solid rgba(34,211,238,.25);color:#22d3ee;border-radius:6px;padding:7px;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:1px;margin-top:8px">VIEW ALL</button>
-          </div>
+        <div class="lmc-score">2 &mdash; 1</div>
+        <div class="lmc-team">
+          <div class="lmc-flag-circle">&#127462;&#127479;</div>
+          <div class="lmc-tname">ARGENTINA</div>
         </div>
+      </div>
+      <div class="lmc-scorers">
+        <div class="lmc-scorer">&#9917; Vini Jr. 27' &nbsp;&nbsp; &#9917; Raphinha 72' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; M. Alvarez 45+1' &#9917;</div>
+      </div>
+      <div class="poss-row">
+        <span class="poss-lbl">56%</span>
+        <div class="poss-bar"><div class="poss-fill" style="width:56%"></div></div>
+        <span class="poss-lbl" style="text-align:right">44%</span>
+      </div>
+      <div style="font-size:7.5px;color:#1e3a5f;text-align:center;margin-top:2px;letter-spacing:1px">POSSESSION</div>
+      <div class="lmc-stats-row" style="margin-top:6px">
+        <div class="card-stat"><span class="ycard"></span>3 <span class="rcard"></span>1</div>
+        <div class="lmc-venue">&#127967; MetLife Stadium, New Jersey</div>
+        <div class="card-stat">2<span class="ycard"></span> 2<span class="rcard"></span></div>
+      </div>
+    </div>
 
-        <!-- TOURNAMENT STATS -->
-        <div class="panel">
-          <div class="ptitle">&#128202; TOURNAMENT STATS</div>
-          <div style="flex:1;display:flex;flex-direction:column;justify-content:space-around">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-              <div style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:12px 10px;text-align:center"><div style="font-size:28px;font-weight:900;color:#22d3ee">48</div><div style="font-size:8px;color:#475569;letter-spacing:1px;margin-top:3px">MATCHES PLAYED</div></div>
-              <div style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:12px 10px;text-align:center"><div style="font-size:28px;font-weight:900;color:#ffd54a">128</div><div style="font-size:8px;color:#475569;letter-spacing:1px;margin-top:3px">GOALS</div></div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
-              <div style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:12px 10px;text-align:center"><div style="font-size:24px;font-weight:900;color:#4ade80">2.67</div><div style="font-size:8px;color:#475569;letter-spacing:1px;margin-top:3px">AVG GOALS/GAME</div></div>
-              <div style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:12px 10px;text-align:center"><div style="font-size:22px;font-weight:900;color:#a78bfa">2.1M+</div><div style="font-size:8px;color:#475569;letter-spacing:1px;margin-top:3px">ATTENDANCE</div></div>
-            </div>
-          </div>
+    <!-- Top Scorers -->
+    <div class="panel">
+      <div class="ptitle">&#128094; TOP SCORERS</div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between">
+        <div>
+          <div class="sc-row"><span class="sc-num">1</span><span style="font-size:12px">&#127467;&#127479;</span><span class="sc-name">K. Mbapp&eacute;</span><span class="sc-g">5 &#9917;</span></div>
+          <div class="sc-row"><span class="sc-num">2</span><span style="font-size:12px">&#127462;&#127479;</span><span class="sc-name">L. Messi</span><span class="sc-g">4 &#9917;</span></div>
+          <div class="sc-row"><span class="sc-num">3</span><span style="font-size:12px">&#127463;&#127479;</span><span class="sc-name">Vini Jr.</span><span class="sc-g">4 &#9917;</span></div>
+          <div class="sc-row"><span class="sc-num">4</span><span style="font-size:12px">&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;</span><span class="sc-name">H. Kane</span><span class="sc-g">3 &#9917;</span></div>
+          <div class="sc-row"><span class="sc-num">5</span><span style="font-size:12px">&#127462;&#127479;</span><span class="sc-name">M. Alvarez</span><span class="sc-g">3 &#9917;</span></div>
         </div>
+        <button class="view-all-btn" onclick="showTab('stats')">VIEW ALL</button>
+      </div>
+    </div>
 
-        <!-- FEATURES -->
-        <div class="panel">
-          <div class="ptitle">&#10024; FEATURES</div>
-          <div style="flex:1;display:flex;flex-direction:column;justify-content:space-around">
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#128308; Live Scores</div>
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#128200; Team Stats</div>
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#128100; Player Stats</div>
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#128197; Fixtures</div>
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;color:#94a3b8">&#127942; Standings</div>
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:10px;color:#94a3b8">&#128240; News &amp; Highlights</div>
-          </div>
+    <!-- Tournament Stats -->
+    <div class="panel">
+      <div class="ptitle">&#128202; TOURNAMENT STATS</div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:space-around">
+        <div class="stat-2col">
+          <div class="stat-box"><div class="stat-val" style="color:#22d3ee">48</div><div class="stat-lbl">MATCHES PLAYED</div></div>
+          <div class="stat-box"><div class="stat-val" style="color:#ffd54a">128</div><div class="stat-lbl">GOALS SCORED</div></div>
         </div>
-
-        <!-- MOBILE APP PREVIEW -->
-        <div class="panel">
-          <div class="ptitle">&#128241; MOBILE APP PREVIEW</div>
-          <div class="mob-phones">
-            <div class="mob-phone"><div class="mob-lbl">Home</div><div style="font-size:9px;color:#475569">&#9917; LIVE 78'</div><div class="mob-val">&#127463;&#127479; 2-1 &#127462;&#127479;</div><div class="mob-sub">BRA vs ARG</div></div>
-            <div class="mob-phone"><div class="mob-lbl">Bracket</div><div class="mob-val">FINAL</div><div class="mob-sub">MetLife Stadium</div></div>
-            <div class="mob-phone"><div class="mob-lbl">Standings</div><div style="font-size:8px;color:#22d3ee;font-weight:700">GROUP A</div><div style="font-size:8px;color:#94a3b8">MEX top</div></div>
-            <div class="mob-phone"><div class="mob-lbl">&#127463;&#127479; Brazil</div><div class="mob-val">&#127942; #1</div><div style="font-size:8px;color:#ffd54a;margin-top:2px">Champions</div></div>
-          </div>
+        <div class="stat-2col">
+          <div class="stat-box"><div class="stat-val" style="color:#4ade80;font-size:22px">2.67</div><div class="stat-lbl">AVG GOALS/GAME</div></div>
+          <div class="stat-box"><div class="stat-val" style="color:#a78bfa;font-size:20px">2.1M+</div><div class="stat-lbl">ATTENDANCE</div></div>
         </div>
+      </div>
+    </div>
 
-  </div><!-- end bot-row -->
-</div>
+    <!-- Features -->
+    <div class="panel">
+      <div class="ptitle">&#10024; FEATURES</div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:space-around">
+        <div class="feat-item">&#128308; Live Scores</div>
+        <div class="feat-item">&#128200; Team Stats</div>
+        <div class="feat-item">&#128100; Player Stats</div>
+        <div class="feat-item">&#128197; Fixtures</div>
+        <div class="feat-item">&#127942; Standings</div>
+        <div class="feat-item">&#128240; News &amp; Highlights</div>
+      </div>
+    </div>
 
-<!-- GROUPS VIEW -->
+    <!-- Mobile App Preview -->
+    <div class="panel">
+      <div class="ptitle">&#128241; MOBILE APP PREVIEW</div>
+      <div class="mob-phones" style="flex:1;align-content:space-around">
+        <div class="mob-phone"><div class="mob-lbl">Home</div><div class="mob-val" style="font-size:10px">&#127463;&#127479; 2&ndash;1 &#127462;&#127479;</div><div class="mob-sub">78' LIVE</div></div>
+        <div class="mob-phone"><div class="mob-lbl">Bracket</div><div class="mob-val">FINAL</div><div class="mob-sub">MetLife</div></div>
+        <div class="mob-phone"><div class="mob-lbl">Standings</div><div style="font-size:8px;color:#22d3ee;font-weight:700">GROUP A</div><div class="mob-sub">MEX top</div></div>
+        <div class="mob-phone"><div class="mob-lbl">&#127463;&#127479; Brazil</div><div class="mob-val">&#127942; #1</div><div style="font-size:8px;color:#ffd54a;margin-top:2px">Champions</div></div>
+      </div>
+    </div>
+
+  </div><!-- bot-row -->
+</div><!-- bracket-view -->
+
+<!-- ════ GROUPS VIEW ════ -->
 <div id="groups-view" class="view">
   <div style="padding:12px"><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px" id="ag"></div></div>
 </div>
 
-<!-- LIVE VIEW -->
+<!-- ════ LIVE VIEW ════ -->
 <div id="live-view" class="view">
   <div style="padding:12px;max-width:820px;margin:0 auto" id="lv"></div>
 </div>
 
-<!-- STATS VIEW -->
+<!-- ════ STATS VIEW ════ -->
 <div id="stats-view" class="view">
-  <div style="padding:12px;max-width:860px;margin:0 auto">
+  <div style="padding:12px;max-width:880px;margin:0 auto">
     <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:12px">
-      <div class="panel"><div class="ptitle">&#128094; TOP SCORERS</div><div id="sc-full"></div></div>
+      <div class="panel">
+        <div class="ptitle">&#128094; TOP SCORERS</div>
+        <div id="sc-full"></div>
+      </div>
       <div style="display:flex;flex-direction:column;gap:10px">
         <div class="panel">
           <div class="ptitle">&#128202; OVERVIEW</div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:6px">
-            <div class="stat-big" style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px;text-align:center"><div class="stat-val" style="color:#22d3ee;font-size:20px">48</div><div class="stat-lbl">PLAYED</div></div>
-            <div class="stat-big" style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px;text-align:center"><div class="stat-val" style="color:#ffd54a;font-size:20px">128</div><div class="stat-lbl">GOALS</div></div>
-            <div class="stat-big" style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px;text-align:center"><div class="stat-val" style="color:#4ade80;font-size:20px">2.67</div><div class="stat-lbl">AVG</div></div>
+            <div class="stat-box" style="text-align:center"><div class="stat-val" style="color:#22d3ee;font-size:22px">48</div><div class="stat-lbl">PLAYED</div></div>
+            <div class="stat-box" style="text-align:center"><div class="stat-val" style="color:#ffd54a;font-size:22px">128</div><div class="stat-lbl">GOALS</div></div>
+            <div class="stat-box" style="text-align:center"><div class="stat-val" style="color:#4ade80;font-size:20px">2.67</div><div class="stat-lbl">AVG</div></div>
           </div>
         </div>
-        <div class="panel" style="border-color:rgba(255,213,74,.25)">
+        <div class="panel" style="border-color:rgba(255,213,74,.28)">
           <div class="ptitle" style="color:#ffd54a">&#127942; CHAMPIONS</div>
           <div style="display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center">
             <div style="font-size:46px;filter:drop-shadow(0 0 18px rgba(255,213,74,.7))">&#127463;&#127479;</div>
@@ -575,7 +505,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
   </div>
 </div>
 
-<!-- POPUP -->
+<!-- ════ POPUP ════ -->
 <div id="pop-ov" onclick="closePop()">
   <div id="pop-box" onclick="event.stopPropagation()">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
@@ -586,29 +516,31 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
       </div>
       <button onclick="closePop()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:7px;padding:5px 10px;cursor:pointer;font-size:13px">&#10005;</button>
     </div>
-    <div class="pop-stats" id="ps"></div>
-    <div style="background:linear-gradient(135deg,rgba(34,211,238,.1),rgba(14,165,233,.05));border:1px solid rgba(34,211,238,.2);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
-      <div><div style="font-size:9px;color:#64748b;letter-spacing:1px">GOAL DIFF</div><div id="pgd" style="font-size:15px;font-weight:700;margin-top:2px"></div></div>
-      <div style="text-align:right"><div style="font-size:9px;color:#64748b;letter-spacing:1px">POINTS</div><div id="ppts" style="font-size:26px;font-weight:700;color:#22d3ee"></div></div>
+    <div class="pop-grid" id="ps"></div>
+    <div style="background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.2);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+      <div><div style="font-size:9px;color:#475569;letter-spacing:1px">GOAL DIFF</div><div id="pgd" style="font-size:15px;font-weight:700;margin-top:2px"></div></div>
+      <div style="text-align:right"><div style="font-size:9px;color:#475569;letter-spacing:1px">POINTS</div><div id="ppts" style="font-size:26px;font-weight:700;color:#22d3ee"></div></div>
     </div>
   </div>
 </div>
 
+<!-- ════ FOOTER ════ -->
 <footer>
   <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
     <strong style="color:#38dfff;letter-spacing:2px">DATA SOURCES</strong>
     <span style="color:#1e3a5f">FIFA API</span><span style="color:#1e3a5f">Opta</span><span style="color:#1e3a5f">Sportradar</span><span style="color:#1e3a5f">API-Football</span>
     <span style="color:#22c55e;font-weight:700">&#9679; LIVE SYNC</span>
-    <span style="color:#1e293b">Data automatically updates every 20 seconds</span>
+    <span style="color:#1e293b">Auto-updates every 20s</span>
   </div>
   <div style="display:flex;gap:18px;align-items:center">
-    <div><div style="letter-spacing:1px;color:#1e3a5f;margin-bottom:2px">TIMEZONE</div><div style="color:#334155">Auto-detected</div></div>
-    <div><div style="letter-spacing:1px;color:#1e3a5f;margin-bottom:2px">MULTI-LANGUAGE</div><div style="display:flex;gap:6px"><span style="color:#22d3ee">EN</span><span style="color:#334155">ES</span><span style="color:#334155">FR</span><span style="color:#334155">PT</span></div></div>
-    <div><div style="letter-spacing:1px;color:#1e3a5f;margin-bottom:2px">FOLLOW THE ACTION</div><div style="display:flex;gap:8px;font-size:12px">&#119091; f &#9654; &#128248;</div></div>
+    <div><div style="color:#1e3a5f;letter-spacing:1px;margin-bottom:2px">TIMEZONE</div><div style="color:#334155">Auto-detected</div></div>
+    <div><div style="color:#1e3a5f;letter-spacing:1px;margin-bottom:2px">MULTI-LANGUAGE</div><div style="display:flex;gap:7px"><span style="color:#22d3ee">EN</span><span style="color:#334155">ES</span><span style="color:#334155">FR</span><span style="color:#334155">PT</span></div></div>
+    <div><div style="color:#1e3a5f;letter-spacing:1px;margin-bottom:2px">FOLLOW THE ACTION</div><div style="display:flex;gap:8px;font-size:12px">&#119091; f &#9654; &#128248;</div></div>
   </div>
 </footer>
 
 <script>
+/* ─── DATA ────────────────────────────────────────────────────────── */
 var G=[
   {id:"A",t:[{n:"Mexico",a:"MEX",f:"&#127474;&#127485;",p:3,w:2,d:1,l:0,gs:7,ga:2,pts:7},{n:"Ecuador",a:"ECU",f:"&#127466;&#127464;",p:3,w:1,d:2,l:0,gs:4,ga:3,pts:5},{n:"S.Korea",a:"KOR",f:"&#127472;&#127479;",p:3,w:1,d:0,l:2,gs:3,ga:5,pts:3},{n:"Sweden",a:"SWE",f:"&#127480;&#127466;",p:3,w:0,d:1,l:2,gs:2,ga:6,pts:1}]},
   {id:"B",t:[{n:"Canada",a:"CAN",f:"&#127464;&#127462;",p:3,w:2,d:1,l:0,gs:5,ga:2,pts:7},{n:"Italy",a:"ITA",f:"&#127470;&#127481;",p:3,w:1,d:1,l:1,gs:4,ga:3,pts:4},{n:"Ecuador",a:"ECU",f:"&#127466;&#127464;",p:3,w:1,d:0,l:2,gs:3,ga:5,pts:3},{n:"Croatia",a:"CRO",f:"&#127469;&#127479;",p:3,w:0,d:2,l:1,gs:2,ga:4,pts:2}]},
@@ -616,13 +548,15 @@ var G=[
   {id:"D",t:[{n:"USA",a:"USA",f:"&#127482;&#127480;",p:3,w:2,d:1,l:0,gs:6,ga:2,pts:7},{n:"Netherlands",a:"NED",f:"&#127475;&#127473;",p:3,w:1,d:1,l:1,gs:4,ga:4,pts:4},{n:"Japan",a:"JPN",f:"&#127471;&#127477;",p:3,w:1,d:0,l:2,gs:4,ga:5,pts:3},{n:"Gambia",a:"GAM",f:"&#127468;&#127474;",p:3,w:0,d:0,l:3,gs:1,ga:4,pts:0}]},
   {id:"E",t:[{n:"Germany",a:"GER",f:"&#127465;&#127466;",p:3,w:2,d:1,l:0,gs:7,ga:3,pts:7},{n:"Spain",a:"ESP",f:"&#127466;&#127480;",p:3,w:1,d:1,l:1,gs:5,ga:4,pts:4},{n:"Uruguay",a:"URU",f:"&#127482;&#127486;",p:3,w:1,d:0,l:2,gs:4,ga:6,pts:3},{n:"Tunisia",a:"TUN",f:"&#127481;&#127475;",p:3,w:0,d:0,l:3,gs:1,ga:4,pts:0}]},
   {id:"F",t:[{n:"Colombia",a:"COL",f:"&#127464;&#127476;",p:3,w:1,d:2,l:0,gs:5,ga:4,pts:5},{n:"Portugal",a:"POR",f:"&#127477;&#127481;",p:3,w:1,d:2,l:0,gs:5,ga:4,pts:5},{n:"Ivory C.",a:"CIV",f:"&#127464;&#127470;",p:3,w:0,d:2,l:1,gs:3,ga:4,pts:2},{n:"S.Arabia",a:"KSA",f:"&#127480;&#127462;",p:3,w:0,d:0,l:3,gs:1,ga:7,pts:0}]},
-  {id:"G",t:[{n:"Belgium",a:"BEL",f:"&#127463;&#127466;",p:3,w:2,d:0,l:1,gs:6,ga:4,pts:6},{n:"Iran",a:"IRN",f:"&#127470;&#127479;",p:3,w:1,d:2,l:0,gs:3,ga:2,pts:5},{n:"Egypt",a:"EGY",f:"&#127466;&#127468;",p:3,w:1,d:1,l:1,gs:3,ga:3,pts:4},{n:"N.Zealand",a:"NZL",f:"&#127475;&#127487;",p:3,w:0,d:1,l:2,gs:2,ga:5,pts:1}]},
+  {id:"G",t:[{n:"Belgium",a:"BEL",f:"&#127463;&#127466;",p:3,w:2,d:0,l:1,gs:6,ga:4,pts:6},{n:"Iran",a:"IRN",f:"&#127470;&#127479;",p:3,w:1,d:2,l:0,gs:3,ga:2,pts:5},{n:"Egypt",a:"EGY",f:"&#127466;&#127468;",p:3,w:1,d:1,l:1,gs:3,ga:3,pts:4},{n:"NZealand",a:"NZL",f:"&#127475;&#127487;",p:3,w:0,d:1,l:2,gs:2,ga:5,pts:1}]},
   {id:"H",t:[{n:"France",a:"FRA",f:"&#127467;&#127479;",p:3,w:3,d:0,l:0,gs:8,ga:1,pts:9},{n:"Austria",a:"AUT",f:"&#127462;&#127481;",p:3,w:1,d:1,l:1,gs:3,ga:3,pts:4},{n:"Senegal",a:"SEN",f:"&#127480;&#127475;",p:3,w:1,d:0,l:2,gs:3,ga:5,pts:3},{n:"Qatar",a:"QAT",f:"&#127478;&#127462;",p:3,w:0,d:1,l:2,gs:1,ga:6,pts:1}]},
   {id:"I",t:[{n:"Argentina",a:"ARG",f:"&#127462;&#127479;",p:3,w:3,d:0,l:0,gs:8,ga:2,pts:9},{n:"Peru",a:"PER",f:"&#127477;&#127466;",p:3,w:1,d:1,l:1,gs:4,ga:4,pts:4},{n:"Nigeria",a:"NGA",f:"&#127475;&#127468;",p:3,w:0,d:2,l:1,gs:2,ga:4,pts:2},{n:"Israel",a:"ISR",f:"&#127470;&#127473;",p:3,w:0,d:1,l:2,gs:2,ga:6,pts:1}]},
   {id:"J",t:[{n:"England",a:"ENG",f:"&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;",p:3,w:2,d:1,l:0,gs:6,ga:2,pts:7},{n:"Denmark",a:"DEN",f:"&#127465;&#127472;",p:3,w:1,d:1,l:1,gs:4,ga:3,pts:4},{n:"Serbia",a:"SRB",f:"&#127479;&#127480;",p:3,w:1,d:0,l:2,gs:3,ga:5,pts:3},{n:"Panama",a:"PAN",f:"&#127477;&#127462;",p:3,w:0,d:0,l:3,gs:1,ga:4,pts:0}]},
   {id:"K",t:[{n:"Portugal",a:"POR",f:"&#127477;&#127481;",p:3,w:2,d:1,l:0,gs:7,ga:2,pts:7},{n:"Uzbekistan",a:"UZB",f:"&#127482;&#127487;",p:3,w:1,d:1,l:1,gs:3,ga:3,pts:4},{n:"Chile",a:"CHI",f:"&#127464;&#127473;",p:3,w:1,d:0,l:2,gs:3,ga:5,pts:3},{n:"Ghana",a:"GHA",f:"&#127468;&#127469;",p:3,w:0,d:0,l:3,gs:1,ga:4,pts:0}]},
   {id:"L",t:[{n:"Croatia",a:"CRO",f:"&#127469;&#127479;",p:3,w:2,d:1,l:0,gs:6,ga:2,pts:7},{n:"Belarus",a:"BLR",f:"&#127463;&#127486;",p:3,w:1,d:1,l:1,gs:3,ga:3,pts:4},{n:"Algeria",a:"ALG",f:"&#127465;&#127487;",p:3,w:1,d:0,l:2,gs:3,ga:5,pts:3},{n:"China",a:"CHN",f:"&#127464;&#127475;",p:3,w:0,d:0,l:3,gs:0,ga:1,pts:0}]}
 ];
+
+/* Bracket: [home-abbr, home-flag, home-score, away-abbr, away-flag, away-score, status, hcode, acode] */
 var B={
   LR32:[["MEX","&#127474;&#127485;","2","MAR","&#127474;&#127462;","1","FT","1A","2C"],["COL","&#127464;&#127476;","3","ESP","&#127466;&#127480;","2","FT","1F","2E"],["CAN","&#127464;&#127462;","1","RSA","&#127487;&#127462;","0","FT","1B","3A/B/C"],["NED","&#127475;&#127473;","2","PER","&#127477;&#127466;","0","FT","2D","2I"],["GER","&#127465;&#127466;","2","AUT","&#127462;&#127481;","1","FT","1E","2H"],["FRA","&#127467;&#127479;","3","IRN","&#127470;&#127479;","1","FT","1H","2G"],["BRA","&#127463;&#127479;","4","JPN","&#127471;&#127477;","1","FT","1C","3D/E/F"],["USA","&#127482;&#127480;","2","BLR","&#127463;&#127486;","0","FT","2A","2L"]],
   LR16:[["MEX","&#127474;&#127485;","1","COL","&#127464;&#127476;","2","FT"],["CAN","&#127464;&#127462;","1(4)","NED","&#127475;&#127473;","1(2)","PEN"],["GER","&#127465;&#127466;","2","FRA","&#127467;&#127479;","3","FT"],["BRA","&#127463;&#127479;","3","USA","&#127482;&#127480;","1","FT"]],
@@ -633,165 +567,172 @@ var B={
   RR16:[["ENG","&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;","1","ARG","&#127462;&#127479;","2","FT"],["BEL","&#127463;&#127466;","0","ITA","&#127470;&#127481;","2","FT"],["POR","&#127477;&#127481;","2","CRO","&#127469;&#127479;","1","FT"],["URU","&#127482;&#127486;","2","SEN","&#127480;&#127475;","1","FT"]],
   RR32:[["ENG","&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;","2","DEN","&#127465;&#127472;","0","FT","1J","2J"],["ARG","&#127462;&#127479;","2","PER","&#127477;&#127466;","0","FT","1I","2I"],["BEL","&#127463;&#127466;","1","SRB","&#127479;&#127480;","0","FT","1G","3J"],["ITA","&#127470;&#127481;","2","UZB","&#127482;&#127487;","1","FT","2B","2K"],["CRO","&#127469;&#127479;","1","AUT","&#127462;&#127481;","0","FT","1L","2H"],["SEN","&#127480;&#127475;","3","EGY","&#127466;&#127468;","1","FT","3H","3G"],["URU","&#127482;&#127486;","2","IRN","&#127470;&#127479;","0","FT","3E","2G"],["POR","&#127477;&#127481;","3","KOR","&#127472;&#127479;","1","FT","1K","3A/B/C"]]
 };
-var SC=[{n:"K. Mbappé",f:"&#127467;&#127479;",c:"France",g:5,a:3},{n:"L. Messi",f:"&#127462;&#127479;",c:"Argentina",g:4,a:5},{n:"Vini Jr.",f:"&#127463;&#127479;",c:"Brazil",g:4,a:4},{n:"H. Kane",f:"&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;",c:"England",g:3,a:2},{n:"M. Alvarez",f:"&#127462;&#127479;",c:"Argentina",g:3,a:1}];
-var LM=[
-  {status:"LIVE",minute:78,hTeam:"Brazil",hFlag:"&#127463;&#127479;",aTeam:"Argentina",aFlag:"&#127462;&#127479;",hScore:2,aScore:1,venue:"MetLife Stadium, NJ",scorers:["Vini Jr. 27'","Raphinha 72'","M.Alvarez 45+1'"]},
-  {status:"HT",minute:45,hTeam:"France",hFlag:"&#127467;&#127479;",aTeam:"England",aFlag:"&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;",hScore:1,aScore:1,venue:"AT&T Stadium, TX",scorers:["Mbappe 22'","Bellingham 38'"]},
-  {status:"LIVE",minute:34,hTeam:"Germany",hFlag:"&#127465;&#127466;",aTeam:"Spain",aFlag:"&#127466;&#127480;",hScore:1,aScore:0,venue:"SoFi Stadium, LA",scorers:["Havertz 29'"]},
-  {status:"TODAY",minute:null,hTeam:"USA",hFlag:"&#127482;&#127480;",aTeam:"Netherlands",aFlag:"&#127475;&#127473;",hScore:null,aScore:null,venue:"Rose Bowl, LA",scorers:[]}
+
+var LIVE_MATCHES=[
+  {id:1,status:"LIVE",minute:78,hTeam:"Brazil",hFlag:"&#127463;&#127479;",aTeam:"Argentina",aFlag:"&#127462;&#127479;",hScore:2,aScore:1,venue:"MetLife Stadium, NJ",scorers:["Vini Jr. 27'","Raphinha 72'","M.Alvarez 45+1'"]},
+  {id:2,status:"HT",minute:45,hTeam:"France",hFlag:"&#127467;&#127479;",aTeam:"England",aFlag:"&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;",hScore:1,aScore:1,venue:"AT&T Stadium, TX",scorers:["Mbappe 22'","Bellingham 38'"]},
+  {id:3,status:"LIVE",minute:34,hTeam:"Germany",hFlag:"&#127465;&#127466;",aTeam:"Spain",aFlag:"&#127466;&#127480;",hScore:1,aScore:0,venue:"SoFi Stadium, LA",scorers:["Havertz 29'"]},
+  {id:4,status:"TODAY",minute:null,hTeam:"USA",hFlag:"&#127482;&#127480;",aTeam:"Netherlands",aFlag:"&#127475;&#127473;",hScore:null,aScore:null,venue:"Rose Bowl, LA",scorers:[]}
 ];
 
-function gc(g){
-  var h='<div class="g-card" id="gc-'+g.id+'"><div class="g-hdr"><span class="g-ltr">GROUP '+g.id+'</span><div class="g-cols"><span class="g-col">P</span><span class="g-col">W</span><span class="g-col">D</span><span class="g-col">L</span><span class="g-col" style="width:22px">GD</span><span class="g-col" style="width:22px">PTS</span></div></div>';
+var SCORERS=[{n:"K. Mbappé",f:"&#127467;&#127479;",c:"France",g:5,a:3},{n:"L. Messi",f:"&#127462;&#127479;",c:"Argentina",g:4,a:5},{n:"Vini Jr.",f:"&#127463;&#127479;",c:"Brazil",g:4,a:4},{n:"H. Kane",f:"&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;",c:"England",g:3,a:2},{n:"M. Alvarez",f:"&#127462;&#127479;",c:"Argentina",g:3,a:1}];
+
+/* ─── RENDER FUNCTIONS ────────────────────────────────────────────── */
+function makeGroup(g){
+  var gd_sign=function(n){return n>0?'+'+n:n};
+  var h='<div class="g-card" id="gc-'+g.id+'"><div class="g-hdr"><span class="g-id">GROUP '+g.id+'</span><div class="g-cols"><span class="g-col">P</span><span class="g-col">W</span><span class="g-col">D</span><span class="g-col">L</span><span class="g-col" style="width:22px">GD</span><span class="g-col" style="width:22px">PTS</span></div></div>';
   g.t.forEach(function(t,i){
-    var gd=t.gs-t.ga,gds=(gd>0?'+':'')+gd,gdc=gd>0?'#4ade80':gd<0?'#f87171':'#475569';
+    var gd=t.gs-t.ga,gdc=gd>0?'#4ade80':gd<0?'#f87171':'#475569';
     h+='<div class="t-row'+(i<2?' q':'')+'" onclick=\'openPop('+JSON.stringify(t)+')\'>'+
-      '<span class="t-num">'+(i+1)+'</span>'+
-      '<span class="t-name '+(i<2?'top':'bot')+'" style="min-width:24px">'+t.a+'</span>'+
+      '<span class="t-pos">'+(i+1)+'</span>'+
+      '<span class="t-abbr '+(i<2?'top':'bot')+'">'+t.a+'</span>'+
       '<span class="t-flag">'+t.f+'</span>'+
       '<span class="t-stat">'+t.p+'</span><span class="t-stat">'+t.w+'</span><span class="t-stat">'+t.d+'</span><span class="t-stat">'+t.l+'</span>'+
-      '<span class="t-stat" style="color:'+gdc+'">'+gds+'</span>'+
+      '<span class="t-stat" style="color:'+gdc+'">'+gd_sign(gd)+'</span>'+
       '<span class="t-stat t-pts '+(i<2?'top':'')+'">'+t.pts+'</span></div>';
   });
   return h+'</div>';
 }
 
-function bCol(ms,gold){
-  var h='<div class="b-col">';
-  ms.forEach(function(m){
-    var hs=parseInt(m[2]),as=parseInt(m[5]),hw=hs>as,aw=as>hs,acc=gold?'g':'w';
-    var hCode=m[7]?'<span style="color:#1e3a5f;font-size:7px;min-width:18px;flex-shrink:0;letter-spacing:.3px">'+m[7]+'</span>':'';
-    var aCode=m[8]?'<span style="color:#1e3a5f;font-size:7px;min-width:18px;flex-shrink:0;letter-spacing:.3px">'+m[8]+'</span>':'';
-    h+='<div class="bc'+(gold?' gold':'')+'">'+
-      '<div class="bc-row'+(hw?' win':'')+'">'+hCode+'<span class="bc-t">'+m[1]+' '+m[0]+'</span><span class="bc-s'+(hw?' '+acc:'')+'">'+m[2]+'</span></div>'+
-      '<div class="bc-row'+(aw?' win':'')+'">'+aCode+'<span class="bc-t">'+m[4]+' '+m[3]+'</span><span class="bc-s'+(aw?' '+acc:'')+'">'+m[5]+'</span></div>'+
-      '<div class="bc-st">'+m[6]+'</div></div>';
-  });
-  return h+'</div>';
+function makeBC(m,gold){
+  var hs=parseInt(m[2]),as=parseInt(m[5]),hw=hs>as,aw=as>hs,acc=gold?'gold':'win';
+  var hCode=m[7]?'<span class="bc-code">'+m[7]+'</span>':'';
+  var aCode=m[8]?'<span class="bc-code">'+m[8]+'</span>':'';
+  return '<div class="bc'+(gold?' gold':'')+'">'+
+    '<div class="bc-row'+(hw?' win':'')+'"><div class="bc-team">'+hCode+'<span>'+m[1]+'</span><span class="bc-name">'+m[0]+'</span></div><span class="bc-score'+(hw?' '+acc:'')+'">'+m[2]+'</span></div>'+
+    '<div class="bc-row'+(aw?' win':'')+'"><div class="bc-team">'+aCode+'<span>'+m[4]+'</span><span class="bc-name">'+m[3]+'</span></div><span class="bc-score'+(aw?' '+acc:'')+'">'+m[5]+'</span></div>'+
+    '<div class="bc-st">'+m[6]+'</div></div>';
 }
 
-var FINAL_IS_LIVE = LM.some(function(m){return m.status==='LIVE' && (m.hTeam==='Brazil'||m.aTeam==='Brazil');}) && false; // set true when final is live
+function makeCol(ms,gold){
+  return '<div class="b-col">'+ms.map(function(m){return makeBC(m,gold)}).join('')+'</div>';
+}
 
-function bFinal(){
-  var glowClass = FINAL_IS_LIVE ? ' final-inner' : '';
+function makeFinal(){
   return '<div class="final-col">'+
-    '<div class="'+glowClass+'" style="width:100%;background:radial-gradient(ellipse at 50% 20%,rgba(255,213,74,.14),rgba(0,0,0,.7));border:1px solid rgba(255,213,74,.6);border-radius:14px;padding:14px 12px">'+
+    '<div class="final-inner gold-glow">'+
       '<div style="color:#ffd54a;font-weight:900;font-size:14px;letter-spacing:4px;margin-bottom:4px">FINAL</div>'+
-      '<div style="color:#64748b;font-size:8px">JULY 19, 2026</div>'+
-      '<div style="color:#475569;font-size:7px;margin-bottom:12px">METLIFE STADIUM &middot; NEW JERSEY</div>'+
-      '<div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;margin-bottom:10px">'+
-        '<div style="text-align:center"><div style="font-size:26px">&#127463;&#127479;</div><div style="font-weight:700;font-size:10px;margin-top:3px;letter-spacing:1px">BRAZIL</div></div>'+
+      '<div style="color:#475569;font-size:8px">JULY 19, 2026</div>'+
+      '<div style="color:#334155;font-size:7px;margin-bottom:10px">METLIFE STADIUM &middot; NEW JERSEY</div>'+
+      '<div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;width:100%">'+
+        '<div style="text-align:center"><div style="font-size:24px">&#127463;&#127479;</div><div style="font-weight:700;font-size:10px;margin-top:2px;letter-spacing:1px">BRAZIL</div></div>'+
         '<div style="font-size:28px;font-weight:900;color:#ffd54a;letter-spacing:2px">2&mdash;1</div>'+
-        '<div style="text-align:center"><div style="font-size:26px">&#127462;&#127479;</div><div style="font-weight:700;font-size:10px;margin-top:3px;letter-spacing:1px">ARGENTINA</div></div>'+
+        '<div style="text-align:center"><div style="font-size:24px">&#127462;&#127479;</div><div style="font-weight:700;font-size:10px;margin-top:2px;letter-spacing:1px">ARGENTINA</div></div>'+
       '</div>'+
-      '<div style="font-size:7.5px;color:#475569;line-height:2;border-top:1px solid rgba(255,213,74,.15);padding-top:8px">'+
+      '<div style="margin-top:9px;font-size:7.5px;color:#475569;line-height:1.9;text-align:center">'+
         '<div>&#9917; VINI JR. 27&apos; &middot; RAPHINHA 72&apos;</div>'+
         '<div>&#9917; M. ALVAREZ 45+1&apos;</div>'+
       '</div>'+
-      '<div style="font-size:7px;color:#334155;margin-top:8px;padding-top:6px;border-top:1px solid rgba(255,255,255,.05)">3RD &middot; &#127477;&#127481; POR 2&ndash;1 URU &#127482;&#127486;</div>'+
-      '<div style="color:#22d3ee;font-size:9px;font-weight:700;letter-spacing:3px;margin-top:8px">&#127463;&#127479; CHAMPIONS</div>'+
+      '<div style="margin-top:8px;padding-top:7px;border-top:1px solid rgba(255,213,74,.15);width:100%;font-size:7px;color:#334155;text-align:center">'+
+        'THIRD PLACE &middot; &#127477;&#127481; POR 2&ndash;1 URU &#127482;&#127486;'+
+      '</div>'+
+      '<div style="color:#22d3ee;font-size:8.5px;font-weight:700;letter-spacing:2.5px;margin-top:7px">&#127463;&#127479; CHAMPIONS</div>'+
     '</div>'+
   '</div>';
 }
 
-function lCard(m){
+function makeLiveCard(m){
   var live=m.status==='LIVE',ht=m.status==='HT';
   var bg=live?'#ef4444':ht?'#f59e0b':'#1d4ed8';
   var lbl=live?'LIVE '+m.minute+"'":ht?'HALF TIME':m.status==='TODAY'?'TODAY':'FT';
   var sc=m.hScore!==null?m.hScore+'&ndash;'+m.aScore:'VS';
-  var sr=m.scorers.map(function(s){return '<span style="font-size:8px;color:#475569">&#9917; '+s+'</span>';}).join('');
-  return '<div style="background:linear-gradient(150deg,rgba(4,16,34,.97),rgba(2,9,20,.99));border:1px solid '+(live?'rgba(239,68,68,.4)':ht?'rgba(251,191,36,.3)':'rgba(34,211,238,.18)')+';border-radius:12px;padding:14px 16px;margin-bottom:10px">'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'+
+  var sr=m.scorers.map(function(s){return '<span style="font-size:8px;color:#475569">&#9917; '+s+'</span>'}).join('');
+  return '<div style="background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid '+(live?'rgba(239,68,68,.38)':ht?'rgba(251,191,36,.28)':'rgba(34,211,238,.17)')+';border-radius:12px;padding:13px 15px;margin-bottom:10px">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">'+
       '<span style="background:'+bg+';color:#fff;font-weight:700;font-size:9px;padding:3px 9px;border-radius:4px;letter-spacing:1px">'+lbl+'</span>'+
       '<span style="font-size:8px;color:#334155">'+m.venue+'</span></div>'+
     '<div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px">'+
-      '<div style="text-align:center"><div style="font-size:28px">'+m.hFlag+'</div><div style="font-weight:700;font-size:10px;margin-top:3px">'+m.hTeam+'</div></div>'+
-      '<div style="text-align:center;font-size:24px;font-weight:900">'+sc+'</div>'+
-      '<div style="text-align:center"><div style="font-size:28px">'+m.aFlag+'</div><div style="font-weight:700;font-size:10px;margin-top:3px">'+m.aTeam+'</div></div>'+
+      '<div style="text-align:center"><div style="font-size:28px">'+m.hFlag+'</div><div style="font-weight:700;font-size:11px;margin-top:3px">'+m.hTeam+'</div></div>'+
+      '<div style="text-align:center;font-size:26px;font-weight:900">'+sc+'</div>'+
+      '<div style="text-align:center"><div style="font-size:28px">'+m.aFlag+'</div><div style="font-weight:700;font-size:11px;margin-top:3px">'+m.aTeam+'</div></div>'+
     '</div>'+
     (m.scorers.length?'<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px">'+sr+'</div>':'')+
   '</div>';
 }
 
+/* ─── INIT ────────────────────────────────────────────────────────── */
 window.addEventListener('DOMContentLoaded',function(){
+  /* Groups */
   var lh='',rh='',ah='';
-  G.forEach(function(g,i){var h=gc(g);if(i<6)lh+=h;else rh+=h;ah+=h;});
+  G.forEach(function(g,i){var h=makeGroup(g);if(i<6)lh+=h;else rh+=h;ah+=h;});
   document.getElementById('lg').innerHTML=lh;
   document.getElementById('rg').innerHTML=rh;
   document.getElementById('ag').innerHTML=ah;
-  document.getElementById('bgrid').innerHTML=bCol(B.LR32)+bCol(B.LR16)+bCol(B.LQF)+bCol(B.LSF)+bFinal()+bCol(B.RSF)+bCol(B.RQF)+bCol(B.RR16)+bCol(B.RR32);
-  document.getElementById('lv').innerHTML=LM.map(lCard).join('');
 
-  var sm=SC.map(function(s,i){
-    return '<div class="sc-row"><span style="color:#1e3a5f;min-width:14px;font-weight:700;font-size:9px">'+(i+1)+'</span><span style="font-size:11px">'+s.f+'</span><span style="flex:1;font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-left:4px">'+s.n+'</span><span style="color:#ffd54a;font-weight:700;font-size:9px">'+s.g+'</span><span style="font-size:9px;margin-left:3px">&#9917;</span></div>';
-  }).join('');
-  document.getElementById('scorers-mini').innerHTML=sm;
+  /* Bracket */
+  document.getElementById('bgrid').innerHTML=
+    makeCol(B.LR32)+makeCol(B.LR16)+makeCol(B.LQF)+makeCol(B.LSF)+
+    makeFinal()+
+    makeCol(B.RSF)+makeCol(B.RQF)+makeCol(B.RR16)+makeCol(B.RR32);
 
-  var sf=SC.map(function(s,i){
-    return '<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-top:'+(i===0?'none':'1px solid rgba(255,255,255,.06')+')">'+
-      '<span style="color:#1e3a5f;min-width:18px;font-weight:900;font-size:13px">'+(i+1)+'</span>'+
+  /* Live matches */
+  document.getElementById('lv').innerHTML=LIVE_MATCHES.map(makeLiveCard).join('');
+
+  /* Stats scorers */
+  document.getElementById('sc-full').innerHTML=SCORERS.map(function(s,i){
+    return '<div style="display:flex;align-items:center;gap:9px;padding:9px 0;border-top:'+(i===0?'none':'1px solid rgba(255,255,255,.05')+')">'+
+      '<span style="color:#1e3a5f;min-width:18px;font-weight:700;font-size:13px">'+(i+1)+'</span>'+
       '<span style="font-size:20px">'+s.f+'</span>'+
-      '<div style="flex:1"><div style="font-weight:700;font-size:12px">'+s.n+'</div><div style="font-size:9px;color:#475569">'+s.c+'</div></div>'+
-      '<div style="text-align:right"><div style="font-size:18px;font-weight:700;color:#ffd54a">'+s.g+'</div><div style="font-size:7px;color:#334155">GOALS</div></div>'+
+      '<div style="flex:1"><div style="font-weight:700;font-size:12px">'+s.n+'</div><div style="font-size:8.5px;color:#475569">'+s.c+'</div></div>'+
+      '<div style="text-align:right"><div style="font-size:18px;font-weight:700;color:#ffd54a">'+s.g+'</div><div style="font-size:7.5px;color:#334155">GOALS</div></div>'+
+      '<div style="text-align:right;margin-left:9px"><div style="font-size:15px;font-weight:700;color:#22d3ee">'+s.a+'</div><div style="font-size:7.5px;color:#334155">AST</div></div>'+
     '</div>';
   }).join('');
-  document.getElementById('sc-full').innerHTML=sf;
 
-  document.getElementById('live-ind').style.display='flex';
+  /* Live indicator */
+  var liveCount=LIVE_MATCHES.filter(function(m){return m.status==='LIVE'}).length;
+  if(liveCount>0){
+    var ind=document.getElementById('live-ind');
+    ind.style.display='flex';
+    ind.innerHTML='<span class="blink" style="width:5px;height:5px;border-radius:50%;background:#ef4444;display:inline-block"></span> '+liveCount+' LIVE MATCH'+(liveCount>1?'ES':'');
+  }
 
-  // Pulse group cards whose teams are currently playing
+  /* Cyan glow on groups whose teams are currently LIVE or HT */
   var liveTeams=[];
-  LM.forEach(function(m){
+  LIVE_MATCHES.forEach(function(m){
     if(m.status==='LIVE'||m.status==='HT'){
       liveTeams.push(m.hTeam.toLowerCase());
       liveTeams.push(m.aTeam.toLowerCase());
     }
   });
   G.forEach(function(g){
-    var card=document.getElementById('gc-'+g.id);
-    if(!card)return;
-    var hasLive=g.t.some(function(t){return liveTeams.indexOf(t.n.toLowerCase())>=0;});
-    if(hasLive)card.classList.add('live-group');
+    var el=document.getElementById('gc-'+g.id);
+    if(!el)return;
+    var has=g.t.some(function(t){return liveTeams.indexOf(t.n.toLowerCase())>=0});
+    if(has)el.classList.add('cyan-glow');
   });
 
+  /* Clock */
   function tick(){
-    var n=new Date(),h=n.getHours().toString().padStart(2,'0'),m=n.getMinutes().toString().padStart(2,'0'),s=n.getSeconds().toString().padStart(2,'0');
-    document.getElementById('clock').textContent=h+':'+m+':'+s;
-    document.getElementById('last-sync').textContent=n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});
+    var n=new Date();
+    document.getElementById('clock').textContent=
+      n.getHours().toString().padStart(2,'0')+':'+
+      n.getMinutes().toString().padStart(2,'0')+':'+
+      n.getSeconds().toString().padStart(2,'0');
+    document.getElementById('last-sync').textContent=
+      n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});
   }
   tick(); setInterval(tick,1000);
 
-  function fitBracket(){
-    var outer=document.getElementById('bouter');
-    var wrap=document.getElementById('bwrap');
-    if(!outer||!wrap)return;
-    var ow=outer.clientWidth;
-    var scale=ow/986;
-    var scaledW=986*scale;
-    var ml=((ow-scaledW)/2)+'px';
-    wrap.style.transform='scale('+scale+')';
-    wrap.style.transformOrigin='top left';
-    wrap.style.marginLeft=ml;
-    // Height = (labels ~24px + grid 520px) * scale
-    outer.style.height=((624)*scale)+'px';
-  }
-  fitBracket();
-  window.addEventListener('resize',fitBracket);
-
+  /* Live scores fetch */
   function fetchScores(){
-    fetch('/api/live-scores').then(function(r){return r.json();}).then(function(d){
-      if(d&&d.matches){document.getElementById('lv').innerHTML=d.matches.map(lCard).join('');}
-    }).catch(function(){});
+    fetch('/api/live-scores')
+      .then(function(r){return r.json()})
+      .then(function(d){if(d&&d.matches)document.getElementById('lv').innerHTML=d.matches.map(makeLiveCard).join('')})
+      .catch(function(){});
   }
   fetchScores(); setInterval(fetchScores,20000);
 });
 
+/* ─── TABS ────────────────────────────────────────────────────────── */
 function showTab(n){
   ['bracket','groups','live','stats'].forEach(function(v,i){
     document.getElementById(v+'-view').className='view'+(v===n?' active':'');
     document.querySelectorAll('.tab')[i].className='tab'+(v===n?' active':'');
   });
 }
+
+/* ─── POPUP ───────────────────────────────────────────────────────── */
 function openPop(t){
   document.getElementById('pf').innerHTML=t.f;
   document.getElementById('pn').textContent=t.n;
@@ -806,8 +747,11 @@ function openPop(t){
   document.getElementById('pop-ov').className='open';
   document.getElementById('pop-ov').style.display='flex';
 }
-function closePop(){document.getElementById('pop-ov').style.display='none';document.getElementById('pop-ov').className='';}
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closePop();});
+function closePop(){
+  document.getElementById('pop-ov').style.display='none';
+  document.getElementById('pop-ov').className='';
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closePop()});
 </script>
 </body>
 </html>
