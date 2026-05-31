@@ -341,7 +341,7 @@ const bracketShell = {
 
 const roundLabels = {
   display: "grid",
-  gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr",
+  gridTemplateColumns: "repeat(9, 1fr)",
   color: "#9cc7e8",
   fontSize: 10,
   letterSpacing: 2,
@@ -352,7 +352,7 @@ const roundLabels = {
 
 const bracketGrid = {
   display: "grid",
-  gridTemplateColumns: "170px minmax(500px,1fr) 170px",
+  gridTemplateColumns: "1.25fr 1fr .85fr .75fr 170px .75fr .85fr 1fr 1.25fr",
   gap: 12,
   alignItems: "center",
   position: "relative" as const,
