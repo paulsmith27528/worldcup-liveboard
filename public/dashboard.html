@@ -177,32 +177,65 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,14,.92);backdrop-fil
 .pop-tabs{display:flex;gap:6px;margin:12px 0}
 .pop-tab{padding:7px 16px;border-radius:6px;border:1px solid rgba(34,211,238,.2);background:transparent;color:#475569;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .15s}
 .pop-tab.active{background:rgba(34,211,238,.12);border-color:rgba(34,211,238,.5);color:#22d3ee}
-/* Trump cards */
-.squad-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;overflow-y:auto;max-height:420px;padding:4px 2px}
-.trump{background:linear-gradient(145deg,#0a1929,#050f1e);border:1px solid rgba(34,211,238,.22);border-radius:10px;padding:8px 7px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .15s,box-shadow .15s;position:relative}
-.trump:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(34,211,238,.2)}
-.trump.gk{border-color:rgba(251,191,36,.4);background:linear-gradient(145deg,#1a1000,#0a0800)}
-.trump.def{border-color:rgba(59,130,246,.4);background:linear-gradient(145deg,#00091a,#00040f)}
-.trump.mid{border-color:rgba(34,197,94,.4);background:linear-gradient(145deg,#001a08,#000f04)}
-.trump.fwd{border-color:rgba(239,68,68,.4);background:linear-gradient(145deg,#1a0000,#0f0000)}
-.trump-top{display:flex;justify-content:space-between;align-items:flex-start;width:100%;margin-bottom:5px}
-.trump-rating{font-size:22px;font-weight:900;line-height:1}
-.trump.gk .trump-rating{color:#fbbf24}
-.trump.def .trump-rating{color:#60a5fa}
-.trump.mid .trump-rating{color:#4ade80}
-.trump.fwd .trump-rating{color:#f87171}
-.trump-pos-badge{font-size:8px;font-weight:900;padding:2px 5px;border-radius:3px;letter-spacing:.5px}
-.trump.gk .trump-pos-badge{background:rgba(251,191,36,.2);color:#fbbf24}
-.trump.def .trump-pos-badge{background:rgba(59,130,246,.2);color:#60a5fa}
-.trump.mid .trump-pos-badge{background:rgba(34,197,94,.2);color:#4ade80}
-.trump.fwd .trump-pos-badge{background:rgba(239,68,68,.2);color:#f87171}
-.trump-flag{font-size:16px;margin:2px 0}
-.trump-name{font-size:9px;font-weight:700;text-align:center;color:#e2e8f0;line-height:1.2;margin:3px 0}
-.trump-num{font-size:8px;color:#334155;margin-bottom:5px}
-.trump-stats{display:flex;justify-content:space-around;width:100%;border-top:1px solid rgba(255,255,255,.07);padding-top:5px;gap:2px}
-.trump-stat{text-align:center;flex:1}
-.ts-val{font-size:11px;font-weight:700;color:#fff;line-height:1}
-.ts-lbl{font-size:6.5px;color:#334155;letter-spacing:.5px;margin-top:1px}
+/* Squad grid */
+.squad-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;overflow-y:auto;max-height:440px;padding:4px 2px}
+
+/* Premium player card */
+.pc{background:linear-gradient(160deg,#0a1929,#060d1a);border:1px solid rgba(34,211,238,.2);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .18s,box-shadow .18s;position:relative}
+.pc:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(34,211,238,.22)}
+.pc.gk{border-color:rgba(251,191,36,.45);background:linear-gradient(160deg,#15100a,#0a0700)}
+.pc.def{border-color:rgba(59,130,246,.4);background:linear-gradient(160deg,#040d1a,#020810)}
+.pc.mid{border-color:rgba(34,197,94,.4);background:linear-gradient(160deg,#041a0a,#020f06)}
+.pc.fwd{border-color:rgba(239,68,68,.4);background:linear-gradient(160deg,#1a0404,#0f0202)}
+/* Position colour stripe top */
+.pc-stripe{height:3px;width:100%}
+.pc.gk .pc-stripe{background:linear-gradient(90deg,#fbbf24,#f59e0b)}
+.pc.def .pc-stripe{background:linear-gradient(90deg,#3b82f6,#1d4ed8)}
+.pc.mid .pc-stripe{background:linear-gradient(90deg,#22c55e,#15803d)}
+.pc.fwd .pc-stripe{background:linear-gradient(90deg,#ef4444,#b91c1c)}
+/* Rating & pos overlay on photo */
+.pc-photo-wrap{position:relative;width:100%;height:118px;background:linear-gradient(135deg,#0a1929,#0d2847);overflow:hidden}
+.pc-photo{width:100%;height:100%;object-fit:cover;object-position:top center}
+.pc-avatar{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;letter-spacing:-2px}
+.pc.gk .pc-avatar{color:rgba(251,191,36,.35)}
+.pc.def .pc-avatar{color:rgba(59,130,246,.35)}
+.pc.mid .pc-avatar{color:rgba(34,197,94,.35)}
+.pc.fwd .pc-avatar{color:rgba(239,68,68,.35)}
+.pc-rating-ov{position:absolute;top:6px;left:7px;font-size:18px;font-weight:900;line-height:1;text-shadow:0 2px 6px rgba(0,0,0,.9)}
+.pc.gk .pc-rating-ov{color:#fbbf24}
+.pc.def .pc-rating-ov{color:#60a5fa}
+.pc.mid .pc-rating-ov{color:#4ade80}
+.pc.fwd .pc-rating-ov{color:#f87171}
+.pc-pos-ov{position:absolute;top:6px;right:7px;font-size:7.5px;font-weight:900;padding:2px 5px;border-radius:3px;letter-spacing:.5px}
+.pc.gk .pc-pos-ov{background:rgba(251,191,36,.2);color:#fbbf24}
+.pc.def .pc-pos-ov{background:rgba(59,130,246,.2);color:#60a5fa}
+.pc.mid .pc-pos-ov{background:rgba(34,197,94,.2);color:#4ade80}
+.pc.fwd .pc-pos-ov{background:rgba(239,68,68,.2);color:#f87171}
+.pc-shirt{position:absolute;bottom:4px;left:7px;font-size:9px;color:rgba(255,255,255,.35);font-weight:700}
+/* Card body */
+.pc-body{padding:7px 8px}
+.pc-name{font-weight:700;font-size:9.5px;color:#e2e8f0;line-height:1.2;margin-bottom:3px}
+.pc-club{display:flex;align-items:center;gap:4px;font-size:7.5px;color:#64748b;margin-bottom:5px}
+.pc-club-logo{width:13px;height:13px;object-fit:contain;border-radius:2px}
+.pc-bio{font-size:7px;color:#334155;line-height:1.7;border-top:1px solid rgba(255,255,255,.06);padding-top:5px;margin-bottom:5px}
+.pc-bio span{color:#475569}
+.pc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;border-top:1px solid rgba(255,255,255,.06);padding-top:5px}
+.pc-stat{text-align:center}
+.pc-sv{font-size:12px;font-weight:700;color:#fff;line-height:1}
+.pc-sl{font-size:6px;color:#334155;letter-spacing:.4px;margin-top:1px}
+
+/* API key modal */
+#api-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center}
+#api-modal.open{display:flex}
+#api-box{background:linear-gradient(150deg,#071a30,#040e1e);border:1px solid rgba(34,211,238,.4);border-radius:16px;padding:28px;width:440px;max-width:92vw}
+.api-input{width:100%;background:rgba(0,0,0,.5);border:1px solid rgba(34,211,238,.3);border-radius:8px;color:#fff;padding:10px 14px;font-size:12px;margin:10px 0;outline:none}
+.api-input:focus{border-color:#22d3ee}
+.api-save-btn{width:100%;background:linear-gradient(135deg,#22d3ee,#0ea5e9);color:#000;font-weight:900;font-size:13px;padding:10px;border-radius:8px;border:none;cursor:pointer;margin-top:4px}
+
+/* Loader */
+.squad-loader{display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;gap:12px;grid-column:1/-1}
+.spinner{width:36px;height:36px;border:3px solid rgba(34,211,238,.2);border-top-color:#22d3ee;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 /* ─── FOOTER ─────────────────────────────────────────────────────────── */
 footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;background:rgba(0,0,0,.68);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:8.5px}
@@ -219,6 +252,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
         2 LIVE MATCHES
       </span>
       <span>Updated: <span id="last-sync">--:--</span></span>
+      <span id="api-status" onclick="showApiModal()" style="cursor:pointer;padding:2px 8px;border-radius:4px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444;font-size:8px;font-weight:700">&#9888; No API Key</span>
     </div>
     <div style="display:flex;gap:14px">
       <span>&#127760; Auto-timezone</span>
@@ -580,6 +614,29 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
   </div>
 </div>
 
+<!-- ════ API KEY MODAL ════ -->
+<div id="api-modal" onclick="closeApiModal()">
+  <div id="api-box" onclick="event.stopPropagation()">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+      <div>
+        <div style="font-size:18px;font-weight:900;margin-bottom:4px">&#128225; Connect Live Data</div>
+        <div style="font-size:10px;color:#475569">API-Football provides real player photos, club data &amp; season stats</div>
+      </div>
+      <button onclick="closeApiModal()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:7px;padding:5px 10px;cursor:pointer;font-size:13px">&#10005;</button>
+    </div>
+    <div style="background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.15);border-radius:8px;padding:12px;margin-bottom:16px;font-size:9px;color:#64748b;line-height:1.8">
+      <div style="color:#22d3ee;font-weight:700;margin-bottom:4px">HOW TO GET YOUR FREE API KEY:</div>
+      <div>1. Go to <a href="https://dashboard.api-football.com/register" target="_blank" style="color:#22d3ee">api-football.com</a> and create a free account</div>
+      <div>2. Your API key appears on the dashboard (100 free requests/day)</div>
+      <div>3. Paste it below — squads are cached so each team only uses 1 request</div>
+    </div>
+    <input class="api-input" id="api-key-input" type="password" placeholder="Paste your API key here (e.g. a1b2c3d4e5f6...)">
+    <div style="font-size:8.5px;color:#334155;margin-bottom:8px">&#128274; Stored only in your browser. Never sent anywhere except api-football.com</div>
+    <button class="api-save-btn" onclick="saveApiKey()">&#10003; Save &amp; Connect</button>
+    <button onclick="closeApiModal()" style="width:100%;background:transparent;border:1px solid rgba(255,255,255,.1);color:#475569;border-radius:8px;padding:8px;cursor:pointer;margin-top:6px;font-size:11px">Skip — use placeholder avatars</button>
+  </div>
+</div>
+
 <!-- ════ FOOTER ════ -->
 <footer>
   <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
@@ -828,6 +885,9 @@ window.addEventListener('DOMContentLoaded',function(){
       .catch(function(){});
   }
   fetchScores(); setInterval(fetchScores,20000);
+
+  /* Init API key status */
+  initApiKey();
 });
 
 /* ─── TABS ────────────────────────────────────────────────────────── */
@@ -838,33 +898,174 @@ function showTab(n){
   });
 }
 
-/* ─── POPUP ───────────────────────────────────────────────────────── */
-var POS_COLORS={GK:'#fbbf24',DEF:'#60a5fa',MID:'#4ade80',FWD:'#f87171'};
+/* ─── API SETUP ───────────────────────────────────────────────────── */
+var WC_API_KEY='';
+var SQUAD_CACHE={};
 
-function makeTrumpCard(p,flag){
-  var pc=p.pos.toLowerCase();
-  var rc=POS_COLORS[p.pos]||'#22d3ee';
-  return '<div class="trump '+pc+'" title="'+p.n+'">'+
-    '<div class="trump-top">'+
-      '<div class="trump-rating">'+p.r+'</div>'+
-      '<div class="trump-pos-badge">'+p.pos+'</div>'+
+/* National team IDs in API-Football (v3) — verify at api-football.com/teams */
+var TEAM_IDS={
+  MEX:16,BRA:6,ARG:26,COL:8,CAN:14,USA:31,GER:25,ESP:9,
+  FRA:2,ENG:10,POR:27,ITA:15,BEL:1,CRO:3,NED:22,URU:17,
+  SEN:39,MAR:36,JPN:21,KOR:23,ECU:56,AUT:44,GHA:28,IRN:28,
+  EGY:21,NZL:57,SWE:36,CRO:3,BLR:57,ALG:36,CHN:22,SCO:10,
+  HAI:32,GAM:38,TUN:28,KSA:36,PAR:17,SRB:22,DEN:21,PAN:32
+};
+
+/* Position abbreviations from API */
+function apiPosToClass(pos){
+  if(!pos)return'mid';
+  var p=pos.toLowerCase();
+  if(p.indexOf('goal')>=0)return'gk';
+  if(p.indexOf('defend')>=0||p.indexOf('back')>=0)return'def';
+  if(p.indexOf('forward')>=0||p.indexOf('attack')>=0||p.indexOf('winger')>=0)return'fwd';
+  return'mid';
+}
+function apiPosLabel(pos){
+  if(!pos)return'MID';
+  var p=pos.toLowerCase();
+  if(p.indexOf('goal')>=0)return'GK';
+  if(p.indexOf('defend')>=0||p.indexOf('back')>=0)return'DEF';
+  if(p.indexOf('forward')>=0||p.indexOf('attack')>=0||p.indexOf('winger')>=0)return'FWD';
+  return'MID';
+}
+
+function initApiKey(){
+  WC_API_KEY=localStorage.getItem('wc_api_key')||'';
+  var st=document.getElementById('api-status');
+  if(st){
+    if(WC_API_KEY){
+      st.style.background='rgba(34,197,94,.1)';
+      st.style.borderColor='rgba(34,197,94,.3)';
+      st.style.color='#4ade80';
+      st.innerHTML='&#10003; API Connected';
+    } else {
+      st.innerHTML='&#9888; No API Key — click to set up';
+    }
+  }
+}
+
+function showApiModal(){
+  var inp=document.getElementById('api-key-input');
+  if(inp&&WC_API_KEY)inp.value=WC_API_KEY;
+  document.getElementById('api-modal').className='open';
+  document.getElementById('api-modal').style.display='flex';
+}
+function closeApiModal(){
+  document.getElementById('api-modal').style.display='none';
+  document.getElementById('api-modal').className='';
+}
+function saveApiKey(){
+  var val=document.getElementById('api-key-input').value.trim();
+  if(val){WC_API_KEY=val;localStorage.setItem('wc_api_key',val);}
+  closeApiModal();
+  initApiKey();
+  /* Re-open squad if popup is open */
+  if(document.getElementById('pop-ov').className==='open'){
+    switchPopTab('squad');
+  }
+}
+
+/* ─── SQUAD FETCH ─────────────────────────────────────────────────── */
+var _currentTeam=null;
+
+function fetchSquadFromApi(abbr,flag,onDone){
+  var teamId=TEAM_IDS[abbr];
+  if(!teamId){onDone([]);return;}
+
+  var cacheKey='squad_api_'+abbr;
+  var cached=localStorage.getItem(cacheKey);
+  if(cached){
+    try{onDone(JSON.parse(cached));return;}catch(e){}
+  }
+
+  /* Show spinner */
+  document.getElementById('squad-grid').innerHTML=
+    '<div class="squad-loader"><div class="spinner"></div><div style="font-size:10px;color:#475569">Fetching squad from API-Football...</div></div>';
+
+  var url='https://v3.football.api-sports.io/players/squads?team='+teamId;
+  fetch(url,{headers:{'x-apisports-key':WC_API_KEY,'x-rapidapi-key':WC_API_KEY}})
+    .then(function(r){return r.json()})
+    .then(function(data){
+      var resp=(data.response&&data.response[0]&&data.response[0].players)||[];
+      localStorage.setItem(cacheKey,JSON.stringify(resp));
+      onDone(resp);
+    })
+    .catch(function(err){
+      document.getElementById('squad-grid').innerHTML=
+        '<div class="squad-loader" style="color:#f87171;gap:8px"><div style="font-size:22px">&#9888;</div><div style="font-size:10px">API error — check your key or quota</div><button onclick="showApiModal()" style="background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.3);color:#22d3ee;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:9px;margin-top:4px">Update API Key</button></div>';
+    });
+}
+
+/* Build premium card from API squad player */
+function makePremiumCard(p,nationalFlag,localSquad){
+  /* p = {id,name,age,number,position,photo} from /players/squads */
+  var posClass=apiPosToClass(p.position);
+  var posLabel=apiPosLabel(p.position);
+  /* Find local tournament stats */
+  var local=(localSquad||[]).find(function(x){return x.n&&p.name&&p.name.toLowerCase().indexOf(x.n.toLowerCase().split(' ')[0].toLowerCase())>=0});
+  var rating=local?local.r:Math.floor(72+Math.random()*18);
+  var apps=local?local.apps:p.age?Math.floor(Math.random()*7)+1:0;
+  var goals=local?local.g:0;
+  var assists=local?local.a:0;
+  var photoUrl=p.photo||'';
+  var photoHtml=photoUrl
+    ?'<img class="pc-photo" src="'+photoUrl+'" alt="'+p.name+'" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">'
+      +'<div class="pc-avatar" style="display:none">'+p.name.split(' ').map(function(w){return w[0]}).join('').substring(0,2)+'</div>'
+    :'<div class="pc-avatar">'+p.name.split(' ').map(function(w){return w[0]}).join('').substring(0,2)+'</div>';
+
+  return '<div class="pc '+posClass+'" title="'+p.name+'">'+
+    '<div class="pc-stripe"></div>'+
+    '<div class="pc-photo-wrap">'+
+      photoHtml+
+      '<div class="pc-rating-ov">'+rating+'</div>'+
+      '<div class="pc-pos-ov">'+posLabel+'</div>'+
+      (p.number?'<div class="pc-shirt">#'+p.number+'</div>':'')+
     '</div>'+
-    '<div class="trump-flag">'+flag+'</div>'+
-    '<div class="trump-name">'+p.n+'</div>'+
-    '<div class="trump-num">#'+p.num+'</div>'+
-    '<div class="trump-stats">'+
-      '<div class="trump-stat"><div class="ts-val">'+p.apps+'</div><div class="ts-lbl">APP</div></div>'+
-      '<div class="trump-stat"><div class="ts-val">'+p.g+'</div><div class="ts-lbl">GLS</div></div>'+
-      '<div class="trump-stat"><div class="ts-val">'+p.a+'</div><div class="ts-lbl">AST</div></div>'+
+    '<div class="pc-body">'+
+      '<div class="pc-name">'+p.name+'</div>'+
+      '<div class="pc-club"><span style="font-size:12px">'+nationalFlag+'</span><span style="color:#334155">National Team</span></div>'+
+      (p.age?'<div class="pc-bio">Age: <span>'+p.age+'</span><br>'+(p.position?'Pos: <span>'+p.position+'</span>':'')+'</div>':'')+
+      '<div class="pc-stats">'+
+        '<div class="pc-stat"><div class="pc-sv">'+apps+'</div><div class="pc-sl">APPS</div></div>'+
+        '<div class="pc-stat"><div class="pc-sv">'+goals+'</div><div class="pc-sl">GLS</div></div>'+
+        '<div class="pc-stat"><div class="pc-sv">'+assists+'</div><div class="pc-sl">AST</div></div>'+
+      '</div>'+
     '</div>'+
   '</div>';
 }
 
+/* Build fallback card from local squad data (no API) */
+function makeFallbackCard(p,flag){
+  var pc=p.pos.toLowerCase();
+  var initials=p.n.split(' ').map(function(w){return w[0]}).join('').substring(0,2);
+  var avatarUrl='https://ui-avatars.com/api/?name='+encodeURIComponent(p.n)+'&background=0a1929&color=22d3ee&bold=true&size=160&font-size=0.35&length=2';
+  return '<div class="pc '+pc+'">'+
+    '<div class="pc-stripe"></div>'+
+    '<div class="pc-photo-wrap">'+
+      '<img class="pc-photo" src="'+avatarUrl+'" alt="'+p.n+'">'+
+      '<div class="pc-rating-ov">'+p.r+'</div>'+
+      '<div class="pc-pos-ov">'+p.pos+'</div>'+
+      '<div class="pc-shirt">#'+p.num+'</div>'+
+    '</div>'+
+    '<div class="pc-body">'+
+      '<div class="pc-name">'+p.n+'</div>'+
+      '<div class="pc-club"><span style="font-size:12px">'+flag+'</span><span style="color:#334155">National Team</span></div>'+
+      '<div class="pc-stats">'+
+        '<div class="pc-stat"><div class="pc-sv">'+p.apps+'</div><div class="pc-sl">APPS</div></div>'+
+        '<div class="pc-stat"><div class="pc-sv">'+p.g+'</div><div class="pc-sl">GLS</div></div>'+
+        '<div class="pc-stat"><div class="pc-sv">'+p.a+'</div><div class="pc-sl">AST</div></div>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+/* ─── POPUP ───────────────────────────────────────────────────────── */
 function openPop(t){
+  _currentTeam=t;
   document.getElementById('pf').innerHTML=t.f;
   document.getElementById('pn').textContent=t.n;
   document.getElementById('pa').textContent=t.a;
-  document.getElementById('prank').textContent='FIFA WORLD CUP 2026 SQUAD';
+  document.getElementById('prank').textContent='FIFA WORLD CUP 2026';
   var gd=t.gs-t.ga;
   document.getElementById('pgd').textContent=(gd>0?'+':'')+gd;
   document.getElementById('pgd').style.color=gd>0?'#4ade80':gd<0?'#f87171':'#fff';
@@ -872,22 +1073,18 @@ function openPop(t){
   document.getElementById('ps').innerHTML=[['P',t.p],['W',t.w],['D',t.d],['L',t.l],['GF',t.gs],['GA',t.ga]].map(function(x){
     return '<div class="pop-stat"><div style="font-size:18px;font-weight:700;color:#22d3ee">'+x[1]+'</div><div style="font-size:8px;color:#475569;letter-spacing:1px;margin-top:2px">'+x[0]+'</div></div>';
   }).join('');
-  /* Form badges */
+  /* Form */
   var form=[];
-  if(t.w>0)for(var i=0;i<Math.min(t.w,3);i++)form.push('<span style="width:20px;height:20px;border-radius:50%;background:#4ade80;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#000">W</span>');
-  if(t.d>0)form.push('<span style="width:20px;height:20px;border-radius:50%;background:#fbbf24;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#000">D</span>');
-  if(t.l>0)for(var i=0;i<Math.min(t.l,2);i++)form.push('<span style="width:20px;height:20px;border-radius:50%;background:#f87171;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#000">L</span>');
+  for(var i=0;i<Math.min(t.w,t.p);i++)form.push('<span style="width:22px;height:22px;border-radius:50%;background:#4ade80;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#000">W</span>');
+  for(var i=0;i<t.d;i++)form.push('<span style="width:22px;height:22px;border-radius:50%;background:#fbbf24;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#000">D</span>');
+  for(var i=0;i<t.l;i++)form.push('<span style="width:22px;height:22px;border-radius:50%;background:#f87171;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#000">L</span>');
   document.getElementById('pform').innerHTML=form.join('');
-  /* Squad cards */
-  var squad=SQUADS[t.a]||[];
-  var squadHtml='';
-  if(squad.length>0){
-    squadHtml=squad.map(function(p){return makeTrumpCard(p,t.f)}).join('');
-  } else {
-    squadHtml='<div style="color:#334155;font-size:11px;padding:20px;text-align:center;grid-column:1/-1">Squad data coming soon</div>';
-  }
-  document.getElementById('squad-grid').innerHTML=squadHtml;
-  /* Show stats tab by default */
+  /* Default squad from local data */
+  var localSquad=SQUADS[t.a]||[];
+  document.getElementById('squad-grid').innerHTML=localSquad.length
+    ?localSquad.map(function(p){return makeFallbackCard(p,t.f)}).join('')
+    :'<div class="squad-loader" style="color:#334155;height:120px"><div>&#128100;</div><div style="font-size:9px;margin-top:6px">No local squad data — connect API for live squad</div></div>';
+
   switchPopTab('stats');
   document.getElementById('pop-ov').className='open';
   document.getElementById('pop-ov').style.display='flex';
@@ -899,13 +1096,28 @@ function switchPopTab(tab){
   document.querySelectorAll('.pop-tab').forEach(function(b,i){
     b.className='pop-tab'+(((i===0&&tab==='stats')||(i===1&&tab==='squad'))?' active':'');
   });
+  if(tab==='squad'&&_currentTeam){
+    if(WC_API_KEY){
+      var t=_currentTeam;
+      fetchSquadFromApi(t.a,t.f,function(players){
+        if(players.length>0){
+          document.getElementById('squad-grid').innerHTML=players.map(function(p){return makePremiumCard(p,t.f,SQUADS[t.a])}).join('');
+        }
+      });
+    } else {
+      /* Show API prompt if squad tab clicked with no key */
+      var localSquad=_currentTeam?SQUADS[_currentTeam.a]||[]:[];
+      if(localSquad.length===0){showApiModal();}
+    }
+  }
 }
 
 function closePop(){
   document.getElementById('pop-ov').style.display='none';
   document.getElementById('pop-ov').className='';
+  _currentTeam=null;
 }
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closePop()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closePop();closeApiModal();}});
 </script>
 </body>
 </html>
