@@ -766,7 +766,7 @@ window.addEventListener('DOMContentLoaded',function(){
     var wrap=document.getElementById('bwrap');
     if(!outer||!wrap)return;
     var ow=outer.clientWidth;
-    var scale=Math.min(1,ow/986);
+    var scale=ow/986;
     var scaledW=986*scale;
     var ml=((ow-scaledW)/2)+'px';
     wrap.style.transform='scale('+scale+')';
