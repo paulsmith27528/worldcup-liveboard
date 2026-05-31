@@ -14,6 +14,7 @@ body{background:radial-gradient(ellipse at 40% 0%,#0d2847 0%,#061020 35%,#030b18
 
 /* ─── ANIMATIONS ───────────────────────────────────────────────────── */
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.12}}
+@keyframes tFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @keyframes goldPulse{0%,100%{box-shadow:0 0 22px rgba(255,213,74,.35),0 0 50px rgba(255,213,74,.12)}50%{box-shadow:0 0 45px rgba(255,213,74,.75),0 0 90px rgba(255,213,74,.3)}}
 @keyframes cyanPulse{0%,100%{box-shadow:0 0 14px rgba(34,211,238,.25),0 0 30px rgba(34,211,238,.1)}50%{box-shadow:0 0 28px rgba(34,211,238,.55),0 0 60px rgba(34,211,238,.22)}}
 @keyframes livering{0%{box-shadow:0 0 0 0 rgba(239,68,68,.7)}70%{box-shadow:0 0 0 8px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
@@ -95,7 +96,10 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,14,.92);backdrop-fil
 .bc-score{color:rgba(255,255,255,.2);flex-shrink:0;min-width:14px;text-align:right}
 .bc-score.win{color:#22d3ee;text-shadow:0 0 7px rgba(34,211,238,.6)}
 .bc-score.gold{color:#ffd54a;text-shadow:0 0 7px rgba(255,213,74,.6)}
-.bc-st{font-size:6.5px;color:#1e3a5f;text-align:right;letter-spacing:.4px}
+.bc-st{font-size:6.5px;color:#1e3a5f;text-align:right;letter-spacing:.4px;display:flex;justify-content:flex-end;gap:3px;align-items:center}
+.bc-yc{width:5px;height:6px;background:#fbbf24;border-radius:1px;display:inline-block}
+.bc-rc{width:5px;height:6px;background:#ef4444;border-radius:1px;display:inline-block}
+.bc-var{font-size:6px;background:rgba(34,211,238,.2);color:#22d3ee;padding:0 3px;border-radius:2px;font-weight:700}
 
 /* Final column */
 .final-col{height:600px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12px 10px}
@@ -239,6 +243,34 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,14,.92);backdrop-fil
 
 /* ─── FOOTER ─────────────────────────────────────────────────────────── */
 footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;background:rgba(0,0,0,.68);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:8.5px}
+
+/* ─── MOBILE ─────────────────────────────────────────────────────────── */
+@media(max-width:900px){
+  .hdr-main{grid-template-columns:auto 1fr;gap:8px;padding:8px 10px}
+  .hdr-right{display:none}
+  .main-title{font-size:16px;letter-spacing:1px}
+  .title-sub{font-size:8px;letter-spacing:2px}
+  .main-grid{grid-template-columns:1fr;gap:8px;padding:6px}
+  .main-grid aside{display:none}
+  .b-shell{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .bracket-outer{min-width:640px}
+  .bot-row{grid-template-columns:1fr;gap:8px;padding:0 6px 8px}
+  .squad-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+  #pop-box{padding:16px;border-radius:12px}
+  .pop-tabs{gap:4px}
+  .pop-tab{padding:6px 10px;font-size:8.5px}
+  .hdr-top div:last-child{display:none}
+  footer{flex-direction:column;align-items:flex-start;gap:8px}
+  .tabs .tab{padding:8px 12px;font-size:9px;letter-spacing:1px}
+  .cta-btn{font-size:11px;padding:7px 14px}
+}
+@media(max-width:600px){
+  .main-title{font-size:13px;letter-spacing:0}
+  .hdr-main{padding:6px 8px}
+  .tabs .tab{padding:7px 9px;font-size:8.5px;letter-spacing:.5px}
+  .bot-row .panel{padding:10px 10px}
+  .squad-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px}
+}
 </style>
 </head>
 <body>
@@ -764,7 +796,7 @@ function makeBC(m,gold){
   return '<div class="bc'+(gold?' gold':'')+'">'+
     '<div class="bc-row'+(hw?' win':'')+'"><div class="bc-team">'+hCode+'<span>'+m[1]+'</span><span class="bc-name">'+m[0]+'</span></div><span class="bc-score'+(hw?' '+acc:'')+'">'+m[2]+'</span></div>'+
     '<div class="bc-row'+(aw?' win':'')+'"><div class="bc-team">'+aCode+'<span>'+m[4]+'</span><span class="bc-name">'+m[3]+'</span></div><span class="bc-score'+(aw?' '+acc:'')+'">'+m[5]+'</span></div>'+
-    '<div class="bc-st">'+m[6]+'</div></div>';
+    '<div class="bc-st">'+(m[6]==='PEN'?'<span class="bc-var">PEN</span> ':m[6]==='ET'?'<span class="bc-var">ET</span> ':'')+m[6]+'</div></div>';
 }
 
 function makeCol(ms,gold){
@@ -774,6 +806,7 @@ function makeCol(ms,gold){
 function makeFinal(){
   return '<div class="final-col">'+
     '<div class="final-inner gold-glow">'+
+      '<img src="/trophy.png" alt="Trophy" onerror="this.style.display=\'none\'" style="width:85px;height:auto;margin-bottom:4px;filter:drop-shadow(0 0 20px rgba(255,213,74,.9)) drop-shadow(0 0 40px rgba(255,180,0,.5));animation:tFloat 3.5s ease-in-out infinite">'+
       '<div style="color:#ffd54a;font-weight:900;font-size:14px;letter-spacing:4px;margin-bottom:4px">FINAL</div>'+
       '<div style="color:#475569;font-size:8px">JULY 19, 2026</div>'+
       '<div style="color:#334155;font-size:7px;margin-bottom:10px">METLIFE STADIUM &middot; NEW JERSEY</div>'+
@@ -969,7 +1002,7 @@ function fetchSquadFromApi(abbr,flag,onDone){
   var cacheKey='squad_api_'+abbr;
   var cached=sessionStorage.getItem(cacheKey);
   if(cached){
-    try{onDone(JSON.parse(cached));return;}catch(e){}
+    try{var c=JSON.parse(cached);onDone(c.players||c,c.src||'squads');return;}catch(e){}
   }
 
   document.getElementById('squad-grid').innerHTML=
@@ -980,43 +1013,76 @@ function fetchSquadFromApi(abbr,flag,onDone){
     .then(function(r){return r.json()})
     .then(function(data){
       if(data.error){
-        /* API key not set in Vercel env vars */
         document.getElementById('squad-grid').innerHTML=
           '<div class="squad-loader" style="color:#fbbf24;gap:8px;text-align:center">'+
           '<div style="font-size:22px">&#128275;</div>'+
           '<div style="font-size:10px;color:#fbbf24;font-weight:700">Add your API key to Vercel</div>'+
-          '<div style="font-size:9px;color:#475569;max-width:280px;line-height:1.6">In your Vercel dashboard go to:<br><strong style="color:#e2e8f0">Settings → Environment Variables</strong><br>Add variable: <strong style="color:#22d3ee">API_FOOTBALL_KEY</strong><br>Value: your api-football.com key</div>'+
+          '<div style="font-size:9px;color:#475569;max-width:280px;line-height:1.6">Settings → Environment Variables → API_FOOTBALL_KEY</div>'+
           '</div>';
         return;
       }
-      var resp=(data.response&&data.response[0]&&data.response[0].players)||[];
-      sessionStorage.setItem(cacheKey,JSON.stringify(resp));
-      onDone(resp);
+      var players=[];
+      if(data._source==='players'){
+        /* Rich format: array of {player, statistics} */
+        players=data.response||[];
+      } else {
+        /* Basic squad format: response[0].players */
+        players=(data.response&&data.response[0]&&data.response[0].players)||[];
+      }
+      sessionStorage.setItem(cacheKey,JSON.stringify({src:data._source||'squads',players:players}));
+      onDone(players,data._source||'squads');
     })
-    .catch(function(){
-      /* /api/squad route not deployed yet — show local fallback */
-      onDone([]);
-    });
+    .catch(function(){onDone([]);});
 }
 
-/* Build premium card from API squad player */
-function makePremiumCard(p,nationalFlag,localSquad){
-  /* p = {id,name,age,number,position,photo} from /players/squads */
+/* Build premium card — handles both /players (rich) and /players/squads (basic) */
+function makePremiumCard(item,nationalFlag,localSquad){
+  var p,stats,isRich=false;
+  if(item.player){
+    /* Rich format from /players endpoint */
+    p=item.player; stats=(item.statistics&&item.statistics[0])||{}; isRich=true;
+  } else {
+    /* Basic format from /players/squads */
+    p=item; stats={};
+  }
+  var name=p.name||'';
   var posClass=apiPosToClass(p.position);
   var posLabel=apiPosLabel(p.position);
-  /* Find local tournament stats */
-  var local=(localSquad||[]).find(function(x){return x.n&&p.name&&p.name.toLowerCase().indexOf(x.n.toLowerCase().split(' ')[0].toLowerCase())>=0});
-  var rating=local?local.r:Math.floor(72+Math.random()*18);
-  var apps=local?local.apps:p.age?Math.floor(Math.random()*7)+1:0;
-  var goals=local?local.g:0;
-  var assists=local?local.a:0;
+  var local=(localSquad||[]).find(function(x){return x.n&&name&&name.toLowerCase().indexOf(x.n.toLowerCase().split(' ')[0].toLowerCase())>=0});
+  var rating=local?local.r:Math.floor(72+Math.random()*14);
+  var apps=isRich?(stats.games&&stats.games.appearences)||0:(local?local.apps:0);
+  var goals=isRich?(stats.goals&&stats.goals.total)||0:(local?local.g:0);
+  var assists=isRich?(stats.goals&&stats.goals.assists)||0:(local?local.a:0);
+  var keyPasses=isRich&&stats.passes?stats.passes.key||0:0;
   var photoUrl=p.photo||'';
+  var initials=name.split(' ').map(function(w){return w[0]}).join('').substring(0,2);
   var photoHtml=photoUrl
-    ?'<img class="pc-photo" src="'+photoUrl+'" alt="'+p.name+'" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">'
-      +'<div class="pc-avatar" style="display:none">'+p.name.split(' ').map(function(w){return w[0]}).join('').substring(0,2)+'</div>'
-    :'<div class="pc-avatar">'+p.name.split(' ').map(function(w){return w[0]}).join('').substring(0,2)+'</div>';
+    ?'<img class="pc-photo" src="'+photoUrl+'" alt="'+name+'" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">'
+      +'<div class="pc-avatar" style="display:none">'+initials+'</div>'
+    :'<div class="pc-avatar">'+initials+'</div>';
 
-  return '<div class="pc '+posClass+'" title="'+p.name+'">'+
+  /* Club info from stats */
+  var clubName=isRich&&stats.team?stats.team.name||'':'';
+  var clubLogo=isRich&&stats.team?stats.team.logo||'':'';
+  var clubHtml=clubName
+    ?'<div class="pc-club">'+(clubLogo?'<img class="pc-club-logo" src="'+clubLogo+'" alt="'+clubName+'">':'<span style="font-size:12px">'+nationalFlag+'</span>')+'<span>'+clubName+'</span></div>'
+    :'<div class="pc-club"><span style="font-size:12px">'+nationalFlag+'</span><span style="color:#334155">National Team</span></div>';
+
+  /* Bio info */
+  var dob=isRich&&p.birth&&p.birth.date?p.birth.date.substring(0,4):'';
+  var birthplace=isRich&&p.birth?(p.birth.place?p.birth.place:''):'';
+  var height=isRich&&p.height?p.height:'';
+  var bioHtml='';
+  if(dob||height||birthplace){
+    bioHtml='<div class="pc-bio">';
+    if(dob)bioHtml+='Born: <span>'+dob+(birthplace?', '+birthplace:'')+'</span><br>';
+    if(height)bioHtml+='Height: <span>'+height+'</span>';
+    bioHtml+='</div>';
+  } else if(p.age){
+    bioHtml='<div class="pc-bio">Age: <span>'+p.age+'</span>'+(p.position?'&nbsp;&nbsp;'+p.position:'')+'</div>';
+  }
+
+  return '<div class="pc '+posClass+'" title="'+name+'">'+
     '<div class="pc-stripe"></div>'+
     '<div class="pc-photo-wrap">'+
       photoHtml+
@@ -1025,13 +1091,14 @@ function makePremiumCard(p,nationalFlag,localSquad){
       (p.number?'<div class="pc-shirt">#'+p.number+'</div>':'')+
     '</div>'+
     '<div class="pc-body">'+
-      '<div class="pc-name">'+p.name+'</div>'+
-      '<div class="pc-club"><span style="font-size:12px">'+nationalFlag+'</span><span style="color:#334155">National Team</span></div>'+
-      (p.age?'<div class="pc-bio">Age: <span>'+p.age+'</span><br>'+(p.position?'Pos: <span>'+p.position+'</span>':'')+'</div>':'')+
+      '<div class="pc-name">'+name+'</div>'+
+      clubHtml+
+      bioHtml+
       '<div class="pc-stats">'+
         '<div class="pc-stat"><div class="pc-sv">'+apps+'</div><div class="pc-sl">APPS</div></div>'+
         '<div class="pc-stat"><div class="pc-sv">'+goals+'</div><div class="pc-sl">GLS</div></div>'+
         '<div class="pc-stat"><div class="pc-sv">'+assists+'</div><div class="pc-sl">AST</div></div>'+
+        (keyPasses?'<div class="pc-stat"><div class="pc-sv">'+keyPasses+'</div><div class="pc-sl">KP</div></div>':'')+
       '</div>'+
     '</div>'+
   '</div>';
@@ -1101,13 +1168,11 @@ function switchPopTab(tab){
   });
   if(tab==='squad'&&_currentTeam){
     var t=_currentTeam;
-    /* Always try server-side proxy — falls back to local data if not deployed */
-    fetchSquadFromApi(t.a,t.f,function(players){
+    fetchSquadFromApi(t.a,t.f,function(players,src){
       if(players.length>0){
         document.getElementById('squad-grid').innerHTML=
           players.map(function(p){return makePremiumCard(p,t.f,SQUADS[t.a])}).join('');
       }
-      /* If API returned nothing, local fallback already shown by openPop */
     });
   }
 }
