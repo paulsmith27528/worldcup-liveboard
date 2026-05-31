@@ -69,7 +69,7 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,12,.95);border-botto
 .b-outer{width:100%;overflow:hidden}
 .b-wrap{position:relative;width:986px;transform-origin:top left;display:flex;flex-direction:column}
 .b-grid{display:grid;grid-template-columns:115px 100px 88px 76px 180px 76px 88px 100px 115px;gap:6px}
-.b-col{height:520px;display:flex;flex-direction:column;justify-content:space-around}
+.b-col{height:600px;display:flex;flex-direction:column;justify-content:space-around}
 .bc{height:55px;background:rgba(2,8,20,.9);border:1px solid rgba(34,211,238,.22);border-radius:8px;padding:4px 9px;display:flex;flex-direction:column;justify-content:space-around;cursor:pointer;transition:all .18s}
 .bc:hover{border-color:rgba(34,211,238,.6);box-shadow:0 0 18px rgba(34,211,238,.2);transform:translateY(-1px)}
 .bc.gold{border-color:rgba(255,213,74,.45);box-shadow:0 0 12px rgba(255,213,74,.15)}
@@ -80,7 +80,7 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,12,.95);border-botto
 .bc-s.w{color:#22d3ee;text-shadow:0 0 8px rgba(34,211,238,.6)}.bc-s.g{color:#ffd54a;text-shadow:0 0 8px rgba(255,213,74,.6)}
 .bc-st{font-size:7px;color:#1e3a5f;text-align:right;letter-spacing:.5px}
 .conn-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5}
-.final-col{height:520px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px 12px;position:relative;z-index:3}
+.final-col{height:600px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px 12px;position:relative;z-index:3}
 @keyframes innerGold{0%,100%{box-shadow:0 0 30px rgba(255,213,74,.4),0 0 60px rgba(255,213,74,.15),0 0 100px rgba(255,180,0,.08)}50%{box-shadow:0 0 50px rgba(255,213,74,.7),0 0 90px rgba(255,213,74,.3),0 0 130px rgba(255,180,0,.18)}}
 @keyframes neonBlue{0%,100%{box-shadow:0 0 18px rgba(34,211,238,.3),0 0 40px rgba(34,211,238,.12),0 0 70px rgba(34,211,238,.06)}50%{box-shadow:0 0 32px rgba(34,211,238,.6),0 0 65px rgba(34,211,238,.28),0 0 100px rgba(34,211,238,.12)}}
 .final-inner{animation:innerGold 3s ease-in-out infinite}
@@ -218,7 +218,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
             <!-- Central atmospheric glow -->
             <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:500px;height:380px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,80,220,.18) 0%,rgba(0,50,180,.08) 45%,transparent 70%);filter:blur(10px)"></div>
             <!-- Football stadium / pitch from above -->
-            <svg viewBox="0 0 986 520" preserveAspectRatio="none" style="position:absolute;top:0;left:0;width:100%;height:100%">
+            <svg viewBox="0 0 986 600" preserveAspectRatio="none" style="position:absolute;top:0;left:0;width:100%;height:100%">
               <defs>
                 <filter id="stadGlow" x="-20%" y="-20%" width="140%" height="140%">
                   <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="b"/>
@@ -227,17 +227,17 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
               </defs>
               <g fill="none" stroke="rgba(30,140,255,.16)" stroke-width="1.5" filter="url(#stadGlow)">
                 <!-- Outer stadium oval -->
-                <ellipse cx="493" cy="260" rx="465" ry="248"/>
+                <ellipse cx="493" cy="300" rx="465" ry="248"/>
                 <!-- Inner stadium oval (stands inner edge) -->
-                <ellipse cx="493" cy="260" rx="410" ry="207"/>
+                <ellipse cx="493" cy="300" rx="410" ry="207"/>
                 <!-- Pitch outline -->
                 <rect x="233" y="110" width="520" height="300" rx="3"/>
                 <!-- Center line (vertical, portrait pitch horizontal) -->
                 <line x1="493" y1="110" x2="493" y2="410"/>
                 <!-- Center circle -->
-                <circle cx="493" cy="260" r="56"/>
+                <circle cx="493" cy="300" r="56"/>
                 <!-- Center spot -->
-                <circle cx="493" cy="260" r="3" fill="rgba(30,140,255,.18)" stroke="none"/>
+                <circle cx="493" cy="300" r="3" fill="rgba(30,140,255,.18)" stroke="none"/>
                 <!-- Left penalty area -->
                 <rect x="233" y="178" width="100" height="164"/>
                 <!-- Left goal area -->
@@ -264,11 +264,11 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
                 <path d="M233,398 A12,12,0,0,0,245,410"/>
                 <path d="M741,410 A12,12,0,0,0,753,398"/>
                 <!-- Stadium seating arc lines (tiers) -->
-                <ellipse cx="493" cy="260" rx="355" ry="176" stroke-dasharray="4,3" stroke-opacity=".5"/>
+                <ellipse cx="493" cy="300" rx="355" ry="176" stroke-dasharray="4,3" stroke-opacity=".5"/>
               </g>
             </svg>
           </div>
-          <svg class="conn-svg" viewBox="0 0 986 520" preserveAspectRatio="none">
+          <svg class="conn-svg" viewBox="0 0 986 600" preserveAspectRatio="none">
             <defs>
               <filter id="cg" x="-50%" y="-50%" width="200%" height="200%">
                 <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="b"/>
@@ -280,33 +280,33 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
               </filter>
             </defs>
             <g fill="none" stroke="rgba(34,211,238,.65)" stroke-width="1.8" filter="url(#cg)">
-              <path d="M115,32.5 H118 V65 H121"/><path d="M115,97.5 H118 V65"/>
-              <path d="M115,162.5 H118 V195 H121"/><path d="M115,227.5 H118 V195"/>
-              <path d="M115,292.5 H118 V325 H121"/><path d="M115,357.5 H118 V325"/>
-              <path d="M115,422.5 H118 V455 H121"/><path d="M115,487.5 H118 V455"/>
+              <path d="M115,37.5 H118 V75 H121"/><path d="M115,112.5 H118 V75"/>
+              <path d="M115,187.5 H118 V225 H121"/><path d="M115,262.5 H118 V225"/>
+              <path d="M115,337.5 H118 V375 H121"/><path d="M115,412.5 H118 V375"/>
+              <path d="M115,487.5 H118 V525 H121"/><path d="M115,562.5 H118 V525"/>
             </g>
             <g fill="none" stroke="rgba(34,211,238,.78)" stroke-width="2" filter="url(#cg)">
-              <path d="M221,65 H224 V130 H227"/><path d="M221,195 H224 V130"/>
-              <path d="M221,325 H224 V390 H227"/><path d="M221,455 H224 V390"/>
+              <path d="M221,75 H224 V150 H227"/><path d="M221,225 H224 V150"/>
+              <path d="M221,375 H224 V450 H227"/><path d="M221,525 H224 V450"/>
             </g>
             <g fill="none" stroke="rgba(34,211,238,.92)" stroke-width="2.5" filter="url(#cg)">
-              <path d="M315,130 H318 V260 H321"/><path d="M315,390 H318 V260"/>
+              <path d="M315,150 H318 V300 H321"/><path d="M315,450 H318 V300"/>
             </g>
-            <path fill="none" stroke="rgba(255,213,74,.98)" stroke-width="3" filter="url(#gg)" d="M397,260 H403"/>
+            <path fill="none" stroke="rgba(255,213,74,.98)" stroke-width="3" filter="url(#gg)" d="M397,300 H403"/>
             <g fill="none" stroke="rgba(34,211,238,.65)" stroke-width="1.8" filter="url(#cg)">
-              <path d="M871,32.5 H868 V65 H865"/><path d="M871,97.5 H868 V65"/>
-              <path d="M871,162.5 H868 V195 H865"/><path d="M871,227.5 H868 V195"/>
-              <path d="M871,292.5 H868 V325 H865"/><path d="M871,357.5 H868 V325"/>
-              <path d="M871,422.5 H868 V455 H865"/><path d="M871,487.5 H868 V455"/>
+              <path d="M871,37.5 H868 V75 H865"/><path d="M871,112.5 H868 V75"/>
+              <path d="M871,187.5 H868 V225 H865"/><path d="M871,262.5 H868 V225"/>
+              <path d="M871,337.5 H868 V375 H865"/><path d="M871,412.5 H868 V375"/>
+              <path d="M871,487.5 H868 V525 H865"/><path d="M871,562.5 H868 V525"/>
             </g>
             <g fill="none" stroke="rgba(34,211,238,.78)" stroke-width="2" filter="url(#cg)">
-              <path d="M765,65 H762 V130 H759"/><path d="M765,195 H762 V130"/>
-              <path d="M765,325 H762 V390 H759"/><path d="M765,455 H762 V390"/>
+              <path d="M765,75 H762 V150 H759"/><path d="M765,225 H762 V150"/>
+              <path d="M765,375 H762 V450 H759"/><path d="M765,525 H762 V450"/>
             </g>
             <g fill="none" stroke="rgba(34,211,238,.92)" stroke-width="2.5" filter="url(#cg)">
-              <path d="M671,130 H668 V260 H665"/><path d="M671,390 H668 V260"/>
+              <path d="M671,150 H668 V300 H665"/><path d="M671,450 H668 V300"/>
             </g>
-            <path fill="none" stroke="rgba(255,213,74,.98)" stroke-width="3" filter="url(#gg)" d="M589,260 H583"/>
+            <path fill="none" stroke="rgba(255,213,74,.98)" stroke-width="3" filter="url(#gg)" d="M589,300 H583"/>
           </svg>
           <div class="b-grid" id="bgrid"></div>
         </div>
@@ -773,7 +773,7 @@ window.addEventListener('DOMContentLoaded',function(){
     wrap.style.transformOrigin='top left';
     wrap.style.marginLeft=ml;
     // Height = (labels ~24px + grid 520px) * scale
-    outer.style.height=((544)*scale)+'px';
+    outer.style.height=((624)*scale)+'px';
   }
   fitBracket();
   window.addEventListener('resize',fitBracket);
