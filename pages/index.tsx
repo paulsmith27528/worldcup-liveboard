@@ -135,60 +135,58 @@ const SCORERS = [
                    RSF-Final=586, RQF-RSF=668, RR16-RQF=762, RR32-RR16=868
 ════════════════════════════════════════════════════════════════════════════ */
 function BracketSVG() {
-  const cn = {fill:"none",stroke:"rgba(34,211,238,.65)",strokeWidth:1.5,filter:"url(#cg)"} as React.SVGProps<SVGPathElement>;
-  const cn2 = {fill:"none",stroke:"rgba(34,211,238,.75)",strokeWidth:1.8,filter:"url(#cg)"} as React.SVGProps<SVGPathElement>;
-  const cn3 = {fill:"none",stroke:"rgba(34,211,238,.85)",strokeWidth:2.2,filter:"url(#cg)"} as React.SVGProps<SVGPathElement>;
-  const gd  = {fill:"none",stroke:"rgba(255,213,74,.9)", strokeWidth:2.5,filter:"url(#gg)"} as React.SVGProps<SVGPathElement>;
+  const C  = "rgba(34,211,238,.68)";
+  const C2 = "rgba(34,211,238,.8)";
+  const C3 = "rgba(34,211,238,.9)";
+  const G  = "rgba(255,213,74,.95)";
   return (
     <svg style={{position:"absolute",inset:0,width:"100%",height:"100%",pointerEvents:"none",zIndex:5}} viewBox="0 0 986 416" preserveAspectRatio="none">
       <defs>
-        <filter id="cg" x="-80%" y="-80%" width="260%" height="260%">
+        <filter id="cg" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="b"/>
-          <feColorMatrix in="b" type="matrix" values="0 0 0 0 .13  0 0 0 0 .83  0 0 0 0 .94  0 0 0 1 0" result="c"/>
-          <feMerge><feMergeNode in="c"/><feMergeNode in="SourceGraphic"/></feMerge>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
-        <filter id="gg" x="-80%" y="-80%" width="260%" height="260%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="b"/>
-          <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 .84  0 0 0 0 .29  0 0 0 1 0" result="c"/>
-          <feMerge><feMergeNode in="c"/><feMergeNode in="SourceGraphic"/></feMerge>
+        <filter id="gg" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
       </defs>
       {/* ── LEFT R32 → R16 ── */}
-      <g {...cn}>
+      <g fill="none" stroke={C} strokeWidth={1.5} filter="url(#cg)">
         <path d="M115,26  H118 V52  H121"/><path d="M115,78  H118 V52"/>
         <path d="M115,130 H118 V156 H121"/><path d="M115,182 H118 V156"/>
         <path d="M115,234 H118 V260 H121"/><path d="M115,286 H118 V260"/>
         <path d="M115,338 H118 V364 H121"/><path d="M115,390 H118 V364"/>
       </g>
       {/* ── LEFT R16 → QF ── */}
-      <g {...cn2}>
+      <g fill="none" stroke={C2} strokeWidth={1.8} filter="url(#cg)">
         <path d="M221,52  H224 V104 H227"/><path d="M221,156 H224 V104"/>
         <path d="M221,260 H224 V312 H227"/><path d="M221,364 H224 V312"/>
       </g>
       {/* ── LEFT QF → SF ── */}
-      <g {...cn3}>
+      <g fill="none" stroke={C3} strokeWidth={2.2} filter="url(#cg)">
         <path d="M315,104 H318 V208 H321"/><path d="M315,312 H318 V208"/>
       </g>
       {/* ── LEFT SF → FINAL ── */}
-      <path {...gd} d="M397,208 H403"/>
+      <path fill="none" stroke={G} strokeWidth={2.5} filter="url(#gg)" d="M397,208 H403"/>
       {/* ── RIGHT R32 → R16 ── */}
-      <g {...cn}>
+      <g fill="none" stroke={C} strokeWidth={1.5} filter="url(#cg)">
         <path d="M871,26  H868 V52  H865"/><path d="M871,78  H868 V52"/>
         <path d="M871,130 H868 V156 H865"/><path d="M871,182 H868 V156"/>
         <path d="M871,234 H868 V260 H865"/><path d="M871,286 H868 V260"/>
         <path d="M871,338 H868 V364 H865"/><path d="M871,390 H868 V364"/>
       </g>
       {/* ── RIGHT R16 → QF ── */}
-      <g {...cn2}>
+      <g fill="none" stroke={C2} strokeWidth={1.8} filter="url(#cg)">
         <path d="M765,52  H762 V104 H759"/><path d="M765,156 H762 V104"/>
         <path d="M765,260 H762 V312 H759"/><path d="M765,364 H762 V312"/>
       </g>
       {/* ── RIGHT QF → SF ── */}
-      <g {...cn3}>
+      <g fill="none" stroke={C3} strokeWidth={2.2} filter="url(#cg)">
         <path d="M671,104 H668 V208 H665"/><path d="M671,312 H668 V208"/>
       </g>
       {/* ── RIGHT SF → FINAL ── */}
-      <path {...gd} d="M589,208 H583"/>
+      <path fill="none" stroke={G} strokeWidth={2.5} filter="url(#gg)" d="M589,208 H583"/>
     </svg>
   );
 }
@@ -491,7 +489,7 @@ export default function Home() {
                 <div style={{color:"#38dfff",fontSize:9,letterSpacing:4,textAlign:"center" as const,marginBottom:8,fontWeight:700}}>KNOCKOUT STAGE</div>
 
                 {/* Bracket shell */}
-                <div className="neon-box" style={{border:"1px solid rgba(34,211,238,.16)",borderRadius:14,padding:"10px 8px",background:"linear-gradient(180deg,rgba(3,10,22,.96),rgba(1,5,12,.98)"}}>
+                <div className="neon-box" style={{border:"1px solid rgba(34,211,238,.16)",borderRadius:14,padding:"10px 8px",background:"linear-gradient(180deg,rgba(3,10,22,.96),rgba(1,5,12,.98))"}}>
 
                   {/* Round labels */}
                   <div style={{display:"grid",gridTemplateColumns:"115px 100px 88px 76px 180px 76px 88px 100px 115px",gap:"6px",color:"#1e3a5f",fontSize:8,letterSpacing:1,marginBottom:8,textAlign:"center" as const,textTransform:"uppercase" as const}}>
