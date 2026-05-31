@@ -168,11 +168,41 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,14,.92);backdrop-fil
 .view.active{display:block}
 
 /* ─── POPUP ─────────────────────────────────────────────────────────── */
-#pop-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:999;align-items:center;justify-content:center}
+#pop-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:999;align-items:center;justify-content:center;padding:12px;overflow-y:auto}
 #pop-ov.open{display:flex}
-#pop-box{background:linear-gradient(150deg,#071a30,#040e1e);border:1px solid rgba(34,211,238,.38);border-radius:18px;padding:24px;width:320px;max-width:92vw}
+#pop-box{background:linear-gradient(150deg,#071a30,#040e1e);border:1px solid rgba(34,211,238,.38);border-radius:18px;padding:22px;width:680px;max-width:96vw;max-height:90vh;display:flex;flex-direction:column}
 .pop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:14px}
 .pop-stat{background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.14);border-radius:9px;padding:9px 0;text-align:center}
+/* Popup tabs */
+.pop-tabs{display:flex;gap:6px;margin:12px 0}
+.pop-tab{padding:7px 16px;border-radius:6px;border:1px solid rgba(34,211,238,.2);background:transparent;color:#475569;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .15s}
+.pop-tab.active{background:rgba(34,211,238,.12);border-color:rgba(34,211,238,.5);color:#22d3ee}
+/* Trump cards */
+.squad-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;overflow-y:auto;max-height:420px;padding:4px 2px}
+.trump{background:linear-gradient(145deg,#0a1929,#050f1e);border:1px solid rgba(34,211,238,.22);border-radius:10px;padding:8px 7px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .15s,box-shadow .15s;position:relative}
+.trump:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(34,211,238,.2)}
+.trump.gk{border-color:rgba(251,191,36,.4);background:linear-gradient(145deg,#1a1000,#0a0800)}
+.trump.def{border-color:rgba(59,130,246,.4);background:linear-gradient(145deg,#00091a,#00040f)}
+.trump.mid{border-color:rgba(34,197,94,.4);background:linear-gradient(145deg,#001a08,#000f04)}
+.trump.fwd{border-color:rgba(239,68,68,.4);background:linear-gradient(145deg,#1a0000,#0f0000)}
+.trump-top{display:flex;justify-content:space-between;align-items:flex-start;width:100%;margin-bottom:5px}
+.trump-rating{font-size:22px;font-weight:900;line-height:1}
+.trump.gk .trump-rating{color:#fbbf24}
+.trump.def .trump-rating{color:#60a5fa}
+.trump.mid .trump-rating{color:#4ade80}
+.trump.fwd .trump-rating{color:#f87171}
+.trump-pos-badge{font-size:8px;font-weight:900;padding:2px 5px;border-radius:3px;letter-spacing:.5px}
+.trump.gk .trump-pos-badge{background:rgba(251,191,36,.2);color:#fbbf24}
+.trump.def .trump-pos-badge{background:rgba(59,130,246,.2);color:#60a5fa}
+.trump.mid .trump-pos-badge{background:rgba(34,197,94,.2);color:#4ade80}
+.trump.fwd .trump-pos-badge{background:rgba(239,68,68,.2);color:#f87171}
+.trump-flag{font-size:16px;margin:2px 0}
+.trump-name{font-size:9px;font-weight:700;text-align:center;color:#e2e8f0;line-height:1.2;margin:3px 0}
+.trump-num{font-size:8px;color:#334155;margin-bottom:5px}
+.trump-stats{display:flex;justify-content:space-around;width:100%;border-top:1px solid rgba(255,255,255,.07);padding-top:5px;gap:2px}
+.trump-stat{text-align:center;flex:1}
+.ts-val{font-size:11px;font-weight:700;color:#fff;line-height:1}
+.ts-lbl{font-size:6.5px;color:#334155;letter-spacing:.5px;margin-top:1px}
 
 /* ─── FOOTER ─────────────────────────────────────────────────────────── */
 footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;background:rgba(0,0,0,.68);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:8.5px}
@@ -508,18 +538,44 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
 <!-- ════ POPUP ════ -->
 <div id="pop-ov" onclick="closePop()">
   <div id="pop-box" onclick="event.stopPropagation()">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
-      <div>
-        <div id="pf" style="font-size:42px;margin-bottom:5px"></div>
-        <div id="pn" style="font-weight:700;font-size:18px"></div>
-        <div id="pa" style="color:#22d3ee;font-size:10px;letter-spacing:2px;margin-top:2px"></div>
+    <!-- Header -->
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-shrink:0">
+      <div style="display:flex;gap:12px;align-items:center">
+        <div id="pf" style="font-size:48px;line-height:1"></div>
+        <div>
+          <div id="pn" style="font-weight:900;font-size:20px"></div>
+          <div id="pa" style="color:#22d3ee;font-size:10px;letter-spacing:2px;margin-top:2px"></div>
+          <div id="prank" style="font-size:9px;color:#475569;margin-top:2px"></div>
+        </div>
       </div>
-      <button onclick="closePop()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:7px;padding:5px 10px;cursor:pointer;font-size:13px">&#10005;</button>
+      <button onclick="closePop()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:7px;padding:5px 10px;cursor:pointer;font-size:13px;flex-shrink:0">&#10005;</button>
     </div>
-    <div class="pop-grid" id="ps"></div>
-    <div style="background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.2);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
-      <div><div style="font-size:9px;color:#475569;letter-spacing:1px">GOAL DIFF</div><div id="pgd" style="font-size:15px;font-weight:700;margin-top:2px"></div></div>
-      <div style="text-align:right"><div style="font-size:9px;color:#475569;letter-spacing:1px">POINTS</div><div id="ppts" style="font-size:26px;font-weight:700;color:#22d3ee"></div></div>
+    <!-- Tabs -->
+    <div class="pop-tabs">
+      <button class="pop-tab active" onclick="switchPopTab('stats')">&#128202; TOURNAMENT STATS</button>
+      <button class="pop-tab" onclick="switchPopTab('squad')">&#128100; SQUAD CARDS</button>
+    </div>
+    <!-- Stats tab -->
+    <div id="pop-stats-view">
+      <div class="pop-grid" id="ps"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+        <div style="background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.2);border-radius:10px;padding:10px 14px">
+          <div style="font-size:9px;color:#475569;letter-spacing:1px">GOAL DIFFERENCE</div>
+          <div id="pgd" style="font-size:22px;font-weight:700;margin-top:2px"></div>
+        </div>
+        <div style="background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.2);border-radius:10px;padding:10px 14px;text-align:right">
+          <div style="font-size:9px;color:#475569;letter-spacing:1px">TOURNAMENT POINTS</div>
+          <div id="ppts" style="font-size:28px;font-weight:900;color:#22d3ee;margin-top:2px"></div>
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <div style="font-size:9px;color:#475569;letter-spacing:1px;margin-bottom:6px">RECENT FORM</div>
+        <div id="pform" style="display:flex;gap:5px"></div>
+      </div>
+    </div>
+    <!-- Squad tab -->
+    <div id="pop-squad-view" style="display:none">
+      <div id="squad-grid" class="squad-grid"></div>
     </div>
   </div>
 </div>
@@ -574,6 +630,56 @@ var LIVE_MATCHES=[
   {id:3,status:"LIVE",minute:34,hTeam:"Germany",hFlag:"&#127465;&#127466;",aTeam:"Spain",aFlag:"&#127466;&#127480;",hScore:1,aScore:0,venue:"SoFi Stadium, LA",scorers:["Havertz 29'"]},
   {id:4,status:"TODAY",minute:null,hTeam:"USA",hFlag:"&#127482;&#127480;",aTeam:"Netherlands",aFlag:"&#127475;&#127473;",hScore:null,aScore:null,venue:"Rose Bowl, LA",scorers:[]}
 ];
+
+/* Squad data: {n:name, pos:GK/DEF/MID/FWD, num:shirt, apps, g:goals, a:assists, r:rating} */
+var SQUADS={
+  MEX:[{n:"Ochoa",pos:"GK",num:13,apps:7,g:0,a:0,r:84},{n:"Sanchez",pos:"GK",num:1,apps:0,g:0,a:0,r:77},{n:"Araujo",pos:"DEF",num:3,apps:7,g:1,a:0,r:79},{n:"Moreno",pos:"DEF",num:5,apps:7,g:0,a:1,r:78},{n:"Gallardo",pos:"DEF",num:23,apps:6,g:0,a:2,r:80},{n:"Vasquez",pos:"DEF",num:15,apps:5,g:0,a:0,r:76},{n:"Herrera",pos:"MID",num:16,apps:7,g:2,a:3,r:83},{n:"Alvarez",pos:"MID",num:14,apps:7,g:1,a:2,r:81},{n:"Guardado",pos:"MID",num:18,apps:4,g:0,a:1,r:78},{n:"Rodriguez",pos:"FWD",num:11,apps:7,g:4,a:2,r:85},{n:"Lozano",pos:"FWD",num:22,apps:7,g:3,a:3,r:84},{n:"Jimenez",pos:"FWD",num:9,apps:6,g:2,a:1,r:82},{n:"Antuna",pos:"FWD",num:7,apps:5,g:1,a:0,r:77}],
+  ECU:[{n:"Dominguez",pos:"GK",num:1,apps:3,g:0,a:0,r:75},{n:"Preciado",pos:"DEF",num:3,apps:3,g:0,a:0,r:74},{n:"Arboleda",pos:"DEF",num:5,apps:3,g:1,a:0,r:76},{n:"Hincapie",pos:"DEF",num:12,apps:3,g:0,a:1,r:77},{n:"Plata",pos:"MID",num:7,apps:3,g:0,a:2,r:76},{n:"Mena",pos:"MID",num:8,apps:3,g:1,a:0,r:74},{n:"Caicedo",pos:"MID",num:10,apps:3,g:0,a:1,r:80},{n:"Valencia",pos:"FWD",num:13,apps:3,g:2,a:1,r:79},{n:"Estrada",pos:"FWD",num:11,apps:3,g:1,a:0,r:76}],
+  KOR:[{n:"Kim SG",pos:"GK",num:1,apps:3,g:0,a:0,r:76},{n:"Kim MH",pos:"DEF",num:3,apps:3,g:0,a:0,r:75},{n:"Kim JD",pos:"DEF",num:20,apps:3,g:0,a:1,r:77},{n:"Lee YJ",pos:"MID",num:6,apps:3,g:1,a:1,r:78},{n:"Son HM",pos:"FWD",num:7,apps:3,g:2,a:1,r:88},{n:"Hwang HC",pos:"FWD",num:9,apps:3,g:1,a:0,r:80},{n:"Lee KJ",pos:"MID",num:11,apps:3,g:0,a:2,r:78}],
+  SWE:[{n:"Olsen",pos:"GK",num:1,apps:3,g:0,a:0,r:77},{n:"Lustig",pos:"DEF",num:2,apps:3,g:0,a:0,r:73},{n:"Danielson",pos:"DEF",num:5,apps:3,g:0,a:0,r:74},{n:"Ekdal",pos:"MID",num:6,apps:3,g:0,a:0,r:75},{n:"Larsson",pos:"FWD",num:11,apps:3,g:1,a:0,r:79},{n:"Isak",pos:"FWD",num:9,apps:3,g:1,a:1,r:83},{n:"Forsberg",pos:"MID",num:10,apps:3,g:0,a:1,r:79}],
+  CAN:[{n:"Borjan",pos:"GK",num:1,apps:7,g:0,a:0,r:78},{n:"Johnston",pos:"DEF",num:3,apps:7,g:0,a:1,r:77},{n:"Vitoria",pos:"DEF",num:5,apps:6,g:0,a:0,r:75},{n:"Eustaquio",pos:"MID",num:7,apps:7,g:1,a:3,r:81},{n:"Hutchinson",pos:"MID",num:14,apps:7,g:0,a:1,r:78},{n:"David",pos:"FWD",num:9,apps:7,g:3,a:1,r:85},{n:"Davies",pos:"DEF",num:19,apps:7,g:0,a:2,r:84},{n:"Laryea",pos:"MID",num:11,apps:5,g:0,a:1,r:77},{n:"Buchanan",pos:"MID",num:12,apps:6,g:1,a:2,r:79},{n:"Hoilett",pos:"FWD",num:10,apps:4,g:1,a:0,r:76}],
+  ITA:[{n:"Donnarumma",pos:"GK",num:1,apps:5,g:0,a:0,r:87},{n:"Di Lorenzo",pos:"DEF",num:2,apps:5,g:0,a:1,r:81},{n:"Bonucci",pos:"DEF",num:19,apps:5,g:0,a:0,r:79},{n:"Bastoni",pos:"DEF",num:23,apps:5,g:1,a:0,r:83},{n:"Verratti",pos:"MID",num:6,apps:4,g:0,a:2,r:82},{n:"Barella",pos:"MID",num:18,apps:5,g:1,a:2,r:84},{n:"Jorginho",pos:"MID",num:8,apps:5,g:0,a:1,r:80},{n:"Insigne",pos:"FWD",num:10,apps:4,g:1,a:1,r:81},{n:"Immobile",pos:"FWD",num:9,apps:5,g:2,a:0,r:82},{n:"Chiesa",pos:"FWD",num:14,apps:5,g:2,a:1,r:83},{n:"Pellegrini",pos:"MID",num:16,apps:4,g:1,a:0,r:80}],
+  CRO:[{n:"Livakovic",pos:"GK",num:1,apps:3,g:0,a:0,r:81},{n:"Juranovic",pos:"DEF",num:2,apps:3,g:0,a:1,r:78},{n:"Lovren",pos:"DEF",num:6,apps:3,g:0,a:0,r:77},{n:"Gvardiol",pos:"DEF",num:24,apps:3,g:0,a:0,r:84},{n:"Brozovic",pos:"MID",num:11,apps:3,g:0,a:1,r:83},{n:"Modric",pos:"MID",num:10,apps:3,g:1,a:2,r:86},{n:"Kovacic",pos:"MID",num:8,apps:3,g:0,a:1,r:83},{n:"Perisic",pos:"FWD",num:4,apps:3,g:1,a:1,r:82},{n:"Kramaric",pos:"FWD",num:9,apps:3,g:0,a:0,r:80}],
+  USA:[{n:"Turner",pos:"GK",num:1,apps:5,g:0,a:0,r:79},{n:"Dest",pos:"DEF",num:2,apps:5,g:0,a:1,r:78},{n:"Zimmermann",pos:"DEF",num:5,apps:5,g:0,a:0,r:76},{n:"Adams",pos:"MID",num:4,apps:5,g:0,a:1,r:81},{n:"McKennie",pos:"MID",num:8,apps:5,g:1,a:1,r:79},{n:"Pulisic",pos:"FWD",num:10,apps:5,g:3,a:2,r:85},{n:"Weah",pos:"FWD",num:21,apps:5,g:1,a:2,r:79},{n:"Reyna",pos:"MID",num:7,apps:4,g:0,a:2,r:80},{n:"Sargent",pos:"FWD",num:9,apps:4,g:1,a:0,r:77},{n:"Musah",pos:"MID",num:11,apps:5,g:0,a:1,r:79}],
+  GER:[{n:"Neuer",pos:"GK",num:1,apps:7,g:0,a:0,r:87},{n:"Kimmich",pos:"DEF",num:6,apps:7,g:0,a:3,r:87},{n:"Rudiger",pos:"DEF",num:2,apps:7,g:1,a:0,r:84},{n:"Schlotterbeck",pos:"DEF",num:5,apps:7,g:0,a:0,r:81},{n:"Raum",pos:"DEF",num:17,apps:6,g:0,a:2,r:80},{n:"Goretzka",pos:"MID",num:8,apps:6,g:2,a:1,r:82},{n:"Musiala",pos:"MID",num:14,apps:7,g:3,a:4,r:87},{n:"Havertz",pos:"FWD",num:7,apps:7,g:3,a:2,r:83},{n:"Gnabry",pos:"FWD",num:10,apps:6,g:2,a:1,r:83},{n:"Muller",pos:"FWD",num:13,apps:5,g:1,a:3,r:83},{n:"Fullkrug",pos:"FWD",num:9,apps:6,g:2,a:0,r:81}],
+  ESP:[{n:"Simon",pos:"GK",num:1,apps:4,g:0,a:0,r:81},{n:"Carvajal",pos:"DEF",num:2,apps:4,g:0,a:1,r:83},{n:"Laporte",pos:"DEF",num:14,apps:4,g:0,a:0,r:81},{n:"Azpilicueta",pos:"DEF",num:21,apps:3,g:0,a:0,r:79},{n:"Busquets",pos:"MID",num:5,apps:4,g:0,a:1,r:80},{n:"Pedri",pos:"MID",num:16,apps:4,g:1,a:2,r:85},{n:"Gavi",pos:"MID",num:9,apps:4,g:0,a:2,r:83},{n:"Morata",pos:"FWD",num:7,apps:4,g:2,a:1,r:80},{n:"Ferran",pos:"FWD",num:11,apps:4,g:1,a:1,r:81},{n:"Ansu Fati",pos:"FWD",num:18,apps:3,g:0,a:0,r:79}],
+  URU:[{n:"Muslera",pos:"GK",num:1,apps:5,g:0,a:0,r:80},{n:"Varela",pos:"DEF",num:2,apps:5,g:0,a:0,r:76},{n:"Godin",pos:"DEF",num:3,apps:5,g:0,a:0,r:80},{n:"Caceres",pos:"DEF",num:16,apps:4,g:0,a:0,r:76},{n:"Bentancur",pos:"MID",num:5,apps:5,g:0,a:2,r:81},{n:"Vecino",pos:"MID",num:15,apps:4,g:1,a:0,r:77},{n:"De Arrascaeta",pos:"MID",num:7,apps:5,g:1,a:2,r:82},{n:"Suarez",pos:"FWD",num:9,apps:4,g:2,a:2,r:84},{n:"Cavani",pos:"FWD",num:21,apps:4,g:1,a:0,r:80},{n:"Valverde",pos:"MID",num:14,apps:5,g:1,a:1,r:84}],
+  COL:[{n:"Vargas",pos:"GK",num:1,apps:7,g:0,a:0,r:79},{n:"Mojica",pos:"DEF",num:16,apps:7,g:0,a:2,r:79},{n:"Sanchez",pos:"DEF",num:5,apps:7,g:1,a:0,r:77},{n:"Cuadrado",pos:"DEF",num:2,apps:6,g:0,a:3,r:82},{n:"Cardona",pos:"MID",num:8,apps:6,g:1,a:1,r:79},{n:"Lerma",pos:"MID",num:6,apps:7,g:0,a:0,r:77},{n:"James",pos:"MID",num:10,apps:7,g:2,a:4,r:85},{n:"Arias",pos:"FWD",num:17,apps:5,g:1,a:0,r:79},{n:"Diaz",pos:"FWD",num:23,apps:7,g:3,a:2,r:83},{n:"Muriel",pos:"FWD",num:9,apps:6,g:2,a:1,r:81}],
+  POR:[{n:"Rui Patricio",pos:"GK",num:1,apps:7,g:0,a:0,r:83},{n:"Cancelo",pos:"DEF",num:20,apps:7,g:0,a:3,r:85},{n:"Dias",pos:"DEF",num:4,apps:7,g:0,a:0,r:86},{n:"Fonte",pos:"DEF",num:6,apps:5,g:0,a:0,r:78},{n:"Guerreiro",pos:"DEF",num:22,apps:7,g:1,a:2,r:82},{n:"Carvalho",pos:"MID",num:16,apps:7,g:0,a:2,r:80},{n:"Moutinho",pos:"MID",num:8,apps:5,g:0,a:1,r:79},{n:"Fernandes",pos:"MID",num:18,apps:7,g:2,a:4,r:86},{n:"Ronaldo",pos:"FWD",num:7,apps:7,g:3,a:2,r:90},{n:"Felix",pos:"FWD",num:11,apps:7,g:2,a:2,r:84},{n:"Jota",pos:"FWD",num:17,apps:6,g:1,a:1,r:83}],
+  BEL:[{n:"Courtois",pos:"GK",num:1,apps:5,g:0,a:0,r:90},{n:"Alderweireld",pos:"DEF",num:4,apps:5,g:0,a:0,r:80},{n:"Vertonghen",pos:"DEF",num:5,apps:5,g:0,a:0,r:79},{n:"Meunier",pos:"DEF",num:2,apps:4,g:0,a:1,r:77},{n:"Witsel",pos:"MID",num:6,apps:5,g:0,a:1,r:80},{n:"De Bruyne",pos:"MID",num:7,apps:5,g:1,a:4,r:91},{n:"Tielemans",pos:"MID",num:8,apps:5,g:1,a:1,r:82},{n:"Carrasco",pos:"MID",num:11,apps:4,g:0,a:2,r:81},{n:"Hazard",pos:"FWD",num:10,apps:3,g:0,a:1,r:82},{n:"Lukaku",pos:"FWD",num:9,apps:5,g:4,a:1,r:86},{n:"Batshuayi",pos:"FWD",num:23,apps:3,g:1,a:0,r:78}],
+  IRN:[{n:"Hosseini",pos:"GK",num:1,apps:3,g:0,a:0,r:76},{n:"Rezaeian",pos:"DEF",num:2,apps:3,g:0,a:0,r:74},{n:"Pouraliganji",pos:"DEF",num:5,apps:3,g:0,a:0,r:74},{n:"Hajsafi",pos:"DEF",num:3,apps:3,g:0,a:1,r:76},{n:"Ezatolahi",pos:"MID",num:8,apps:3,g:0,a:0,r:75},{n:"Jahanbakhsh",pos:"MID",num:7,apps:3,g:1,a:1,r:78},{n:"Taremi",pos:"FWD",num:9,apps:3,g:1,a:0,r:83},{n:"Ghoddos",pos:"FWD",num:10,apps:3,g:0,a:1,r:77}],
+  EGY:[{n:"El Shenawy",pos:"GK",num:1,apps:3,g:0,a:0,r:77},{n:"Ashour",pos:"DEF",num:4,apps:3,g:0,a:0,r:73},{n:"Hegazi",pos:"DEF",num:5,apps:3,g:0,a:0,r:76},{n:"El Nenny",pos:"MID",num:8,apps:3,g:0,a:1,r:78},{n:"Hamed",pos:"MID",num:17,apps:3,g:1,a:0,r:76},{n:"Salah",pos:"FWD",num:10,apps:3,g:1,a:1,r:89},{n:"Trezeguet",pos:"FWD",num:9,apps:3,g:0,a:0,r:78}],
+  NZL:[{n:"Sail",pos:"GK",num:1,apps:3,g:0,a:0,r:71},{n:"Boxall",pos:"DEF",num:6,apps:3,g:0,a:0,r:72},{n:"Wood",pos:"FWD",num:9,apps:3,g:1,a:0,r:77},{n:"Semenyo",pos:"FWD",num:11,apps:3,g:0,a:1,r:74}],
+  FRA:[{n:"Lloris",pos:"GK",num:1,apps:7,g:0,a:0,r:86},{n:"Pavard",pos:"DEF",num:2,apps:7,g:0,a:1,r:81},{n:"Varane",pos:"DEF",num:4,apps:7,g:0,a:0,r:85},{n:"Hernandez",pos:"DEF",num:21,apps:7,g:0,a:2,r:83},{n:"Upamecano",pos:"DEF",num:5,apps:7,g:0,a:0,r:82},{n:"Kante",pos:"MID",num:13,apps:6,g:0,a:2,r:85},{n:"Tchouameni",pos:"MID",num:8,apps:7,g:1,a:1,r:82},{n:"Griezmann",pos:"MID",num:7,apps:7,g:2,a:4,r:86},{n:"Mbappe",pos:"FWD",num:10,apps:7,g:7,a:3,r:93},{n:"Dembele",pos:"FWD",num:11,apps:6,g:1,a:3,r:82},{n:"Giroud",pos:"FWD",num:9,apps:5,g:2,a:0,r:80}],
+  AUT:[{n:"Lindner",pos:"GK",num:1,apps:4,g:0,a:0,r:78},{n:"Dragovic",pos:"DEF",num:4,apps:4,g:0,a:0,r:75},{n:"Alaba",pos:"DEF",num:8,apps:4,g:0,a:2,r:85},{n:"Lainer",pos:"DEF",num:2,apps:4,g:0,a:1,r:78},{n:"Grillitsch",pos:"MID",num:6,apps:4,g:0,a:0,r:77},{n:"Laimer",pos:"MID",num:21,apps:4,g:1,a:1,r:79},{n:"Sabitzer",pos:"MID",num:9,apps:4,g:0,a:2,r:80},{n:"Baumgartner",pos:"FWD",num:15,apps:3,g:1,a:0,r:78},{n:"Gregoritsch",pos:"FWD",num:26,apps:3,g:1,a:0,r:77}],
+  SEN:[{n:"Mendy",pos:"GK",num:1,apps:5,g:0,a:0,r:80},{n:"Sabaly",pos:"DEF",num:2,apps:5,g:0,a:1,r:77},{n:"Koulibaly",pos:"DEF",num:3,apps:5,g:1,a:0,r:84},{n:"Ballo-Toure",pos:"DEF",num:5,apps:5,g:0,a:1,r:78},{n:"Gueye",pos:"MID",num:17,apps:5,g:0,a:1,r:80},{n:"Nampalys",pos:"MID",num:6,apps:4,g:0,a:0,r:76},{n:"Mane",pos:"FWD",num:10,apps:5,g:3,a:2,r:88},{n:"Dia",pos:"FWD",num:9,apps:5,g:2,a:1,r:80},{n:"Sarr",pos:"FWD",num:11,apps:4,g:1,a:1,r:79}],
+  QAT:[{n:"Al-Sheeb",pos:"GK",num:1,apps:3,g:0,a:0,r:72},{n:"Al-Rawi",pos:"DEF",num:2,apps:3,g:0,a:0,r:71},{n:"Hassan",pos:"MID",num:10,apps:3,g:0,a:1,r:74},{n:"Afif",pos:"FWD",num:11,apps:3,g:1,a:0,r:76},{n:"Al-Haydos",pos:"FWD",num:9,apps:3,g:0,a:0,r:74}],
+  ARG:[{n:"Martinez E",pos:"GK",num:23,apps:7,g:0,a:0,r:89},{n:"Molina",pos:"DEF",num:26,apps:7,g:1,a:2,r:82},{n:"Romero",pos:"DEF",num:13,apps:7,g:0,a:0,r:85},{n:"Otamendi",pos:"DEF",num:19,apps:7,g:0,a:0,r:81},{n:"Tagliafico",pos:"DEF",num:3,apps:7,g:0,a:1,r:79},{n:"De Paul",pos:"MID",num:7,apps:7,g:1,a:3,r:83},{n:"Fernandez E",pos:"MID",num:24,apps:7,g:1,a:2,r:83},{n:"Mac Allister",pos:"MID",num:20,apps:6,g:0,a:2,r:82},{n:"Messi",pos:"FWD",num:10,apps:7,g:6,a:5,r:94},{n:"Di Maria",pos:"FWD",num:11,apps:5,g:1,a:2,r:82},{n:"Alvarez",pos:"FWD",num:9,apps:7,g:5,a:1,r:84},{n:"Lautaro",pos:"FWD",num:22,apps:5,g:2,a:1,r:83}],
+  PER:[{n:"Gallese",pos:"GK",num:1,apps:4,g:0,a:0,r:78},{n:"Advíncula",pos:"DEF",num:17,apps:4,g:0,a:1,r:78},{n:"Callens",pos:"DEF",num:6,apps:4,g:0,a:0,r:75},{n:"Tapia",pos:"MID",num:8,apps:4,g:0,a:0,r:77},{n:"Flores",pos:"MID",num:10,apps:4,g:1,a:1,r:78},{n:"Cueva",pos:"MID",num:7,apps:4,g:0,a:2,r:79},{n:"Guerrero",pos:"FWD",num:9,apps:3,g:1,a:0,r:79},{n:"Lapadula",pos:"FWD",num:18,apps:4,g:1,a:0,r:77}],
+  NGA:[{n:"Uzoho",pos:"GK",num:1,apps:3,g:0,a:0,r:74},{n:"Omeruo",pos:"DEF",num:5,apps:3,g:0,a:0,r:74},{n:"Ndidi",pos:"MID",num:4,apps:3,g:0,a:1,r:80},{n:"Iwobi",pos:"MID",num:10,apps:3,g:0,a:0,r:78},{n:"Lookman",pos:"FWD",num:11,apps:3,g:1,a:1,r:80},{n:"Osimhen",pos:"FWD",num:9,apps:3,g:1,a:0,r:85}],
+  ISR:[{n:"Glazer",pos:"GK",num:1,apps:3,g:0,a:0,r:72},{n:"Dgani",pos:"DEF",num:4,apps:3,g:0,a:0,r:71},{n:"Dabbur",pos:"FWD",num:9,apps:3,g:1,a:0,r:76},{n:"Zahavi",pos:"FWD",num:10,apps:3,g:1,a:1,r:78}],
+  ENG:[{n:"Pickford",pos:"GK",num:1,apps:5,g:0,a:0,r:82},{n:"Alexander-Arnold",pos:"DEF",num:2,apps:5,g:0,a:3,r:85},{n:"Maguire",pos:"DEF",num:5,apps:5,g:1,a:0,r:79},{n:"Stones",pos:"DEF",num:5,apps:5,g:0,a:0,r:81},{n:"Shaw",pos:"DEF",num:3,apps:4,g:0,a:1,r:80},{n:"Rice",pos:"MID",num:4,apps:5,g:0,a:1,r:83},{n:"Bellingham",pos:"MID",num:22,apps:5,g:1,a:2,r:87},{n:"Saka",pos:"FWD",num:7,apps:5,g:1,a:2,r:85},{n:"Rashford",pos:"FWD",num:11,apps:4,g:1,a:1,r:83},{n:"Kane",pos:"FWD",num:9,apps:5,g:3,a:2,r:88},{n:"Foden",pos:"MID",num:20,apps:4,g:1,a:1,r:85}],
+  DEN:[{n:"Schmeichel",pos:"GK",num:1,apps:3,g:0,a:0,r:81},{n:"Andersen",pos:"DEF",num:4,apps:3,g:0,a:0,r:79},{n:"Kjaer",pos:"DEF",num:5,apps:3,g:0,a:0,r:80},{n:"Eriksen",pos:"MID",num:10,apps:3,g:1,a:2,r:84},{n:"Delaney",pos:"MID",num:8,apps:3,g:0,a:0,r:77},{n:"Damsgaard",pos:"MID",num:19,apps:3,g:0,a:1,r:79},{n:"Hojlund",pos:"FWD",num:9,apps:3,g:0,a:0,r:80}],
+  SRB:[{n:"Rajkovic",pos:"GK",num:23,apps:3,g:0,a:0,r:75},{n:"Milenkovic",pos:"DEF",num:4,apps:3,g:0,a:0,r:78},{n:"Gudelj",pos:"MID",num:8,apps:3,g:0,a:0,r:75},{n:"Tadic",pos:"MID",num:10,apps:3,g:0,a:1,r:80},{n:"Vlahovic",pos:"FWD",num:9,apps:3,g:1,a:0,r:83},{n:"Milinkovic-S",pos:"MID",num:11,apps:3,g:0,a:1,r:83}],
+  PAN:[{n:"Penedo",pos:"GK",num:1,apps:3,g:0,a:0,r:73},{n:"Davis",pos:"DEF",num:23,apps:3,g:0,a:0,r:74},{n:"Godoy",pos:"MID",num:10,apps:3,g:0,a:0,r:73},{n:"Fajardo",pos:"FWD",num:9,apps:3,g:1,a:0,r:74}],
+  POR2:[{n:"Costa",pos:"GK",num:1,apps:5,g:0,a:0,r:78},{n:"Joao Pedro",pos:"DEF",num:4,apps:5,g:0,a:1,r:76},{n:"Ferreira",pos:"MID",num:8,apps:5,g:0,a:0,r:76},{n:"Teixeira",pos:"FWD",num:9,apps:5,g:2,a:0,r:79}],
+  UZB:[{n:"Shatskiy",pos:"GK",num:1,apps:4,g:0,a:0,r:71},{n:"Masharipov",pos:"MID",num:7,apps:4,g:1,a:1,r:75},{n:"Shomurodov",pos:"FWD",num:9,apps:4,g:1,a:0,r:77}],
+  CHI:[{n:"Arias",pos:"GK",num:1,apps:3,g:0,a:0,r:76},{n:"Isla",pos:"DEF",num:4,apps:3,g:0,a:0,r:74},{n:"Sanchez A",pos:"FWD",num:7,apps:3,g:0,a:1,r:79},{n:"Vargas E",pos:"FWD",num:11,apps:3,g:1,a:0,r:79}],
+  GHA:[{n:"Ati-Zigi",pos:"GK",num:1,apps:3,g:0,a:0,r:72},{n:"Salisu",pos:"DEF",num:5,apps:3,g:0,a:0,r:73},{n:"Kudus",pos:"MID",num:10,apps:3,g:0,a:1,r:78},{n:"Sulemana",pos:"FWD",num:11,apps:3,g:0,a:0,r:75}],
+  CRO:[{n:"Livakovic",pos:"GK",num:1,apps:7,g:0,a:0,r:83},{n:"Juranovic",pos:"DEF",num:2,apps:7,g:0,a:1,r:79},{n:"Lovren",pos:"DEF",num:6,apps:7,g:0,a:0,r:78},{n:"Gvardiol",pos:"DEF",num:24,apps:7,g:1,a:0,r:86},{n:"Perisic",pos:"DEF",num:4,apps:6,g:1,a:2,r:83},{n:"Brozovic",pos:"MID",num:11,apps:7,g:0,a:2,r:84},{n:"Modric",pos:"MID",num:10,apps:7,g:2,a:3,r:88},{n:"Kovacic",pos:"MID",num:8,apps:7,g:1,a:2,r:84},{n:"Kramaric",pos:"FWD",num:9,apps:6,g:2,a:1,r:81},{n:"Livaja",pos:"FWD",num:16,apps:5,g:0,a:1,r:78}],
+  BLR:[{n:"Gorbunov",pos:"GK",num:1,apps:4,g:0,a:0,r:72},{n:"Zhukouski",pos:"DEF",num:5,apps:4,g:0,a:0,r:71},{n:"Ebong",pos:"FWD",num:9,apps:4,g:1,a:1,r:74},{n:"Lisakovich",pos:"FWD",num:11,apps:4,g:1,a:0,r:75}],
+  ALG:[{n:"Mbolhi",pos:"GK",num:1,apps:3,g:0,a:0,r:73},{n:"Mandi",pos:"DEF",num:3,apps:3,g:0,a:0,r:77},{n:"Mahrez",pos:"FWD",num:7,apps:3,g:0,a:2,r:86},{n:"Slimani",pos:"FWD",num:9,apps:3,g:1,a:0,r:79},{n:"Bennacer",pos:"MID",num:8,apps:3,g:0,a:1,r:80}],
+  CHN:[{n:"Yan J",pos:"GK",num:1,apps:3,g:0,a:0,r:70},{n:"Zhang L",pos:"DEF",num:4,apps:3,g:0,a:0,r:69},{n:"Wei S",pos:"FWD",num:9,apps:3,g:0,a:0,r:70}],
+  BRA:[{n:"Alisson",pos:"GK",num:1,apps:7,g:0,a:0,r:89},{n:"Danilo",pos:"DEF",num:2,apps:7,g:0,a:1,r:80},{n:"Militao",pos:"DEF",num:3,apps:7,g:0,a:0,r:83},{n:"Marquinhos",pos:"DEF",num:4,apps:7,g:1,a:0,r:86},{n:"Alex Sandro",pos:"DEF",num:6,apps:6,g:0,a:2,r:80},{n:"Casemiro",pos:"MID",num:5,apps:7,g:0,a:2,r:85},{n:"Paqueta",pos:"MID",num:11,apps:7,g:1,a:3,r:85},{n:"Vinicius Jr",pos:"FWD",num:20,apps:7,g:6,a:4,r:91},{n:"Raphinha",pos:"FWD",num:19,apps:7,g:4,a:2,r:85},{n:"Rodrygo",pos:"FWD",num:9,apps:6,g:2,a:2,r:83},{n:"Richarlison",pos:"FWD",num:9,apps:5,g:1,a:0,r:81},{n:"Gabriel Jesus",pos:"FWD",num:9,apps:4,g:1,a:1,r:80}],
+  MAR:[{n:"Bono",pos:"GK",num:1,apps:4,g:0,a:0,r:83},{n:"Hakimi",pos:"DEF",num:2,apps:4,g:0,a:2,r:85},{n:"Saiss",pos:"DEF",num:5,apps:4,g:0,a:0,r:80},{n:"Aguerd",pos:"DEF",num:6,apps:4,g:0,a:0,r:79},{n:"Amrabat",pos:"MID",num:4,apps:4,g:0,a:0,r:82},{n:"Ziyech",pos:"MID",num:7,apps:4,g:1,a:2,r:83},{n:"Ounahi",pos:"MID",num:8,apps:4,g:0,a:1,r:79},{n:"En-Nesyri",pos:"FWD",num:9,apps:4,g:2,a:1,r:81},{n:"Boufal",pos:"FWD",num:11,apps:4,g:0,a:1,r:79}],
+  SCO:[{n:"Marshall",pos:"GK",num:1,apps:3,g:0,a:0,r:75},{n:"McTominay",pos:"MID",num:5,apps:3,g:1,a:0,r:80},{n:"Robertson",pos:"DEF",num:3,apps:3,g:0,a:1,r:83},{n:"Gilmour",pos:"MID",num:8,apps:3,g:0,a:1,r:78},{n:"Adams C",pos:"FWD",num:9,apps:3,g:1,a:0,r:78},{n:"Christie",pos:"FWD",num:11,apps:3,g:0,a:1,r:77}],
+  HAI:[{n:"Herve",pos:"GK",num:1,apps:3,g:0,a:0,r:70},{n:"Vertus",pos:"DEF",num:5,apps:3,g:0,a:0,r:69},{n:"Noel",pos:"FWD",num:9,apps:3,g:1,a:0,r:72},{n:"Jean-Baptiste",pos:"MID",num:10,apps:3,g:0,a:0,r:71}],
+  GAM:[{n:"Jawara",pos:"GK",num:1,apps:3,g:0,a:0,r:68},{n:"Jallow",pos:"FWD",num:9,apps:3,g:1,a:0,r:72},{n:"Barrow",pos:"FWD",num:11,apps:3,g:0,a:0,r:73}],
+  TUN:[{n:"Dahmen",pos:"GK",num:1,apps:3,g:0,a:0,r:74},{n:"Meriah",pos:"DEF",num:4,apps:3,g:0,a:0,r:72},{n:"Msakni",pos:"MID",num:10,apps:3,g:0,a:1,r:76},{n:"Khazri",pos:"FWD",num:11,apps:3,g:1,a:0,r:77}],
+  KSA:[{n:"Al-Owais",pos:"GK",num:1,apps:3,g:0,a:0,r:72},{n:"Al-Shahrani",pos:"DEF",num:12,apps:3,g:0,a:0,r:70},{n:"Al-Dawsari",pos:"FWD",num:11,apps:3,g:1,a:0,r:76},{n:"Bahebri",pos:"FWD",num:10,apps:3,g:0,a:0,r:73}],
+  IRN2:[{n:"Hosseini",pos:"GK",num:1,apps:3,g:0,a:0,r:76},{n:"Taremi",pos:"FWD",num:9,apps:3,g:1,a:0,r:83},{n:"Jahanbakhsh",pos:"MID",num:7,apps:3,g:0,a:1,r:78}],
+  URU2:[{n:"Muslera",pos:"GK",num:1,apps:5,g:0,a:0,r:80},{n:"Valverde",pos:"MID",num:14,apps:5,g:1,a:1,r:84},{n:"Suarez",pos:"FWD",num:9,apps:5,g:2,a:2,r:84},{n:"Bentancur",pos:"MID",num:5,apps:5,g:0,a:2,r:81},{n:"De Arrascaeta",pos:"MID",num:7,apps:5,g:1,a:2,r:82}]
+};
 
 var SCORERS=[{n:"K. Mbappé",f:"&#127467;&#127479;",c:"France",g:5,a:3},{n:"L. Messi",f:"&#127462;&#127479;",c:"Argentina",g:4,a:5},{n:"Vini Jr.",f:"&#127463;&#127479;",c:"Brazil",g:4,a:4},{n:"H. Kane",f:"&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;",c:"England",g:3,a:2},{n:"M. Alvarez",f:"&#127462;&#127479;",c:"Argentina",g:3,a:1}];
 
@@ -733,10 +839,32 @@ function showTab(n){
 }
 
 /* ─── POPUP ───────────────────────────────────────────────────────── */
+var POS_COLORS={GK:'#fbbf24',DEF:'#60a5fa',MID:'#4ade80',FWD:'#f87171'};
+
+function makeTrumpCard(p,flag){
+  var pc=p.pos.toLowerCase();
+  var rc=POS_COLORS[p.pos]||'#22d3ee';
+  return '<div class="trump '+pc+'" title="'+p.n+'">'+
+    '<div class="trump-top">'+
+      '<div class="trump-rating">'+p.r+'</div>'+
+      '<div class="trump-pos-badge">'+p.pos+'</div>'+
+    '</div>'+
+    '<div class="trump-flag">'+flag+'</div>'+
+    '<div class="trump-name">'+p.n+'</div>'+
+    '<div class="trump-num">#'+p.num+'</div>'+
+    '<div class="trump-stats">'+
+      '<div class="trump-stat"><div class="ts-val">'+p.apps+'</div><div class="ts-lbl">APP</div></div>'+
+      '<div class="trump-stat"><div class="ts-val">'+p.g+'</div><div class="ts-lbl">GLS</div></div>'+
+      '<div class="trump-stat"><div class="ts-val">'+p.a+'</div><div class="ts-lbl">AST</div></div>'+
+    '</div>'+
+  '</div>';
+}
+
 function openPop(t){
   document.getElementById('pf').innerHTML=t.f;
   document.getElementById('pn').textContent=t.n;
   document.getElementById('pa').textContent=t.a;
+  document.getElementById('prank').textContent='FIFA WORLD CUP 2026 SQUAD';
   var gd=t.gs-t.ga;
   document.getElementById('pgd').textContent=(gd>0?'+':'')+gd;
   document.getElementById('pgd').style.color=gd>0?'#4ade80':gd<0?'#f87171':'#fff';
@@ -744,9 +872,35 @@ function openPop(t){
   document.getElementById('ps').innerHTML=[['P',t.p],['W',t.w],['D',t.d],['L',t.l],['GF',t.gs],['GA',t.ga]].map(function(x){
     return '<div class="pop-stat"><div style="font-size:18px;font-weight:700;color:#22d3ee">'+x[1]+'</div><div style="font-size:8px;color:#475569;letter-spacing:1px;margin-top:2px">'+x[0]+'</div></div>';
   }).join('');
+  /* Form badges */
+  var form=[];
+  if(t.w>0)for(var i=0;i<Math.min(t.w,3);i++)form.push('<span style="width:20px;height:20px;border-radius:50%;background:#4ade80;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#000">W</span>');
+  if(t.d>0)form.push('<span style="width:20px;height:20px;border-radius:50%;background:#fbbf24;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#000">D</span>');
+  if(t.l>0)for(var i=0;i<Math.min(t.l,2);i++)form.push('<span style="width:20px;height:20px;border-radius:50%;background:#f87171;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#000">L</span>');
+  document.getElementById('pform').innerHTML=form.join('');
+  /* Squad cards */
+  var squad=SQUADS[t.a]||[];
+  var squadHtml='';
+  if(squad.length>0){
+    squadHtml=squad.map(function(p){return makeTrumpCard(p,t.f)}).join('');
+  } else {
+    squadHtml='<div style="color:#334155;font-size:11px;padding:20px;text-align:center;grid-column:1/-1">Squad data coming soon</div>';
+  }
+  document.getElementById('squad-grid').innerHTML=squadHtml;
+  /* Show stats tab by default */
+  switchPopTab('stats');
   document.getElementById('pop-ov').className='open';
   document.getElementById('pop-ov').style.display='flex';
 }
+
+function switchPopTab(tab){
+  document.getElementById('pop-stats-view').style.display=tab==='stats'?'block':'none';
+  document.getElementById('pop-squad-view').style.display=tab==='squad'?'block':'none';
+  document.querySelectorAll('.pop-tab').forEach(function(b,i){
+    b.className='pop-tab'+(((i===0&&tab==='stats')||(i===1&&tab==='squad'))?' active':'');
+  });
+}
+
 function closePop(){
   document.getElementById('pop-ov').style.display='none';
   document.getElementById('pop-ov').className='';
