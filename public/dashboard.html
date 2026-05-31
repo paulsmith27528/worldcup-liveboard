@@ -66,8 +66,8 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,12,.95);border-botto
 /* BRACKET */
 .b-shell{border:1px solid rgba(34,211,238,.18);border-radius:14px;padding:10px;background:linear-gradient(180deg,rgba(3,10,22,.97),rgba(1,5,12,.99));box-shadow:0 0 40px rgba(34,211,238,.06)}
 .r-lbls{display:grid;grid-template-columns:115px 100px 88px 76px 180px 76px 88px 100px 115px;gap:6px;color:#1e3a5f;font-size:7.5px;letter-spacing:.8px;margin-bottom:8px;text-align:center;text-transform:uppercase;white-space:nowrap;width:986px;flex-shrink:0}
-.b-outer{width:100%;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.b-wrap{position:relative;width:986px;transform-origin:top left}
+.b-outer{width:100%;overflow:hidden}
+.b-wrap{position:relative;width:986px;transform-origin:top left;display:flex;flex-direction:column}
 .b-grid{display:grid;grid-template-columns:115px 100px 88px 76px 180px 76px 88px 100px 115px;gap:6px}
 .b-col{height:520px;display:flex;flex-direction:column;justify-content:space-around}
 .bc{height:55px;background:rgba(2,8,20,.9);border:1px solid rgba(34,211,238,.22);border-radius:8px;padding:4px 9px;display:flex;flex-direction:column;justify-content:space-around;cursor:pointer;transition:all .18s}
@@ -206,13 +206,13 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
     <section>
       <div class="sec-lbl">KNOCKOUT STAGE</div>
       <div class="b-shell">
-        <div class="r-lbls">
-          <span>ROUND OF 32</span><span>ROUND OF 16</span><span>QTR-FINALS</span><span>SEMI-FINALS</span>
-          <span style="color:rgba(255,213,74,.65);font-weight:700">FINAL</span>
-          <span>SEMI-FINALS</span><span>QTR-FINALS</span><span>ROUND OF 16</span><span>ROUND OF 32</span>
-        </div>
         <div class="b-outer" id="bouter">
         <div class="b-wrap" id="bwrap">
+          <div class="r-lbls" style="position:relative;z-index:10;flex-shrink:0">
+            <span>ROUND OF 32</span><span>ROUND OF 16</span><span>QTR-FINALS</span><span>SEMI-FINALS</span>
+            <span style="color:rgba(255,213,74,.65);font-weight:700">FINAL</span>
+            <span>SEMI-FINALS</span><span>QTR-FINALS</span><span>ROUND OF 16</span><span>ROUND OF 32</span>
+          </div>
           <!-- STADIUM BACKGROUND GRAPHIC -->
           <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden">
             <!-- Central atmospheric glow -->
@@ -772,15 +772,8 @@ window.addEventListener('DOMContentLoaded',function(){
     wrap.style.transform='scale('+scale+')';
     wrap.style.transformOrigin='top left';
     wrap.style.marginLeft=ml;
-    outer.style.height=(520*scale)+'px';
-    // Scale round labels to match bracket exactly
-    var rl=document.querySelector('.r-lbls');
-    if(rl){
-      rl.style.width='986px';
-      rl.style.transform='scale('+scale+')';
-      rl.style.transformOrigin='top left';
-      rl.style.marginLeft=ml;
-    }
+    // Height = (labels ~24px + grid 520px) * scale
+    outer.style.height=((544)*scale)+'px';
   }
   fitBracket();
   window.addEventListener('resize',fitBracket);
