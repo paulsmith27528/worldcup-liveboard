@@ -66,7 +66,7 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,12,.95);border-botto
 /* BRACKET */
 .b-shell{border:1px solid rgba(34,211,238,.18);border-radius:14px;padding:10px;background:linear-gradient(180deg,rgba(3,10,22,.97),rgba(1,5,12,.99));box-shadow:0 0 40px rgba(34,211,238,.06)}
 .r-lbls{display:grid;grid-template-columns:115px 100px 88px 76px 180px 76px 88px 100px 115px;gap:6px;color:#1e3a5f;font-size:8px;letter-spacing:1px;margin-bottom:8px;text-align:center;text-transform:uppercase}
-.b-outer{width:100%;overflow:hidden}
+.b-outer{width:100%;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .b-wrap{position:relative;width:986px;transform-origin:top left}
 .b-grid{display:grid;grid-template-columns:115px 100px 88px 76px 180px 76px 88px 100px 115px;gap:6px}
 .b-col{height:520px;display:flex;flex-direction:column;justify-content:space-around}
@@ -213,29 +213,58 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:8px 16px;
         </div>
         <div class="b-outer" id="bouter">
         <div class="b-wrap" id="bwrap">
-          <!-- BLUE ATMOSPHERIC BACKGROUND -->
+          <!-- STADIUM BACKGROUND GRAPHIC -->
           <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden">
-            <!-- Central blue glow -->
-            <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-55%);width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(10,80,200,.22) 0%,rgba(10,60,180,.1) 40%,transparent 70%);filter:blur(8px)"></div>
-            <!-- Wide bracket tree background lines -->
+            <!-- Central atmospheric glow -->
+            <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:500px;height:380px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,80,220,.18) 0%,rgba(0,50,180,.08) 45%,transparent 70%);filter:blur(10px)"></div>
+            <!-- Football stadium / pitch from above -->
             <svg viewBox="0 0 986 520" preserveAspectRatio="none" style="position:absolute;top:0;left:0;width:100%;height:100%">
-              <g fill="none" stroke="rgba(34,150,255,.09)" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M115,32.5 H118 V65 H221"/><path d="M115,97.5 H118 V65"/>
-                <path d="M115,162.5 H118 V195 H221"/><path d="M115,227.5 H118 V195"/>
-                <path d="M115,292.5 H118 V325 H221"/><path d="M115,357.5 H118 V325"/>
-                <path d="M115,422.5 H118 V455 H221"/><path d="M115,487.5 H118 V455"/>
-                <path d="M221,65 H224 V130 H315"/><path d="M221,195 H224 V130"/>
-                <path d="M221,325 H224 V390 H315"/><path d="M221,455 H224 V390"/>
-                <path d="M315,130 H318 V260 H397"/><path d="M315,390 H318 V260"/>
-                <path d="M397,260 H493"/>
-                <path d="M871,32.5 H868 V65 H765"/><path d="M871,97.5 H868 V65"/>
-                <path d="M871,162.5 H868 V195 H765"/><path d="M871,227.5 H868 V195"/>
-                <path d="M871,292.5 H868 V325 H765"/><path d="M871,357.5 H868 V325"/>
-                <path d="M871,422.5 H868 V455 H765"/><path d="M871,487.5 H868 V455"/>
-                <path d="M765,65 H762 V130 H671"/><path d="M765,195 H762 V130"/>
-                <path d="M765,325 H762 V390 H671"/><path d="M765,455 H762 V390"/>
-                <path d="M671,130 H668 V260 H589"/><path d="M671,390 H668 V260"/>
-                <path d="M589,260 H493"/>
+              <defs>
+                <filter id="stadGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="b"/>
+                  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+              <g fill="none" stroke="rgba(30,140,255,.16)" stroke-width="1.5" filter="url(#stadGlow)">
+                <!-- Outer stadium oval -->
+                <ellipse cx="493" cy="260" rx="465" ry="248"/>
+                <!-- Inner stadium oval (stands inner edge) -->
+                <ellipse cx="493" cy="260" rx="410" ry="207"/>
+                <!-- Pitch outline -->
+                <rect x="233" y="110" width="520" height="300" rx="3"/>
+                <!-- Center line (vertical, portrait pitch horizontal) -->
+                <line x1="493" y1="110" x2="493" y2="410"/>
+                <!-- Center circle -->
+                <circle cx="493" cy="260" r="56"/>
+                <!-- Center spot -->
+                <circle cx="493" cy="260" r="3" fill="rgba(30,140,255,.18)" stroke="none"/>
+                <!-- Left penalty area -->
+                <rect x="233" y="178" width="100" height="164"/>
+                <!-- Left goal area -->
+                <rect x="233" y="215" width="44" height="90"/>
+                <!-- Left goal (behind line) -->
+                <rect x="218" y="232" width="15" height="56"/>
+                <!-- Left penalty arc (outside box only) -->
+                <path d="M333,207 A56,56,0,0,0,333,313"/>
+                <!-- Left penalty spot -->
+                <circle cx="283" cy="260" r="2.5" fill="rgba(30,140,255,.18)" stroke="none"/>
+                <!-- Right penalty area -->
+                <rect x="653" y="178" width="100" height="164"/>
+                <!-- Right goal area -->
+                <rect x="709" y="215" width="44" height="90"/>
+                <!-- Right goal -->
+                <rect x="753" y="232" width="15" height="56"/>
+                <!-- Right penalty arc -->
+                <path d="M653,207 A56,56,0,0,1,653,313"/>
+                <!-- Right penalty spot -->
+                <circle cx="703" cy="260" r="2.5" fill="rgba(30,140,255,.18)" stroke="none"/>
+                <!-- Corner arcs (small quarter circles) -->
+                <path d="M233,122 A12,12,0,0,1,245,110"/>
+                <path d="M741,110 A12,12,0,0,1,753,122"/>
+                <path d="M233,398 A12,12,0,0,0,245,410"/>
+                <path d="M741,410 A12,12,0,0,0,753,398"/>
+                <!-- Stadium seating arc lines (tiers) -->
+                <ellipse cx="493" cy="260" rx="355" ry="176" stroke-dasharray="4,3" stroke-opacity=".5"/>
               </g>
             </svg>
           </div>
@@ -736,10 +765,14 @@ window.addEventListener('DOMContentLoaded',function(){
     var outer=document.getElementById('bouter');
     var wrap=document.getElementById('bwrap');
     if(!outer||!wrap)return;
-    var scale=outer.clientWidth/986;
+    var ow=outer.clientWidth;
+    var scale=Math.min(1, ow/986);
+    var scaledW=986*scale;
+    var scaledH=520*scale;
     wrap.style.transform='scale('+scale+')';
     wrap.style.transformOrigin='top left';
-    outer.style.height=(520*scale)+'px';
+    wrap.style.marginLeft=((ow-scaledW)/2)+'px';
+    outer.style.height=scaledH+'px';
   }
   fitBracket();
   window.addEventListener('resize',fitBracket);
