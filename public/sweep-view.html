@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My WC2026 Sweepstake Bracket</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;background:#020810;color:#fff;font-family:Arial,sans-serif}
+body{background:radial-gradient(ellipse at 40% 0%,#0d2847,#061020 40%,#020810 100%)}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:rgba(34,211,238,.3);border-radius:2px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes goldPulse{0%,100%{box-shadow:0 0 20px rgba(255,213,74,.2)}50%{box-shadow:0 0 40px rgba(255,213,74,.5)}}
+@keyframes teamFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:90}
+.nav-logo{display:flex;align-items:center;gap:8px}
+.nav-logo img{height:32px;width:auto}
+.nav-title{font-size:10px;color:#38dfff;font-weight:700;letter-spacing:2px}
+
+.main{max-width:860px;margin:0 auto;padding:16px}
+
+/* MY TEAM HERO */
+.team-hero{text-align:center;padding:32px 20px;background:linear-gradient(150deg,rgba(5,18,38,.97),rgba(2,9,20,.99));border-radius:18px;margin-bottom:16px;animation:fadeUp .5s ease;position:relative;overflow:hidden}
+.team-hero.gold{border:2px solid;animation:fadeUp .5s ease,goldPulse 3s ease-in-out infinite}
+.team-flag{font-size:80px;display:block;animation:teamFloat 4s ease-in-out infinite;line-height:1.1;margin-bottom:12px}
+.team-name{font-size:32px;font-weight:900;letter-spacing:2px;margin-bottom:6px}
+.team-sub{font-size:13px;color:#475569}
+.owner-badge{display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:6px 14px;font-size:12px}
+.owner-dot{width:10px;height:10px;border-radius:50%}
+.eliminated-banner{position:absolute;top:0;left:0;right:0;background:linear-gradient(135deg,rgba(239,68,68,.8),rgba(185,28,28,.8));padding:8px;text-align:center;font-size:12px;font-weight:700;letter-spacing:2px;color:#fff}
+
+/* TABS */
+.tabs{display:flex;gap:6px;margin-bottom:16px;border-bottom:1px solid rgba(34,211,238,.1);padding-bottom:0}
+.tab-btn{padding:10px 18px;background:transparent;border:none;color:#334155;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:all .18s;font-weight:700}
+.tab-btn.active{color:#22d3ee;border-bottom-color:#22d3ee}
+.tab-content{display:none;animation:fadeUp .3s ease}
+.tab-content.active{display:block}
+
+/* LEADERBOARD */
+.lb-list{display:flex;flex-direction:column;gap:6px}
+.lb-row{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:9px}
+.lb-row.alive{border-color:rgba(255,213,74,.2);background:rgba(255,213,74,.03)}
+.lb-row.mine{border-color;background:rgba(34,211,238,.06)}
+.lb-pos{font-size:18px;font-weight:900;min-width:24px;color:#334155}
+.lb-pos.p1{color:#ffd54a}.lb-pos.p2{color:#94a3b8}.lb-pos.p3{color:#cd7f32}
+.lb-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.lb-info{flex:1}
+.lb-name{font-size:13px;font-weight:700}
+.lb-team{font-size:11px;color:#475569}
+.lb-badge{font-size:9px;font-weight:700;padding:3px 10px;border-radius:10px;letter-spacing:.5px}
+.badge-alive{background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.2)}
+.badge-out{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2)}
+.badge-me{background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.2)}
+.badge-champ{background:linear-gradient(135deg,#ffd54a,#f59e0b);color:#000}
+
+/* POT */
+.pot-box{text-align:center;background:linear-gradient(135deg,rgba(255,213,74,.08),rgba(0,0,0,.4));border:1px solid rgba(255,213,74,.25);border-radius:12px;padding:18px;margin-bottom:16px}
+.pot-amt{font-size:42px;font-weight:900;color:#ffd54a;line-height:1}
+.pot-lbl{font-size:10px;color:#475569;letter-spacing:2px;margin-top:4px;text-transform:uppercase}
+
+/* BRACKET */
+.bracket-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.bracket-grid{display:grid;grid-template-columns:115fr 100fr 88fr 76fr 180fr 76fr 88fr 100fr 115fr;gap:5px;min-width:700px}
+.r-lbls{display:grid;grid-template-columns:115fr 100fr 88fr 76fr 180fr 76fr 88fr 100fr 115fr;gap:5px;min-width:700px;margin-bottom:7px}
+.r-lbl{font-size:7px;color:#1e3a5f;letter-spacing:1px;text-align:center;text-transform:uppercase}
+.b-col{height:480px;display:flex;flex-direction:column;justify-content:space-around}
+.bc{height:50px;background:rgba(2,8,20,.88);border:1px solid rgba(34,211,238,.15);border-radius:7px;padding:3px 7px;display:flex;flex-direction:column;justify-content:space-around}
+.bc.my-team{border-color;box-shadow:0 0 14px;border-width:2px}
+.bc-row{display:flex;justify-content:space-between;align-items:center;font-size:9px;color:rgba(255,255,255,.35)}
+.bc-row.win{color:#e2e8f0;font-weight:700}
+.bc-t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;display:flex;align-items:center;gap:3px}
+.bc-s{color:rgba(255,255,255,.22);min-width:16px;text-align:right;flex-shrink:0}
+.bc-s.win{color:#22d3ee}
+.bc-st{font-size:6.5px;color:#1e3a5f;text-align:right}
+.final-col{height:480px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12px 8px;background:radial-gradient(ellipse at 50% 30%,rgba(255,213,74,.12),rgba(0,0,0,.7));border:1px solid rgba(255,213,74,.4);border-radius:12px;animation:goldPulse 3s ease-in-out infinite}
+
+/* NOT FOUND */
+.not-found{text-align:center;padding:60px 20px}
+.not-found h2{font-size:24px;font-weight:900;margin-bottom:10px}
+.not-found p{color:#475569;font-size:14px;margin-bottom:24px}
+
+/* LIVE BADGE */
+.live-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:4px;padding:3px 9px;font-size:9px;font-weight:700;color:#ef4444;letter-spacing:1.5px}
+.live-dot{width:5px;height:5px;border-radius:50%;background:#ef4444;animation:blink 1.2s ease-in-out infinite;display:inline-block}
+
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(10,25,50,.95);border:1px solid rgba(34,211,238,.3);border-radius:10px;padding:10px 22px;font-size:12px;font-weight:700;color:#fff;z-index:999;transition:transform .3s}
+#toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <img src="/wc26.png" alt="WC2026" onerror="this.style.display='none'">
+    <span class="nav-title" id="nav-sweep-name">WC2026 SWEEPSTAKE</span>
+  </div>
+  <a href="/dashboard.html" style="font-size:10px;color:#334155;text-decoration:none;border:1px solid rgba(255,255,255,.1);padding:5px 12px;border-radius:12px">📊 Full Dashboard</a>
+</nav>
+
+<div class="main">
+
+  <!-- NOT FOUND STATE -->
+  <div class="not-found" id="not-found" style="display:none">
+    <div style="font-size:48px;margin-bottom:16px">🔐</div>
+    <h2>Invitation Required</h2>
+    <p>This bracket requires a personal invitation link from your sweepstake organiser.<br>Ask them to share your unique bracket link.</p>
+    <a href="/dashboard.html" style="display:inline-block;background:linear-gradient(135deg,#22d3ee,#0ea5e9);color:#000;font-weight:900;padding:12px 24px;border-radius:10px;text-decoration:none;font-size:13px">View Public Dashboard</a>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div id="main-content" style="display:none">
+
+    <!-- MY TEAM HERO -->
+    <div class="team-hero" id="team-hero">
+      <div class="eliminated-banner" id="elim-banner" style="display:none">❌ YOUR TEAM HAS BEEN ELIMINATED</div>
+      <span class="team-flag" id="my-flag">🏴</span>
+      <div class="team-name" id="my-team">Team Name</div>
+      <div class="team-sub" id="my-sub">Your team</div>
+      <div class="owner-badge">
+        <span class="owner-dot" id="owner-dot"></span>
+        <span id="owner-name">—</span>
+        <span style="color:#334155;font-size:10px">· Your Entry</span>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('tab-lb')">📊 Leaderboard</button>
+      <button class="tab-btn" onclick="showTab('tab-bracket')">🏟 Bracket</button>
+    </div>
+
+    <div class="tab-content active" id="tab-lb">
+      <div class="pot-box">
+        <div class="pot-lbl">Prize Pot</div>
+        <div class="pot-amt" id="pot-amt">£0</div>
+        <div class="pot-lbl" id="pot-sub" style="margin-top:4px">Loading...</div>
+      </div>
+      <div class="lb-list" id="lb-list"></div>
+    </div>
+
+    <div class="tab-content" id="tab-bracket">
+      <div style="font-size:11px;color:#334155;margin-bottom:10px;text-align:center">Your team is highlighted throughout the bracket</div>
+      <div class="bracket-wrap">
+        <div class="r-lbls" id="r-lbls">
+          <div class="r-lbl">Round of 32</div><div class="r-lbl">Round of 16</div><div class="r-lbl">QTR-Finals</div><div class="r-lbl">Semis</div>
+          <div class="r-lbl" style="color:rgba(255,213,74,.6);font-weight:700">Final</div>
+          <div class="r-lbl">Semis</div><div class="r-lbl">QTR-Finals</div><div class="r-lbl">Round of 16</div><div class="r-lbl">Round of 32</div>
+        </div>
+        <div class="bracket-grid" id="bracket-grid"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast">✅</div>
+
+<script>
+// Bracket data (same as main dashboard)
+const B={
+  LR32:[["MEX","🇲🇽","2","MAR","🇲🇦","1","FT"],["COL","🇨🇴","3","ESP","🇪🇸","2","FT"],["CAN","🇨🇦","1","RSA","🇿🇦","0","FT"],["NED","🇳🇱","2","PER","🇵🇪","0","FT"],["GER","🇩🇪","2","AUT","🇦🇹","1","FT"],["FRA","🇫🇷","3","IRN","🇮🇷","1","FT"],["BRA","🇧🇷","4","JPN","🇯🇵","1","FT"],["USA","🇺🇸","2","BLR","🇧🇾","0","FT"]],
+  LR16:[["MEX","🇲🇽","1","COL","🇨🇴","2","FT"],["CAN","🇨🇦","1(4)","NED","🇳🇱","1(2)","PEN"],["GER","🇩🇪","2","FRA","🇫🇷","3","FT"],["BRA","🇧🇷","3","USA","🇺🇸","1","FT"]],
+  LQF:[["COL","🇨🇴","1","NED","🇳🇱","2","FT"],["FRA","🇫🇷","2","BRA","🇧🇷","3","FT"]],
+  LSF:[["NED","🇳🇱","0","BRA","🇧🇷","2","FT"]],
+  RSF:[["ARG","🇦🇷","2","POR","🇵🇹","1","FT"]],
+  RQF:[["ARG","🇦🇷","3","ITA","🇮🇹","1","FT"],["POR","🇵🇹","2","URU","🇺🇾","0","FT"]],
+  RR16:[["ENG","🏴󠁧󠁢󠁥󠁮󠁧󠁿","1","ARG","🇦🇷","2","FT"],["BEL","🇧🇪","0","ITA","🇮🇹","2","FT"],["POR","🇵🇹","2","CRO","🇭🇷","1","FT"],["URU","🇺🇾","2","SEN","🇸🇳","1","FT"]],
+  RR32:[["ENG","🏴󠁧󠁢󠁥󠁮󠁧󠁿","2","DEN","🇩🇰","0","FT"],["ARG","🇦🇷","2","PER","🇵🇪","0","FT"],["BEL","🇧🇪","1","SRB","🇷🇸","0","FT"],["ITA","🇮🇹","2","UZB","🇺🇿","1","FT"],["CRO","🇭🇷","1","AUT","🇦🇹","0","FT"],["SEN","🇸🇳","3","EGY","🇪🇬","1","FT"],["URU","🇺🇾","2","IRN","🇮🇷","0","FT"],["POR","🇵🇹","3","KOR","🇰🇷","1","FT"]]
+};
+
+function toast(msg,dur=2500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx=['tab-lb','tab-bracket'].indexOf(id);
+  document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+  if(id==='tab-bracket')renderBracket();
+}
+
+let myEntry=null,sweepData=null;
+
+window.addEventListener('DOMContentLoaded',()=>{
+  const hash=window.location.hash.slice(1);
+  if(!hash||!hash.startsWith('V1:')){
+    document.getElementById('not-found').style.display='block';
+    return;
+  }
+  try{
+    const d=JSON.parse(atob(hash.replace('V1:','')));
+    sweepData=d;
+    // Find my entry by token
+    myEntry=d.entries&&d.entries.find(e=>e.token===d.tok);
+    if(!myEntry){document.getElementById('not-found').style.display='block';return;}
+    document.getElementById('main-content').style.display='block';
+    document.getElementById('nav-sweep-name').textContent=(d.n||'WC2026 SWEEPSTAKE').toUpperCase();
+    renderHero();
+    renderLeaderboard();
+  }catch(e){
+    document.getElementById('not-found').style.display='block';
+  }
+});
+
+function renderHero(){
+  const e=myEntry;
+  const hero=document.getElementById('team-hero');
+  hero.style.borderColor=e.colour;
+  hero.style.boxShadow=`0 0 40px ${e.colour}33`;
+  if(e.eliminated){
+    document.getElementById('elim-banner').style.display='block';
+    hero.style.filter='grayscale(.5)';
+  }
+  // Find team flag from entries or default
+  const knownFlags={"Brazil":"🇧🇷","France":"🇫🇷","Argentina":"🇦🇷","Germany":"🇩🇪","England":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Spain":"🇪🇸","Portugal":"🇵🇹","Netherlands":"🇳🇱","Mexico":"🇲🇽","USA":"🇺🇸","Belgium":"🇧🇪","Croatia":"🇭🇷","Italy":"🇮🇹","Uruguay":"🇺🇾","Colombia":"🇨🇴","Senegal":"🇸🇳","Morocco":"🇲🇦","Japan":"🇯🇵","S.Korea":"🇰🇷","Canada":"🇨🇦","Denmark":"🇩🇰","Austria":"🇦🇹","Poland":"🇵🇱","Switzerland":"🇨🇭","Australia":"🇦🇺"};
+  const flag=e.teamName&&knownFlags[e.teamName]?knownFlags[e.teamName]:'🏴';
+  document.getElementById('my-flag').textContent=flag;
+  document.getElementById('my-team').textContent=e.teamName||'Draw Pending';
+  document.getElementById('my-sub').textContent=e.teamName?'Your team in WC2026':'The draw hasn\'t been run yet';
+  document.getElementById('owner-name').textContent=e.name;
+  document.getElementById('owner-dot').style.background=e.colour;
+}
+
+function renderLeaderboard(){
+  const d=sweepData;
+  const entries=d.entries||[];
+  const cur=d.cur||'£';
+  const pot=entries.filter(e=>e.paid).reduce((s,e)=>s+3,0); // approximate
+  document.getElementById('pot-amt').textContent=cur+pot;
+  document.getElementById('pot-sub').textContent=entries.length+' entries · Organiser pays out the winner';
+
+  const sorted=[...entries].sort((a,b)=>Number(a.eliminated)-Number(b.eliminated));
+  const el=document.getElementById('lb-list');
+  el.innerHTML=sorted.map((e,i)=>{
+    const isMe=e.token===d.tok;
+    const isChamp=!e.eliminated&&(d.eliminated||[]).length>=47;
+    return `<div class="lb-row ${!e.eliminated?'alive':''} ${isMe?'mine':''}" style="${isMe?'border-color:'+myEntry.colour+';background:'+myEntry.colour+'11':''}">
+      <div class="lb-pos ${i===0?'p1':i===1?'p2':i===2?'p3':''}">${i+1}</div>
+      <div class="lb-dot" style="background:${e.colour}"></div>
+      <div class="lb-info">
+        <div class="lb-name">${esc(e.name)} ${isMe?'<span style="font-size:9px;color:#22d3ee">← YOU</span>':''}</div>
+        <div class="lb-team">${e.teamName||'—'}</div>
+      </div>
+      <span class="lb-badge ${isMe?'badge-me':isChamp?'badge-champ':e.eliminated?'badge-out':'badge-alive'}">${isMe?'YOU':isChamp?'🏆 Winner':e.eliminated?'Eliminated':'🟢 Active'}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderBracket(){
+  const myTeamName=myEntry?myEntry.teamName:'';
+  const myColour=myEntry?myEntry.colour:'#22d3ee';
+
+  function makeCol(ms){
+    return '<div class="b-col">'+ms.map(m=>{
+      const hs=parseInt(m[2]),as=parseInt(m[5]),hw=hs>as,aw=as>hs;
+      const hIsMe=myTeamName&&m[0]&&myTeamName.toLowerCase().includes(m[0].toLowerCase());
+      const aIsMe=myTeamName&&m[3]&&myTeamName.toLowerCase().includes(m[3].toLowerCase());
+      return `<div class="bc" style="${(hIsMe||aIsMe)?'border-color:'+myColour+';border-width:2px;box-shadow:0 0 12px '+myColour+'66':''}">
+        <div class="bc-row ${hw?'win':''}"><div class="bc-t"><span style="font-size:10px">${m[1]}</span>${m[0]}</div><span class="bc-s ${hw?'win':''}">${m[2]}</span></div>
+        <div class="bc-row ${aw?'win':''}"><div class="bc-t"><span style="font-size:10px">${m[4]}</span>${m[3]}</div><span class="bc-s ${aw?'win':''}">${m[5]}</span></div>
+        <div class="bc-st">${m[6]}</div></div>`;
+    }).join('')+'</div>';
+  }
+
+  const finalHtml=`<div class="final-col">
+    <div style="color:#ffd54a;font-weight:900;font-size:13px;letter-spacing:3px;margin-bottom:4px">FINAL</div>
+    <div style="color:#475569;font-size:8px;margin-bottom:12px">JULY 19 · METLIFE</div>
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:4px">
+      <div style="text-align:center"><div style="font-size:22px">🇧🇷</div><div style="font-size:9px;font-weight:700;margin-top:2px">BRAZIL</div></div>
+      <div style="font-size:20px;font-weight:900;color:#ffd54a">2—1</div>
+      <div style="text-align:center"><div style="font-size:22px">🇦🇷</div><div style="font-size:9px;font-weight:700;margin-top:2px">ARGENTINA</div></div>
+    </div>
+    <div style="font-size:7.5px;color:#475569;margin-top:8px;line-height:1.9"><div>⚽ Vini Jr. 27' · Raphinha 72'</div><div>⚽ M.Alvarez 45+1'</div></div>
+    <div style="color:#22d3ee;font-size:8px;font-weight:700;letter-spacing:2px;margin-top:8px">🇧🇷 CHAMPIONS</div>
+  </div>`;
+
+  document.getElementById('bracket-grid').innerHTML=
+    makeCol(B.LR32)+makeCol(B.LR16)+makeCol(B.LQF)+makeCol(B.LSF)+
+    finalHtml+
+    makeCol(B.RSF)+makeCol(B.RQF)+makeCol(B.RR16)+makeCol(B.RR32);
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+</script>
+</body>
+</html>
