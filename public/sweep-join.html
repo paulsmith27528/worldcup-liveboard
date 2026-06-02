@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Join the Sweepstake — WC2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;background:#020810;color:#fff;font-family:Arial,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+body{background:radial-gradient(ellipse at 50% 0%,#0d2847,#061020 40%,#020810 100%)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes goldPulse{0%,100%{box-shadow:0 0 20px rgba(255,213,74,.2)}50%{box-shadow:0 0 40px rgba(255,213,74,.5)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.card{background:linear-gradient(150deg,rgba(5,18,38,.97),rgba(2,9,20,.99));border:1px solid rgba(34,211,238,.2);border-radius:18px;padding:28px;width:100%;max-width:460px;animation:fadeUp .5s ease}
+.card.gold{border-color:rgba(255,213,74,.4);animation:fadeUp .5s ease,goldPulse 3s ease-in-out infinite}
+
+.logo{text-align:center;margin-bottom:24px}
+.logo img{height:60px;width:auto}
+.sweep-name{font-size:22px;font-weight:900;text-align:center;margin-bottom:4px}
+.sweep-org{font-size:12px;color:#475569;text-align:center;margin-bottom:24px}
+
+.price-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.price-box{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.price-box.selected{border-color:rgba(255,213,74,.6);background:rgba(255,213,74,.08)}
+.price-box input[type=radio]{position:absolute;opacity:0;width:0;height:0}
+.price-type{font-size:10px;color:#475569;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.price-amt{font-size:28px;font-weight:900;color:#ffd54a;line-height:1}
+.price-desc{font-size:10px;color:#334155;margin-top:4px}
+
+.lbl{display:block;font-size:10px;color:#475569;letter-spacing:1px;font-weight:700;text-transform:uppercase;margin-bottom:5px}
+.inp{width:100%;background:rgba(0,0,0,.5);border:1px solid rgba(34,211,238,.2);border-radius:8px;color:#fff;padding:12px 14px;font-size:14px;outline:none;transition:border-color .2s;margin-bottom:14px}
+.inp:focus{border-color:rgba(34,211,238,.55)}
+.inp::placeholder{color:#334155}
+
+.btn{display:block;width:100%;font-weight:900;font-size:14px;padding:14px;border-radius:10px;cursor:pointer;border:none;transition:all .18s;text-align:center}
+.btn-gold{background:linear-gradient(135deg,#ffd54a,#f59e0b);color:#000}
+.btn-gold:hover{box-shadow:0 0 24px rgba(255,213,74,.5);transform:translateY(-1px)}
+.btn-outline{background:transparent;border:1px solid rgba(34,211,238,.3);color:#22d3ee;margin-top:8px}
+
+/* TEAM PICKER */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px;max-height:300px;overflow-y:auto;margin-bottom:14px;padding:2px}
+.team-tile{display:flex;align-items:center;gap:6px;padding:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:7px;cursor:pointer;transition:all .15s;font-size:11px;font-weight:600}
+.team-tile:hover{background:rgba(255,213,74,.1);border-color:rgba(255,213,74,.3)}
+.team-tile.selected{background:rgba(255,213,74,.15);border-color:rgba(255,213,74,.6)}
+
+/* SUCCESS STATE */
+.success{display:none;text-align:center}
+.success.show{display:block;animation:fadeUp .4s ease}
+.code-box{background:rgba(0,0,0,.5);border:1px solid rgba(34,211,238,.3);border-radius:10px;padding:16px;font-family:monospace;font-size:12px;color:#22d3ee;word-break:break-all;margin:12px 0;text-align:left}
+.bookmark-box{background:rgba(255,213,74,.07);border:1px solid rgba(255,213,74,.25);border-radius:10px;padding:16px;margin:12px 0}
+.bookmark-link{font-family:monospace;font-size:11px;color:#94a3b8;word-break:break-all;display:block;margin-top:6px}
+
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(10,25,50,.95);border:1px solid rgba(34,211,238,.3);border-radius:10px;padding:10px 22px;font-size:12px;font-weight:700;color:#fff;z-index:999;transition:transform .3s}
+#toast.show{transform:translateX(-50%) translateY(0)}
+
+.divider{height:1px;background:rgba(255,255,255,.07);margin:16px 0}
+.note{font-size:11px;color:#334155;text-align:center;line-height:1.6;margin-top:12px}
+</style>
+</head>
+<body>
+
+<div class="card" id="join-card">
+  <div class="logo">
+    <img src="/wc26.png" alt="WC2026" onerror="this.style.display='none'">
+  </div>
+  <div class="sweep-name" id="sweep-name">Loading...</div>
+  <div class="sweep-org" id="sweep-org"></div>
+
+  <!-- Step 1: Choose type -->
+  <div id="step-type">
+    <div style="font-size:12px;color:#64748b;margin-bottom:14px;text-align:center">Choose how you want to enter:</div>
+    <div class="price-row">
+      <label class="price-box selected" id="box-random" onclick="selectType('random')">
+        <input type="radio" name="entry-type" value="random" checked>
+        <div class="price-type">🎲 Random</div>
+        <div class="price-amt" id="price-r">£3</div>
+        <div class="price-desc">Team drawn for you</div>
+      </label>
+      <label class="price-box" id="box-pick" onclick="selectType('pick')">
+        <input type="radio" name="entry-type" value="pick">
+        <div class="price-type">✋ Pick</div>
+        <div class="price-amt" id="price-p">£8</div>
+        <div class="price-desc">Choose your team</div>
+      </label>
+    </div>
+
+    <label class="lbl">Your Name</label>
+    <input class="inp" id="entrant-name" placeholder="Enter your full name" maxlength="40">
+
+    <!-- Team picker (shown for pick type) -->
+    <div id="team-picker-wrap" style="display:none">
+      <label class="lbl">Pick Your Team</label>
+      <input class="inp" id="team-search" placeholder="Search teams..." oninput="filterTeams()" style="margin-bottom:8px">
+      <div class="team-grid" id="team-grid"></div>
+      <div style="font-size:11px;color:#475569;margin-bottom:10px" id="selected-team-label">No team selected</div>
+    </div>
+
+    <button class="btn btn-gold" onclick="submitEntry()">✅ Register My Entry</button>
+    <div class="note">💰 Money is paid directly to the organiser — not through this app</div>
+  </div>
+
+  <!-- Success state -->
+  <div class="success" id="success-state">
+    <div style="font-size:48px;margin-bottom:12px">🎉</div>
+    <div style="font-size:20px;font-weight:900;margin-bottom:6px">You're in!</div>
+    <div style="font-size:13px;color:#64748b;margin-bottom:16px" id="success-name"></div>
+
+    <div class="divider"></div>
+
+    <div style="font-size:12px;color:#94a3b8;margin-bottom:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase">Step 1 — Send Your Join Code to the Organiser</div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:8px">Copy this code and send it to <strong style="color:#e2e8f0" id="organiser-name">the organiser</strong> via WhatsApp or email:</div>
+    <div class="code-box" id="join-code-display"></div>
+    <button class="btn btn-outline" onclick="copyCode()" style="margin-bottom:16px">📋 Copy Join Code</button>
+
+    <div class="divider"></div>
+
+    <div class="bookmark-box">
+      <div style="font-size:12px;color:#ffd54a;font-weight:700;margin-bottom:6px">Step 2 — Bookmark Your Personal Bracket Link</div>
+      <div style="font-size:11px;color:#64748b;margin-bottom:6px">Once the organiser confirms you and runs the draw, this link will show your team and the live bracket:</div>
+      <span class="bookmark-link" id="bracket-link-preview">Your link will appear here after the organiser confirms your entry</span>
+    </div>
+
+    <button class="btn btn-gold" onclick="copyBracketLink()" id="copy-bracket-btn" style="display:none">⭐ Copy Your Bracket Link</button>
+
+    <div class="note" style="margin-top:16px">The organiser will confirm your entry and let you know when the draw has been run. Pay your organiser directly — not through this app.</div>
+  </div>
+</div>
+
+<div id="toast">✅</div>
+
+<script>
+const ALL_TEAMS=[
+  {name:"Mexico",flag:"🇲🇽"},{name:"Ecuador",flag:"🇪🇨"},{name:"S.Korea",flag:"🇰🇷"},{name:"Sweden",flag:"🇸🇪"},
+  {name:"Canada",flag:"🇨🇦"},{name:"Italy",flag:"🇮🇹"},{name:"Croatia",flag:"🇭🇷"},
+  {name:"Brazil",flag:"🇧🇷"},{name:"Morocco",flag:"🇲🇦"},{name:"Scotland",flag:"🏴󠁧󠁢󠁳󠁣󠁴󠁿"},{name:"Haiti",flag:"🇭🇹"},
+  {name:"USA",flag:"🇺🇸"},{name:"Netherlands",flag:"🇳🇱"},{name:"Japan",flag:"🇯🇵"},{name:"Gambia",flag:"🇬🇲"},
+  {name:"Germany",flag:"🇩🇪"},{name:"Spain",flag:"🇪🇸"},{name:"Uruguay",flag:"🇺🇾"},{name:"Tunisia",flag:"🇹🇳"},
+  {name:"Colombia",flag:"🇨🇴"},{name:"Portugal",flag:"🇵🇹"},{name:"Ivory Coast",flag:"🇨🇮"},{name:"S.Arabia",flag:"🇸🇦"},
+  {name:"Belgium",flag:"🇧🇪"},{name:"Iran",flag:"🇮🇷"},{name:"Egypt",flag:"🇪🇬"},{name:"N.Zealand",flag:"🇳🇿"},
+  {name:"France",flag:"🇫🇷"},{name:"Austria",flag:"🇦🇹"},{name:"Senegal",flag:"🇸🇳"},{name:"Qatar",flag:"🇶🇦"},
+  {name:"Argentina",flag:"🇦🇷"},{name:"Peru",flag:"🇵🇪"},{name:"Nigeria",flag:"🇳🇬"},{name:"Israel",flag:"🇮🇱"},
+  {name:"England",flag:"🏴󠁧󠁢󠁥󠁮󠁧󠁿"},{name:"Denmark",flag:"🇩🇰"},{name:"Serbia",flag:"🇷🇸"},{name:"Panama",flag:"🇵🇦"},
+  {name:"Uzbekistan",flag:"🇺🇿"},{name:"Chile",flag:"🇨🇱"},{name:"Ghana",flag:"🇬🇭"},
+  {name:"Belarus",flag:"🇧🇾"},{name:"Algeria",flag:"🇩🇿"},{name:"China",flag:"🇨🇳"},
+];
+
+let params={},selectedType='random',selectedTeam=null;
+
+function toast(msg,dur=2500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
+function genToken(){return Math.random().toString(36).substring(2,12);}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  params=Object.fromEntries(new URLSearchParams(window.location.search));
+  document.getElementById('sweep-name').textContent=params.name||'WC2026 Sweepstake';
+  document.getElementById('sweep-org').textContent=params.organiser?'Organised by '+params.organiser:'';
+  const cur=params.c||'£';
+  document.getElementById('price-r').textContent=cur+(params.r||3);
+  document.getElementById('price-p').textContent=cur+(params.p||8);
+  renderTeamGrid();
+});
+
+function selectType(type){
+  selectedType=type;
+  document.getElementById('box-random').classList.toggle('selected',type==='random');
+  document.getElementById('box-pick').classList.toggle('selected',type==='pick');
+  document.getElementById('team-picker-wrap').style.display=type==='pick'?'block':'none';
+}
+
+function renderTeamGrid(filter=''){
+  const grid=document.getElementById('team-grid');
+  const teams=ALL_TEAMS.filter(t=>!filter||t.name.toLowerCase().includes(filter.toLowerCase()));
+  grid.innerHTML=teams.map(t=>`
+    <div class="team-tile ${selectedTeam===t.name?'selected':''}" onclick="selectTeam('${t.name.replace(/'/g,"\\'")}','${t.flag}')">
+      <span style="font-size:18px">${t.flag}</span>
+      <span>${t.name}</span>
+    </div>`).join('');
+}
+
+function filterTeams(){
+  renderTeamGrid(document.getElementById('team-search').value);
+}
+
+function selectTeam(name,flag){
+  selectedTeam=name;
+  document.getElementById('selected-team-label').textContent='Selected: '+flag+' '+name;
+  renderTeamGrid(document.getElementById('team-search').value);
+}
+
+function submitEntry(){
+  const name=document.getElementById('entrant-name').value.trim();
+  if(!name){toast('Please enter your name');return;}
+  if(selectedType==='pick'&&!selectedTeam){toast('Please pick a team');return;}
+
+  const tok=genToken();
+  const payload={n:name,t:selectedType,team:selectedTeam||null,tok,ts:Date.now(),sid:params.s||''};
+  const code='V1:'+btoa(JSON.stringify(payload));
+
+  // Show success
+  document.getElementById('step-type').style.display='none';
+  const succ=document.getElementById('success-state');
+  succ.classList.add('show');
+  document.getElementById('success-name').textContent=name+(selectedType==='pick'&&selectedTeam?' — '+selectedTeam:'');
+  document.getElementById('organiser-name').textContent=params.organiser||'the organiser';
+  document.getElementById('join-code-display').textContent=code;
+
+  // Note about bracket link (available after organiser confirms)
+  document.getElementById('bracket-link-preview').textContent='Your bracket link will be sent by '+( params.organiser||'the organiser')+' once the draw is run.';
+});
+
+function copyCode(){
+  const code=document.getElementById('join-code-display').textContent;
+  navigator.clipboard.writeText(code).then(()=>toast('📋 Join code copied — send it to the organiser!'));
+}
+
+function copyBracketLink(){
+  const link=document.getElementById('bracket-link-preview').textContent;
+  navigator.clipboard.writeText(link).then(()=>toast('⭐ Bracket link copied — bookmark it!'));
+}
+</script>
+</body>
+</html>
