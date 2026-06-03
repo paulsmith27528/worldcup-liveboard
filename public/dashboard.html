@@ -12,6 +12,25 @@ body{background:radial-gradient(ellipse at 40% 0%,#0d2847 0%,#061020 35%,#030b18
 ::-webkit-scrollbar{width:3px;height:3px}
 ::-webkit-scrollbar-thumb{background:rgba(34,211,238,.3);border-radius:2px}
 
+/* ─── DAY MODE — bracket only ──────────────────────────────────────── */
+body.day-mode .b-shell{background:linear-gradient(180deg,#0f2035,#162840)!important;border-color:rgba(100,180,220,.22)!important}
+body.day-mode .bc{background:#1a3352!important;border-color:rgba(100,180,220,.25)!important}
+body.day-mode .bc:hover{border-color:rgba(100,180,220,.55)!important;box-shadow:0 0 12px rgba(74,174,217,.15)!important}
+body.day-mode .bc-row{color:rgba(200,220,240,.32)!important}
+body.day-mode .bc-row.win{color:#cbd5e1!important}
+body.day-mode .bc-s.win{color:#4aaed9!important;text-shadow:none!important}
+body.day-mode .bc-st{color:#2d5a7a!important}
+body.day-mode .final-col{background:linear-gradient(145deg,#1f2f10,#162508)!important;border-color:rgba(255,213,74,.5)!important}
+body.day-mode .r-lbls{color:#2d5a7a!important}
+body.day-mode .r-lbl-final{color:rgba(255,213,74,.7)!important}
+body.day-mode .conn-svg g path,.conn-svg path{stroke-opacity:.6}
+body.day-mode .b-outer{background:linear-gradient(180deg,#0f2035,#162840)!important}
+/* Day mode indicator */
+.day-badge{display:none;align-items:center;gap:6px;background:rgba(74,174,217,.1);border:1px solid rgba(74,174,217,.25);border-radius:6px;padding:3px 10px;font-size:9px;color:#4aaed9;font-weight:700;letter-spacing:1px}
+body.day-mode .day-badge{display:inline-flex}
+body.day-mode .night-badge{display:none}
+.night-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.2);border-radius:6px;padding:3px 10px;font-size:9px;color:#22d3ee;font-weight:700;letter-spacing:1px}
+
 /* ─── ANIMATIONS ───────────────────────────────────────────────────── */
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.12}}
 @keyframes tFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
@@ -297,6 +316,8 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
       </span>
       <span>Updated: <span id="last-sync">--:--</span></span>
       <span id="api-status" onclick="showApiModal()" style="cursor:pointer;padding:2px 8px;border-radius:4px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444;font-size:8px;font-weight:700">&#9888; No API Key</span>
+      <span class="day-badge" onclick="toggleDayNight()" title="Click to switch">&#9728; Day</span>
+      <span class="night-badge" onclick="toggleDayNight()" title="Click to switch">&#9790; Night</span>
     </div>
     <div style="display:flex;gap:14px">
       <span>&#127760; Auto-timezone</span>
@@ -944,6 +965,15 @@ window.addEventListener('DOMContentLoaded',function(){
   /* Init API key status */
   initApiKey();
 
+  /* ── Day / Night mode — auto by local time, clickable to override ── */
+  function applyDayNight(){
+    var h=new Date().getHours();
+    var isDay=(h>=7&&h<19);
+    document.body.classList.toggle('day-mode',isDay);
+  }
+  applyDayNight();
+  setInterval(applyDayNight,60000); // check every minute
+
   /* ── Countdown to World Cup opening match: Jun 11 2026 21:00 UTC ── */
   var kickoff = new Date('2026-06-11T21:00:00Z').getTime();
   function updateCountdown(){
@@ -973,6 +1003,10 @@ window.addEventListener('DOMContentLoaded',function(){
 });
 
 /* ─── TABS ────────────────────────────────────────────────────────── */
+function toggleDayNight(){
+  document.body.classList.toggle('day-mode');
+}
+
 function showTab(n){
   ['bracket','groups','live','stats'].forEach(function(v,i){
     document.getElementById(v+'-view').className='view'+(v===n?' active':'');
