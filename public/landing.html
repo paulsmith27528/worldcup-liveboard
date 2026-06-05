@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>World Cup 2026 LiveBoard & Sweepstake</title>
-<meta name="description" content="48 teams, 48 nations, 1 World Cup. Live dashboard and office sweepstake platform for FIFA World Cup 2026.">
-<meta property="og:title" content="World Cup 2026 LiveBoard & Sweepstake">
-<meta property="og:description" content="48 teams, 48 nations, 1 World Cup. Enjoy it with your colleagues, family and friends.">
+<title>World Cup Sweepstake 2026 — Live Leaderboard & Dashboard</title>
+<meta name="description" content="The easiest World Cup sweepstake ever. One link, everyone registers themselves, live leaderboard updates automatically. No spreadsheets. No paper. No hats.">
+<meta property="og:title" content="World Cup Sweepstake 2026 — Live Leaderboard & Dashboard">
+<meta property="og:description" content="No spreadsheets. No paper. No hats. Set it up in 5 minutes. Argue about it for 6 weeks.">
 <meta property="og:image" content="/wc26.png">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -14,7 +14,6 @@ html{scroll-behavior:smooth}
 body{background:#020810;color:#fff;font-family:Arial,sans-serif;overflow-x:hidden}
 body{background:radial-gradient(ellipse at 50% 0%,#0d2847 0%,#061020 40%,#020810 100%)}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:rgba(34,211,238,.3);border-radius:2px}
-
 @keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
@@ -23,8 +22,6 @@ body{background:radial-gradient(ellipse at 50% 0%,#0d2847 0%,#061020 40%,#020810
 @keyframes countPulse{0%,100%{border-color:rgba(255,213,74,.35)}50%{border-color:rgba(255,213,74,.85)}}
 .blink{animation:blink 1.2s ease-in-out infinite}
 .float{animation:float 5s ease-in-out infinite}
-
-/* NAV */
 nav{position:sticky;top:0;z-index:100;background:rgba(2,8,16,.9);backdrop-filter:blur(18px);border-bottom:1px solid rgba(34,211,238,.12);padding:12px 24px;display:flex;justify-content:space-between;align-items:center}
 .nav-logo{display:flex;align-items:center;gap:10px}
 .nav-logo img{height:38px;width:auto}
@@ -34,19 +31,16 @@ nav{position:sticky;top:0;z-index:100;background:rgba(2,8,16,.9);backdrop-filter
 .nav-link:hover{color:#22d3ee}
 .nav-cta{background:linear-gradient(135deg,#22d3ee,#0ea5e9);color:#000;font-weight:900;font-size:12px;padding:8px 18px;border-radius:20px;text-decoration:none;white-space:nowrap;transition:all .15s}
 .nav-cta:hover{box-shadow:0 0 24px rgba(34,211,238,.5);transform:scale(1.04)}
-
-/* HERO */
 .hero-bg{position:relative;background:url('/Hero2.png') center center/cover no-repeat;min-height:100vh;display:flex;align-items:center;justify-content:center}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,8,16,.78) 0%,rgba(2,8,16,.65) 50%,rgba(2,8,16,.85) 100%)}
 .hero{padding:120px 20px 80px;text-align:center;max-width:900px;margin:0 auto;position:relative;z-index:1;width:100%}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:7px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:20px;padding:6px 16px;font-size:11px;font-weight:700;color:#ef4444;letter-spacing:1.5px;margin-bottom:24px}
 .hero-eyebrow span{width:7px;height:7px;border-radius:50%;background:#ef4444;display:inline-block}
-.hero h1{font-size:clamp(30px,6vw,68px);font-weight:900;line-height:1.08;letter-spacing:-1px;margin-bottom:16px}
+.hero h1{font-size:clamp(36px,7vw,80px);font-weight:900;line-height:1.05;letter-spacing:-2px;margin-bottom:16px}
 .hero h1 em{font-style:normal;background:linear-gradient(135deg,#22d3ee,#fff,#ffd54a);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-strap{font-size:clamp(15px,2.5vw,20px);color:#64748b;max-width:580px;margin:0 auto 12px;line-height:1.7}
-.hero-sub{font-size:14px;color:#334155;margin-bottom:36px}
-
-/* COUNTDOWN */
+.hero-sub48{font-size:clamp(16px,2.5vw,22px);color:#94a3b8;margin-bottom:10px;font-weight:500}
+.hero-hook{font-size:clamp(16px,2.5vw,22px);font-weight:900;color:#fff;margin-bottom:8px}
+.hero-tagline{font-size:14px;color:#475569;margin-bottom:36px}
 .countdown{margin-bottom:40px}
 .cd-label{font-size:10px;color:#ffd54a;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px}
 .cd-units{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
@@ -54,26 +48,28 @@ nav{position:sticky;top:0;z-index:100;background:rgba(2,8,16,.9);backdrop-filter
 .cu-num{font-size:clamp(34px,7vw,58px);font-weight:900;color:#fff;min-width:72px;text-align:center;background:linear-gradient(180deg,rgba(255,213,74,.09),rgba(0,0,0,.5));border:1px solid rgba(255,213,74,.35);border-radius:10px;padding:10px 6px;line-height:1;animation:countPulse 2s ease-in-out infinite}
 .cu-lbl{font-size:9px;color:#475569;letter-spacing:2px;font-weight:700;text-transform:uppercase}
 .cu-sep{font-size:42px;font-weight:900;color:#ffd54a;opacity:.4;align-self:flex-start;padding-top:6px}
-
-/* HERO BUTTONS */
 .hero-btns{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .btn-hero-gold{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#ffd54a,#f59e0b);color:#000;font-weight:900;font-size:15px;padding:16px 32px;border-radius:26px;text-decoration:none;transition:all .18s;animation:goldGlow 3s ease-in-out infinite}
 .btn-hero-gold:hover{transform:scale(1.04)}
 .btn-hero-cyan{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#22d3ee,#0ea5e9);color:#000;font-weight:900;font-size:15px;padding:16px 32px;border-radius:26px;text-decoration:none;transition:all .18s;animation:cyanGlow 3s ease-in-out infinite}
 .btn-hero-cyan:hover{transform:scale(1.04)}
+.btn-hero-bundle{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#a78bfa,#7c3aed);color:#fff;font-weight:900;font-size:15px;padding:16px 32px;border-radius:26px;text-decoration:none;transition:all .18s;box-shadow:0 0 30px rgba(167,139,250,.3)}
+.btn-hero-bundle:hover{transform:scale(1.04);box-shadow:0 0 50px rgba(167,139,250,.5)}
 .hero-note{font-size:11px;color:#1e3a5f;text-align:center}
-
-/* TWO PRODUCTS */
+.social-proof{display:inline-flex;align-items:center;gap:7px;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.2);border-radius:20px;padding:6px 16px;font-size:11px;font-weight:700;color:#22d3ee;letter-spacing:1px;margin-bottom:20px}
 .products{padding:70px 20px;max-width:1100px;margin:0 auto}
-.products-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.products-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
 .product-card{border-radius:20px;padding:32px;display:flex;flex-direction:column;transition:transform .2s}
 .product-card:hover{transform:translateY(-4px)}
 .product-card.sweep{background:linear-gradient(150deg,rgba(255,213,74,.09),rgba(5,18,38,.97));border:1px solid rgba(255,213,74,.35);animation:goldGlow 4s ease-in-out infinite}
 .product-card.dash{background:linear-gradient(150deg,rgba(34,211,238,.07),rgba(5,18,38,.97));border:1px solid rgba(34,211,238,.3);animation:cyanGlow 4s ease-in-out infinite}
+.product-card.bundle{background:linear-gradient(150deg,rgba(167,139,250,.1),rgba(5,18,38,.97));border:2px solid rgba(167,139,250,.5);position:relative;overflow:hidden}
+.bundle-badge{position:absolute;top:16px;right:16px;background:linear-gradient(135deg,#a78bfa,#7c3aed);color:#fff;font-size:9px;font-weight:900;letter-spacing:1.5px;padding:4px 10px;border-radius:10px;text-transform:uppercase}
 .product-icon{font-size:40px;margin-bottom:14px}
 .product-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:2px;padding:3px 10px;border-radius:10px;margin-bottom:12px;text-transform:uppercase}
 .tag-gold{background:rgba(255,213,74,.15);color:#ffd54a;border:1px solid rgba(255,213,74,.25)}
 .tag-cyan{background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.22)}
+.tag-purple{background:rgba(167,139,250,.15);color:#a78bfa;border:1px solid rgba(167,139,250,.25)}
 .product-title{font-size:24px;font-weight:900;margin-bottom:8px}
 .product-desc{font-size:13px;color:#64748b;line-height:1.8;margin-bottom:20px;flex:1}
 .product-price{font-size:32px;font-weight:900;margin-bottom:6px}
@@ -85,8 +81,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(2,8,16,.9);backdrop-filter
 .btn-product-gold:hover{box-shadow:0 0 24px rgba(255,213,74,.5);transform:translateY(-1px)}
 .btn-product-cyan{display:block;text-align:center;background:linear-gradient(135deg,#22d3ee,#0ea5e9);color:#000;font-weight:900;font-size:13px;padding:13px;border-radius:12px;text-decoration:none;transition:all .15s}
 .btn-product-cyan:hover{box-shadow:0 0 24px rgba(34,211,238,.5);transform:translateY(-1px)}
-
-/* HOW IT WORKS */
+.btn-product-bundle{display:block;text-align:center;background:linear-gradient(135deg,#a78bfa,#7c3aed);color:#fff;font-weight:900;font-size:13px;padding:13px;border-radius:12px;text-decoration:none;transition:all .15s}
+.btn-product-bundle:hover{box-shadow:0 0 24px rgba(167,139,250,.5);transform:translateY(-1px)}
 .hiw{padding:70px 20px;border-top:1px solid rgba(255,255,255,.06);max-width:1000px;margin:0 auto}
 .section-label{text-align:center;font-size:10px;color:#22d3ee;font-weight:700;letter-spacing:4px;text-transform:uppercase;margin-bottom:10px}
 .section-title{text-align:center;font-size:clamp(22px,4vw,36px);font-weight:900;margin-bottom:48px;line-height:1.2}
@@ -95,15 +91,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(2,8,16,.9);backdrop-filter
 .hiw-num{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#ffd54a,#f59e0b);color:#000;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
 .hiw-title{font-size:15px;font-weight:700;margin-bottom:8px}
 .hiw-desc{font-size:12px;color:#475569;line-height:1.7}
-
-/* STATS */
 .stats{padding:60px 20px;text-align:center;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);background:linear-gradient(135deg,rgba(255,213,74,.04),rgba(0,0,0,.3))}
 .stats-row{display:flex;justify-content:center;gap:56px;flex-wrap:wrap}
 .stat{text-align:center}
 .stat-num{font-size:clamp(32px,6vw,52px);font-weight:900;color:#ffd54a;line-height:1}
 .stat-lbl{font-size:11px;color:#475569;letter-spacing:1.5px;margin-top:5px;text-transform:uppercase}
-
-/* FEATURES */
 .features{padding:70px 20px;max-width:1100px;margin:0 auto}
 .features-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 .feat{background:linear-gradient(150deg,rgba(5,18,38,.97),rgba(2,9,20,.99));border:1px solid rgba(34,211,238,.12);border-radius:14px;padding:24px;transition:all .2s}
@@ -115,25 +107,17 @@ nav{position:sticky;top:0;z-index:100;background:rgba(2,8,16,.9);backdrop-filter
 .feat-tag.sweep{background:rgba(255,213,74,.12);color:#ffd54a}
 .feat-tag.dash{background:rgba(34,211,238,.1);color:#22d3ee}
 .feat-tag.both{background:rgba(167,139,250,.1);color:#a78bfa}
-
-/* COMPARE */
 .compare{padding:70px 20px;max-width:680px;margin:0 auto;text-align:center;border-top:1px solid rgba(255,255,255,.06)}
 .compare-row{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-top:32px}
 .compare-item{text-align:center}
 .compare-strike{font-size:18px;font-weight:700;color:#334155;text-decoration:line-through}
 .compare-lbl{font-size:10px;color:#1e3a5f;margin-top:2px}
-
-/* BOTTOM CTA */
 .bottom-cta{padding:80px 20px;text-align:center;background:linear-gradient(135deg,rgba(34,211,238,.06),rgba(255,213,74,.04));border-top:1px solid rgba(34,211,238,.1)}
 .bottom-cta h2{font-size:clamp(24px,4vw,40px);font-weight:900;margin-bottom:12px;line-height:1.2}
 .bottom-cta p{font-size:15px;color:#475569;margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto}
-
-/* FOOTER */
 footer{padding:24px;border-top:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.6);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:10px;color:#1e3a5f}
 footer a{color:#334155;text-decoration:none}
 footer a:hover{color:#22d3ee}
-
-/* MOBILE */
 @media(max-width:768px){
   nav .nav-links .nav-link{display:none}
   .products-grid{grid-template-columns:1fr}
@@ -151,8 +135,6 @@ footer a:hover{color:#22d3ee}
 </style>
 </head>
 <body>
-
-<!-- NAV -->
 <nav>
   <div class="nav-logo">
     <img src="/wc26.png" alt="WC2026" onerror="this.style.display='none'">
@@ -162,22 +144,18 @@ footer a:hover{color:#22d3ee}
     <a href="#products" class="nav-link">Products</a>
     <a href="#how-it-works" class="nav-link">How It Works</a>
     <a href="#features" class="nav-link">Features</a>
-    <a href="https://buy.stripe.com/3cI4gs5BudLndXU2aR3F601" class="nav-cta">🎲 Start Sweepstake — £4.99</a>
+    <a href="https://buy.stripe.com/3cI4gs5BudLndXU2aR3F601" class="nav-cta">Start My Sweepstake — £4.99</a>
   </div>
 </nav>
-
-<!-- HERO -->
 <div class="hero-bg">
 <div class="hero-overlay"></div>
 <section class="hero">
-  <div class="hero-eyebrow">
-    <span class="blink"></span> WORLD CUP STARTS JUNE 11, 2026
-  </div>
-  <h1>48 teams. 48 nations.<br><em>United by football.</em></h1>
-  <p class="hero-strap">The smartest way to follow the World Cup.</p>
-  <p class="hero-sub">Live scores. Office sweepstake. All in one place.</p>
-
-  <!-- COUNTDOWN -->
+  <div class="hero-eyebrow"><span class="blink"></span> WORLD CUP STARTS JUNE 11, 2026</div>
+  <div class="social-proof">⚡ Be one of the first 500 groups</div>
+  <h1>World Cup<br><em>Sweepstake</em><br>2026</h1>
+  <p class="hero-sub48">48 teams. 48 nations. United by football.</p>
+  <p class="hero-hook">No spreadsheets. No paper. No hats.</p>
+  <p class="hero-tagline">Less than a round of drinks. Set it up in 5 minutes. Argue about it for 6 weeks.</p>
   <div class="countdown">
     <div class="cd-label">⏱ Tournament kicks off in</div>
     <div class="cd-units">
@@ -190,87 +168,93 @@ footer a:hover{color:#22d3ee}
       <div class="cu"><div class="cu-num" id="cd-s">--</div><div class="cu-lbl">Secs</div></div>
     </div>
   </div>
-
   <div class="hero-btns">
-    <a href="https://buy.stripe.com/3cI4gs5BudLndXU2aR3F601" class="btn-hero-gold">🎲 Start a Sweepstake — £4.99</a>
+    <a href="https://buy.stripe.com/3cI4gs5BudLndXU2aR3F601" class="btn-hero-gold">🏆 Start My Sweepstake — £4.99</a>
+    <a href="https://buy.stripe.com/7sYbIUd3WfTv9HE9Dj3F602" class="btn-hero-bundle">⚡ Bundle Deal — £5.99</a>
     <a href="https://buy.stripe.com/bJe4gsd3W8r39HEbLr3F600" class="btn-hero-cyan">📊 Live Dashboard — £2.99</a>
   </div>
-  <div class="hero-note">No account needed · Works on any device · Instant access</div>
+  <div class="hero-note">Instant access link to your email · Secure checkout via Stripe · Works on any device</div>
 </section>
 </div>
-
-<!-- TWO PRODUCTS -->
 <section class="products" id="products">
   <div class="section-label">Two products</div>
   <h2 class="section-title">Everything you need for WC2026</h2>
   <div class="products-grid">
-
-    <!-- SWEEPSTAKE -->
     <div class="product-card sweep">
-      <div class="product-icon float">🎲</div>
+      <div class="product-icon float">🏆</div>
       <div class="product-tag tag-gold">Sweepstake Platform</div>
       <div class="product-title">Office Sweepstake</div>
-      <div class="product-desc">Run a premium World Cup sweepstake for your office, family or WhatsApp group. Participants register themselves via a link — no chasing. Random draw or pick your team. Everyone gets a personal live bracket.</div>
+      <div class="product-desc">Run a premium World Cup sweepstake for your office, family or WhatsApp group. No spreadsheets. No paper. No hats. Everyone registers themselves via one link.</div>
       <div class="product-price" style="color:#ffd54a">£4.99</div>
       <div class="product-price-note">One-off · Full tournament access for your whole group</div>
       <div class="product-features">
         <div class="pf"><span class="pf-check">✓</span> Self-registration via join link — no chasing</div>
-        <div class="pf"><span class="pf-check">✓</span> Random draw or pick a team (premium)</div>
+        <div class="pf"><span class="pf-check">✓</span> Random draw or pick a team</div>
         <div class="pf"><span class="pf-check">✓</span> Every participant gets a personal live bracket</div>
         <div class="pf"><span class="pf-check">✓</span> Live leaderboard as teams get knocked out</div>
         <div class="pf"><span class="pf-check">✓</span> Prize pot tracker · Paid/unpaid management</div>
         <div class="pf"><span class="pf-check">✓</span> Free printable A3 poster included</div>
       </div>
-      <a href="https://buy.stripe.com/3cI4gs5BudLndXU2aR3F601" class="btn-product-gold">🎲 Start Your Sweepstake — £4.99</a>
+      <a href="https://buy.stripe.com/3cI4gs5BudLndXU2aR3F601" class="btn-product-gold">🏆 Start My Sweepstake — £4.99</a>
     </div>
-
-    <!-- DASHBOARD -->
+    <div class="product-card bundle">
+      <div class="bundle-badge">BEST VALUE</div>
+      <div class="product-icon float" style="animation-delay:.3s">⚡</div>
+      <div class="product-tag tag-purple">Bundle</div>
+      <div class="product-title">Everything</div>
+      <div class="product-desc">Sweepstake + Live Dashboard together. The full World Cup experience for your group. Save £2 vs buying separately.</div>
+      <div class="product-price" style="color:#a78bfa">£5.99</div>
+      <div class="product-price-note">One-off · Both products · Full tournament access</div>
+      <div class="product-features">
+        <div class="pf"><span class="pf-check">✓</span> Everything in the Sweepstake</div>
+        <div class="pf"><span class="pf-check">✓</span> Everything in the Live Dashboard</div>
+        <div class="pf"><span class="pf-check">✓</span> Live scores, bracket, group tables</div>
+        <div class="pf"><span class="pf-check">✓</span> Squad cards with real player photos</div>
+        <div class="pf"><span class="pf-check">✓</span> Save £2 vs buying separately</div>
+        <div class="pf"><span class="pf-check">✓</span> Free printable A3 poster included</div>
+      </div>
+      <a href="https://buy.stripe.com/7sYbIUd3WfTv9HE9Dj3F602" class="btn-product-bundle">⚡ Get the Bundle — £5.99</a>
+    </div>
     <div class="product-card dash">
       <div class="product-icon float" style="animation-delay:.5s">📊</div>
       <div class="product-tag tag-cyan">Live Dashboard</div>
       <div class="product-title">Tournament Dashboard</div>
-      <div class="product-desc">The most beautiful World Cup dashboard ever built. Live scores, the full knockout bracket, all 12 group stages, player squad cards with real photos, top scorers and tournament stats — all in one stunning view.</div>
+      <div class="product-desc">The most beautiful World Cup dashboard ever built. Live scores, the full knockout bracket, all 12 group stages, player squad cards with real photos and top scorers.</div>
       <div class="product-price" style="color:#22d3ee">£2.99</div>
       <div class="product-price-note">One-off payment · No subscription · Full tournament access</div>
       <div class="product-features">
         <div class="pf"><span class="pf-check">✓</span> Live scores — updates every 20 seconds</div>
         <div class="pf"><span class="pf-check">✓</span> Full knockout bracket with glowing connector lines</div>
         <div class="pf"><span class="pf-check">✓</span> All 48 teams · All 12 group tables</div>
-        <div class="pf"><span class="pf-check">✓</span> Tournament stats, team stats &amp; player profiles with photos</div>
+        <div class="pf"><span class="pf-check">✓</span> Tournament stats &amp; player profiles with photos</div>
         <div class="pf"><span class="pf-check">✓</span> Top scorers &amp; golden boot leaderboard</div>
         <div class="pf"><span class="pf-check">✓</span> Works on desktop, tablet and mobile</div>
-        <div class="pf"><span class="pf-check">✓</span> Free printable A3 poster included</div>
       </div>
       <a href="https://buy.stripe.com/bJe4gsd3W8r39HEbLr3F600" class="btn-product-cyan">📊 View the Dashboard — £2.99</a>
     </div>
-
   </div>
 </section>
-
-<!-- HOW IT WORKS -->
 <section class="hiw" id="how-it-works">
   <div class="section-label">Simple by design</div>
-  <h2 class="section-title">Sweepstake set up in 5 minutes</h2>
+  <h2 class="section-title">Up and running in 5 minutes</h2>
   <div class="hiw-grid">
     <div class="hiw-step">
       <div class="hiw-num">1</div>
-      <div class="hiw-title">Organiser Sets Up</div>
-      <div class="hiw-desc">Visit the sweepstake hub, enter your group name and buy-in prices. Takes 2 minutes. Get a unique join link for your group.</div>
+      <div class="hiw-title">Share one link</div>
+      <div class="hiw-desc">Send your join link to the group. WhatsApp, Slack, email — wherever they live. Takes 2 minutes to set up.</div>
     </div>
     <div class="hiw-step">
       <div class="hiw-num">2</div>
-      <div class="hiw-title">Share the Link</div>
-      <div class="hiw-desc">Drop the join link in your WhatsApp group or office Slack. Everyone clicks, enters their name, and registers themselves. No chasing needed.</div>
+      <div class="hiw-title">Everyone registers themselves</div>
+      <div class="hiw-desc">No chasing. No spreadsheets. No paper. No hats. They click the link, enter their name, they're in.</div>
     </div>
     <div class="hiw-step">
       <div class="hiw-num">3</div>
-      <div class="hiw-title">Draw & Follow Live</div>
-      <div class="hiw-desc">Run the draw with one click. Everyone gets a personal bracket link showing their team. As teams get knocked out, the leaderboard updates automatically.</div>
+      <div class="hiw-title">Watch the chaos unfold</div>
+      <div class="hiw-desc">Run the draw with one click. The leaderboard updates automatically as teams get knocked out. You just enjoy it.</div>
     </div>
   </div>
 </section>
-
-<!-- STATS -->
 <section class="stats">
   <div class="stats-row">
     <div class="stat"><div class="stat-num">48</div><div class="stat-lbl">Teams</div></div>
@@ -279,96 +263,44 @@ footer a:hover{color:#22d3ee}
     <div class="stat"><div class="stat-num">5bn</div><div class="stat-lbl">Global viewers</div></div>
   </div>
 </section>
-
-<!-- FEATURES -->
 <section class="features" id="features">
   <div class="section-label">Everything included</div>
   <h2 class="section-title" style="margin-bottom:32px">Smart, Sociable and Fun</h2>
   <div class="features-grid">
-    <div class="feat">
-      <div class="feat-tag sweep">Sweepstake</div>
-      <div class="feat-icon">🔗</div>
-      <div class="feat-title">Self-Registration</div>
-      <div class="feat-desc">Share one link. Participants register themselves — choose random or pick their team. No spreadsheets, no chasing.</div>
-    </div>
-    <div class="feat">
-      <div class="feat-tag dash">Dashboard</div>
-      <div class="feat-icon">⚽</div>
-      <div class="feat-title">Live Scores</div>
-      <div class="feat-desc">Real-time scores for every match. Minute, scorers, possession, yellow and red cards — updating every 20 seconds.</div>
-    </div>
-    <div class="feat">
-      <div class="feat-tag sweep">Sweepstake</div>
-      <div class="feat-icon">🎲</div>
-      <div class="feat-title">Fair Random Draw</div>
-      <div class="feat-desc">Teams assigned randomly or by choice. Pick-a-team option lets premium entrants choose their nation. Fully transparent.</div>
-    </div>
-    <div class="feat">
-      <div class="feat-tag dash">Dashboard</div>
-      <div class="feat-icon">🏟️</div>
-      <div class="feat-title">Knockout Bracket</div>
-      <div class="feat-desc">The complete tournament tree from Round of 32 to the Final. Live results update as matches are played.</div>
-    </div>
-    <div class="feat">
-      <div class="feat-tag both">Both</div>
-      <div class="feat-icon">👤</div>
-      <div class="feat-title">Personal Bracket View</div>
-      <div class="feat-desc">Every sweepstake participant gets their own secure link — showing their team highlighted throughout the live bracket.</div>
-    </div>
-    <div class="feat">
-      <div class="feat-tag dash">Dashboard</div>
-      <div class="feat-icon">🃏</div>
-      <div class="feat-title">Squad Cards</div>
-      <div class="feat-desc">Click any team to see their full squad. Premium player cards with real photos, DOB, height, club and season stats.</div>
-    </div>
-    <div class="feat">
-      <div class="feat-tag sweep">Sweepstake</div>
-      <div class="feat-icon">📊</div>
-      <div class="feat-title">Live Leaderboard</div>
-      <div class="feat-desc">As teams are eliminated, the leaderboard updates. See who's still alive and who's out — building drama until the Final.</div>
-    </div>
-    <div class="feat">
-      <div class="feat-tag both">Both</div>
-      <div class="feat-icon">📱</div>
-      <div class="feat-title">Any Device</div>
-      <div class="feat-desc">Fully responsive on mobile, tablet, laptop and TV. Follow the World Cup anywhere, any time, on any screen.</div>
-    </div>
-    <div class="feat">
-      <div class="feat-tag sweep">Sweepstake</div>
-      <div class="feat-icon">💰</div>
-      <div class="feat-title">Pot Tracker</div>
-      <div class="feat-desc">Mark who's paid, track the prize pot in real time. Money stays between your group — we never handle payments.</div>
-    </div>
+    <div class="feat"><div class="feat-tag sweep">Sweepstake</div><div class="feat-icon">🔗</div><div class="feat-title">Self-Registration</div><div class="feat-desc">Share one link. Participants register themselves — choose random or pick their team. No spreadsheets, no chasing.</div></div>
+    <div class="feat"><div class="feat-tag dash">Dashboard</div><div class="feat-icon">⚽</div><div class="feat-title">Live Scores</div><div class="feat-desc">Real-time scores for every match. Minute, scorers, possession, yellow and red cards — updating every 20 seconds.</div></div>
+    <div class="feat"><div class="feat-tag sweep">Sweepstake</div><div class="feat-icon">🎲</div><div class="feat-title">Fair Random Draw</div><div class="feat-desc">Teams assigned randomly or by choice. Pick-a-team option lets premium entrants choose their nation. Fully transparent.</div></div>
+    <div class="feat"><div class="feat-tag dash">Dashboard</div><div class="feat-icon">🏟️</div><div class="feat-title">Knockout Bracket</div><div class="feat-desc">The complete tournament tree from Round of 32 to the Final. Live results update as matches are played.</div></div>
+    <div class="feat"><div class="feat-tag both">Both</div><div class="feat-icon">👤</div><div class="feat-title">Personal Bracket View</div><div class="feat-desc">Every sweepstake participant gets their own secure link — showing their team highlighted throughout the live bracket.</div></div>
+    <div class="feat"><div class="feat-tag dash">Dashboard</div><div class="feat-icon">🃏</div><div class="feat-title">Squad Cards</div><div class="feat-desc">Click any team to see their full squad. Premium player cards with real photos, DOB, height, club and season stats.</div></div>
+    <div class="feat"><div class="feat-tag sweep">Sweepstake</div><div class="feat-icon">📊</div><div class="feat-title">Live Leaderboard</div><div class="feat-desc">As teams are eliminated, the leaderboard updates. See who's still alive and who's out — building drama until the Final.</div></div>
+    <div class="feat"><div class="feat-tag both">Both</div><div class="feat-icon">📱</div><div class="feat-title">Any Device</div><div class="feat-desc">Fully responsive on mobile, tablet, laptop and TV. Follow the World Cup anywhere, any time, on any screen.</div></div>
+    <div class="feat"><div class="feat-tag sweep">Sweepstake</div><div class="feat-icon">💰</div><div class="feat-title">Pot Tracker</div><div class="feat-desc">Mark who's paid, track the prize pot in real time. Money stays between your group — we never handle payments.</div></div>
   </div>
 </section>
-
-<!-- PRICE COMPARE -->
 <section class="compare">
   <div class="section-label">Value</div>
-  <h2 class="section-title">Less than a round of drinks.<br>More entertaining.</h2>
+  <h2 class="section-title">Less than a round of drinks.<br>Set it up in 5 minutes. Argue about it for 6 weeks.</h2>
   <div class="compare-row">
     <div class="compare-item"><div class="compare-strike">£5.50</div><div class="compare-lbl">A pint</div></div>
     <div class="compare-item"><div class="compare-strike">£9.99</div><div class="compare-lbl">Sports app/month</div></div>
     <div class="compare-item"><div class="compare-strike">£14.99</div><div class="compare-lbl">Sky Sports day pass</div></div>
     <div class="compare-item" style="border:1px solid rgba(34,211,238,.3);border-radius:12px;padding:16px 20px">
-      <div style="font-size:28px;font-weight:900;color:#22d3ee">£2.99</div>
+      <div style="font-size:28px;font-weight:900;color:#22d3ee">£4.99</div>
       <div style="font-size:10px;color:#475569;margin-top:2px">Full tournament · One payment</div>
     </div>
   </div>
 </section>
-
-<!-- BOTTOM CTA -->
 <section class="bottom-cta">
-  <h2>Your team is waiting.<br>The countdown has started.</h2>
-  <p>48 teams. 104 matches. One sweepstake. One stunning dashboard. Join millions of fans for the greatest show on earth.</p>
+  <h2>6 days. 48 teams.<br>One sweepstake.</h2>
+  <p>The tournament starts 11 June. Don't be the person who nearly organised it.</p>
   <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
-    <a href="https://buy.stripe.com/3cI4gs5BudLndXU2aR3F601" class="btn-hero-gold" style="text-decoration:none">🎲 Start a Sweepstake — £4.99</a>
-    <a href="https://buy.stripe.com/bJe4gsd3W8r39HEbLr3F600" class="btn-hero-cyan" style="text-decoration:none">📊 Live Dashboard — £2.99</a>
+    <a href="https://buy.stripe.com/3cI4gs5BudLndXU2aR3F601" class="btn-hero-gold">🏆 Start My Sweepstake — £4.99</a>
+    <a href="https://buy.stripe.com/7sYbIUd3WfTv9HE9Dj3F602" class="btn-hero-bundle">⚡ Bundle — £5.99</a>
+    <a href="https://buy.stripe.com/bJe4gsd3W8r39HEbLr3F600" class="btn-hero-cyan">📊 Live Dashboard — £2.99</a>
   </div>
-  <div style="font-size:11px;color:#1e3a5f;margin-top:14px">No account · No subscription · Instant access</div>
+  <div style="font-size:11px;color:#1e3a5f;margin-top:14px">No account · No subscription · Instant access link to your email</div>
 </section>
-
-<!-- FOOTER -->
 <footer>
   <div style="display:flex;align-items:center;gap:8px">
     <img src="/wc26.png" alt="WC2026" style="height:24px" onerror="this.style.display='none'">
@@ -381,16 +313,11 @@ footer a:hover{color:#22d3ee}
   </div>
   <div style="color:#1e293b">Powered by API-Football · Stripe Payments</div>
 </footer>
-
 <script>
-/* Countdown */
 var kickoff=new Date('2026-06-11T21:00:00Z').getTime();
 function tick(){
   var diff=kickoff-Date.now();
-  if(diff<=0){
-    document.querySelector('.countdown').innerHTML='<div style="font-size:20px;font-weight:900;color:#22c55e;letter-spacing:3px">⚽ THE WORLD CUP HAS STARTED!</div>';
-    return;
-  }
+  if(diff<=0){document.querySelector('.countdown').innerHTML='<div style="font-size:20px;font-weight:900;color:#22c55e;letter-spacing:3px">⚽ THE WORLD CUP HAS STARTED!</div>';return;}
   var pad=function(n){return n<10?'0'+n:''+n};
   document.getElementById('cd-d').textContent=pad(Math.floor(diff/86400000));
   document.getElementById('cd-h').textContent=pad(Math.floor((diff%86400000)/3600000));
@@ -398,16 +325,8 @@ function tick(){
   document.getElementById('cd-s').textContent=pad(Math.floor((diff%60000)/1000));
 }
 tick();setInterval(tick,1000);
-
-/* Fade in on scroll */
-var obs=new IntersectionObserver(function(entries){
-  entries.forEach(function(e){
-    if(e.isIntersecting){e.target.style.opacity='1';e.target.style.animation='fadeUp .6s ease forwards';}
-  });
-},{threshold:.1});
-document.querySelectorAll('.feat,.hiw-step,.product-card,.stat').forEach(function(el){
-  el.style.opacity='0';obs.observe(el);
-});
+var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.style.opacity='1';e.target.style.animation='fadeUp .6s ease forwards';}});},{threshold:.1});
+document.querySelectorAll('.feat,.hiw-step,.product-card,.stat').forEach(function(el){el.style.opacity='0';obs.observe(el);});
 </script>
 </body>
 </html>
