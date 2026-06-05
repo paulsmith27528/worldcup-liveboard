@@ -825,7 +825,7 @@ function makeGroup(g){
   var h='<div class="g-card" id="gc-'+g.id+'"><div class="g-hdr"><span class="g-id">GROUP '+g.id+'</span><div class="g-cols"><span class="g-col">P</span><span class="g-col">W</span><span class="g-col">D</span><span class="g-col">L</span><span class="g-col" style="width:22px">GD</span><span class="g-col" style="width:22px">PTS</span></div></div>';
   g.t.forEach(function(t,i){
     var gd=t.gs-t.ga,gdc=gd>0?'#4ade80':gd<0?'#f87171':'#475569';
-    h+='<div class="t-row'+(i<2?' q':'')+'" onclick='openPop('+JSON.stringify(t)+')'>'+
+    h+='<div class="t-row'+(i<2?' q':'')+'" onclick="openPop('+JSON.stringify(t).replace(/"/g,'&quot;')+')">'+ 
       '<span class="t-pos">'+(i+1)+'</span>'+
       '<span class="t-abbr '+(i<2?'top':'bot')+'">'+t.a+'</span>'+
       '<span class="t-flag">'+t.f+'</span>'+
@@ -851,29 +851,29 @@ function makeCol(ms,gold){
 }
 
 function makeFinal(){
-  return '<div class="final-col">'+
-    '<div style="margin-bottom:10px;animation:tFloat 4s ease-in-out infinite">'+
-      '<img src="/wc26.png" alt="FIFA World Cup 2026" onerror="this.style.display='none'" style="width:130px;height:auto;filter:drop-shadow(0 0 22px rgba(255,213,74,.85)) drop-shadow(0 0 50px rgba(255,160,0,.4)) brightness(1.08);mix-blend-mode:screen;opacity:.92">'+
-    '</div>'+
-    '<div class="final-inner gold-glow">'+
-      '<div style="color:#ffd54a;font-weight:900;font-size:14px;letter-spacing:4px;margin-bottom:4px">FINAL</div>'+
-      '<div style="color:#475569;font-size:8px">JULY 19, 2026</div>'+
-      '<div style="color:#334155;font-size:7px;margin-bottom:10px">METLIFE STADIUM · NEW JERSEY</div>'+
-      '<div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;width:100%">'+
-        '<div style="text-align:center"><div style="font-size:24px">&#127463;&#127479;</div><div style="font-weight:700;font-size:10px;margin-top:2px;letter-spacing:1px">BRAZIL</div></div>'+
-        '<div style="font-size:28px;font-weight:900;color:#ffd54a;letter-spacing:2px">2&mdash;1</div>'+
-        '<div style="text-align:center"><div style="font-size:24px">&#127462;&#127479;</div><div style="font-weight:700;font-size:10px;margin-top:2px;letter-spacing:1px">ARGENTINA</div></div>'+
-      '</div>'+
-      '<div style="margin-top:9px;font-size:7.5px;color:#475569;line-height:1.9;text-align:center">'+
-        '<div>&#9917; VINI JR. 27' · RAPHINHA 72'</div>'+
-        '<div>&#9917; M. ALVAREZ 45+1'</div>'+
-      '</div>'+
-      '<div style="margin-top:8px;padding-top:7px;border-top:1px solid rgba(255,213,74,.15);width:100%;font-size:7px;color:#334155;text-align:center">'+
-        'THIRD PLACE · &#127477;&#127481; POR 2&ndash;1 URU &#127482;&#127486;'+
-      '</div>'+
-      '<div style="color:#22d3ee;font-size:8.5px;font-weight:700;letter-spacing:2.5px;margin-top:7px">&#127463;&#127479; CHAMPIONS</div>'+
-    '</div>'+
-  '</div>';
+  var h=[];
+  h.push('<div class="final-col">');
+  h.push('<div style="margin-bottom:10px;animation:tFloat 4s ease-in-out infinite">');
+  h.push('<img src="/wc26.png" alt="FIFA World Cup 2026" onerror="this.style.display=&apos;none&apos;" style="width:130px;height:auto;filter:drop-shadow(0 0 22px rgba(255,213,74,.85)) drop-shadow(0 0 50px rgba(255,160,0,.4)) brightness(1.08);mix-blend-mode:screen;opacity:.92">');
+  h.push('</div>');
+  h.push('<div class="final-inner gold-glow">');
+  h.push('<div style="color:#ffd54a;font-weight:900;font-size:14px;letter-spacing:4px;margin-bottom:4px">FINAL</div>');
+  h.push('<div style="color:#475569;font-size:8px">JULY 19, 2026</div>');
+  h.push('<div style="color:#334155;font-size:7px;margin-bottom:10px">METLIFE STADIUM &middot; NEW JERSEY</div>');
+  h.push('<div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;width:100%">');
+  h.push('<div style="text-align:center"><div style="font-size:24px">&#127463;&#127479;</div><div style="font-weight:700;font-size:10px;margin-top:2px;letter-spacing:1px">BRAZIL</div></div>');
+  h.push('<div style="font-size:28px;font-weight:900;color:#ffd54a;letter-spacing:2px">2&mdash;1</div>');
+  h.push('<div style="text-align:center"><div style="font-size:24px">&#127462;&#127479;</div><div style="font-weight:700;font-size:10px;margin-top:2px;letter-spacing:1px">ARGENTINA</div></div>');
+  h.push('</div>');
+  h.push('<div style="margin-top:9px;font-size:7.5px;color:#475569;line-height:1.9;text-align:center">');
+  h.push('<div>&#9917; VINI JR. 27&apos; &middot; RAPHINHA 72&apos;</div>');
+  h.push('<div>&#9917; M. ALVAREZ 45+1&apos;</div>');
+  h.push('</div>');
+  h.push('<div style="margin-top:8px;padding-top:7px;border-top:1px solid rgba(255,213,74,.15);width:100%;font-size:7px;color:#334155;text-align:center">THIRD PLACE &middot; &#127477;&#127481; POR 2&ndash;1 URU &#127482;&#127486;</div>');
+  h.push('<div style="color:#22d3ee;font-size:8.5px;font-weight:700;letter-spacing:2.5px;margin-top:7px">&#127463;&#127479; CHAMPIONS</div>');
+  h.push('</div>');
+  h.push('</div>');
+  return h.join('');
 }
 
 function makeLiveCard(m){
@@ -968,7 +968,7 @@ window.addEventListener('DOMContentLoaded',function(){
   function updateCountdown(){
     var diff=kickoff-Date.now();
     var bar=document.getElementById('countdown-bar');
-    if(diff<=0){if(bar)bar.innerHTML='<div class="cd-label" style="color:#22c55e">&#9917; THE WORLD CUP HAS STARTED!</div><div class="cd-started">&#127942; IT'S HAPPENING &#127942;</div>';return;}
+    if(diff<=0){if(bar)bar.innerHTML='<div class="cd-label" style="color:#22c55e">&#9917; THE WORLD CUP HAS STARTED!</div><div class="cd-started">&#127942; IT\'S HAPPENING &#127942;</div>';return;}
     var pad=function(n){return n<10?'0'+n:''+n};
     var dEl=document.getElementById('cd-d'),hEl=document.getElementById('cd-h'),mEl=document.getElementById('cd-m'),sEl=document.getElementById('cd-s');
     if(dEl)dEl.textContent=pad(Math.floor(diff/86400000));
@@ -1039,7 +1039,7 @@ function makePremiumCard(item,nationalFlag,localSquad){
   var keyPasses=isRich&&stats.passes?stats.passes.key||0:0;
   var photoUrl=p.photo||'';
   var initials=name.split(' ').map(function(w){return w[0]}).join('').substring(0,2);
-  var photoHtml=photoUrl?'<img class="pc-photo" src="'+photoUrl+'" alt="'+name+'" onerror="this.style.display='none';this.nextSibling.style.display='flex'"><div class="pc-avatar" style="display:none">'+initials+'</div>':'<div class="pc-avatar">'+initials+'</div>';
+  var photoHtml=photoUrl?'<img class="pc-photo" src="'+photoUrl+'" alt="'+name+'" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'"><div class="pc-avatar" style="display:none">'+initials+'</div>':'<div class="pc-avatar">'+initials+'</div>';
   var clubName=isRich&&stats.team?stats.team.name||'':'';
   var clubLogo=isRich&&stats.team?stats.team.logo||'':'';
   var clubHtml=clubName?'<div class="pc-club">'+(clubLogo?'<img class="pc-club-logo" src="'+clubLogo+'" alt="'+clubName+'">':'<span style="font-size:12px">'+nationalFlag+'</span>')+'<span>'+clubName+'</span></div>':'<div class="pc-club"><span style="font-size:12px">'+nationalFlag+'</span><span style="color:#334155">National Team</span></div>';
