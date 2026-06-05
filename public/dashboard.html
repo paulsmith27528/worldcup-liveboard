@@ -9,6 +9,8 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:#020810;color:#fff;font-family:Arial,sans-serif;min-height:100vh;overflow-x:hidden}
 body{background:radial-gradient(ellipse at 40% 0%,#0d2847 0%,#061020 35%,#030b18 65%,#010508 100%)}
+body::before{content:'';pointer-events:none;position:fixed;inset:0;z-index:0;opacity:.18;background-image:linear-gradient(rgba(0,229,255,.15) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.15) 1px,transparent 1px);background-size:44px 44px}
+body>*{position:relative;z-index:1}
 ::-webkit-scrollbar{width:3px;height:3px}
 ::-webkit-scrollbar-thumb{background:rgba(34,211,238,.3);border-radius:2px}
 
