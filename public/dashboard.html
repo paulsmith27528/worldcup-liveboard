@@ -49,7 +49,7 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,14,.92);backdrop-fil
 .hdr-main{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;padding:9px 16px}
 .fifa-badge{background:linear-gradient(135deg,#1d4ed8,#1e3a8a);border:1px solid rgba(34,211,238,.45);border-radius:9px;padding:7px 11px;text-align:center;line-height:1.25;flex-shrink:0}
 .hdr-logo{display:flex;gap:9px;align-items:center}
-.main-title{text-align:center;font-size:36px;font-weight:900;letter-spacing:4px;color:#fff;text-shadow:0 0 40px rgba(34,211,238,.4)}
+.main-title{text-align:center;font-size:42px;font-weight:900;letter-spacing:4px;color:#fff;text-shadow:0 0 40px rgba(34,211,238,.4),0 0 80px rgba(34,211,238,.2)}
 .title-sub{font-size:10px;color:#38dfff;letter-spacing:6px;margin-top:3px;text-align:center}
 .hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:7px}
 .clock-box{display:flex;align-items:center;gap:7px;background:rgba(0,0,0,.5);border:1px solid rgba(34,211,238,.2);border-radius:7px;padding:5px 12px}
@@ -115,7 +115,7 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,14,.92);backdrop-fil
 .bc-score{color:rgba(255,255,255,.2);flex-shrink:0;min-width:14px;text-align:right}
 .bc-score.win{color:#22d3ee;text-shadow:0 0 7px rgba(34,211,238,.6)}
 .bc-score.gold{color:#ffd54a;text-shadow:0 0 7px rgba(255,213,74,.6)}
-.bc-st{font-size:6.5px;color:#1e3a5f;text-align:right;letter-spacing:.4px;display:flex;justify-content:flex-end;gap:3px;align-items:center}
+.bc-stad{font-size:6px;color:#1e3a5f;text-align:center;letter-spacing:.3px;margin-top:2px;border-top:1px solid rgba(34,211,238,.06);padding-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bc-yc{width:5px;height:6px;background:#fbbf24;border-radius:1px;display:inline-block}
 .bc-rc{width:5px;height:6px;background:#ef4444;border-radius:1px;display:inline-block}
 .bc-var{font-size:6px;background:rgba(34,211,238,.2);color:#22d3ee;padding:0 3px;border-radius:2px;font-weight:700}
@@ -722,7 +722,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
     <span style="color:#00c4ff;font-weight:700;font-size:10px">&#9646; Sportradar</span>
     <span style="color:#22d3ee;font-weight:700;font-size:10px">&#9646; API-Football</span>
     <span style="color:#22c55e;font-weight:700">&#9679; LIVE SYNC</span>
-    <span style="color:#1e293b">Auto-updates every 20s</span>
+    <span style="color:#4ade80">Data automatically updates every 20 seconds</span>
   </div>
   <div style="display:flex;gap:18px;align-items:center">
     <div><div style="color:#1e3a5f;letter-spacing:1px;margin-bottom:2px">TIMEZONE</div><div style="color:#334155">Auto-detected</div></div>
@@ -748,7 +748,7 @@ var G=[
   {id:"L",t:[{n:"Croatia",a:"CRO",f:"&#127469;&#127479;",p:3,w:2,d:1,l:0,gs:6,ga:2,pts:7},{n:"Belarus",a:"BLR",f:"&#127463;&#127486;",p:3,w:1,d:1,l:1,gs:3,ga:3,pts:4},{n:"Algeria",a:"ALG",f:"&#127465;&#127487;",p:3,w:1,d:0,l:2,gs:3,ga:5,pts:3},{n:"China",a:"CHN",f:"&#127464;&#127475;",p:3,w:0,d:0,l:3,gs:0,ga:1,pts:0}]}
 ];
 
-/* Bracket: [home-abbr, home-flag, home-score, away-abbr, away-flag, away-score, status, hcode, acode] */
+/* Bracket: [home-abbr, home-flag, home-score, away-abbr, away-flag, away-score, status, hcode, acode, stadium] */
 var B={
   LR32:[["MEX","&#127474;&#127485;","2","MAR","&#127474;&#127462;","1","FT","1A","2C"],["COL","&#127464;&#127476;","3","ESP","&#127466;&#127480;","2","FT","1F","2E"],["CAN","&#127464;&#127462;","1","RSA","&#127487;&#127462;","0","FT","1B","3A/B/C"],["NED","&#127475;&#127473;","2","PER","&#127477;&#127466;","0","FT","2D","2I"],["GER","&#127465;&#127466;","2","AUT","&#127462;&#127481;","1","FT","1E","2H"],["FRA","&#127467;&#127479;","3","IRN","&#127470;&#127479;","1","FT","1H","2G"],["BRA","&#127463;&#127479;","4","JPN","&#127471;&#127477;","1","FT","1C","3D/E/F"],["USA","&#127482;&#127480;","2","BLR","&#127463;&#127486;","0","FT","2A","2L"]],
   LR16:[["MEX","&#127474;&#127485;","1","COL","&#127464;&#127476;","2","FT"],["CAN","&#127464;&#127462;","1(4)","NED","&#127475;&#127473;","1(2)","PEN"],["GER","&#127465;&#127466;","2","FRA","&#127467;&#127479;","3","FT"],["BRA","&#127463;&#127479;","3","USA","&#127482;&#127480;","1","FT"]],
