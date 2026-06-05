@@ -524,7 +524,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
       </div>
       <div class="lmc-teams">
         <div class="lmc-team">
-          <div class="lmc-flag-circle" style="width:56px;height:56px;font-size:34px">&#127463;&#127479;</div>
+          <img src="https://flagcdn.com/w40/br.png" style="height:32px;width:auto;border-radius:2px;display:block;margin:0 auto">
           <div class="lmc-tname" style="font-size:13px;margin-top:5px">BRAZIL</div>
         </div>
         <div>
@@ -532,7 +532,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
           <div style="text-align:center;font-size:8px;color:#ef4444;font-weight:700;letter-spacing:2px;margin-top:2px">LIVE</div>
         </div>
         <div class="lmc-team">
-          <div class="lmc-flag-circle" style="width:56px;height:56px;font-size:34px">&#127462;&#127479;</div>
+          <img src="https://flagcdn.com/w40/ar.png" style="height:32px;width:auto;border-radius:2px;display:block;margin:0 auto">
           <div class="lmc-tname" style="font-size:13px;margin-top:5px">ARGENTINA</div>
         </div>
       </div>
@@ -765,10 +765,10 @@ var B={
 };
 
 var LIVE_MATCHES=[
-  {id:1,status:"LIVE",minute:78,hTeam:"Brazil",hFlag:"&#127463;&#127479;",aTeam:"Argentina",aFlag:"&#127462;&#127479;",hScore:2,aScore:1,venue:"MetLife Stadium, NJ",scorers:["Vini Jr. 27'","Raphinha 72'","M.Alvarez 45+1'"]},
-  {id:2,status:"HT",minute:45,hTeam:"France",hFlag:"&#127467;&#127479;",aTeam:"England",aFlag:"&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;",hScore:1,aScore:1,venue:"AT&T Stadium, TX",scorers:["Mbappe 22'","Bellingham 38'"]},
-  {id:3,status:"LIVE",minute:34,hTeam:"Germany",hFlag:"&#127465;&#127466;",aTeam:"Spain",aFlag:"&#127466;&#127480;",hScore:1,aScore:0,venue:"SoFi Stadium, LA",scorers:["Havertz 29'"]},
-  {id:4,status:"TODAY",minute:null,hTeam:"USA",hFlag:"&#127482;&#127480;",aTeam:"Netherlands",aFlag:"&#127475;&#127473;",hScore:null,aScore:null,venue:"Rose Bowl, LA",scorers:[]}
+  {id:1,status:"LIVE",minute:78,hTeam:"Brazil",hAbbr:"BRA",aTeam:"Argentina",aAbbr:"ARG",hScore:2,aScore:1,venue:"MetLife Stadium, NJ",scorers:["Vini Jr. 27'","Raphinha 72'","M.Alvarez 45+1'"]},
+  {id:2,status:"HT",minute:45,hTeam:"France",hAbbr:"FRA",aTeam:"England",aAbbr:"ENG",hScore:1,aScore:1,venue:"AT&T Stadium, TX",scorers:["Mbappe 22'","Bellingham 38'"]},
+  {id:3,status:"LIVE",minute:34,hTeam:"Germany",hAbbr:"GER",aTeam:"Spain",aAbbr:"ESP",hScore:1,aScore:0,venue:"SoFi Stadium, LA",scorers:["Havertz 29'"]},
+  {id:4,status:"TODAY",minute:null,hTeam:"USA",hAbbr:"USA",aTeam:"Netherlands",aAbbr:"NED",hScore:null,aScore:null,venue:"Rose Bowl, LA",scorers:[]}
 ];
 
 /* Squad data: {n:name, pos:GK/DEF/MID/FWD, num:shirt, apps, g:goals, a:assists, r:rating} */
@@ -823,6 +823,22 @@ var SQUADS={
 
 var SCORERS=[{n:"K. Mbappé",f:"&#127467;&#127479;",c:"France",g:5,a:3},{n:"L. Messi",f:"&#127462;&#127479;",c:"Argentina",g:4,a:5},{n:"Vini Jr.",f:"&#127463;&#127479;",c:"Brazil",g:4,a:4},{n:"H. Kane",f:"&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;",c:"England",g:3,a:2},{n:"M. Alvarez",f:"&#127462;&#127479;",c:"Argentina",g:3,a:1}];
 
+
+/* ─── FLAG IMAGES ─────────────────────────────────────────────────── */
+var FLAG_CDN = {
+  MEX:'mx',ECU:'ec',KOR:'kr',SWE:'se',CAN:'ca',ITA:'it',CRO:'hr',BRA:'br',
+  MAR:'ma',SCO:'gb-sct',HAI:'ht',USA:'us',NED:'nl',JPN:'jp',GAM:'gm',GER:'de',
+  ESP:'es',URU:'uy',TUN:'tn',COL:'co',POR:'pt',CIV:'ci',KSA:'sa',BEL:'be',
+  IRN:'ir',EGY:'eg',NZL:'nz',FRA:'fr',AUT:'at',SEN:'sn',QAT:'qa',ARG:'ar',
+  PER:'pe',NGA:'ng',ISR:'il',ENG:'gb-eng',DEN:'dk',SRB:'rs',PAN:'pa',UZB:'uz',
+  CHI:'cl',GHA:'gh',ALG:'dz',CHN:'cn',BLR:'by',RSA:'za'
+};
+function flagImg(abbr,size){
+  var code=FLAG_CDN[abbr];
+  if(!code)return '<span style="font-size:10px">🏳</span>';
+  return '<img src="https://flagcdn.com/w'+(size||20)+'/'+code+'.png" style="height:'+(size==40?14:10)+'px;width:auto;border-radius:1px;vertical-align:middle;margin-right:2px" alt="'+abbr+'">';
+}
+
 /* ─── RENDER FUNCTIONS ─────────────────────────────────────────────────────── */
 function makeGroup(g){
   var gd_sign=function(n){return n>0?'+'+n:n};
@@ -832,7 +848,7 @@ function makeGroup(g){
     h+='<div class="t-row'+(i<2?' q':'')+'" onclick="openPop('+JSON.stringify(t).replace(/"/g,'&quot;')+')">'+ 
       '<span class="t-pos">'+(i+1)+'</span>'+
       '<span class="t-abbr '+(i<2?'top':'bot')+'">'+t.a+'</span>'+
-      '<span class="t-flag">'+t.f+'</span>'+
+      flagImg(t.a)+
       '<span class="t-stat">'+t.p+'</span><span class="t-stat">'+t.w+'</span><span class="t-stat">'+t.d+'</span><span class="t-stat">'+t.l+'</span>'+
       '<span class="t-stat" style="color:'+gdc+'">'+gd_sign(gd)+'</span>'+
       '<span class="t-stat t-pts '+(i<2?'top':'')+'">'+t.pts+'</span></div>';
@@ -846,8 +862,8 @@ function makeBC(m,gold){
   var aCode=m[8]?'<span class="bc-code">'+m[8]+'</span>':'';
   var stadium=m[9]?'<div class="bc-stad">&#127967; '+m[9]+'</div>':'';
   return '<div class="bc'+(gold?' gold':'')+'">'+
-    '<div class="bc-row'+(hw?' win':'')+'"><div class="bc-team">'+hCode+'<span>'+m[1]+'</span><span class="bc-name">'+m[0]+'</span></div><span class="bc-score'+(hw?' '+acc:'')+'">'+m[2]+'</span></div>'+
-    '<div class="bc-row'+(aw?' win':'')+'"><div class="bc-team">'+aCode+'<span>'+m[4]+'</span><span class="bc-name">'+m[3]+'</span></div><span class="bc-score'+(aw?' '+acc:'')+'">'+m[5]+'</span></div>'+
+    '<div class="bc-row'+(hw?' win':'')+'"><div class="bc-team">'+hCode+flagImg(m[0])+'<span class="bc-name">'+m[0]+'</span></div><span class="bc-score'+(hw?' '+acc:'')+'">'+m[2]+'</span></div>'+
+    '<div class="bc-row'+(aw?' win':'')+'"><div class="bc-team">'+aCode+flagImg(m[3])+'<span class="bc-name">'+m[3]+'</span></div><span class="bc-score'+(aw?' '+acc:'')+'">'+m[5]+'</span></div>'+
     '<div class="bc-st">'+(m[6]==='PEN'?'<span class="bc-var">PEN</span> ':m[6]==='ET'?'<span class="bc-var">ET</span> ':'')+m[6]+'</div>'+stadium+'</div>';
 }
 
@@ -900,9 +916,9 @@ function makeLiveCard(m){
       '<span style="background:'+bg+';color:#fff;font-weight:700;font-size:9px;padding:3px 9px;border-radius:4px;letter-spacing:1px">'+lbl+'</span>'+
       '<span style="font-size:8px;color:#334155">'+m.venue+'</span></div>'+
     '<div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px">'+
-      '<div style="text-align:center"><div style="font-size:28px">'+m.hFlag+'</div><div style="font-weight:700;font-size:11px;margin-top:3px">'+m.hTeam+'</div></div>'+
+      '<div style="text-align:center"><div style="margin:0 auto 3px">'+flagImg(m.hAbbr,40)+'</div><div style="font-weight:700;font-size:11px;margin-top:3px">'+m.hTeam+'</div></div>'+
       '<div style="text-align:center;font-size:26px;font-weight:900">'+sc+'</div>'+
-      '<div style="text-align:center"><div style="font-size:28px">'+m.aFlag+'</div><div style="font-weight:700;font-size:11px;margin-top:3px">'+m.aTeam+'</div></div>'+
+      '<div style="text-align:center"><div style="margin:0 auto 3px">'+flagImg(m.aAbbr,40)+'</div><div style="font-weight:700;font-size:11px;margin-top:3px">'+m.aTeam+'</div></div>'+
     '</div>'+
     (m.scorers.length?'<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px">'+sr+'</div>':'')+
   '</div>';
