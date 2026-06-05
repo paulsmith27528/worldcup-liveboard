@@ -1133,6 +1133,17 @@ function switchPopTab(tab){
   }
 }
 
+
+function openPopByAbbr(abbr){
+  var team=null;
+  for(var i=0;i<G.length;i++){
+    for(var j=0;j<G[i].t.length;j++){
+      if(G[i].t[j].a===abbr){team=G[i].t[j];break;}
+    }
+    if(team)break;
+  }
+  if(team)openPop(team);
+}
 function closePop(){
   document.getElementById('pop-ov').style.display='none';
   document.getElementById('pop-ov').className='';
