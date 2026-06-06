@@ -87,12 +87,6 @@ body{background:radial-gradient(ellipse at 50% 0%,#0d2847,#061020 40%,#020810 10
 
     <label class="lbl">Your Name</label>
     <input class="inp" id="entrant-name" placeholder="Enter your full name" maxlength="40">
-
-    <!-- Team picker (shown for pick type) -->
-    <div id="team-picker-wrap" style="display:none">
-      <label class="lbl">Pick Your Team</label>
-      <input class="inp" id="team-search" placeholder="Search teams..." oninput="filterTeams()" style="margin-bottom:8px">
-      <div class="team-grid" id="team-grid"></div>
       <div style="font-size:11px;color:#475569;margin-bottom:10px" id="selected-team-label">No team selected</div>
     </div>
 
@@ -145,7 +139,7 @@ const ALL_TEAMS=[
   {name:"Belarus",flag:"🇧🇾"},{name:"Algeria",flag:"🇩🇿"},{name:"China",flag:"🇨🇳"},
 ];
 
-let params={},selectedType='random',selectedTeam=null;
+let params={};
 
 function toast(msg,dur=2500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
 function genToken(){return Math.random().toString(36).substring(2,12);}
@@ -160,47 +154,24 @@ window.addEventListener('DOMContentLoaded',()=>{
   renderTeamGrid();
 });
 
-function selectType(type){
-  selectedType=type;
-  document.getElementById('box-random').classList.toggle('selected',type==='random');
-  document.getElementById('box-pick').classList.toggle('selected',type==='pick');
-  document.getElementById('team-picker-wrap').style.display=type==='pick'?'block':'none';
-}
 
-function renderTeamGrid(filter=''){
-  const grid=document.getElementById('team-grid');
-  const teams=ALL_TEAMS.filter(t=>!filter||t.name.toLowerCase().includes(filter.toLowerCase()));
-  grid.innerHTML=teams.map(t=>`
-    <div class="team-tile ${selectedTeam===t.name?'selected':''}" onclick="selectTeam('${t.name.replace(/'/g,"\\'")}','${t.flag}')">
-      <span style="font-size:18px">${t.flag}</span>
-      <span>${t.name}</span>
-    </div>`).join('');
-}
 
-function filterTeams(){
-  renderTeamGrid(document.getElementById('team-search').value);
-}
 
-function selectTeam(name,flag){
-  selectedTeam=name;
-  document.getElementById('selected-team-label').textContent='Selected: '+flag+' '+name;
-  renderTeamGrid(document.getElementById('team-search').value);
-}
 
 function submitEntry(){
   const name=document.getElementById('entrant-name').value.trim();
   if(!name){toast('Please enter your name');return;}
-  if(selectedType==='pick'&&!selectedTeam){toast('Please pick a team');return;}
+
 
   const tok=genToken();
-  const payload={n:name,t:selectedType,team:selectedTeam||null,tok,ts:Date.now(),sid:params.s||''};
+  const payload={n:name,t:'random',team:null,tok,ts:Date.now(),sid:params.s||''};
   const code='V1:'+btoa(JSON.stringify(payload));
 
   // Show success
   document.getElementById('step-type').style.display='none';
   const succ=document.getElementById('success-state');
   succ.classList.add('show');
-  document.getElementById('success-name').textContent=name+(selectedType==='pick'&&selectedTeam?' — '+selectedTeam:'');
+  document.getElementById('success-name').textContent=name;
   document.getElementById('organiser-name').textContent=params.organiser||'the organiser';
   document.getElementById('join-code-display').textContent=code;
 
