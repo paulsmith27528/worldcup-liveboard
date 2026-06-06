@@ -207,27 +207,39 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,14,.92);backdrop-fil
 .squad-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;overflow-y:auto;max-height:440px;padding:4px 2px}
 
 /* Premium player card */
-.pc{background:linear-gradient(160deg,#0a1929,#060d1a);border:1px solid rgba(34,211,238,.2);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .18s,box-shadow .18s;position:relative}
-.pc:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(34,211,238,.22)}
-.pc.gk{border-color:rgba(251,191,36,.45);background:linear-gradient(160deg,#15100a,#0a0700)}
-.pc.def{border-color:rgba(59,130,246,.4);background:linear-gradient(160deg,#040d1a,#020810)}
-.pc.mid{border-color:rgba(34,197,94,.4);background:linear-gradient(160deg,#041a0a,#020f06)}
-.pc.fwd{border-color:rgba(239,68,68,.4);background:linear-gradient(160deg,#1a0404,#0f0202)}
-/* Position colour stripe top */
+.pc-flip-wrap{perspective:800px;width:100%;height:100%}
+.pc-flip{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1)}
+.pc-flip-wrap:hover .pc-flip,.pc-flip-wrap.flipped .pc-flip{transform:rotateY(180deg)}
+.pc-front,.pc-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;overflow:hidden}
+.pc-back{transform:rotateY(180deg);display:flex;flex-direction:column;justify-content:flex-start;padding:10px 8px 8px}
+.pc{border:1px solid rgba(34,211,238,.2);border-radius:12px;overflow:hidden;cursor:pointer;position:relative;transition:box-shadow .2s,border-color .2s;height:230px}
+.pc:hover{box-shadow:0 6px 28px rgba(0,0,0,.5)}
+.pc.gk{border-color:rgba(251,191,36,.45)}
+.pc.def{border-color:rgba(59,130,246,.4)}
+.pc.mid{border-color:rgba(34,197,94,.4)}
+.pc.fwd{border-color:rgba(239,68,68,.4)}
+.pc-front{background:linear-gradient(160deg,#0a1929,#060d1a)}
+.pc.gk .pc-front{background:linear-gradient(160deg,#15100a,#0a0700)}
+.pc.def .pc-front{background:linear-gradient(160deg,#040d1a,#020810)}
+.pc.mid .pc-front{background:linear-gradient(160deg,#041a0a,#020f06)}
+.pc.fwd .pc-front{background:linear-gradient(160deg,#1a0404,#0f0202)}
+.pc.gk .pc-back{background:linear-gradient(170deg,#1a1300,#0f0a00)}
+.pc.def .pc-back{background:linear-gradient(170deg,#020d1f,#010810)}
+.pc.mid .pc-back{background:linear-gradient(170deg,#021a06,#010f04)}
+.pc.fwd .pc-back{background:linear-gradient(170deg,#1f0202,#0f0101)}
 .pc-stripe{height:3px;width:100%}
 .pc.gk .pc-stripe{background:linear-gradient(90deg,#fbbf24,#f59e0b)}
 .pc.def .pc-stripe{background:linear-gradient(90deg,#3b82f6,#1d4ed8)}
 .pc.mid .pc-stripe{background:linear-gradient(90deg,#22c55e,#15803d)}
 .pc.fwd .pc-stripe{background:linear-gradient(90deg,#ef4444,#b91c1c)}
-/* Rating & pos overlay on photo */
 .pc-photo-wrap{position:relative;width:100%;height:118px;background:linear-gradient(135deg,#0a1929,#0d2847);overflow:hidden}
 .pc-photo{width:100%;height:100%;object-fit:cover;object-position:top center}
-.pc-avatar{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;letter-spacing:-2px}
+.pc-avatar{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;letter-spacing:-2px;color:rgba(255,255,255,.07)}
 .pc.gk .pc-avatar{color:rgba(251,191,36,.35)}
 .pc.def .pc-avatar{color:rgba(59,130,246,.35)}
 .pc.mid .pc-avatar{color:rgba(34,197,94,.35)}
 .pc.fwd .pc-avatar{color:rgba(239,68,68,.35)}
-.pc-rating-ov{position:absolute;top:6px;left:7px;font-size:18px;font-weight:900;line-height:1;text-shadow:0 2px 6px rgba(0,0,0,.9)}
+.pc-rating-ov{position:absolute;top:6px;left:7px;font-size:16px;font-weight:900;line-height:1;text-shadow:0 2px 6px rgba(0,0,0,.8)}
 .pc.gk .pc-rating-ov{color:#fbbf24}
 .pc.def .pc-rating-ov{color:#60a5fa}
 .pc.mid .pc-rating-ov{color:#4ade80}
@@ -238,17 +250,32 @@ header{position:sticky;top:0;z-index:90;background:rgba(1,4,14,.92);backdrop-fil
 .pc.mid .pc-pos-ov{background:rgba(34,197,94,.2);color:#4ade80}
 .pc.fwd .pc-pos-ov{background:rgba(239,68,68,.2);color:#f87171}
 .pc-shirt{position:absolute;bottom:4px;left:7px;font-size:9px;color:rgba(255,255,255,.35);font-weight:700}
-/* Card body */
-.pc-body{padding:7px 8px}
+.pc-motm{position:absolute;bottom:4px;right:7px;font-size:8px;color:#ffd54a;font-weight:900;text-shadow:0 1px 4px rgba(0,0,0,.8)}
+.pc-body{padding:7px 8px 6px}
 .pc-name{font-weight:700;font-size:9.5px;color:#e2e8f0;line-height:1.2;margin-bottom:3px}
-.pc-club{display:flex;align-items:center;gap:4px;font-size:7.5px;color:#64748b;margin-bottom:5px}
+.pc-club{display:flex;align-items:center;gap:4px;font-size:7.5px;color:#64748b;margin-bottom:4px}
 .pc-club-logo{width:13px;height:13px;object-fit:contain;border-radius:2px}
-.pc-bio{font-size:7px;color:#334155;line-height:1.7;border-top:1px solid rgba(255,255,255,.06);padding-top:5px;margin-bottom:5px}
-.pc-bio span{color:#475569}
-.pc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;border-top:1px solid rgba(255,255,255,.06);padding-top:5px}
-.pc-stat{text-align:center}
+.pc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;border-top:1px solid rgba(255,255,255,.06);padding-top:4px}
 .pc-sv{font-size:12px;font-weight:700;color:#fff;line-height:1}
 .pc-sl{font-size:6px;color:#334155;letter-spacing:.4px;margin-top:1px}
+.pc-bio{font-size:7px;color:#334155;line-height:1.7;border-top:1px solid rgba(255,255,255,.06);padding-top:5px;margin-bottom:5px}
+.pc-bio span{color:#475569}
+.pcb-name{font-size:9px;font-weight:800;color:#e2e8f0;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcb-meta{font-size:6.5px;color:#475569;margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.pcb-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.pcb-label{font-size:6.5px;color:#475569;letter-spacing:.3px;white-space:nowrap}
+.pcb-val{font-size:8px;font-weight:700;color:#e2e8f0}
+.pcb-bar-wrap{flex:1;height:3px;background:rgba(255,255,255,.07);border-radius:2px;margin:0 5px}
+.pcb-bar{height:100%;border-radius:2px;transition:width .3s}
+.pc.gk .pcb-bar{background:#fbbf24}
+.pc.def .pcb-bar{background:#3b82f6}
+.pc.mid .pcb-bar{background:#22c55e}
+.pc.fwd .pcb-bar{background:#ef4444}
+.pcb-divider{height:1px;background:rgba(255,255,255,.06);margin:4px 0}
+.pcb-cards{display:flex;gap:4px;align-items:center;margin-top:2px}
+.pcb-yc{display:inline-block;width:6px;height:8px;background:#fbbf24;border-radius:1px;margin-right:1px}
+.pcb-rc{display:inline-block;width:6px;height:8px;background:#ef4444;border-radius:1px;margin-right:1px}
+.pcb-flip-hint{font-size:5.5px;color:rgba(255,255,255,.18);text-align:center;margin-top:auto;padding-top:4px;letter-spacing:.3px}
 
 /* API key modal */
 #api-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center}
@@ -1116,15 +1143,80 @@ function makePremiumCard(item,nationalFlag,localSquad){
 
 function makeFallbackCard(p,flag){
   var pc=p.pos.toLowerCase();
+  var posColor={'gk':'#fbbf24','def':'#3b82f6','mid':'#22c55e','fwd':'#ef4444'}[pc]||'#94a3b8';
   var avatarUrl='https://ui-avatars.com/api/?name='+encodeURIComponent(p.n)+'&background=0a1929&color=22d3ee&bold=true&size=160&font-size=0.35&length=2';
-  var clubHtml=p.club?'<div class="pc-club"><span style="font-size:12px">'+flag+'</span><span style="color:#94a3b8;font-size:8px">'+p.club+'</span></div>':'<div class="pc-club"><span style="font-size:12px">'+flag+'</span><span style="color:#334155">National Team</span></div>';
-  var bioHtml=p.age?'<div class="pc-bio">Age: <span>'+p.age+'</span>'+(p.club?'&nbsp;&nbsp;Club: <span>'+p.club+'</span>':'')+'</div>':'';
-  var motmHtml=p.motm?'<div style="font-size:7px;color:#ffd54a;margin-top:2px">★ MOTM x'+p.motm+'</div>':'';
-  return '<div class="pc '+pc+'"><div class="pc-stripe"></div><div class="pc-photo-wrap"><img class="pc-photo" src="'+avatarUrl+'" alt="'+p.n+'"><div class="pc-rating-ov">'+p.r+'</div><div class="pc-pos-ov">'+p.pos+'</div><div class="pc-shirt">#'+p.num+'</div></div>'+
-    '<div class="pc-body"><div class="pc-name">'+p.n+'</div>'+clubHtml+bioHtml+motmHtml+
-    '<div class="pc-stats"><div class="pc-stat"><div class="pc-sv">'+p.apps+'</div><div class="pc-sl">APPS</div></div><div class="pc-stat"><div class="pc-sv">'+p.g+'</div><div class="pc-sl">GLS</div></div><div class="pc-stat"><div class="pc-sv">'+p.a+'</div><div class="pc-sl">AST</div></div></div>'+
-    '<div class="pc-stats" style="margin-top:3px"><div class="pc-stat"><div class="pc-sv" style="font-size:10px">'+(p.sot||0)+'</div><div class="pc-sl">SOT</div></div><div class="pc-stat"><div class="pc-sv" style="font-size:10px">'+(p.pa||'-')+'%</div><div class="pc-sl">PASS</div></div><div class="pc-stat"><div class="pc-sv" style="font-size:10px">'+(p.drb||0)+'</div><div class="pc-sl">DRB</div></div></div>'+
-    '</div></div>';
+  // ── FRONT ──
+  var motmHtml=p.motm?'<div class="pc-motm">★'+p.motm+'</div>':'';
+  var front='<div class="pc-front">'+
+    '<div class="pc-stripe"></div>'+
+    '<div class="pc-photo-wrap">'+
+      '<img class="pc-photo" src="'+avatarUrl+'" alt="'+p.n+'">'+
+      '<div class="pc-rating-ov">'+p.r+'</div>'+
+      '<div class="pc-pos-ov">'+p.pos+'</div>'+
+      '<div class="pc-shirt">#'+p.num+'</div>'+
+      motmHtml+
+    '</div>'+
+    '<div class="pc-body">'+
+      '<div class="pc-name">'+p.n+'</div>'+
+      '<div class="pc-club"><span>'+flag+'</span><span style="color:#475569;font-size:7px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+p.club+'</span></div>'+
+      '<div class="pc-stats">'+
+        '<div class="pc-stat"><div class="pc-sv">'+p.apps+'</div><div class="pc-sl">APPS</div></div>'+
+        '<div class="pc-stat"><div class="pc-sv">'+p.g+'</div><div class="pc-sl">GLS</div></div>'+
+        '<div class="pc-stat"><div class="pc-sv">'+p.a+'</div><div class="pc-sl">AST</div></div>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+  // ── BACK ──
+  var sot=p.sot||0;var pa=p.pa||0;var drb=p.drb||0;var km=p.km||0;
+  var yc=p.yc||0;var rc=p.rc||0;var mins=p.mins||0;
+  var tackles=p.tackles||0;var aerial=p.aerial||0;
+  function bar(val,max){return '<div class="pcb-bar" style="width:'+Math.min(100,Math.round(val/max*100))+'%"></div>';}
+  var statsRows='';
+  if(pc==='gk'){
+    statsRows=
+      '<div class="pcb-row"><span class="pcb-label">PASS%</span><div class="pcb-bar-wrap">'+bar(pa,100)+'</div><span class="pcb-val">'+pa+'%</span></div>'+
+      '<div class="pcb-row"><span class="pcb-label">KM/GM</span><div class="pcb-bar-wrap">'+bar(km,12)+'</div><span class="pcb-val">'+km+'</span></div>'+
+      '<div class="pcb-row"><span class="pcb-label">APPS</span><div class="pcb-bar-wrap">'+bar(p.apps,7)+'</div><span class="pcb-val">'+p.apps+'</span></div>'+
+      '<div class="pcb-row"><span class="pcb-label">AERIALS</span><div class="pcb-bar-wrap">'+bar(aerial,30)+'</div><span class="pcb-val">'+aerial+'</span></div>';
+  } else if(pc==='def'){
+    statsRows=
+      '<div class="pcb-row"><span class="pcb-label">TACKLE</span><div class="pcb-bar-wrap">'+bar(tackles,35)+'</div><span class="pcb-val">'+tackles+'</span></div>'+
+      '<div class="pcb-row"><span class="pcb-label">AERIAL</span><div class="pcb-bar-wrap">'+bar(aerial,40)+'</div><span class="pcb-val">'+aerial+'</span></div>'+
+      '<div class="pcb-row"><span class="pcb-label">PASS%</span><div class="pcb-bar-wrap">'+bar(pa,100)+'</div><span class="pcb-val">'+pa+'%</span></div>'+
+      '<div class="pcb-row"><span class="pcb-label">KM/GM</span><div class="pcb-bar-wrap">'+bar(km,12)+'</div><span class="pcb-val">'+km+'</span></div>';
+  } else if(pc==='mid'){
+    statsRows=
+      '<div class="pcb-row"><span class="pcb-label">ASSIST</span><div class="pcb-bar-wrap">'+bar(p.a,8)+'</div><span class="pcb-val">'+p.a+'</span></div>'+
+      '<div class="pcb-row"><span class="pcb-label">TACKLE</span><div class="pcb-bar-wrap">'+bar(tackles,35)+'</div><span class="pcb-val">'+tackles+'</span></div>'+
+      '<div class="pcb-row"><span class="pcb-label">DRIBBLE</span><div class="pcb-bar-wrap">'+bar(drb,10)+'</div><span class="pcb-val">'+drb+'</span></div>'+
+      '<div class="pcb-row"><span class="pcb-label">KM/GM</span><div class="pcb-bar-wrap">'+bar(km,12)+'</div><span class="pcb-val">'+km+'</span></div>';
+  } else {
+    statsRows=
+      '<div class="pcb-row"><span class="pcb-label">GOALS</span><div class="pcb-bar-wrap">'+bar(p.g,10)+'</div><span class="pcb-val">'+p.g+'</span></div>'+
+      '<div class="pcb-row"><span class="pcb-label">SOT</span><div class="pcb-bar-wrap">'+bar(sot,20)+'</div><span class="pcb-val">'+sot+'</span></div>'+
+      '<div class="pcb-row"><span class="pcb-label">DRIBBLE</span><div class="pcb-bar-wrap">'+bar(drb,10)+'</div><span class="pcb-val">'+drb+'</span></div>'+
+      '<div class="pcb-row"><span class="pcb-label">ASSIST</span><div class="pcb-bar-wrap">'+bar(p.a,8)+'</div><span class="pcb-val">'+p.a+'</span></div>';
+  }
+  var cardIcons='';
+  if(yc>0)for(var i=0;i<yc;i++)cardIcons+='<span class="pcb-yc"></span>';
+  if(rc>0)cardIcons+='<span class="pcb-rc"></span>';
+  var minsStr=mins>0?(Math.floor(mins/60)>0?Math.floor(mins/60)+'h ':'')+(mins%60)+'m':'—';
+  var back='<div class="pc-back">'+
+    '<div class="pc-stripe"></div>'+
+    '<div style="padding:0 0 4px 0">'+
+      '<div class="pcb-name">'+p.n+'</div>'+
+      '<div class="pcb-meta"><span style="color:'+posColor+';font-weight:900">'+p.pos+'</span><span>·</span><span style="font-size:6px">'+p.club+'</span></div>'+
+    '</div>'+
+    statsRows+
+    '<div class="pcb-divider"></div>'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">'+
+      '<div style="font-size:6px;color:#334155">MINS<span style="color:#64748b;margin-left:3px;font-weight:700">'+mins+'</span></div>'+
+      '<div style="font-size:6px;color:#334155">AGE<span style="color:#64748b;margin-left:3px;font-weight:700">'+p.age+'</span></div>'+
+      '<div class="pcb-cards">'+(cardIcons||'<span style="font-size:6px;color:#1e293b">—</span>')+'</div>'+
+    '</div>'+
+    '<div class="pcb-flip-hint">HOVER TO FLIP</div>'+
+  '</div>';
+  return '<div class="pc '+pc+'"><div class="pc-flip-wrap"><div class="pc-flip">'+front+back+'</div></div></div>';
 }
 
 /* ─── POPUP ─────────────────────────────────────────────────────────────────────────────── */
