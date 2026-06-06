@@ -194,7 +194,7 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
     <div class="card" style="text-align:center">
       <div style="font-size:28px;margin-bottom:8px">🎲</div>
       <div style="font-weight:700;margin-bottom:5px">Auto Draw</div>
-      <div style="font-size:12px;color:#475569">Random or pick-a-team. Everyone gets a personal bracket link</div>
+      <div style="font-size:12px;color:#475569">Random draw. Everyone gets a personal bracket link</div>
     </div>
     <div class="card" style="text-align:center">
       <div style="font-size:28px;margin-bottom:8px">📊</div>
@@ -323,7 +323,7 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
       </div>
 
       <div id="draw-not-done">
-        <p style="font-size:13px;color:#64748b;margin-bottom:16px">Ready to draw? Make sure all entries are in and paid status is marked. The draw randomly assigns teams — Pick entries choose their own team first.</p>
+        <p style="font-size:13px;color:#64748b;margin-bottom:16px">Ready to draw? Make sure all entries are in and paid status is marked. The draw randomly assigns a team to every participant.</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn btn-gold" style="flex:1;font-size:14px;padding:14px" onclick="runDraw()">🎲 Run Draw Now</button>
         </div>
@@ -369,7 +369,7 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
 <!-- TOAST -->
 <div id="toast">✅ Saved</div>
 
-<!-- PICK OVERLAY (injected by JS) -->
+
 
 <script>
 // ══════════════════════════════════════════════════
@@ -397,7 +397,7 @@ const COLOURS=["#FF6B6B","#4ECDC4","#45B7D1","#96CEB4","#FFEAA7","#DDA0DD","#98D
 // ══════════════════════════════════════════════════
 let SW = {
   id: genId(),
-  config: {name:'Office WC2026 Sweepstake',organiser:'',priceRandom:3,pricePick:8,currency:'£',pin:'2026',drawDate:'2026-06-11T17:00'},
+  config: {name:'Office WC2026 Sweepstake',organiser:'',priceRandom:3,currency:'£',pin:'2026',drawDate:'2026-06-11T17:00'},
   entries: [],
   drawDone: false,
   eliminated: [],
@@ -438,7 +438,6 @@ function startSweepstake(){
     name:g('cfg-name')||'Office WC2026 Sweepstake',
     organiser:g('cfg-org'),
     priceRandom:parseFloat(g('cfg-priceR'))||3,
-    pricePick:parseFloat(g('cfg-priceP'))||8,
     currency:g('cfg-cur')||'£',
     pin:g('cfg-pin')||'2026',
     drawDate:g('cfg-drawDate'),
@@ -467,7 +466,6 @@ function updateJoinLink(){
     s:SW.id,
     name:SW.config.name,
     r:SW.config.priceRandom,
-    p:SW.config.pricePick,
     c:SW.config.currency,
     organiser:SW.config.organiser
   });
@@ -499,7 +497,7 @@ function decodeJoinCode(){
     const json=JSON.parse(atob(raw.replace('V1:','')));
     const preview=document.getElementById('join-code-preview');
     preview.style.display='block';
-    preview.innerHTML=`<strong>${esc(json.n)}</strong> wants to join as <strong>${json.t==='pick'?'✋ Pick a Team':'🎲 Random'}</strong><br>
+    preview.innerHTML=`<strong>${esc(json.n)}</strong> wants to join the sweepstake<br>
       <button class="btn btn-green btn-sm" style="margin-top:8px" onclick="confirmJoin('${encodeURIComponent(JSON.stringify(json))}')">✅ Confirm & Add</button>`;
   }catch(e){
     toast('❌ Invalid join code');
@@ -551,7 +549,7 @@ function clearEntries(){
   renderEntryList();updateStats();saveState();
 }
 
-function calcPot(){return SW.entries.reduce((s,e)=>s+(e.paid?(e.type==='pick'?SW.config.pricePick:SW.config.priceRandom):0),0);}
+function calcPot(){return SW.entries.reduce((s,e)=>s+(e.paid?SW.config.priceRandom:0),0);}
 
 function renderEntryList(){
   const el=document.getElementById('entry-list');
@@ -593,12 +591,8 @@ function runDraw(){
   if(!SW.entries.length){toast('Add entries first');return;}
   if(SW.drawDone&&!confirm('Re-run the draw? All team assignments will be reset.'))return;
 
-  const randoms=SW.entries.filter(e=>e.type==='random');
-  const picks=SW.entries.filter(e=>e.type==='pick');
   const pool=[...ALL_TEAMS].sort(()=>Math.random()-.5);
-
-  // Assign random entries
-  randoms.forEach((e,i)=>{e.teamName=pool[i%pool.length].name;});
+  SW.entries.forEach((e,i)=>{e.teamName=pool[i%pool.length].name;});
 
   SW.drawDone=true;saveState();renderDrawTab();fireConfetti();toast('🎲 Draw complete!',3000);
 }
