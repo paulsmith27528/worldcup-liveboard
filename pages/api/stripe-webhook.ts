@@ -103,7 +103,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Build the correct access URLs based on what they bought
     const dashUrl = `${BASE_URL}/dashboard.html?token=${token}`;
-    const sweepUrl = `${BASE_URL}/sweepstake.html`;
+    const sweepUrl = `${BASE_URL}/sweepstake.html?token=${token}`;
 
     await resend.emails.send({
       from: "World Cup LiveBoard <onboarding@resend.dev>",
