@@ -18,9 +18,9 @@ const redis = new Redis({
 });
 
 const PRICE_MAP: Record<string, { name: string; emoji: string }> = {
-  price_SWEEPSTAKE: { name: "Sweepstake Platform", emoji: "🏆" },
-  price_DASHBOARD:  { name: "Live Dashboard",       emoji: "📺" },
-  price_BUNDLE:     { name: "Bundle (Both Products)", emoji: "⚡" },
+  price_1TeMKT3g62IhPcY7PvqpncJF: { name: "World Cup Sweepstake", emoji: "🏆" },
+  price_1TeMHw3g62IhPcY7CCZhO3T6: { name: "Live Dashboard",        emoji: "📺" },
+  price_1TetFJ3g62IhPcY7exBoTMtq: { name: "Bundle — Dashboard + Sweepstake", emoji: "⚡" },
 };
 
 function generateToken(): string {
