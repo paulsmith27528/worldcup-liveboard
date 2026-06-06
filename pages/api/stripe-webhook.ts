@@ -68,7 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       expiresAt,
     }), { exat: Math.floor(expiresAt / 1000) });
 
-    const accessUrl = `https://worldcupsweepstake-liveboard.com/dashboard.html?token=${token}`;
+    const accessUrl = `https://worldcup-liveboard.vercel.app/dashboard.html?token=${token}`;
 
     await resend.emails.send({
       from: "World Cup LiveBoard <onboarding@resend.dev>",
