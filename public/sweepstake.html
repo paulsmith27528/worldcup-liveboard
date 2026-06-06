@@ -219,7 +219,7 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
     </div>
     <div class="form-row col3">
       <div><label class="lbl">Random Buy-in</label><input class="inp" id="cfg-priceR" type="number" value="3" min="1" max="100"></div>
-      <div><label class="lbl">Pick Buy-in (premium)</label><input class="inp" id="cfg-priceP" type="number" value="8" min="1" max="100"></div>
+
       <div><label class="lbl">Currency Symbol</label><input class="inp" id="cfg-cur" value="£" maxlength="3"></div>
     </div>
     <div class="form-row col2">
@@ -296,13 +296,10 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
       <!-- Manual add -->
       <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
         <input class="inp" id="ent-name" placeholder="Or add manually — enter name" style="flex:1;min-width:140px" onkeydown="if(event.key==='Enter')addEntry()">
-        <select class="inp" id="ent-type" style="max-width:140px">
-          <option value="random">🎲 Random</option>
-          <option value="pick">✋ Pick a Team</option>
-        </select>
+
         <button class="btn btn-primary" onclick="addEntry()">+ Add</button>
       </div>
-      <div style="font-size:11px;color:#334155;margin-bottom:12px" id="ent-price-info">Random: £3 · Pick: £8 · Max 48 entries</div>
+      <div style="font-size:11px;color:#334155;margin-bottom:12px" id="ent-price-info">Buy-in: £3 per entry · Max 48 entries</div>
 
       <div class="entry-list" id="entry-list"></div>
 
@@ -459,7 +456,7 @@ function updateDashHeader(){
   document.getElementById('dash-title').textContent=SW.config.name;
   document.getElementById('dash-org').textContent='Organiser: '+SW.config.organiser;
   document.getElementById('nav-sweep-name').textContent=SW.config.name;
-  document.getElementById('ent-price-info').textContent=`Random: ${SW.config.currency}${SW.config.priceRandom} · Pick: ${SW.config.currency}${SW.config.pricePick} · Max 48 entries`;
+  document.getElementById('ent-price-info').textContent=`Buy-in: ${SW.config.currency}${SW.config.priceRandom} per entry · Max 48 entries`;
 }
 
 // ══════════════════════════════════════════════════
@@ -527,7 +524,7 @@ function confirmJoin(encoded){
 // ══════════════════════════════════════════════════
 function addEntry(){
   const name=document.getElementById('ent-name').value.trim();
-  const type=document.getElementById('ent-type').value;
+  const type='random';
   if(!name){toast('Enter a name');return;}
   if(SW.entries.find(e=>e.name.toLowerCase()===name.toLowerCase())){toast('Name already added');return;}
   if(SW.entries.length>=48){toast('Max 48 entries');return;}
@@ -568,7 +565,7 @@ function renderEntryList(){
       <div class="entry-dot" style="background:${e.colour}"></div>
       <div class="entry-name">${esc(e.name)}</div>
       ${e.teamName?`<div class="entry-team">${getFlag(e.teamName)} ${e.teamName}</div>`:''}
-      <div class="entry-type">${e.type==='pick'?'✋':'🎲'}</div>
+
       <button class="paid-btn ${e.paid?'paid-yes':'paid-no'}" onclick="togglePaid(${e.id})">${e.paid?'✓ Paid':'Mark Paid'}</button>
       ${!SW.drawDone?`<button class="remove-btn" onclick="removeEntry(${e.id})" title="Remove">✕</button>`:''}
     </div>`).join('');
@@ -603,15 +600,7 @@ function runDraw(){
   // Assign random entries
   randoms.forEach((e,i)=>{e.teamName=pool[i%pool.length].name;});
 
-  if(picks.length){
-    const takenNames=new Set(randoms.map(e=>e.teamName));
-    const remaining=pool.filter(t=>!takenNames.has(t.name));
-    showPickFlow(picks,remaining,0,()=>{
-      SW.drawDone=true;saveState();renderDrawTab();fireConfetti();toast('🎉 Draw complete!',3000);
-    });
-  } else {
-    SW.drawDone=true;saveState();renderDrawTab();fireConfetti();toast('🎲 Draw complete!',3000);
-  }
+  SW.drawDone=true;saveState();renderDrawTab();fireConfetti();toast('🎲 Draw complete!',3000);
 }
 
 function redoDraw(){
@@ -620,36 +609,7 @@ function redoDraw(){
   renderDrawTab();saveState();
 }
 
-function showPickFlow(picks,remaining,idx,done){
-  if(idx>=picks.length){done();return;}
-  const player=picks[idx];
-  const taken=new Set(SW.entries.filter(e=>e.teamName).map(e=>e.teamName));
-  const avail=remaining.filter(t=>!taken.has(t.name));
 
-  const overlay=document.createElement('div');
-  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(8px)';
-  overlay.innerHTML=`<div style="background:linear-gradient(160deg,#0a1929,#060f1e);border:1px solid rgba(255,213,74,.4);border-radius:14px;padding:24px;max-width:500px;width:100%;max-height:80vh;overflow-y:auto">
-    <div style="font-size:18px;font-weight:900;color:#ffd54a;margin-bottom:4px">✋ ${esc(player.name)} — Pick Your Team</div>
-    <div style="font-size:11px;color:#475569;margin-bottom:16px">${avail.length} teams remaining</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px">
-      ${avail.map(t=>`<div onclick="pickTeam(${player.id},'${t.name.replace(/'/g,"\\'")}',this)"
-        style="display:flex;align-items:center;gap:6px;padding:9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;transition:all .15s"
-        onmouseover="this.style.background='rgba(255,213,74,.12)';this.style.borderColor='rgba(255,213,74,.4)'"
-        onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.1)'">
-        <span style="font-size:18px">${t.flag}</span><span>${t.name}</span></div>`).join('')}
-    </div>
-  </div>`;
-  document.body.appendChild(overlay);
-  overlay.id='pick-overlay';
-  overlay._next=()=>{overlay.remove();setTimeout(()=>showPickFlow(picks,remaining,idx+1,done),100);};
-}
-
-function pickTeam(playerId,teamName){
-  const e=SW.entries.find(e=>e.id===playerId);
-  if(e)e.teamName=teamName;
-  const o=document.getElementById('pick-overlay');
-  if(o)o._next();
-}
 
 function renderDrawResult(){
   const el=document.getElementById('draw-result-grid');
