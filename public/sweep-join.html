@@ -38,12 +38,6 @@ body{background:radial-gradient(ellipse at 50% 0%,#0d2847,#061020 40%,#020810 10
 .btn-gold:hover{box-shadow:0 0 24px rgba(255,213,74,.5);transform:translateY(-1px)}
 .btn-outline{background:transparent;border:1px solid rgba(34,211,238,.3);color:#22d3ee;margin-top:8px}
 
-/* TEAM PICKER */
-.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px;max-height:300px;overflow-y:auto;margin-bottom:14px;padding:2px}
-.team-tile{display:flex;align-items:center;gap:6px;padding:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:7px;cursor:pointer;transition:all .15s;font-size:11px;font-weight:600}
-.team-tile:hover{background:rgba(255,213,74,.1);border-color:rgba(255,213,74,.3)}
-.team-tile.selected{background:rgba(255,213,74,.15);border-color:rgba(255,213,74,.6)}
-
 /* SUCCESS STATE */
 .success{display:none;text-align:center}
 .success.show{display:block;animation:fadeUp .4s ease}
@@ -70,25 +64,6 @@ body{background:radial-gradient(ellipse at 50% 0%,#0d2847,#061020 40%,#020810 10
   <!-- Step 1: Choose type -->
   <div id="step-type">
     <div style="font-size:12px;color:#64748b;margin-bottom:14px;text-align:center">Choose how you want to enter:</div>
-    <div class="price-row">
-      <label class="price-box selected" id="box-random" onclick="selectType('random')">
-        <input type="radio" name="entry-type" value="random" checked>
-        <div class="price-type">🎲 Random</div>
-        <div class="price-amt" id="price-r">£3</div>
-        <div class="price-desc">Team drawn for you</div>
-      </label>
-      <label class="price-box" id="box-pick" onclick="selectType('pick')">
-        <input type="radio" name="entry-type" value="pick">
-        <div class="price-type">✋ Pick</div>
-        <div class="price-amt" id="price-p">£8</div>
-        <div class="price-desc">Choose your team</div>
-      </label>
-    </div>
-
-    <label class="lbl">Your Name</label>
-    <input class="inp" id="entrant-name" placeholder="Enter your full name" maxlength="40">
-      <div style="font-size:11px;color:#475569;margin-bottom:10px" id="selected-team-label">No team selected</div>
-    </div>
 
     <button class="btn btn-gold" onclick="submitEntry()">✅ Register My Entry</button>
     <div class="note">💰 Money is paid directly to the organiser — not through this app</div>
