@@ -134,34 +134,30 @@ footer a:hover{color:#22d3ee}
 }
 
 
-  /* ── MOCKUP CAROUSEL ── */
-  .mockup-section{padding:70px 0 80px;overflow:hidden}
-  .mockup-section .section-title{padding:0 24px}
-  .mockup-section .section-label{padding:0 24px}
-  .mockup-section>p{padding:0 24px}
-  .carousel-wrap{position:relative;margin-top:36px}
-  .carousel-track{display:flex;gap:20px;padding:12px 40px 20px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;cursor:grab}
-  .carousel-track::-webkit-scrollbar{display:none}
-  .carousel-track.grabbing{cursor:grabbing}
-  .carousel-slide{flex:0 0 340px;scroll-snap-align:center}
-  @media(max-width:500px){.carousel-slide{flex:0 0 88vw}}
-  .mockup-panel{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.5);height:100%}
+
+  /* ── MOCKUP SLIDESHOW ── */
+  .mockup-section{padding:70px 24px 80px;max-width:1100px;margin:0 auto}
+  .mockup-viewport{position:relative;overflow:hidden;width:100%;height:480px}
+  .mockup-stage{display:flex;width:300%;transition:transform .65s cubic-bezier(.77,0,.18,1)}
+  .mockup-frame{width:33.333%;display:flex;gap:24px;padding:4px 2px;box-sizing:border-box;align-items:flex-start}
+  /* panels */
+  .mockup-panel{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.5);flex:1}
   .mockup-chrome{background:#0a0f1a;padding:8px 12px;display:flex;align-items:center;gap:6px;border-bottom:1px solid rgba(255,255,255,.06)}
   .mockup-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-  .mockup-url{font-size:9px;color:#334155;margin-left:6px;font-family:monospace;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .mockup-url{font-size:9px;color:#334155;margin-left:6px;font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .mockup-body{padding:16px}
   .mk-header{margin-bottom:10px}
   .mk-title{font-size:13px;font-weight:800;color:#e2e8f0;margin-bottom:2px}
   .mk-sub{font-size:10px;color:#475569}
   .mk-live-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:#4ade80;font-size:8px;font-weight:900;padding:2px 8px;border-radius:20px;letter-spacing:1px;margin-bottom:10px}
   .mk-table{width:100%}
-  .mk-row{display:grid;grid-template-columns:24px 1fr 1fr 80px;gap:4px;align-items:center;padding:5px 4px;border-bottom:1px solid rgba(255,255,255,.04);font-size:10px}
+  .mk-row{display:grid;grid-template-columns:20px 1fr 1fr 72px;gap:4px;align-items:center;padding:5px 4px;border-bottom:1px solid rgba(255,255,255,.04);font-size:10px}
   .mk-row-head{font-size:7.5px;color:#334155;letter-spacing:.5px;font-weight:700;padding-bottom:6px}
-  .mk-row-1{background:rgba(251,191,36,.04);border-radius:4px}
-  .mk-row-out{opacity:.45}
+  .mk-row-top{background:rgba(251,191,36,.04);border-radius:4px}
+  .mk-row-out{opacity:.38}
   .mk-pos{color:#475569;font-weight:700;font-size:9px}
   .mk-name{color:#e2e8f0;font-weight:600}
-  .mk-name-out,.mk-pos-out,.mk-nation-out{color:#1e293b}
+  .mk-grey{color:#1e293b}
   .mk-nation{color:#94a3b8;font-size:9.5px}
   .mk-status{font-size:8px;font-weight:700;text-align:right}
   .mk-in{color:#4ade80}
@@ -171,35 +167,41 @@ footer a:hover{color:#22d3ee}
   .mk-org-stat{text-align:center}
   .mk-org-num{font-size:20px;font-weight:900;line-height:1}
   .mk-org-lbl{font-size:7px;color:#334155;margin-top:2px;letter-spacing:.5px}
-  .mk-action-label{font-size:7.5px;color:#334155;letter-spacing:.6px;font-weight:700;margin-bottom:6px}
+  .mk-action-lbl{font-size:7.5px;color:#334155;letter-spacing:.6px;font-weight:700;margin:10px 0 6px}
   .mk-action{font-size:9.5px;padding:6px 10px;border-radius:6px;margin-bottom:4px;font-weight:500}
-  .mk-action-green{background:rgba(34,197,94,.08);color:#4ade80;border:1px solid rgba(34,197,94,.15)}
-  .mk-action-blue{background:rgba(34,211,238,.08);color:#22d3ee;border:1px solid rgba(34,211,238,.15)}
-  .mk-action-amber{background:rgba(251,191,36,.08);color:#fbbf24;border:1px solid rgba(251,191,36,.15)}
-  .mk-action-purple{background:rgba(167,139,250,.08);color:#a78bfa;border:1px solid rgba(167,139,250,.15)}
+  .mk-ag{background:rgba(34,197,94,.08);color:#4ade80;border:1px solid rgba(34,197,94,.15)}
+  .mk-ab{background:rgba(34,211,238,.08);color:#22d3ee;border:1px solid rgba(34,211,238,.15)}
+  .mk-aa{background:rgba(251,191,36,.08);color:#fbbf24;border:1px solid rgba(251,191,36,.15)}
+  .mk-ap{background:rgba(167,139,250,.08);color:#a78bfa;border:1px solid rgba(167,139,250,.15)}
   .mk-entry{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:9.5px}
   .mk-entry-name{color:#94a3b8;font-weight:600}
   .mk-entry-nation{color:#e2e8f0}
   .mk-entry-time{color:#334155;font-size:8px}
-  /* bracket panel */
-  .mk-bracket{padding:4px 0}
-  .mk-rnd-label{font-size:7px;color:#334155;letter-spacing:.8px;font-weight:700;margin:10px 0 6px;text-transform:uppercase}
-  .mk-match{display:flex;flex-direction:column;gap:2px;margin-bottom:8px}
-  .mk-team{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:5px;font-size:10px;font-weight:600;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
-  .mk-team.winner{background:rgba(34,211,238,.08);border-color:rgba(34,211,238,.25);color:#22d3ee}
-  .mk-team.loser{opacity:.35}
-  .mk-team-name{display:flex;align-items:center;gap:5px}
-  .mk-score{font-size:11px;font-weight:900;color:#fff;min-width:14px;text-align:right}
-  .mk-team.winner .mk-score{color:#22d3ee}
-  .mk-connector{height:1px;background:rgba(255,255,255,.06);margin:2px 8px}
+  /* bracket */
+  .bkt-wrap{display:flex;align-items:center;gap:0;overflow:hidden}
+  .bkt-col{display:flex;flex-direction:column;justify-content:space-around;gap:0}
+  .bkt-col-qf{gap:6px}
+  .bkt-match{display:flex;flex-direction:column;margin-bottom:6px;position:relative}
+  .bkt-team{display:flex;align-items:center;justify-content:space-between;padding:4px 7px;border-radius:4px;font-size:9px;font-weight:600;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);white-space:nowrap;min-width:120px}
+  .bkt-team.w{background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.3);color:#e2e8f0}
+  .bkt-team.l{opacity:.3}
+  .bkt-team.tbc{opacity:.25;font-style:italic;color:#475569}
+  .bkt-score{font-weight:900;font-size:10px;color:#fff;margin-left:6px}
+  .bkt-team.w .bkt-score{color:#22d3ee}
+  .bkt-div{height:1px;background:rgba(255,255,255,.05);margin:2px 0}
+  .bkt-connector{display:flex;flex-direction:column;justify-content:center;align-items:center;width:18px;flex-shrink:0}
+  .bkt-line-v{flex:1;width:1px;background:rgba(34,211,238,.25)}
+  .bkt-line-h{height:1px;width:100%;background:rgba(34,211,238,.25)}
+  .bkt-round-lbl{font-size:6.5px;color:#334155;letter-spacing:.8px;font-weight:700;text-align:center;margin-bottom:8px;text-transform:uppercase}
   /* dots */
-  .carousel-dots{display:flex;justify-content:center;gap:8px;margin-top:16px}
-  .carousel-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.15);cursor:pointer;transition:background .2s,transform .2s}
-  .carousel-dot.active{background:#22d3ee;transform:scale(1.3)}
-  /* auto-scroll hint */
-  .carousel-hint{text-align:center;font-size:10px;color:#1e3a5f;margin-top:8px;letter-spacing:.3px}
-  @keyframes mkFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-  .mk-animate{animation:mkFadeIn .5s ease both}
+  .slide-dots{display:flex;justify-content:center;gap:10px;margin-top:18px}
+  .slide-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.15);cursor:pointer;transition:background .2s,transform .2s;border:none;padding:0}
+  .slide-dot.on{background:#22d3ee;transform:scale(1.35)}
+  .slide-hint{text-align:center;font-size:10px;color:#1e3a5f;margin-top:8px;letter-spacing:.3px}
+  @media(max-width:680px){
+    .mockup-viewport{height:auto;min-height:460px}
+    .mockup-frame{flex-direction:column;height:auto}
+  }
 
 </style>
 </head>
@@ -304,22 +306,24 @@ footer a:hover{color:#22d3ee}
 </section>
 
 
-<!-- ── PRODUCT MOCKUP CAROUSEL ──────────────────────────────────────────── -->
+
+<!-- ── MOCKUP SLIDESHOW ──────────────────────────────────────────────────── -->
 <section class="mockup-section">
   <div class="section-label">See it in action</div>
   <h2 class="section-title" style="margin-bottom:8px">What your group sees on day one</h2>
-  <p style="text-align:center;color:#475569;font-size:13px;margin-bottom:0">Real names. Real nations. Live updates. Zero effort from you.</p>
-  <div class="carousel-wrap">
-    <div class="carousel-track" id="mockup-track">
+  <p style="text-align:center;color:#475569;font-size:13px;margin-bottom:32px">Real names. Real nations. Live updates. Zero effort from you.</p>
 
-      <!-- SLIDE 1: Leaderboard -->
-      <div class="carousel-slide">
+  <div class="mockup-viewport">
+    <div class="mockup-stage" id="mk-stage">
+
+      <!-- FRAME 1: Leaderboard + Organiser -->
+      <div class="mockup-frame">
         <div class="mockup-panel">
           <div class="mockup-chrome">
             <div class="mockup-dot" style="background:#ef4444"></div>
             <div class="mockup-dot" style="background:#fbbf24"></div>
             <div class="mockup-dot" style="background:#22c55e"></div>
-            <span class="mockup-url">worldcupsweepstake-liveboard.com/sweep-view</span>
+            <span class="mockup-url">/sweep-view · Your live bracket</span>
           </div>
           <div class="mockup-body">
             <div class="mk-header">
@@ -328,97 +332,25 @@ footer a:hover{color:#22d3ee}
             </div>
             <div class="mk-live-badge"><span class="blink"></span> LIVE</div>
             <div class="mk-table">
-              <div class="mk-row mk-row-head">
-                <span>#</span><span>Player</span><span>Nation</span><span style="text-align:right">Status</span>
-              </div>
-              <div class="mk-row mk-row-1 mk-animate" style="animation-delay:.1s">
-                <span class="mk-pos">1</span><span class="mk-name">Sarah K.</span><span class="mk-nation">🇫🇷 France</span><span class="mk-status mk-in">Still in</span>
-              </div>
-              <div class="mk-row mk-animate" style="animation-delay:.2s">
-                <span class="mk-pos">2</span><span class="mk-name">Dave T.</span><span class="mk-nation">🇧🇷 Brazil</span><span class="mk-status mk-in">Still in</span>
-              </div>
-              <div class="mk-row mk-animate" style="animation-delay:.3s">
-                <span class="mk-pos">3</span><span class="mk-name">Priya M.</span><span class="mk-nation">🇦🇷 Argentina</span><span class="mk-status mk-in">Still in</span>
-              </div>
-              <div class="mk-row mk-animate" style="animation-delay:.4s">
-                <span class="mk-pos">4</span><span class="mk-name">James R.</span><span class="mk-nation">🏴󠁧󠁢󠁥󠁮󠁧󠁿 England</span><span class="mk-status mk-in">Still in</span>
-              </div>
-              <div class="mk-row mk-animate" style="animation-delay:.5s">
-                <span class="mk-pos">5</span><span class="mk-name">Tom W.</span><span class="mk-nation">🇪🇸 Spain</span><span class="mk-status mk-in">Still in</span>
-              </div>
-              <div class="mk-row mk-animate" style="animation-delay:.6s">
-                <span class="mk-pos">6</span><span class="mk-name">Lisa C.</span><span class="mk-nation">🇵🇹 Portugal</span><span class="mk-status mk-in">Still in</span>
-              </div>
-              <div class="mk-row mk-row-out mk-animate" style="animation-delay:.7s">
-                <span class="mk-pos mk-pos-out">7</span><span class="mk-name mk-name-out">Mike B.</span><span class="mk-nation mk-nation-out">🇩🇪 Germany</span><span class="mk-status mk-out">Out</span>
-              </div>
-              <div class="mk-row mk-row-out mk-animate" style="animation-delay:.8s">
-                <span class="mk-pos mk-pos-out">8</span><span class="mk-name mk-name-out">Jen H.</span><span class="mk-nation mk-nation-out">🇳🇱 Netherlands</span><span class="mk-status mk-out">Out</span>
-              </div>
+              <div class="mk-row mk-row-head"><span>#</span><span>Player</span><span>Nation</span><span style="text-align:right">Status</span></div>
+              <div class="mk-row mk-row-top"><span class="mk-pos">1</span><span class="mk-name">Sarah K.</span><span class="mk-nation">🇫🇷 France</span><span class="mk-status mk-in">Still in</span></div>
+              <div class="mk-row"><span class="mk-pos">2</span><span class="mk-name">Dave T.</span><span class="mk-nation">🇧🇷 Brazil</span><span class="mk-status mk-in">Still in</span></div>
+              <div class="mk-row"><span class="mk-pos">3</span><span class="mk-name">Priya M.</span><span class="mk-nation">🇦🇷 Argentina</span><span class="mk-status mk-in">Still in</span></div>
+              <div class="mk-row"><span class="mk-pos">4</span><span class="mk-name">James R.</span><span class="mk-nation">🏴󠁧󠁢󠁥󠁮󠁧󠁿 England</span><span class="mk-status mk-in">Still in</span></div>
+              <div class="mk-row"><span class="mk-pos">5</span><span class="mk-name">Tom W.</span><span class="mk-nation">🇪🇸 Spain</span><span class="mk-status mk-in">Still in</span></div>
+              <div class="mk-row"><span class="mk-pos">6</span><span class="mk-name">Lisa C.</span><span class="mk-nation">🇵🇹 Portugal</span><span class="mk-status mk-in">Still in</span></div>
+              <div class="mk-row mk-row-out"><span class="mk-pos mk-grey">7</span><span class="mk-name mk-grey">Mike B.</span><span class="mk-nation mk-grey">🇩🇪 Germany</span><span class="mk-status mk-out">Out</span></div>
+              <div class="mk-row mk-row-out"><span class="mk-pos mk-grey">8</span><span class="mk-name mk-grey">Jen H.</span><span class="mk-nation mk-grey">🇳🇱 Netherlands</span><span class="mk-status mk-out">Out</span></div>
             </div>
             <div class="mk-footer">Every participant gets their own live link 📲</div>
           </div>
         </div>
-      </div>
-
-      <!-- SLIDE 2: Bracket -->
-      <div class="carousel-slide">
         <div class="mockup-panel">
           <div class="mockup-chrome">
             <div class="mockup-dot" style="background:#ef4444"></div>
             <div class="mockup-dot" style="background:#fbbf24"></div>
             <div class="mockup-dot" style="background:#22c55e"></div>
-            <span class="mockup-url">worldcupsweepstake-liveboard.com/dashboard</span>
-          </div>
-          <div class="mockup-body">
-            <div class="mk-header">
-              <div class="mk-title">🏟️ Live Knockout Bracket</div>
-              <div class="mk-sub">Updates automatically after every match</div>
-            </div>
-            <div class="mk-live-badge"><span class="blink"></span> LIVE</div>
-            <div class="mk-bracket">
-              <div class="mk-rnd-label">⚽ Quarter-Finals</div>
-              <div class="mk-match">
-                <div class="mk-team winner"><span class="mk-team-name">🇫🇷 France</span><span class="mk-score">2</span></div>
-                <div class="mk-connector"></div>
-                <div class="mk-team loser"><span class="mk-team-name">🏴󠁧󠁢󠁥󠁮󠁧󠁿 England</span><span class="mk-score">1</span></div>
-              </div>
-              <div class="mk-match">
-                <div class="mk-team winner"><span class="mk-team-name">🇧🇷 Brazil</span><span class="mk-score">3</span></div>
-                <div class="mk-connector"></div>
-                <div class="mk-team loser"><span class="mk-team-name">🇩🇪 Germany</span><span class="mk-score">1</span></div>
-              </div>
-              <div class="mk-rnd-label">🔥 Semi-Finals</div>
-              <div class="mk-match">
-                <div class="mk-team winner"><span class="mk-team-name">🇫🇷 France</span><span class="mk-score">1</span></div>
-                <div class="mk-connector"></div>
-                <div class="mk-team loser"><span class="mk-team-name">🇦🇷 Argentina</span><span class="mk-score">0</span></div>
-              </div>
-              <div class="mk-match" style="opacity:.4">
-                <div class="mk-team"><span class="mk-team-name">🇧🇷 Brazil</span><span class="mk-score" style="color:#475569">vs</span></div>
-                <div class="mk-connector"></div>
-                <div class="mk-team"><span class="mk-team-name">🇪🇸 Spain</span><span class="mk-score" style="color:#475569">—</span></div>
-              </div>
-              <div class="mk-rnd-label" style="color:#fbbf24">🏆 Final — TBC</div>
-              <div class="mk-match" style="opacity:.25">
-                <div class="mk-team"><span class="mk-team-name">🇫🇷 France</span><span class="mk-score" style="color:#475569">—</span></div>
-                <div class="mk-connector"></div>
-                <div class="mk-team"><span class="mk-team-name">TBC</span><span class="mk-score" style="color:#475569">—</span></div>
-              </div>
-            </div>
-            <div class="mk-footer">All 104 matches · All 12 groups · All 48 teams 🌍</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 3: Organiser Hub -->
-      <div class="carousel-slide">
-        <div class="mockup-panel">
-          <div class="mockup-chrome">
-            <div class="mockup-dot" style="background:#ef4444"></div>
-            <div class="mockup-dot" style="background:#fbbf24"></div>
-            <div class="mockup-dot" style="background:#22c55e"></div>
-            <span class="mockup-url">worldcupsweepstake-liveboard.com/sweepstake</span>
+            <span class="mockup-url">/sweepstake · Organiser only</span>
           </div>
           <div class="mockup-body">
             <div class="mk-header">
@@ -431,69 +363,164 @@ footer a:hover{color:#22d3ee}
               <div class="mk-org-stat"><div class="mk-org-num" style="color:#fbbf24">3</div><div class="mk-org-lbl">Unpaid</div></div>
               <div class="mk-org-stat"><div class="mk-org-num" style="color:#a78bfa">£60</div><div class="mk-org-lbl">Pot</div></div>
             </div>
-            <div class="mk-action-label">Organiser tools</div>
-            <div class="mk-action mk-action-green">✓ Draw complete — nations assigned</div>
-            <div class="mk-action mk-action-blue">📋 Copy join link for WhatsApp</div>
-            <div class="mk-action mk-action-amber">⚠️ Chase: Mike, Jen, Carl (unpaid)</div>
-            <div class="mk-action mk-action-purple">📄 Download printable poster</div>
-            <div class="mk-action-label" style="margin-top:12px">Recent entries</div>
-            <div class="mk-entry mk-animate" style="animation-delay:.2s">
-              <span class="mk-entry-name">Carl S. joined</span><span class="mk-entry-nation">🇲🇽 Mexico</span><span class="mk-entry-time">2 min ago</span>
-            </div>
-            <div class="mk-entry mk-animate" style="animation-delay:.35s">
-              <span class="mk-entry-name">Anna P. joined</span><span class="mk-entry-nation">🇯🇵 Japan</span><span class="mk-entry-time">14 min ago</span>
-            </div>
-            <div class="mk-entry mk-animate" style="animation-delay:.5s">
-              <span class="mk-entry-name">Rob D. joined</span><span class="mk-entry-nation">🇺🇸 USA</span><span class="mk-entry-time">1 hr ago</span>
-            </div>
+            <div class="mk-action-lbl">Organiser tools</div>
+            <div class="mk-action mk-ag">✓ Draw complete — nations assigned</div>
+            <div class="mk-action mk-ab">📋 Copy join link for WhatsApp</div>
+            <div class="mk-action mk-aa">⚠️ Chase: Mike, Jen, Carl (unpaid)</div>
+            <div class="mk-action mk-ap">📄 Download printable poster</div>
+            <div class="mk-action-lbl">Recent entries</div>
+            <div class="mk-entry"><span class="mk-entry-name">Carl S. joined</span><span class="mk-entry-nation">🇲🇽 Mexico</span><span class="mk-entry-time">2 min ago</span></div>
+            <div class="mk-entry"><span class="mk-entry-name">Anna P. joined</span><span class="mk-entry-nation">🇯🇵 Japan</span><span class="mk-entry-time">14 min ago</span></div>
+            <div class="mk-entry"><span class="mk-entry-name">Rob D. joined</span><span class="mk-entry-nation">🇺🇸 USA</span><span class="mk-entry-time">1 hr ago</span></div>
             <div class="mk-footer">No spreadsheets. No chasing. No hats. 🎉</div>
           </div>
         </div>
       </div>
 
+      <!-- FRAME 2: Knockout Bracket -->
+      <div class="mockup-frame">
+        <div class="mockup-panel" style="flex:1">
+          <div class="mockup-chrome">
+            <div class="mockup-dot" style="background:#ef4444"></div>
+            <div class="mockup-dot" style="background:#fbbf24"></div>
+            <div class="mockup-dot" style="background:#22c55e"></div>
+            <span class="mockup-url">/dashboard · Live knockout bracket</span>
+          </div>
+          <div class="mockup-body">
+            <div class="mk-header">
+              <div class="mk-title">🏟️ Live Knockout Bracket</div>
+              <div class="mk-sub">Auto-updates after every match · All 48 teams</div>
+            </div>
+            <div class="mk-live-badge"><span class="blink"></span> LIVE</div>
+
+            <!-- Bracket layout: QF top-half → SF → F ← SF ← QF bottom-half -->
+            <div style="overflow-x:auto;padding-bottom:4px">
+            <div style="display:flex;align-items:center;min-width:520px;gap:0">
+
+              <!-- QF left column -->
+              <div style="display:flex;flex-direction:column;gap:22px">
+                <div class="bkt-round-lbl">QF</div>
+                <div class="bkt-match">
+                  <div class="bkt-team w"><span>🇫🇷 France</span><span class="bkt-score">2</span></div>
+                  <div class="bkt-div"></div>
+                  <div class="bkt-team l"><span>🏴󠁧󠁢󠁥󠁮󠁧󠁿 England</span><span class="bkt-score">1</span></div>
+                </div>
+                <div class="bkt-match">
+                  <div class="bkt-team w"><span>🇧🇷 Brazil</span><span class="bkt-score">3</span></div>
+                  <div class="bkt-div"></div>
+                  <div class="bkt-team l"><span>🇩🇪 Germany</span><span class="bkt-score">1</span></div>
+                </div>
+              </div>
+
+              <!-- connector QF→SF left -->
+              <svg width="22" height="180" style="flex-shrink:0;overflow:visible">
+                <path d="M0,42 H11 V138 H0" fill="none" stroke="rgba(34,211,238,.3)" stroke-width="1"/>
+                <path d="M11,90 H22" fill="none" stroke="rgba(34,211,238,.3)" stroke-width="1"/>
+              </svg>
+
+              <!-- SF left -->
+              <div style="display:flex;flex-direction:column;gap:0;justify-content:center">
+                <div class="bkt-round-lbl">SF</div>
+                <div class="bkt-match">
+                  <div class="bkt-team w"><span>🇫🇷 France</span><span class="bkt-score">1</span></div>
+                  <div class="bkt-div"></div>
+                  <div class="bkt-team l"><span>🇧🇷 Brazil</span><span class="bkt-score">0</span></div>
+                </div>
+              </div>
+
+              <!-- connector SF→Final left -->
+              <svg width="22" height="80" style="flex-shrink:0;overflow:visible">
+                <path d="M0,34 H22" fill="none" stroke="rgba(251,191,36,.4)" stroke-width="1"/>
+              </svg>
+
+              <!-- FINAL -->
+              <div style="display:flex;flex-direction:column;align-items:center">
+                <div class="bkt-round-lbl" style="color:#fbbf24">🏆 FINAL</div>
+                <div class="bkt-match">
+                  <div class="bkt-team w" style="background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.4);min-width:110px"><span>🇫🇷 France</span><span class="bkt-score" style="color:#fbbf24">—</span></div>
+                  <div class="bkt-div" style="background:rgba(251,191,36,.2)"></div>
+                  <div class="bkt-team tbc" style="min-width:110px"><span>TBC</span><span class="bkt-score">—</span></div>
+                </div>
+              </div>
+
+              <!-- connector Final→SF right -->
+              <svg width="22" height="80" style="flex-shrink:0;overflow:visible">
+                <path d="M22,34 H0" fill="none" stroke="rgba(251,191,36,.4)" stroke-width="1"/>
+              </svg>
+
+              <!-- SF right -->
+              <div style="display:flex;flex-direction:column;justify-content:center">
+                <div class="bkt-round-lbl">SF</div>
+                <div class="bkt-match">
+                  <div class="bkt-team w"><span>🇦🇷 Argentina</span><span class="bkt-score">2</span></div>
+                  <div class="bkt-div"></div>
+                  <div class="bkt-team l"><span>🇵🇹 Portugal</span><span class="bkt-score">1</span></div>
+                </div>
+              </div>
+
+              <!-- connector SF→QF right -->
+              <svg width="22" height="180" style="flex-shrink:0;overflow:visible">
+                <path d="M22,42 H11 V138 H22" fill="none" stroke="rgba(34,211,238,.3)" stroke-width="1"/>
+                <path d="M11,90 H0" fill="none" stroke="rgba(34,211,238,.3)" stroke-width="1"/>
+              </svg>
+
+              <!-- QF right column -->
+              <div style="display:flex;flex-direction:column;gap:22px">
+                <div class="bkt-round-lbl">QF</div>
+                <div class="bkt-match">
+                  <div class="bkt-team w"><span>🇦🇷 Argentina</span><span class="bkt-score">2</span></div>
+                  <div class="bkt-div"></div>
+                  <div class="bkt-team l"><span>🇪🇸 Spain</span><span class="bkt-score">1</span></div>
+                </div>
+                <div class="bkt-match">
+                  <div class="bkt-team w"><span>🇵🇹 Portugal</span><span class="bkt-score">1</span></div>
+                  <div class="bkt-div"></div>
+                  <div class="bkt-team l"><span>🇺🇸 USA</span><span class="bkt-score">0</span></div>
+                </div>
+              </div>
+
+            </div>
+            </div>
+            <div class="mk-footer">Glowing connector lines · All 104 matches tracked 🌍</div>
+          </div>
+        </div>
+      </div>
+
     </div>
-    <div class="carousel-dots">
-      <div class="carousel-dot active" onclick="goSlide(0)"></div>
-      <div class="carousel-dot" onclick="goSlide(1)"></div>
-      <div class="carousel-dot" onclick="goSlide(2)"></div>
-    </div>
-    <div class="carousel-hint">← swipe or drag →</div>
   </div>
+
+  <div class="slide-dots">
+    <button class="slide-dot on" onclick="mkGo(0)"></button>
+    <button class="slide-dot" onclick="mkGo(1)"></button>
+  </div>
+  <div class="slide-hint">← swipe or click dots →</div>
 </section>
+
 <script>
 (function(){
-  var track=document.getElementById('mockup-track');
-  if(!track)return;
-  var dots=document.querySelectorAll('.carousel-dot');
-  var current=0;var total=3;var autoTimer;
-  function goSlide(n){
-    current=n;
-    var slide=track.children[n];
-    track.scrollTo({left:slide.offsetLeft-40,behavior:'smooth'});
-    dots.forEach(function(d,i){d.className='carousel-dot'+(i===n?' active':'');});
+  var stage=document.getElementById('mk-stage');
+  if(!stage)return;
+  var dots=document.querySelectorAll('.slide-dot');
+  var cur=0;var total=2;var timer;
+  function mkGo(n){
+    cur=n;
+    stage.style.transform='translateX(-'+(n*33.333)+'%)';
+    dots.forEach(function(d,i){d.className='slide-dot'+(i===n?' on':'');});
   }
-  function next(){goSlide((current+1)%total);}
-  function startAuto(){autoTimer=setInterval(next,3200);}
-  function stopAuto(){clearInterval(autoTimer);}
-  window.goSlide=goSlide;
-  startAuto();
-  track.addEventListener('touchstart',function(){stopAuto();},{passive:true});
-  track.addEventListener('mousedown',function(){stopAuto();track.classList.add('grabbing');});
-  track.addEventListener('mouseup',function(){track.classList.remove('grabbing');startAuto();});
-  // drag to scroll
-  var isDown=false;var startX;var scrollLeft;
-  track.addEventListener('mousedown',function(e){isDown=true;startX=e.pageX-track.offsetLeft;scrollLeft=track.scrollLeft;});
-  track.addEventListener('mouseleave',function(){isDown=false;track.classList.remove('grabbing');});
-  track.addEventListener('mouseup',function(){isDown=false;});
-  track.addEventListener('mousemove',function(e){if(!isDown)return;e.preventDefault();var x=e.pageX-track.offsetLeft;track.scrollLeft=scrollLeft-(x-startX)*1.5;});
-  // update dot on scroll
-  track.addEventListener('scroll',function(){
-    var idx=Math.round(track.scrollLeft/(track.scrollWidth/total));
-    if(idx!==current){current=idx;dots.forEach(function(d,i){d.className='carousel-dot'+(i===idx?' active':'');});}
-  });
+  window.mkGo=mkGo;
+  function next(){mkGo((cur+1)%total);}
+  timer=setInterval(next,4000);
+  // touch swipe
+  var tx=0;
+  stage.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;clearInterval(timer);},{passive:true});
+  stage.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-tx;
+    if(Math.abs(dx)>40)mkGo(dx<0?Math.min(cur+1,total-1):Math.max(cur-1,0));
+    timer=setInterval(next,4000);
+  },{passive:true});
 })();
 </script>
-<!-- ── END MOCKUP CAROUSEL ────────────────────────────────────────────────── -->
+<!-- ── END MOCKUP SLIDESHOW ───────────────────────────────────────────────── -->
 
 <section class="hiw" id="how-it-works">
   <div class="section-label">How it works</div>
