@@ -313,8 +313,8 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
   .title-sub{font-size:8px;letter-spacing:2px}
   .main-grid{grid-template-columns:1fr;gap:8px;padding:6px}
   .main-grid aside{display:none}
-  .b-shell{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .bracket-outer{min-width:640px}
+  .b-shell{display:none}#mob-bracket{display:block}
+  
   .bot-row{grid-template-columns:1fr;gap:8px;padding:0 6px 8px}
   .squad-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
   #pop-box{padding:16px;border-radius:12px}
@@ -332,6 +332,32 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
   .bot-row .panel{padding:10px 10px}
   .squad-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px}
 }
+
+/* mob-bracket */
+#mob-bracket{padding:0 6px}
+.mob-tabs{display:flex;gap:5px;overflow-x:auto;padding:0 0 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.mob-tabs::-webkit-scrollbar{display:none}
+.mob-tab{flex-shrink:0;background:rgba(255,255,255,.05);border:1px solid rgba(34,211,238,.15);border-radius:20px;color:#4a7a9a;font-size:10px;font-weight:700;letter-spacing:.6px;padding:8px 16px;cursor:pointer;transition:all .2s}
+.mob-tab.active{background:rgba(34,211,238,.12);border-color:rgba(34,211,238,.5);color:#22d3ee}
+.mob-match{background:rgba(2,7,18,.88);border:1px solid rgba(34,211,238,.18);border-radius:10px;overflow:hidden;margin-bottom:8px}
+.mob-match-header{display:flex;align-items:center;padding:10px 12px;gap:4px}
+.mob-match-team{flex:1;display:flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:#64748b}
+.mob-match-team.away{flex-direction:row-reverse}
+.mob-match-team.winner{color:#e2e8f0}
+.mob-match-score{display:flex;align-items:center;gap:6px;flex-shrink:0;padding:0 8px}
+.mob-sv{font-size:20px;font-weight:900;color:#1e3a5f;min-width:20px;text-align:center}
+.mob-sv.win{color:#22d3ee;text-shadow:0 0 8px rgba(34,211,238,.4)}
+.mob-sep{color:#1e3a5f;font-size:10px;letter-spacing:.5px}
+.mob-stad{padding:0 12px 8px;font-size:10px;color:#1e3a5f;letter-spacing:.3px}
+.mob-final-card{background:rgba(255,213,74,.06);border:1px solid rgba(255,213,74,.4);border-radius:14px;padding:24px 16px;text-align:center}
+.mob-final-title{color:#ffd54a;font-size:13px;font-weight:900;letter-spacing:4px;margin-bottom:4px}
+.mob-final-date{color:#64748b;font-size:10px;margin-bottom:16px}
+.mob-final-teams{display:flex;align-items:center;justify-content:center;gap:8px}
+.mob-ft{text-align:center;flex:1}
+.mob-ft-flag{font-size:38px;display:block;margin-bottom:6px}
+.mob-ft-name{font-size:12px;font-weight:900;color:#e2e8f0;letter-spacing:1px}
+.mob-final-score{font-size:42px;font-weight:900;color:#ffd54a;flex-shrink:0;padding:0 4px}
+.mob-champ{color:#22c55e;font-size:10px;letter-spacing:3px;margin-top:14px;font-weight:700}
 </style>
 </head>
 <body>
@@ -572,6 +598,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
           </div><!-- b-grid-wrap -->
         </div><!-- bracket-outer -->
       </div><!-- b-shell -->
+      <div id="mob-bracket" style="display:none"><div class="mob-tabs" id="mob-tabs"></div><div id="mob-match-list" style="padding:6px 0 12px"></div></div>
 
       <!-- Legend -->
       <div class="legend">
@@ -1344,6 +1371,28 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){closePop();
     }
   }).catch(function(){});
 })();
+</script>
+<script>
+var B_FINAL=[["BRA","🇧🇷","2","ARG","🇦🇷","1","FT","","","MetLife, NJ"]];
+function initMobileBracket(){
+  var rounds=[{id:"r32",label:"R32",matches:(B.LR32||[]).concat(B.RR32||[])},{id:"r16",label:"R16",matches:(B.LR16||[]).concat(B.RR16||[])},{id:"qtr",label:"QTR",matches:(B.LQF||[]).concat(B.RQF||[])},{id:"semi",label:"SEMI",matches:(B.LSF||[]).concat(B.RSF||[])},{id:"final",label:"FINAL",matches:B_FINAL}];
+  var ai=0;
+  for(var i=0;i<rounds.length;i++)if(rounds[i].matches.some(function(m){return m[6]==="FT"||m[6]==="PEN"||m[6]==="AET";}))ai=i;
+  window.__mobRounds=rounds;
+  document.getElementById("mob-tabs").innerHTML=rounds.map(function(r,i){return '<button class="mob-tab'+(i===ai?' active':'')+'" onclick="mobShowRound('+i+')">'+r.label+"</button>";}).join("");
+  mobShowRound(ai);
+}
+function mobShowRound(idx){
+  document.querySelectorAll(".mob-tab").forEach(function(t,i){t.classList.toggle("active",i===idx);});
+  var round=window.__mobRounds[idx],el=document.getElementById("mob-match-list");
+  if(round.id==="final"){
+    var m=round.matches[0],hs=parseInt(m[2]),as=parseInt(m[5]),w=hs>as?m[0]:m[3];
+    el.innerHTML='<div class="mob-final-card"><div class="mob-final-title">FINAL</div><div class="mob-final-date">July 19, 2026 &middot; MetLife Stadium, NJ</div><div class="mob-final-teams"><div class="mob-ft"><span class="mob-ft-flag">'+m[1]+'</span><div class="mob-ft-name">'+m[0]+'</div></div><div class="mob-final-score">'+m[2]+"&ndash;"+m[5]+'</div><div class="mob-ft"><span class="mob-ft-flag">'+m[4]+'</span><div class="mob-ft-name">'+m[3]+'</div></div></div><div class="mob-champ">&#127942; '+w+' CHAMPIONS</div></div>';
+    return;
+  }
+  el.innerHTML=round.matches.map(function(m){var hs=parseInt(m[2]),as=parseInt(m[5]),played=m[6]==="FT"||m[6]==="PEN"||m[6]==="AET",hw=played&&hs>as,aw=played&&as>hs;return '<div class="mob-match"><div class="mob-match-header"><div class="mob-match-team'+(hw?' winner':'')+'">'+m[1]+' '+m[0]+'</div><div class="mob-match-score"><span class="mob-sv'+(hw?' win':'')+'">'+m[2]+'</span><span class="mob-sep">'+(played?m[6]:"vs")+'</span><span class="mob-sv'+(aw?' win':'')+'">'+m[5]+'</span></div><div class="mob-match-team away'+(aw?' winner':'')+'">'+m[3]+' '+m[4]+'</div></div>'+(m[9]?'<div class="mob-stad">&#128205; '+m[9]+'</div>':'')+'</div>';}).join("");
+}
+if(typeof B!=="undefined")initMobileBracket();
 </script>
 </body>
 </html>
