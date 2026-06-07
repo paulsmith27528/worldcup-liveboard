@@ -1394,5 +1394,59 @@ function mobShowRound(idx){
 }
 if(typeof B!=="undefined")initMobileBracket();
 </script>
+
+<script id="wc26-live-overlay">
+/* WC2026 LIVE OVERLAY — 20s refresh from /api/bracket */
+(function(){
+  var IV=20000;
+  function buildMap(arr){
+    var m={};
+    (arr||[]).forEach(function(x){
+      if(!x.homeCode||!x.awayCode) return;
+      m[x.homeCode+"_"+x.awayCode]=x;
+      m[x.awayCode+"_"+x.homeCode]={homeCode:x.awayCode,homeScore:x.awayScore,awayCode:x.homeCode,awayScore:x.homeScore,status:x.status,minute:x.minute,_f:1};
+    });
+    return m;
+  }
+  function patch(card,m){
+    var s=card.querySelectorAll(".bc-score");
+    if(s.length<2) return;
+    var hs=m._f?m.awayScore:m.homeScore;
+    var as=m._f?m.homeScore:m.awayScore;
+    s[0].textContent=(hs!=null)?String(hs):"-";
+    s[1].textContent=(as!=null)?String(as):"-";
+    var done=["FT","AET","PEN"].indexOf(m.status)>-1;
+    s[0].classList.toggle("win",done&&hs>as);
+    s[1].classList.toggle("win",done&&as>hs);
+    s[0].classList.toggle("gold",done&&hs>as);
+    s[1].classList.toggle("gold",done&&as>hs);
+    var live=["LIVE","HT"].indexOf(m.status)>-1;
+    card.classList.toggle("live",live);
+    var el=card.querySelector(".bc-min");
+    if(live){
+      if(!el){el=document.createElement("span");el.className="bc-min";el.style.cssText="font-size:7px;color:#ef4444;font-weight:700;text-align:center;display:block";card.appendChild(el);}
+      el.textContent=m.status==="HT"?"HT":(m.minute?m.minute+"'":"LIVE");
+    } else if(el) el.remove();
+  }
+  function run(){
+    fetch("/api/bracket").then(function(r){return r.ok?r.json():null;}).then(function(d){
+      if(!d||!d.matches||!d.matches.length) return;
+      var map=buildMap(d.matches);
+      document.querySelectorAll(".bc").forEach(function(c){
+        var codes=Array.from(c.querySelectorAll(".bc-code")).map(function(e){return e.textContent.trim();});
+        if(codes.length<2) return;
+        var mx=map[codes[0]+"_"+codes[1]];
+        if(mx) patch(c,mx);
+      });
+    }).catch(function(e){console.warn("[WC26]",e);});
+  }
+  run();
+  setInterval(run,IV);
+  var b=document.createElement("div");
+  b.style.cssText="position:fixed;bottom:16px;right:16px;background:#ef4444;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;z-index:9999;letter-spacing:1px";
+  b.textContent="LIVE";
+  document.body.appendChild(b);
+})();
+</script>
 </body>
 </html>
