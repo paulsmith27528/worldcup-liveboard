@@ -107,7 +107,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }));
     }
 
-    const thirds = Object.entries(groups)
+    const thirds = (Object.entries(groups) as Array<[string, any[]]>)
       .filter(([, teams]) => teams.length >= 3)
       .map(([letter, teams]) => ({ group: letter, ...teams[2] }))
       .sort((a, b) => b.points - a.points || b.gd - a.gd || b.gf - a.gf);
