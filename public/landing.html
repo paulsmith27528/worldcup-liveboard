@@ -132,6 +132,54 @@ footer a:hover{color:#22d3ee}
   .hero{padding:70px 16px 40px}
   .product-card{padding:24px 20px}
 }
+
+  /* ── MOCKUP SECTION ── */
+  .mockup-section{padding:80px 24px;max-width:1100px;margin:0 auto}
+  .mockup-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:980px;margin:0 auto}
+  @media(max-width:700px){.mockup-grid{grid-template-columns:1fr}}
+  .mockup-panel{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+  .mockup-chrome{background:#0a0f1a;padding:8px 12px;display:flex;align-items:center;gap:6px;border-bottom:1px solid rgba(255,255,255,.06)}
+  .mockup-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  .mockup-url{font-size:9px;color:#334155;margin-left:6px;font-family:monospace;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .mockup-body{padding:16px}
+  .mk-header{margin-bottom:10px}
+  .mk-title{font-size:13px;font-weight:800;color:#e2e8f0;margin-bottom:2px}
+  .mk-sub{font-size:10px;color:#475569}
+  .mk-live-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:#4ade80;font-size:8px;font-weight:900;padding:2px 8px;border-radius:20px;letter-spacing:1px;margin-bottom:10px}
+  .mk-table{width:100%;border-collapse:collapse}
+  .mk-row{display:grid;grid-template-columns:24px 1fr 1fr 80px;gap:4px;align-items:center;padding:5px 4px;border-bottom:1px solid rgba(255,255,255,.04);font-size:10px}
+  .mk-row-head{font-size:7.5px;color:#334155;letter-spacing:.5px;font-weight:700;padding-bottom:6px}
+  .mk-row-1{background:rgba(251,191,36,.04);border-radius:4px}
+  .mk-row-out{opacity:.45}
+  .mk-pos{color:#475569;font-weight:700;font-size:9px}
+  .mk-pos-out{color:#1e293b}
+  .mk-name{color:#e2e8f0;font-weight:600}
+  .mk-name-out{color:#334155}
+  .mk-nation{color:#94a3b8;font-size:9.5px}
+  .mk-nation-out{color:#1e293b}
+  .mk-status{font-size:8px;font-weight:700;text-align:right}
+  .mk-in{color:#4ade80}
+  .mk-out{color:#475569}
+  .mk-footer{font-size:9px;color:#334155;text-align:center;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.05)}
+  .mk-org-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;padding:10px;background:rgba(255,255,255,.02);border-radius:10px;border:1px solid rgba(255,255,255,.05)}
+  .mk-org-stat{text-align:center}
+  .mk-org-num{font-size:20px;font-weight:900;line-height:1}
+  .mk-org-lbl{font-size:7px;color:#334155;margin-top:2px;letter-spacing:.5px}
+  .mk-org-actions{margin-bottom:12px}
+  .mk-action-label{font-size:7.5px;color:#334155;letter-spacing:.6px;font-weight:700;margin-bottom:6px}
+  .mk-action{font-size:9.5px;padding:6px 10px;border-radius:6px;margin-bottom:4px;font-weight:500}
+  .mk-action-green{background:rgba(34,197,94,.08);color:#4ade80;border:1px solid rgba(34,197,94,.15)}
+  .mk-action-blue{background:rgba(34,211,238,.08);color:#22d3ee;border:1px solid rgba(34,211,238,.15);cursor:pointer}
+  .mk-action-amber{background:rgba(251,191,36,.08);color:#fbbf24;border:1px solid rgba(251,191,36,.15)}
+  .mk-action-purple{background:rgba(167,139,250,.08);color:#a78bfa;border:1px solid rgba(167,139,250,.15)}
+  .mk-org-entries{}
+  .mk-entry{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:9.5px}
+  .mk-entry-name{color:#94a3b8;font-weight:600}
+  .mk-entry-nation{color:#e2e8f0}
+  .mk-entry-time{color:#334155;font-size:8px}
+  @keyframes mkFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  .mk-animate{animation:mkFadeIn .5s ease both}
+
 </style>
 </head>
 <body>
@@ -233,6 +281,152 @@ footer a:hover{color:#22d3ee}
     </div>
   </div>
 </section>
+
+<!-- ── PRODUCT MOCKUP ──────────────────────────────────────────────────────── -->
+<section class="mockup-section">
+  <div class="section-label">See it in action</div>
+  <h2 class="section-title" style="margin-bottom:8px">What your group sees on day one</h2>
+  <p style="text-align:center;color:#475569;font-size:13px;margin-bottom:40px">Real names. Real nations. Live updates. Zero effort from you.</p>
+  <div class="mockup-grid">
+
+    <!-- LEFT: Sweepstake leaderboard -->
+    <div class="mockup-panel">
+      <div class="mockup-chrome">
+        <div class="mockup-dot" style="background:#ef4444"></div>
+        <div class="mockup-dot" style="background:#fbbf24"></div>
+        <div class="mockup-dot" style="background:#22c55e"></div>
+        <span class="mockup-url">worldcupsweepstake-liveboard.com/sweep-view</span>
+      </div>
+      <div class="mockup-body">
+        <div class="mk-header">
+          <div class="mk-title">🏆 Office Sweepstake 2026</div>
+          <div class="mk-sub">12 players · Prize pot: <span style="color:#4ade80;font-weight:700">£60.00</span></div>
+        </div>
+        <div class="mk-live-badge"><span class="blink"></span> LIVE</div>
+        <div class="mk-table">
+          <div class="mk-row mk-row-head">
+            <span class="mk-pos-h">#</span>
+            <span class="mk-name-h">Player</span>
+            <span class="mk-nation-h">Nation</span>
+            <span class="mk-status-h">Status</span>
+          </div>
+          <div class="mk-row mk-row-1 mk-animate" style="animation-delay:.1s">
+            <span class="mk-pos">1</span>
+            <span class="mk-name">Sarah K.</span>
+            <span class="mk-nation">🇫🇷 France</span>
+            <span class="mk-status mk-in">Still in</span>
+          </div>
+          <div class="mk-row mk-animate" style="animation-delay:.2s">
+            <span class="mk-pos">2</span>
+            <span class="mk-name">Dave T.</span>
+            <span class="mk-nation">🇧🇷 Brazil</span>
+            <span class="mk-status mk-in">Still in</span>
+          </div>
+          <div class="mk-row mk-animate" style="animation-delay:.3s">
+            <span class="mk-pos">3</span>
+            <span class="mk-name">Priya M.</span>
+            <span class="mk-nation">🇦🇷 Argentina</span>
+            <span class="mk-status mk-in">Still in</span>
+          </div>
+          <div class="mk-row mk-animate" style="animation-delay:.4s">
+            <span class="mk-pos">4</span>
+            <span class="mk-name">James R.</span>
+            <span class="mk-nation">🏴󠁧󠁢󠁥󠁮󠁧󠁿 England</span>
+            <span class="mk-status mk-in">Still in</span>
+          </div>
+          <div class="mk-row mk-animate" style="animation-delay:.5s">
+            <span class="mk-pos">5</span>
+            <span class="mk-name">Tom W.</span>
+            <span class="mk-nation">🇪🇸 Spain</span>
+            <span class="mk-status mk-in">Still in</span>
+          </div>
+          <div class="mk-row mk-animate" style="animation-delay:.6s">
+            <span class="mk-pos">6</span>
+            <span class="mk-name">Lisa C.</span>
+            <span class="mk-nation">🇵🇹 Portugal</span>
+            <span class="mk-status mk-in">Still in</span>
+          </div>
+          <div class="mk-row mk-animate mk-row-out" style="animation-delay:.7s">
+            <span class="mk-pos mk-pos-out">7</span>
+            <span class="mk-name mk-name-out">Mike B.</span>
+            <span class="mk-nation mk-nation-out">🇩🇪 Germany</span>
+            <span class="mk-status mk-out">Knocked out</span>
+          </div>
+          <div class="mk-row mk-animate mk-row-out" style="animation-delay:.8s">
+            <span class="mk-pos mk-pos-out">8</span>
+            <span class="mk-name mk-name-out">Jen H.</span>
+            <span class="mk-nation mk-nation-out">🇳🇱 Netherlands</span>
+            <span class="mk-status mk-out">Knocked out</span>
+          </div>
+        </div>
+        <div class="mk-footer">Each player gets this link for their nation 📲</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Organiser dashboard -->
+    <div class="mockup-panel">
+      <div class="mockup-chrome">
+        <div class="mockup-dot" style="background:#ef4444"></div>
+        <div class="mockup-dot" style="background:#fbbf24"></div>
+        <div class="mockup-dot" style="background:#22c55e"></div>
+        <span class="mockup-url">worldcupsweepstake-liveboard.com/sweepstake</span>
+      </div>
+      <div class="mockup-body">
+        <div class="mk-header">
+          <div class="mk-title">⚙️ Organiser Hub</div>
+          <div class="mk-sub">You're in control — nobody else sees this</div>
+        </div>
+        <div class="mk-org-stats">
+          <div class="mk-org-stat">
+            <div class="mk-org-num" style="color:#22d3ee">12</div>
+            <div class="mk-org-lbl">Entered</div>
+          </div>
+          <div class="mk-org-stat">
+            <div class="mk-org-num" style="color:#4ade80">9</div>
+            <div class="mk-org-lbl">Paid</div>
+          </div>
+          <div class="mk-org-stat">
+            <div class="mk-org-num" style="color:#fbbf24">3</div>
+            <div class="mk-org-lbl">Unpaid</div>
+          </div>
+          <div class="mk-org-stat">
+            <div class="mk-org-num" style="color:#a78bfa">£60</div>
+            <div class="mk-org-lbl">Pot</div>
+          </div>
+        </div>
+        <div class="mk-org-actions">
+          <div class="mk-action-label">Organiser tools</div>
+          <div class="mk-action mk-action-green">✓ Draw complete — nations assigned</div>
+          <div class="mk-action mk-action-blue">📋 Copy join link for WhatsApp</div>
+          <div class="mk-action mk-action-amber">⚠️ Chase: Mike, Jen, Carl (unpaid)</div>
+          <div class="mk-action mk-action-purple">📄 Download printable poster</div>
+        </div>
+        <div class="mk-org-entries">
+          <div class="mk-action-label">Recent entries</div>
+          <div class="mk-entry mk-animate" style="animation-delay:.2s">
+            <span class="mk-entry-name">Carl S. joined</span>
+            <span class="mk-entry-nation">🇲🇽 Mexico</span>
+            <span class="mk-entry-time">2 min ago</span>
+          </div>
+          <div class="mk-entry mk-animate" style="animation-delay:.35s">
+            <span class="mk-entry-name">Anna P. joined</span>
+            <span class="mk-entry-nation">🇯🇵 Japan</span>
+            <span class="mk-entry-time">14 min ago</span>
+          </div>
+          <div class="mk-entry mk-animate" style="animation-delay:.5s">
+            <span class="mk-entry-name">Rob D. joined</span>
+            <span class="mk-entry-nation">🇺🇸 USA</span>
+            <span class="mk-entry-time">1 hr ago</span>
+          </div>
+        </div>
+        <div class="mk-footer">No spreadsheets. No chasing. No hats. 🎉</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+<!-- ── END MOCKUP ─────────────────────────────────────────────────────────── -->
+
 <section class="hiw" id="how-it-works">
   <div class="section-label">How it works</div>
   <h2 class="section-title">Up and running in minutes</h2>
