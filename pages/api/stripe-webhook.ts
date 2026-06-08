@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import { Redis } from "@upstash/redis";
 import { randomBytes } from "crypto";
 import { buffer } from "micro";
@@ -8,7 +8,16 @@ import { buffer } from "micro";
 export const config = { api: { bodyParser: false } };
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2023-10-16" });
-const resend = new Resend(process.env.RESEND_API_KEY!);
+const transporter = nodemailer.createTransport({
+  host: "smtp-mail.outlook.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: "paulsmith27528@outlook.com",
+    pass: process.env.OUTLOOK_PASS!,
+  },
+  tls: { ciphers: "SSLv3" },
+});
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
@@ -122,18 +131,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const html = buildEmailHtml(product, dashUrl, sweepUrl);
 
-  const { data: emailData, error: emailError } = await resend.emails.send({
-    from: "World Cup LiveBoard <hello@worldcupsweepstake-liveboard.com>",
-    to: email,
-    subject: `${product.emoji} Your ${product.name} is ready`,
-    html,
-  });
-
-  if (emailError) {
-    console.error("Resend error:", JSON.stringify(emailError));
-    return res.status(500).json({ error: "Email failed", detail: emailError });
+  try {
+    await transporter.sendMail({
+      from: '"World Cup LiveBoard" <paulsmith27528@outlook.com>',
+      to: email,
+      subject: `Your ${product.name} is ready`,
+      html,
+    });
+    console.log("Email sent to:", email, "product:", product.type, "priceId:", priceId);
+  } catch (mailErr: any) {
+    console.error("Mail error:", mailErr.message);
+    return res.status(500).json({ error: "Email failed", detail: mailErr.message });
   }
-
-  console.log("Email sent:", emailData?.id, "to:", email, "product:", product.type, "priceId:", priceId);
   return res.status(200).json({ received: true });
 }
