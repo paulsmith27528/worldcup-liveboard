@@ -200,7 +200,10 @@ footer a:hover{color:#22d3ee}
   .slide-hint{text-align:center;font-size:10px;color:#1e3a5f;margin-top:8px;letter-spacing:.3px}
   @media(max-width:680px){
     .mockup-viewport{height:auto;min-height:460px}
-    .mockup-frame{flex-direction:column;height:auto}
+    .mockup-stage{align-items:stretch}
+    .mockup-frame{flex-direction:column;align-self:stretch;align-items:stretch}
+    .mockup-panel{flex:1;min-height:0;display:flex;flex-direction:column}
+    .mockup-body{flex:1;overflow:hidden}
   }
 
 </style>
@@ -495,8 +498,8 @@ footer a:hover{color:#22d3ee}
             <div class="mockup-dot" style="background:#22c55e"></div>
             <span class="mockup-url">/dashboard · Live scores, bracket &amp; stats</span>
           </div>
-          <div style="padding:0;margin:0;line-height:0;overflow:hidden;height:440px">
-            <img src="/dashboard-preview.jpg" alt="Live Dashboard Preview" style="width:100%;height:auto;display:block;object-position:top">
+          <div style="flex:1;overflow:hidden;display:flex;align-items:flex-start">
+            <img src="/dashboard-preview.jpg" alt="Live Dashboard Preview" style="width:100%;height:auto;display:block">
           </div>
         </div>
       </div>
@@ -510,7 +513,7 @@ footer a:hover{color:#22d3ee}
             <div class="mockup-dot" style="background:#22c55e"></div>
             <span class="mockup-url">/dashboard · Squad cards with player photos</span>
           </div>
-          <div style="padding:0;margin:0;line-height:0;overflow:hidden;height:440px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.03)">
+          <div style="flex:1;overflow:hidden;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.03)">
             <p style="color:#334155;font-size:12px;text-align:center;padding:24px">Player stats screenshot coming soon</p>
           </div>
         </div>
