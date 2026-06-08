@@ -401,6 +401,8 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
     showBlocked();
     return;
   }
+  // Demo bypass
+  if(tok === 'demo2026'){ hideGate(); return; }
 
   fetch('/api/verify-token?token=' + encodeURIComponent(tok))
     .then(function(r){ return r.json(); })
