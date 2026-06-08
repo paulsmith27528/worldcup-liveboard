@@ -16,9 +16,9 @@ const redis = new Redis({
 
 // Price IDs mapped to product info
 const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake" | "dashboard" | "bundle" }> = {
-  price_1TeMKT3g62IhPcY7PvqpncJF: { name: "World Cup Sweepstake", emoji: "Ã°ÂÂÂ", type: "sweepstake" },
-  price_1TeMHw3g62IhPcY7CCZhO3T6: { name: "Live Dashboard",       emoji: "Ã°ÂÂÂº", type: "dashboard" },
-  price_1TetFJ3g62IhPcY7exBoTMtq: { name: "Bundle Ã¢ÂÂ Dashboard + Sweepstake", emoji: "Ã¢ÂÂ¡", type: "bundle" },
+  price_1TeMKT3g62IhPcY7PvqpncJF: { name: "World Cup Sweepstake", emoji: "ÃÂ°ÃÂÃÂÃÂ", type: "sweepstake" },
+  price_1TeMHw3g62IhPcY7CCZhO3T6: { name: "Live Dashboard",       emoji: "ÃÂ°ÃÂÃÂÃÂº", type: "dashboard" },
+  price_1TetFJ3g62IhPcY7exBoTMtq: { name: "Bundle ÃÂ¢ÃÂÃÂ Dashboard + Sweepstake", emoji: "ÃÂ¢ÃÂÃÂ¡", type: "bundle" },
 };
 
 const BASE_URL = "https://worldcup-liveboard.vercel.app";
@@ -32,22 +32,22 @@ function buildEmailHtml(product: { name: string; emoji: string; type: string }, 
   const isBundle = product.type === "bundle";
   const isDash = product.type === "dashboard";
 
-  const primaryBtn = isSweep
-    ? `<a href="${sweepUrl}" style="display:block;background:#ffd54a;color:#000;text-decoration:none;text-align:center;font-weight:900;font-size:16px;padding:16px 24px;border-radius:50px;">Ã°ÂÂÂ Open Sweepstake Organiser Hub Ã¢ÂÂ</a>`
-    : `<a href="${dashUrl}" style="display:block;background:#00e5ff;color:#000;text-decoration:none;text-align:center;font-weight:900;font-size:16px;padding:16px 24px;border-radius:50px;">Ã°ÂÂÂ Open Live Dashboard Ã¢ÂÂ</a>`;
+  const primaryBtn = (isSweep || isBundle)
+    ? `<a href="${sweepUrl}" style="display:block;background:#ffd54a;color:#000;text-decoration:none;text-align:center;font-weight:900;font-size:16px;padding:16px 24px;border-radius:50px;">ÃÂ°ÃÂÃÂÃÂ Open Sweepstake Organiser Hub ÃÂ¢ÃÂÃÂ</a>`
+    : `<a href="${dashUrl}" style="display:block;background:#00e5ff;color:#000;text-decoration:none;text-align:center;font-weight:900;font-size:16px;padding:16px 24px;border-radius:50px;">ÃÂ°ÃÂÃÂÃÂ Open Live Dashboard ÃÂ¢ÃÂÃÂ</a>`;
 
   const bundleExtra = isBundle ? `
     <div style="margin-top:16px;padding:16px;background:rgba(255,213,74,.08);border:1px solid rgba(255,213,74,.2);border-radius:12px;">
-      <p style="color:#ffd54a;font-size:13px;font-weight:700;margin:0 0 8px;">Ã°ÂÂÂ Also included: Sweepstake Organiser Hub</p>
-      <p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:0 0 12px;">Set up your group sweepstake, run the draw and send everyone their personal bracket link. Start here first Ã¢ÂÂ then use the Dashboard to follow the action.</p>
-      <a href="${sweepUrl}" style="display:block;background:rgba(255,213,74,.15);border:1px solid rgba(255,213,74,.3);color:#ffd54a;text-decoration:none;text-align:center;font-weight:700;font-size:14px;padding:12px 24px;border-radius:50px;">Ã°ÂÂÂ² Open Sweepstake Hub Ã¢ÂÂ</a>
+      <p style="color:#00e5ff;font-size:13px;font-weight:700;margin:0 0 8px;">ÃÂ°ÃÂÃÂÃÂ Also included: Live Dashboard</p>
+      <p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:0 0 12px;">Once your sweepstake is set up, use the Live Dashboard to follow every match — live scores, bracket, group tables and squad cards. </p>
+      <a href="${dashUrl}" style="display:block;background:rgba(0,229,255,.12);border:1px solid rgba(0,229,255,.25);color:#ffd54a;text-decoration:none;text-align:center;font-weight:700;font-size:14px;padding:12px 24px;border-radius:50px;">ÃÂ°ÃÂÃÂÃÂ² Open Live Dashboard ÃÂ¢ÃÂÃÂ</a>
     </div>` : "";
 
   const sweepNote = isSweep ? `
-    <p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:0 0 16px;">As the organiser, you can set up your sweepstake, invite participants, run the draw and track who is still in Ã¢ÂÂ all from your hub. Share your join link with your group and they will register themselves.</p>` : "";
+    <p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:0 0 16px;">As the organiser, you can set up your sweepstake, invite participants, run the draw and track who is still in ÃÂ¢ÃÂÃÂ all from your hub. Share your join link with your group and they will register themselves.</p>` : "";
 
   const dashNote = isDash ? `
-    <p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:0 0 16px;">Your personal access link is below. Bookmark it Ã¢ÂÂ it is yours for the entire tournament. It gives you the live bracket, all group tables, live scores and player squad cards.</p>` : "";
+    <p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:0 0 16px;">Your personal access link is below. Bookmark it ÃÂ¢ÃÂÃÂ it is yours for the entire tournament. It gives you the live bracket, all group tables, live scores and player squad cards.</p>` : "";
 
   return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#05070A;font-family:-apple-system,sans-serif;">
 <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
@@ -93,7 +93,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await resend.emails.send({
           from: "World Cup LiveBoard <onboarding@resend.dev>",
           to: customerEmail,
-          subject: "Company branding confirmed â upload your logo",
+          subject: "Company branding confirmed Ã¢ÂÂ upload your logo",
           html: '<html><body style="margin:0;padding:0;background:#05070A;font-family:-apple-system,sans-serif;"><div style="max-width:560px;margin:0 auto;padding:40px 24px;"><h1 style="color:#fff;font-size:24px;font-weight:900;margin:0 0 16px;">Branding confirmed</h1><p style="color:#94a3b8;font-size:14px;line-height:1.6;margin:0 0 24px;">Payment received for <strong>' + companyName + '</strong>. Upload your logo to activate branding on your dashboard and bracket.</p><a href="' + uploadUrl + '" style="display:block;background:#ffd54a;color:#000;text-decoration:none;text-align:center;font-weight:900;font-size:16px;padding:16px 24px;border-radius:50px;">Upload your logo &rarr;</a><p style="color:#475569;font-size:12px;text-align:center;margin-top:24px;">Use this link any time to update your logo.</p></div></body></html>',
         });
       }
@@ -103,7 +103,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Fetch line items to get the real price ID (Payment Links don't pass metadata)
     const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
     const priceId = lineItems.data[0]?.price?.id ?? session.metadata?.price_id ?? "unknown";
-    const product = PRICE_MAP[priceId] ?? { name: "World Cup Access", emoji: "Ã¢ÂÂ½", type: "dashboard" };
+    const product = PRICE_MAP[priceId] ?? { name: "World Cup Access", emoji: "ÃÂ¢ÃÂÃÂ½", type: "dashboard" };
 
     if (!customerEmail) return res.status(400).json({ error: "No customer email" });
 
