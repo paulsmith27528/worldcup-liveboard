@@ -14,40 +14,55 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
 
-// Price IDs mapped to product info
 const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake" | "dashboard" | "bundle" }> = {
-  price_1TeMKT3g62IhPcY7PvqpncJF: { name: "World Cup Sweepstake", emoji: "&#127967;", type: "sweepstake" },
-  price_1TeMHw3g62IhPcY7CCZhO3T6: { name: "Live Dashboard",       emoji: "&#128250;", type: "dashboard" },
-  price_1TetFJ3g62IhPcY7exBoTMtq: { name: "Bundle &mdash; Dashboard + Sweepstake", emoji: "&#9889;", type: "bundle" },
+  price_1TeMKT3g62IhPcY7PvqpncJF: { name: "World Cup Sweepstake",               emoji: "&#127967;", type: "sweepstake" },
+  price_1TeMHw3g62IhPcY7CCZhO3T6: { name: "Live Dashboard",                      emoji: "&#128250;", type: "dashboard"  },
+  price_1TetFJ3g62IhPcY7exBoTMtq: { name: "Bundle &mdash; Dashboard + Sweepstake", emoji: "&#9889;",  type: "bundle"     },
 };
 
 const BASE_URL = "https://worldcup-liveboard.vercel.app";
+const TTL = 60 * 60 * 24 * 30; // 30 days
 
 function generateToken(): string {
   return randomBytes(32).toString("hex");
 }
 
-function buildEmailHtml(product: { name: string; emoji: string; type: string }, dashUrl: string, sweepUrl: string | null): string {
-  const isSweep = product.type === "sweepstake";
-  const isBundle = product.type === "bundle";
-  const isDash = product.type === "dashboard";
+async function storeToken(token: string, email: string, productName: string, priceId: string) {
+  await redis.set(`token:${token}`, JSON.stringify({
+    email,
+    productName,
+    priceId,
+    expiresAt: Date.now() + TTL * 1000,
+  }), { ex: TTL });
+}
 
+function buildEmailHtml(
+  product: { name: string; emoji: string; type: string },
+  dashUrl: string | null,
+  sweepUrl: string | null
+): string {
+  const isSweep  = product.type === "sweepstake";
+  const isBundle = product.type === "bundle";
+  const isDash   = product.type === "dashboard";
+
+  // Primary button
   const primaryBtn = (isSweep || isBundle)
     ? `<a href="${sweepUrl}" style="display:block;background:#ffd54a;color:#000;text-decoration:none;text-align:center;font-weight:900;font-size:16px;padding:16px 24px;border-radius:50px;">&#127967; Open Sweepstake Organiser Hub &rarr;</a>`
     : `<a href="${dashUrl}" style="display:block;background:#00e5ff;color:#000;text-decoration:none;text-align:center;font-weight:900;font-size:16px;padding:16px 24px;border-radius:50px;">&#128250; Open Live Dashboard &rarr;</a>`;
 
+  // Bundle gets a second section for the dashboard
   const bundleExtra = isBundle ? `
     <div style="margin-top:16px;padding:16px;background:rgba(255,213,74,.08);border:1px solid rgba(255,213,74,.2);border-radius:12px;">
       <p style="color:#00e5ff;font-size:13px;font-weight:700;margin:0 0 8px;">&#128250; Also included: Live Dashboard</p>
-      <p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:0 0 12px;">Once your sweepstake is set up, use the Live Dashboard to follow every match &mdash; live scores, bracket, group tables and squad cards.</p>
+      <p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:0 0 12px;">Follow every match live &mdash; scores, bracket, group tables and squad cards.</p>
       <a href="${dashUrl}" style="display:block;background:rgba(0,229,255,.12);border:1px solid rgba(0,229,255,.25);color:#ffd54a;text-decoration:none;text-align:center;font-weight:700;font-size:14px;padding:12px 24px;border-radius:50px;">&#128250; Open Live Dashboard &rarr;</a>
     </div>` : "";
 
-  const sweepNote = isSweep ? `
-    <p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:0 0 16px;">As the organiser, you can set up your sweepstake, invite participants, run the draw and track who is still in &mdash; all from your hub. Share your join link with your group and they will register themselves.</p>` : "";
-
-  const dashNote = isDash ? `
-    <p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:0 0 16px;">Your personal access link is below. Bookmark it &mdash; it is yours for the entire tournament. It gives you the live bracket, all group tables, live scores and player squad cards.</p>` : "";
+  const bodyNote = isSweep
+    ? `<p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:0 0 16px;">Set up your sweepstake, invite participants, run the draw and track who is still in &mdash; all from your organiser hub. Share your join link and your group registers themselves.</p>`
+    : isDash
+    ? `<p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:0 0 16px;">Your personal access link is below. Bookmark it &mdash; it is yours for the entire tournament. Live bracket, group tables, live scores and squad cards.</p>`
+    : `<p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:0 0 16px;">You have got everything. Run your sweepstake from the organiser hub, and follow the action on the live dashboard.</p>`;
 
   return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#05070A;font-family:-apple-system,sans-serif;">
 <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
@@ -58,7 +73,7 @@ function buildEmailHtml(product: { name: string; emoji: string; type: string }, 
   <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(0,229,255,0.2);border-radius:16px;padding:32px;margin-bottom:24px;">
     <p style="color:#94a3b8;font-size:14px;margin:0 0 4px;">Your product</p>
     <p style="color:#00e5ff;font-size:18px;font-weight:700;margin:0 0 20px;">${product.name}</p>
-    ${sweepNote}${dashNote}
+    ${bodyNote}
     ${primaryBtn}
     ${bundleExtra}
   </div>
@@ -86,32 +101,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const email = session.customer_details?.email;
   if (!email) return res.status(200).json({ received: true });
 
-  // Fetch line items to get the real price ID (Payment Links do not pass metadata)
   const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
   const priceId = lineItems.data[0]?.price?.id ?? session.metadata?.price_id ?? "unknown";
-
   const product = PRICE_MAP[priceId] ?? { name: "World Cup Access", emoji: "&#9917;", type: "dashboard" };
 
-  // Generate tokens
-  const dashToken = generateToken();
+  // Generate only the tokens each product needs
+  const dashToken  = (product.type === "dashboard" || product.type === "bundle") ? generateToken() : null;
   const sweepToken = (product.type === "sweepstake" || product.type === "bundle") ? generateToken() : null;
 
-  // Store in Redis (30 days TTL)
-  const ttl = 60 * 60 * 24 * 30;
-  await redis.set(`dash:${dashToken}`, email, { ex: ttl });
-  if (sweepToken) await redis.set(`sweep:${sweepToken}`, email, { ex: ttl });
+  // Store with correct key format: token:{token}
+  if (dashToken)  await storeToken(dashToken,  email, product.name, priceId);
+  if (sweepToken) await storeToken(sweepToken, email, product.name, priceId);
 
-  const dashUrl = `${BASE_URL}/dashboard?token=${dashToken}`;
+  const dashUrl  = dashToken  ? `${BASE_URL}/dashboard?token=${dashToken}`   : null;
   const sweepUrl = sweepToken ? `${BASE_URL}/sweepstake?token=${sweepToken}` : null;
 
   const html = buildEmailHtml(product, dashUrl, sweepUrl);
 
-  const subjectEmoji = product.type === "sweepstake" ? "&#127967;" : product.type === "bundle" ? "&#9889;" : "&#128250;";
-
   await resend.emails.send({
     from: "World Cup LiveBoard <hello@worldcupsweepstake-liveboard.com>",
     to: email,
-    subject: `${subjectEmoji} Your ${product.name} is ready`,
+    subject: `${product.emoji} Your ${product.name} is ready`,
     html,
   });
 
