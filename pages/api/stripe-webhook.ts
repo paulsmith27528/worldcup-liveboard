@@ -118,12 +118,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const html = buildEmailHtml(product, dashUrl, sweepUrl);
 
-  await resend.emails.send({
+  const { data: emailData, error: emailError } = await resend.emails.send({
     from: "World Cup LiveBoard <hello@worldcupsweepstake-liveboard.com>",
     to: email,
     subject: `${product.emoji} Your ${product.name} is ready`,
     html,
   });
 
+  if (emailError) {
+    console.error("Resend error:", JSON.stringify(emailError));
+    return res.status(500).json({ error: "Email failed", detail: emailError });
+  }
+
+  console.log("Email sent:", emailData?.id, "to:", email, "product:", product.type, "priceId:", priceId);
   return res.status(200).json({ received: true });
 }
