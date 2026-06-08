@@ -487,11 +487,29 @@ footer a:hover{color:#22d3ee}
       </div>
 
     </div>
+
+      <!-- FRAME 3: Dashboard Screenshot -->
+      <div class="mockup-frame">
+        <div class="mockup-panel" style="flex:1;overflow:hidden">
+          <div class="mockup-chrome">
+            <div class="mockup-dot" style="background:#ef4444"></div>
+            <div class="mockup-dot" style="background:#fbbf24"></div>
+            <div class="mockup-dot" style="background:#22c55e"></div>
+            <span class="mockup-url">/dashboard · Live scores, bracket &amp; stats</span>
+          </div>
+          <div style="padding:0;margin:0;line-height:0">
+            <img src="/dashboard-preview.jpg" alt="Live Dashboard Preview" style="width:100%;height:auto;display:block;border-radius:0 0 16px 16px">
+          </div>
+        </div>
+      </div>
+
+  </div>
   </div>
 
   <div class="slide-dots">
     <button class="slide-dot on" onclick="mkGo(0)"></button>
     <button class="slide-dot" onclick="mkGo(1)"></button>
+    <button class="slide-dot" onclick="mkGo(2)"></button>
   </div>
   <div class="slide-hint">← swipe or click dots →</div>
 </section>
@@ -501,7 +519,7 @@ footer a:hover{color:#22d3ee}
   var stage=document.getElementById('mk-stage');
   if(!stage)return;
   var dots=document.querySelectorAll('.slide-dot');
-  var cur=0;var total=2;var timer;
+  var cur=0;var total=3;var timer;
   function mkGo(n){
     cur=n;
     stage.style.transform='translateX(-'+(n*33.333)+'%)';
