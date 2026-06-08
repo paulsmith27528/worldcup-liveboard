@@ -99,7 +99,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const session = event.data.object as Stripe.Checkout.Session;
   const email = session.customer_details?.email;
-  if (!email) return res.status(200).json({ received: true });
+  console.log("Webhook session:", session.id, "email:", email, "customer:", session.customer, "mode:", session.mode);
+  if (!email) {
+    console.error("No email found in session:", session.id, "customer_details:", JSON.stringify(session.customer_details));
+    return res.status(200).json({ received: true });
+  }
 
   const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
   const priceId = lineItems.data[0]?.price?.id ?? session.metadata?.price_id ?? "unknown";
