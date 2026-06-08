@@ -139,9 +139,9 @@ footer a:hover{color:#22d3ee}
 
   /* ── MOCKUP SLIDESHOW ── */
   .mockup-section{padding:70px 24px 80px;max-width:1100px;margin:0 auto}
-  .mockup-viewport{position:relative;overflow:hidden;width:100%;height:480px}
-  .mockup-stage{display:flex;width:400%;transition:transform .65s cubic-bezier(.77,0,.18,1)}
-  .mockup-frame{width:25%;display:flex;gap:24px;padding:4px 2px;box-sizing:border-box;align-items:flex-start}
+  .mockup-viewport{position:relative;overflow:hidden;width:100%;max-width:900px;margin:0 auto;height:480px}
+  .mockup-stage{display:flex;width:500%;transition:transform .65s cubic-bezier(.77,0,.18,1)}
+  .mockup-frame{width:20%;display:flex;gap:24px;padding:4px 2px;box-sizing:border-box;align-items:flex-start}
   /* panels */
   .mockup-panel{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.5);flex:1}
   .mockup-chrome{background:#0a0f1a;padding:8px 12px;display:flex;align-items:center;gap:6px;border-bottom:1px solid rgba(255,255,255,.06)}
@@ -324,9 +324,9 @@ footer a:hover{color:#22d3ee}
   <div class="mockup-viewport">
     <div class="mockup-stage" id="mk-stage">
 
-      <!-- FRAME 1: Leaderboard + Organiser -->
+      <!-- FRAME 1: Leaderboard -->
       <div class="mockup-frame">
-        <div class="mockup-panel">
+        <div class="mockup-panel" style="flex:1">
           <div class="mockup-chrome">
             <div class="mockup-dot" style="background:#ef4444"></div>
             <div class="mockup-dot" style="background:#fbbf24"></div>
@@ -353,7 +353,11 @@ footer a:hover{color:#22d3ee}
             <div class="mk-footer">Every participant gets their own live link 📲</div>
           </div>
         </div>
-        <div class="mockup-panel">
+      </div>
+
+      <!-- FRAME 2: Organiser Hub -->
+      <div class="mockup-frame">
+        <div class="mockup-panel" style="flex:1">
           <div class="mockup-chrome">
             <div class="mockup-dot" style="background:#ef4444"></div>
             <div class="mockup-dot" style="background:#fbbf24"></div>
@@ -530,6 +534,7 @@ footer a:hover{color:#22d3ee}
     <button class="slide-dot" onclick="mkGo(1)"></button>
     <button class="slide-dot" onclick="mkGo(2)"></button>
     <button class="slide-dot" onclick="mkGo(3)"></button>
+    <button class="slide-dot" onclick="mkGo(4)"></button>
   </div>
   <div class="slide-hint">← swipe or click dots →</div>
 </section>
@@ -539,10 +544,10 @@ footer a:hover{color:#22d3ee}
   var stage=document.getElementById('mk-stage');
   if(!stage)return;
   var dots=document.querySelectorAll('.slide-dot');
-  var cur=0;var total=4;var timer;
+  var cur=0;var total=5;var timer;
   function mkGo(n){
     cur=n;
-    stage.style.transform='translateX(-'+(n*25)+'%)';
+    stage.style.transform='translateX(-'+(n*20)+'%)';
     dots.forEach(function(d,i){d.className='slide-dot'+(i===n?' on':'');});
   }
   window.mkGo=mkGo;
