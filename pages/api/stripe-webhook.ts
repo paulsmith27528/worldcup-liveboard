@@ -21,7 +21,7 @@ const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake
   price_1TetFJ3g62IhPcY7exBoTMtq: { name: "Bundle &mdash; Dashboard + Sweepstake", emoji: "&#9889;", type: "bundle" },
 };
 
-const BASE_URL = "https://worldcup-liveboard.vercel.app";
+const BASE_URL = "https://worldcupsweepstake-liveboard.com";
 const TTL = 60 * 60 * 24 * 30;
 
 function generateToken(): string {
@@ -114,8 +114,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (dashToken) await storeToken(dashToken, email, product.name, priceId);
   if (sweepToken) await storeToken(sweepToken, email, product.name, priceId);
 
-  const dashUrl = dashToken ? `${BASE_URL}/dashboard?token=${dashToken}` : null;
-  const sweepUrl = sweepToken ? `${BASE_URL}/sweepstake?token=${sweepToken}` : null;
+  const dashUrl = dashToken ? `${BASE_URL}/dashboard.html?token=${dashToken}` : null;
+  const sweepUrl = sweepToken ? `${BASE_URL}/sweepstake.html?token=${sweepToken}` : null;
 
   const html = buildEmailHtml(product, dashUrl, sweepUrl);
 
