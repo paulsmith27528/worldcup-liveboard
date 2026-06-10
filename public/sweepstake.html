@@ -345,6 +345,7 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
       <button class="btn btn-outline btn-sm" onclick="goToTab('tab-draw')">🎰 Draw</button>
       <button class="btn btn-outline btn-sm" onclick="goToTab('tab-elim')">❌ Eliminations</button>
       <button class="btn btn-outline btn-sm" onclick="goToTab('tab-lb')">📊 Leaderboard</button>
+      <button class="btn btn-outline btn-sm" onclick="editSettings()">⚙️ Settings</button>
     </div>
   </div>
 
@@ -536,7 +537,7 @@ function startSweepstake(){
     name:g('cfg-name')||'Office WC2026 Sweepstake',
     organiser:g('cfg-org'),
     priceRandom:parseFloat(g('cfg-priceR'))||3,
-    currency:g('cfg-cur')||'£',
+    currency:(g('cfg-cur').replace(/[0-9]/g,'')||'£'),
     pin:g('cfg-pin')||'2026',
     drawDate:g('cfg-drawDate'),
   };
@@ -555,6 +556,17 @@ function updateDashHeader(){
   document.getElementById('dash-org').textContent='Organiser: '+SW.config.organiser;
   document.getElementById('nav-sweep-name').textContent=SW.config.name;
   document.getElementById('ent-price-info').textContent=`Buy-in: ${SW.config.currency}${SW.config.priceRandom} per entry · Max 48 entries`;
+}
+
+function editSettings(){
+  document.getElementById('cfg-name').value=SW.config.name||'';
+  document.getElementById('cfg-org').value=SW.config.organiser||'';
+  document.getElementById('cfg-priceR').value=SW.config.priceRandom||3;
+  document.getElementById('cfg-cur').value=SW.config.currency||'£';
+  document.getElementById('cfg-pin').value=SW.config.pin||'2026';
+  document.getElementById('cfg-drawDate').value=SW.config.drawDate||'';
+  document.getElementById('legal-check').checked=true;
+  showScreen('screen-setup');
 }
 
 // ══════════════════════════════════════════════════
@@ -1172,6 +1184,11 @@ async function loadStateFromServer(id,k){
 function applyLoadedState(d){
   SW={...SW,...d};
   if(!SW.orgToken)SW.orgToken=genToken();
+  // Sanitize config — strip any digits that may have crept into the currency symbol
+  if(SW.config){
+    SW.config.currency=(String(SW.config.currency||'£').replace(/[0-9]/g,'')||'£');
+    SW.config.priceRandom=parseFloat(SW.config.priceRandom)||3;
+  }
   const newHash='ORG:'+btoa(JSON.stringify(SW));
   history.replaceState(null,'',window.location.pathname+'#'+newHash);
   try{localStorage.setItem(LS_KEY,JSON.stringify(SW));}catch(e){}
