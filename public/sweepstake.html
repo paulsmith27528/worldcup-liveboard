@@ -1311,6 +1311,8 @@ async function loadFromSave(){
   }
   applyLoadedState(d);
   toast('Sweepstake loaded!');
+  fetchServerEntries();
+  if(!serverPollInterval)serverPollInterval=setInterval(fetchServerEntries,30000);
   return true;
 }
 
