@@ -215,8 +215,10 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
 
   if(!tok){ showBlocked(); return; }
 
-  fetch('/api/verify-token?' + new URLSearchParams({token:tok}).toString())
-    .then(function(r){ return r.json(); })
+  var ctrl = new AbortController();
+  var timer = setTimeout(function(){ ctrl.abort(); }, 8000);
+  fetch('/api/verify-token?' + new URLSearchParams({token:tok}).toString(), {signal:ctrl.signal})
+    .then(function(r){ clearTimeout(timer); return r.json(); })
     .then(function(data){
       if(data && data.valid){
         var name = (data.productName || '').toLowerCase();
@@ -234,7 +236,7 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
         showBlocked();
       }
     })
-    .catch(function(){ hideGate(); });
+    .catch(function(){ clearTimeout(timer); hideGate(); });
 })();
 </script>
 
