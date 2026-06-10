@@ -444,6 +444,14 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
       <div class="pot-lbl" id="lb-sub" style="margin-top:4px">0 entries · Organiser pays out the winner</div>
     </div>
     <div class="lb-list" id="lb-list"></div>
+    <div class="card" style="margin-top:16px;border-color:rgba(99,102,241,.3)">
+      <div class="card-title" style="color:#a5b4fc">🔗 Organiser Recovery Link</div>
+      <p style="font-size:12px;color:#64748b;margin-bottom:12px">Bookmark or save this link to reopen your sweepstake from any browser or device. Keep it private — anyone with it can manage your sweepstake.</p>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div id="recovery-url-box" style="flex:1;background:rgba(0,0,0,.5);border:1px solid rgba(99,102,241,.25);border-radius:8px;padding:10px 12px;font-size:11px;font-family:monospace;color:#94a3b8;word-break:break-all">—</div>
+        <button class="btn btn-outline btn-sm" style="flex-shrink:0;border-color:rgba(99,102,241,.4);color:#a5b4fc" onclick="copyRecoveryUrl()">📋 Copy</button>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -477,6 +485,7 @@ const COLOURS=["#FF6B6B","#4ECDC4","#45B7D1","#96CEB4","#FFEAA7","#DDA0DD","#98D
 // ══════════════════════════════════════════════════
 let SW = {
   id: genId(),
+  orgToken: genToken(),
   config: {name:'Office WC2026 Sweepstake',organiser:'',priceRandom:3,currency:'£',pin:'2026',drawDate:'2026-06-11T17:00'},
   entries: [],
   drawDone: false,
@@ -504,7 +513,7 @@ function goToTab(tabId){
   const el=document.getElementById(tabId);
   if(el)el.style.display='block';
   currentTab=tabId;
-  if(tabId==='tab-lb')renderLeaderboard();
+  if(tabId==='tab-lb'){renderLeaderboard();showRecoveryUrl();}
   if(tabId==='tab-elim')renderElimGrid();
   if(tabId==='tab-draw')renderDrawTab();
 }
@@ -1126,37 +1135,83 @@ function startDrawCountdown(){
 // ══════════════════════════════════════════════════
 const LS_KEY='sweepstake_autosave';
 
+function recoveryUrl(){
+  return window.location.origin+window.location.pathname+'?sw='+SW.id+'&k='+SW.orgToken;
+}
+
 function saveState(){
+  if(!SW.orgToken)SW.orgToken=genToken();
   const hash='ORG:'+btoa(JSON.stringify(SW));
   history.replaceState(null,'',window.location.pathname+window.location.search+'#'+hash);
   try{localStorage.setItem(LS_KEY,JSON.stringify(SW));}catch(e){}
+  // Silently sync to server (fire-and-forget)
+  fetch('/api/sweep-state',{
+    method:'PUT',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({id:SW.id,k:SW.orgToken,state:SW})
+  }).catch(()=>{});
 }
 
-function loadFromSave(){
+async function loadStateFromServer(id,k){
   try{
-    // Prefer URL hash; fall back to localStorage
-    let d=null;
-    const h=window.location.hash.slice(1);
-    if(h&&h.startsWith('ORG:')){
-      d=JSON.parse(atob(h.replace('ORG:','')));
-    } else {
-      const ls=localStorage.getItem(LS_KEY);
-      if(ls) d=JSON.parse(ls);
-    }
-    if(!d)throw new Error('No save');
-    SW={...SW,...d};
-    // Restore URL hash if it was missing
-    const newHash='ORG:'+btoa(JSON.stringify(SW));
-    history.replaceState(null,'',window.location.pathname+window.location.search+'#'+newHash);
-    showScreen('screen-dashboard');
-    updateDashHeader();updateJoinLink();renderEntryList();renderElimGrid();updateStats();startDrawCountdown();
-    startServerPoll();
-    if(SW.drawDone){goToTab('tab-draw');}
-    toast('✅ Sweepstake loaded!');
-    return true;
-  }catch(e){
-    return false;
+    const res=await fetch('/api/sweep-state?id='+encodeURIComponent(id)+'&k='+encodeURIComponent(k));
+    if(!res.ok)return null;
+    const data=await res.json();
+    return data.state||null;
+  }catch(e){return null;}
+}
+
+function applyLoadedState(d){
+  SW={...SW,...d};
+  if(!SW.orgToken)SW.orgToken=genToken();
+  const newHash='ORG:'+btoa(JSON.stringify(SW));
+  history.replaceState(null,'',window.location.pathname+'#'+newHash);
+  try{localStorage.setItem(LS_KEY,JSON.stringify(SW));}catch(e){}
+  showScreen('screen-dashboard');
+  updateDashHeader();updateJoinLink();renderEntryList();renderElimGrid();updateStats();startDrawCountdown();
+  startServerPoll();
+  showRecoveryUrl();
+  if(SW.drawDone){goToTab('tab-draw');}
+}
+
+function showRecoveryUrl(){
+  const el=document.getElementById('recovery-url-box');
+  if(el){el.textContent=recoveryUrl();}
+}
+
+function copyRecoveryUrl(){
+  const url=recoveryUrl();
+  navigator.clipboard.writeText(url).then(()=>toast('📋 Recovery link copied!'))
+    .catch(()=>{
+      // Fallback for browsers without clipboard API
+      const ta=document.createElement('textarea');
+      ta.value=url;ta.style.position='fixed';ta.style.opacity='0';
+      document.body.appendChild(ta);ta.select();document.execCommand('copy');
+      document.body.removeChild(ta);toast('📋 Recovery link copied!');
+    });
+}
+
+async function loadFromSave(){
+  let d=null;
+  const h=window.location.hash.slice(1);
+  if(h&&h.startsWith('ORG:')){
+    try{d=JSON.parse(atob(h.replace('ORG:','')));}catch(e){}
   }
+  if(!d){
+    try{const ls=localStorage.getItem(LS_KEY);if(ls)d=JSON.parse(ls);}catch(e){}
+  }
+  if(!d){
+    const params=new URLSearchParams(window.location.search);
+    const swId=params.get('sw'),k=params.get('k');
+    if(swId&&k){
+      toast('Loading your sweepstake...',3000);
+      d=await loadStateFromServer(swId,k);
+    }
+  }
+  if(!d)return false;
+  applyLoadedState(d);
+  toast('Sweepstake loaded!');
+  return true;
 }
 
 // ══════════════════════════════════════════════════
@@ -1174,10 +1229,15 @@ function fireConfetti(){
 // ══════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded',()=>{
+document.addEventListener('DOMContentLoaded',async()=>{
+  const params=new URLSearchParams(window.location.search);
   const h=window.location.hash.slice(1);
-  const loaded=(h&&h.startsWith('ORG:'))||localStorage.getItem(LS_KEY);
-  if(loaded)loadFromSave();
+  const hasHash=h&&h.startsWith('ORG:');
+  const hasRecovery=params.get('sw')&&params.get('k');
+  const hasLocal=!!localStorage.getItem(LS_KEY);
+  if(hasHash||hasRecovery||hasLocal){
+    await loadFromSave();
+  }
   if(!SW.drawDone)goToTab('tab-entries');
 });
 </script>
