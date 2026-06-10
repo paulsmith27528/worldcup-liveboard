@@ -265,7 +265,7 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
   <div style="display:flex;gap:8px;align-items:center">
     <span id="nav-sweep-name" style="font-size:10px;color:#475569"></span>
     <button class="nav-save-btn" onclick="saveState()">💾 Save Link</button>
-    <a href="/dashboard.html" class="nav-save-btn" style="text-decoration:none">📊 Dashboard</a>
+    <a href="#" onclick="(function(){var tok=new URLSearchParams(window.location.search).get('token');window.location.href='/dashboard.html'+(tok?'?token='+encodeURIComponent(tok):'');})()" class="nav-save-btn" style="text-decoration:none">📊 Dashboard</a>
   </div>
 </nav>
 
