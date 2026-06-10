@@ -8,7 +8,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{min-height:100vh;background:#020810;color:#fff;font-family:Arial,sans-serif}
 body{background:radial-gradient(ellipse at 40% 0%,#0d2847,#061020 40%,#020810 100%)}
-::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:rgba(34,211,238,.3);border-radius:2px}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{backround:rgba(34,211,238,.3);border-radius:2px}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes goldPulse{0%,100%{box-shadow:0 0 20px rgba(255,213,74,.2)}50%{box-shadow:0 0 40px rgba(255,213,74,.5)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -397,7 +397,7 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:8px">
         <div style="font-size:12px;color:#475569" id="entry-summary">0 entries</div>
         <div style="display:flex;gap:8px">
-          <button class="btn btn-red btn-sm" onclick="clearEntries()">🗑 Clear All</button>
+          <button id="clear-all-btn" class="btn btn-red btn-sm" onclick="clearEntries()">🗑 Clear All</button>
           <button class="btn btn-gold" onclick="goToTab('tab-draw')" id="go-draw-btn">🎰 Go to Draw →</button>
         </div>
       </div>
@@ -701,9 +701,21 @@ function togglePaid(id){
 }
 
 function clearEntries(){
-  if(!confirm('Remove all entries?'))return;
+  const btn=document.getElementById('clear-all-btn');
+  if(!btn._confirming){
+    btn._confirming=true;
+    btn.textContent='⚠️ Confirm?';
+    btn.style.background='#dc2626';
+    setTimeout(()=>{
+      if(btn._confirming){btn._confirming=false;btn.textContent='🗑 Clear All';btn.style.background='';}
+    },3000);
+    return;
+  }
+  btn._confirming=false;btn.textContent='🗑 Clear All';btn.style.background='';
   SW.entries=[];SW.drawDone=false;
-  renderEntryList();updateStats();saveState();
+  SW.id=genId();
+  renderEntryList();updateStats();updateJoinLink();saveState();
+  toast('All entries cleared. Join link has been reset.');
 }
 
 function calcPot(){return SW.entries.reduce((s,e)=>s+(e.paid?SW.config.priceRandom:0),0);}
