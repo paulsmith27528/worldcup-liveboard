@@ -346,7 +346,19 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
   </div>
 
   <button class="btn btn-gold btn-full" style="font-size:14px;padding:14px" onclick="startSweepstake()">✅ Create Sweepstake →</button>
-</div>
+<!-- JOIN LINK SECTION -->
+  <div class="card gold" id="join-link-card">
+    <div class="card-title">🔗 Share Join Link With Your Group</div>
+    <p style="font-size:12px;color:#64748b;margin-bottom:12px">Send this link to everyone. They enter their name and email — their entry registers automatically. No codes needed.</p>
+    <div class="share-row">
+      <input class="share-inp" id="join-link-inp" readonly>
+      <button class="btn btn-gold" onclick="copyJoinLink()">📋 Copy Link</button>
+      <button class="btn btn-outline" onclick="shareJoinLink()">📤 Share</button>
+    </div>
+    <p style="font-size:11px;color:#334155;margin-top:8px">After each person registers, their name appears below automatically. They'll get a confirmation email straight away.</p>
+  </div>
+
+  </div>
 
 <!-- MAIN DASHBOARD SCREEN -->
 <div class="screen" id="screen-dashboard">
@@ -371,18 +383,6 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
     <div class="stat-box"><div class="stat-val" id="st-paid">£0</div><div class="stat-lbl">Pot (paid)</div></div>
     <div class="stat-box"><div class="stat-val" id="st-alive">0</div><div class="stat-lbl">Still In</div></div>
     <div class="stat-box"><div class="stat-val" id="st-draw">—</div><div class="stat-lbl">Draw In</div></div>
-  </div>
-
-  <!-- JOIN LINK SECTION -->
-  <div class="card gold" id="join-link-card">
-    <div class="card-title">🔗 Share Join Link With Your Group</div>
-    <p style="font-size:12px;color:#64748b;margin-bottom:12px">Send this link to everyone. They enter their name and email — their entry registers automatically. No codes needed.</p>
-    <div class="share-row">
-      <input class="share-inp" id="join-link-inp" readonly>
-      <button class="btn btn-gold" onclick="copyJoinLink()">📋 Copy Link</button>
-      <button class="btn btn-outline" onclick="shareJoinLink()">📤 Share</button>
-    </div>
-    <p style="font-size:11px;color:#334155;margin-top:8px">After each person registers, their name appears below automatically. They'll get a confirmation email straight away.</p>
   </div>
 
   <!-- TABS -->
