@@ -978,7 +978,17 @@ function revealNext(){
 function skipToResults(){
   clearTimeout(DA.revealTimeout);
   cancelAnimationFrame(DA.animId);
-  finishDraw();
+  DA.done=true;
+  // Always close modal immediately — works mid-animation or after draw finishes
+  const modal=document.getElementById('draw-modal');
+  if(modal)modal.style.display='none';
+  if(!SW.drawDone){
+    SW.drawDone=true;
+    saveState();
+    fireConfetti();
+    toast('🎲 Draw complete!',3000);
+  }
+  renderDrawTab();
 }
 
 async function finishDraw(){
