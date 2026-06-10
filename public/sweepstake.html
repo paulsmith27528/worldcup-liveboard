@@ -985,6 +985,7 @@ function skipToResults(){
   if(!SW.drawDone){
     SW.drawDone=true;
     saveState();
+    sendDrawEmails();
     fireConfetti();
     toast('🎲 Draw complete!',3000);
   }
