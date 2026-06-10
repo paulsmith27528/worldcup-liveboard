@@ -268,6 +268,11 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
       </div>
       <button class="btn btn-gold btn-full" style="font-size:14px;padding:14px" onclick="showScreen('screen-setup')">🎲 Create New Sweepstake</button>
       <button class="btn btn-outline btn-full" onclick="loadFromSave()">📂 Resume Saved Sweepstake</button>
+      <div id="recovery-url-box" style="display:none;margin-top:4px;text-align:left;background:rgba(255,213,74,.06);border:1px solid rgba(255,213,74,.25);border-radius:10px;padding:12px">
+        <div style="font-size:11px;color:#ffd54a;font-weight:700;margin-bottom:6px">Paste your recovery link:</div>
+        <input id="recovery-url-inp" class="inp" placeholder="https://…?sw=…&k=…" style="font-size:11px;width:100%;box-sizing:border-box">
+        <button class="btn btn-gold btn-sm" style="margin-top:8px;width:100%" onclick="loadFromRecoveryUrl()">Load Sweepstake →</button>
+      </div>
     </div>
     <p style="margin-top:24px;font-size:11px;color:#1e3a5f">Your sweepstake data is saved in your browser — use the Leaderboard tab to get your recovery link</p>
   </div>
@@ -1254,10 +1259,34 @@ async function loadFromSave(){
       d=await loadStateFromServer(swId,k);
     }
   }
-  if(!d)return false;
+  if(!d){
+    const box=document.getElementById('recovery-url-box');
+    if(box)box.style.display='block';
+    toast('No local save found — paste your recovery link below',4000);
+    return false;
+  }
   applyLoadedState(d);
   toast('Sweepstake loaded!');
   return true;
+}
+
+async function loadFromRecoveryUrl(){
+  const inp=document.getElementById('recovery-url-inp').value.trim();
+  if(!inp){toast('Paste your recovery link first');return;}
+  try{
+    const url=new URL(inp);
+    const sw=url.searchParams.get('sw');
+    const k=url.searchParams.get('k');
+    if(!sw||!k){toast("That doesn't look like a valid recovery link");return;}
+    toast('Loading your sweepstake...',3000);
+    const d=await loadStateFromServer(sw,k);
+    if(d){
+      history.replaceState(null,'',window.location.pathname+'?sw='+sw+'&k='+k);
+      applyLoadedState(d);
+    }else{
+      toast('Could not find that sweepstake — check your recovery link');
+    }
+  }catch(e){toast('Invalid link — paste the full recovery URL');}
 }
 
 // ══════════════════════════════════════════════════
