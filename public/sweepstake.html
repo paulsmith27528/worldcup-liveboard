@@ -13,9 +13,10 @@ body{background:radial-gradient(ellipse at 40% 0%,#0d2847,#061020 40%,#020810 10
 @keyframes goldPulse{0%,100%{box-shadow:0 0 20px rgba(255,213,74,.2)}50%{box-shadow:0 0 40px rgba(255,213,74,.5)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes confettiFall{to{transform:translateY(100vh) rotate(720deg);opacity:0}}
-@keyframes revealPop{0%{transform:scale(0.7);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
-@keyframes drumShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+@keyframes revealPop{0%{transform:scale(0) rotate(-10deg);opacity:0}60%{transform:scale(1.15) rotate(2deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 
+/* NAV */
 nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:90}
 .nav-logo{display:flex;align-items:center;gap:10px}
 .nav-logo img{height:36px;width:auto}
@@ -23,13 +24,16 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
 .nav-save-btn{background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.3);color:#22d3ee;font-size:10px;font-weight:700;padding:6px 14px;border-radius:16px;cursor:pointer;letter-spacing:1px;transition:all .15s}
 .nav-save-btn:hover{background:rgba(34,211,238,.2)}
 
+/* SCREENS */
 .screen{display:none;padding:20px;max-width:860px;margin:0 auto;animation:fadeUp .4s ease}
 .screen.active{display:block}
 
+/* SETUP CARD */
 .card{background:linear-gradient(150deg,rgba(5,18,38,.97),rgba(2,9,20,.99));border:1px solid rgba(34,211,238,.18);border-radius:16px;padding:24px;margin-bottom:16px}
 .card-title{font-size:13px;font-weight:700;color:#67e8f9;letter-spacing:2px;text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:8px}
 .card.gold{border-color:rgba(255,213,74,.35);animation:goldPulse 3s ease-in-out infinite}
 
+/* FORM ELEMENTS */
 .inp{width:100%;background:rgba(0,0,0,.5);border:1px solid rgba(34,211,238,.2);border-radius:8px;color:#fff;padding:10px 14px;font-size:13px;outline:none;transition:border-color .2s}
 .inp:focus{border-color:rgba(34,211,238,.55)}
 .inp::placeholder{color:#334155}
@@ -38,6 +42,7 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
 .form-row.col2{grid-template-columns:1fr 1fr}
 .form-row.col3{grid-template-columns:1fr 1fr 1fr}
 
+/* BUTTONS */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-weight:700;font-size:12px;letter-spacing:1px;padding:11px 20px;border-radius:10px;cursor:pointer;border:none;transition:all .18s;text-decoration:none}
 .btn-primary{background:linear-gradient(135deg,#22d3ee,#0ea5e9);color:#000}
 .btn-primary:hover{box-shadow:0 0 24px rgba(34,211,238,.5);transform:translateY(-1px)}
@@ -50,31 +55,38 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
 .btn-full{width:100%}
 .btn-sm{padding:6px 12px;font-size:10px;letter-spacing:.5px}
 
+/* STATS ROW */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
 .stat-box{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px;text-align:center}
 .stat-val{font-size:28px;font-weight:900;color:#22d3ee;line-height:1}
 .stat-lbl{font-size:9px;color:#334155;letter-spacing:1px;margin-top:3px;text-transform:uppercase}
 
+/* POT DISPLAY */
 .pot-display{text-align:center;background:linear-gradient(135deg,rgba(255,213,74,.08),rgba(0,0,0,.4));border:1px solid rgba(255,213,74,.25);border-radius:12px;padding:20px;margin-bottom:16px}
 .pot-amt{font-size:48px;font-weight:900;color:#ffd54a;line-height:1}
 .pot-lbl{font-size:10px;color:#475569;letter-spacing:2px;margin-top:4px;text-transform:uppercase}
 
+/* ENTRY LIST */
 .entry-list{display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto}
 .entry-item{display:flex;align-items:center;gap:8px;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px}
 .entry-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .entry-name{flex:1;font-size:13px;font-weight:600}
 .entry-team{font-size:11px;color:#475569;display:flex;align-items:center;gap:4px}
+.entry-type{font-size:9px;color:#334155;flex-shrink:0}
 .paid-btn{font-size:9px;font-weight:700;padding:3px 9px;border-radius:10px;cursor:pointer;border:none;letter-spacing:.5px;flex-shrink:0}
 .paid-yes{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.25)}
 .paid-no{background:rgba(255,255,255,.06);color:#475569;border:1px solid rgba(255,255,255,.1)}
 .remove-btn{background:none;border:none;color:rgba(239,68,68,.4);cursor:pointer;font-size:14px;flex-shrink:0;padding:2px}
 .remove-btn:hover{color:#f87171}
 
+/* PARTICIPANT LINKS */
 .plink-item{display:flex;align-items:center;gap:8px;padding:9px 12px;background:rgba(255,255,255,.03);border:1px solid rgba(34,211,238,.12);border-radius:8px;margin-bottom:6px}
+.plink-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .plink-name{flex:1;font-size:12px;font-weight:600}
 .plink-team{font-size:11px;color:#475569;min-width:80px}
 .plink-inp{flex:2;background:rgba(0,0,0,.4);border:1px solid rgba(34,211,238,.15);border-radius:5px;color:#94a3b8;padding:5px 8px;font-size:10px;font-family:monospace;outline:none;min-width:0}
 
+/* ELIM GRID */
 .elim-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:5px}
 .elim-tile{display:flex;align-items:center;gap:5px;padding:7px 9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;cursor:pointer;transition:all .15s;font-size:11px;font-weight:600}
 .elim-tile:hover{background:rgba(255,255,255,.08)}
@@ -82,6 +94,7 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
 .elim-tile.out .elim-name{text-decoration:line-through;opacity:.5}
 .elim-mark{font-size:9px;color:#f87171;margin-left:auto}
 
+/* LEADERBOARD */
 .lb-list{display:flex;flex-direction:column;gap:6px}
 .lb-row{display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px}
 .lb-row.alive{border-color:rgba(255,213,74,.2);background:rgba(255,213,74,.03)}
@@ -96,18 +109,20 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
 .badge-out{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2)}
 .badge-champ{background:linear-gradient(135deg,#ffd54a,#f59e0b);color:#000}
 
-.code-box{background:rgba(0,0,0,.4);border:1px solid rgba(34,211,238,.2);border-radius:8px;padding:12px;font-family:monospace;font-size:13px;color:#22d3ee;word-break:break-all;margin:8px 0}
-
+/* DRAW RESULT GRID */
 .draw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
 .draw-card{display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(255,255,255,.04);border:1px solid;border-radius:8px;border-left-width:3px}
 .draw-card.out{opacity:.45;filter:grayscale(.5)}
 
+/* SHARE LINK */
 .share-row{display:flex;gap:8px;align-items:center}
 .share-inp{flex:1;background:rgba(0,0,0,.5);border:1px solid rgba(34,211,238,.2);border-radius:7px;color:#94a3b8;padding:10px 12px;font-size:11px;font-family:monospace;outline:none}
 
+/* TOAST */
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(10,25,50,.95);border:1px solid rgba(34,211,238,.3);border-radius:10px;padding:10px 22px;font-size:12px;font-weight:700;color:#fff;z-index:999;transition:transform .3s;white-space:nowrap}
 #toast.show{transform:translateX(-50%) translateY(0)}
 
+/* STEPS */
 .steps{display:flex;gap:0;margin-bottom:24px;position:relative}
 .steps::before{content:'';position:absolute;top:16px;left:16px;right:16px;height:2px;background:rgba(34,211,238,.1);z-index:0}
 .step{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;z-index:1;cursor:pointer}
@@ -118,30 +133,34 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
 .step.active .step-lbl{color:#22d3ee}
 .step.done .step-lbl{color:#4ade80}
 
+/* DRAW ANIMATION MODAL */
+#draw-modal{position:fixed;inset:0;background:rgba(0,0,5,.95);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.draw-modal-header{text-align:center;margin-bottom:16px}
+.draw-modal-title{font-size:20px;font-weight:900;color:#ffd54a;letter-spacing:2px;text-transform:uppercase}
+#draw-reveal-card{min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:12px;animation:revealPop .5s ease}
+#draw-reveal-name{font-size:22px;font-weight:900;color:#fff;text-align:center}
+#draw-reveal-team{font-size:16px;color:#ffd54a;font-weight:700;text-align:center;margin-top:4px;display:flex;align-items:center;gap:8px;justify-content:center}
+#draw-canvas{border-radius:16px;border:1px solid rgba(255,213,74,.2);display:block;max-width:100%}
+.draw-modal-controls{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap;justify-content:center}
+#draw-progress{font-size:12px;color:#475569;margin-top:10px;letter-spacing:1px}
+
+/* COUNTDOWN */
 .draw-countdown{text-align:center;padding:20px;background:rgba(255,213,74,.06);border:1px solid rgba(255,213,74,.2);border-radius:10px;margin-bottom:12px}
 .dc-time{font-size:32px;font-weight:900;color:#ffd54a}
 .dc-lbl{font-size:10px;color:#475569;letter-spacing:2px;margin-top:3px;text-transform:uppercase}
 
-/* DRAW ANIMATION MODAL */
-#draw-anim-modal{display:none;position:fixed;inset:0;background:rgba(0,3,14,.97);z-index:500;overflow-y:auto;padding:20px;flex-direction:column;align-items:center}
-.dam-inner{max-width:580px;margin:0 auto;display:flex;flex-direction:column;align-items:center;padding:20px 0;min-height:100vh}
-.dam-title{font-size:32px;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:#fff;margin-bottom:4px;text-shadow:0 0 30px rgba(255,213,74,.4)}
-.dam-counter{font-size:10px;color:#475569;letter-spacing:4px;text-transform:uppercase;margin-bottom:20px}
-.dam-machine{position:relative;width:100%;max-width:420px;height:200px;border-radius:20px;background:linear-gradient(145deg,rgba(5,18,38,.99),rgba(1,6,18,.99));border:2px solid rgba(34,211,238,.2);box-shadow:0 0 40px rgba(34,211,238,.05),inset 0 0 40px rgba(0,0,0,.5);overflow:hidden;margin-bottom:20px}
-.dam-machine-label{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);font-size:7px;color:#0a2040;letter-spacing:3px;text-transform:uppercase;font-weight:700}
-.dam-reveal{width:100%;max-width:420px;border-radius:18px;padding:24px;text-align:center;background:linear-gradient(135deg,rgba(255,213,74,.08),rgba(0,0,0,.4));border:2px solid rgba(255,213,74,.35);margin-bottom:16px;opacity:0;transform:scale(0.9)}
-.dam-reveal-flag{font-size:56px;margin-bottom:8px;display:block}
-.dam-reveal-team{font-size:26px;font-weight:900;color:#ffd54a;margin-bottom:6px}
-.dam-reveal-arrow{font-size:10px;color:#475569;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
-.dam-reveal-name{font-size:22px;font-weight:700;color:#fff}
-.dam-picks{width:100%;max-width:420px;display:flex;flex-direction:column;gap:5px;margin-bottom:16px;max-height:220px;overflow-y:auto}
-.dam-pick-item{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,.04);border-radius:8px;animation:fadeUp .3s ease}
-.dam-controls{display:flex;gap:10px;margin-top:8px}
+/* LIVE REGISTRATIONS */
+.live-reg-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.live-reg-item:last-child{border-bottom:none}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;flex-shrink:0;animation:pulse 2s ease-in-out infinite}
 
+/* MOBILE */
 @media(max-width:600px){
   .stats-row{grid-template-columns:1fr 1fr}
   .form-row.col2,.form-row.col3{grid-template-columns:1fr}
+  .step-lbl{display:none}
   .share-row{flex-direction:column}
+  #draw-canvas{width:100%;height:auto}
 }
 </style>
 </head>
@@ -165,16 +184,60 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
 </div>
 <script>
 (function(){
-  var params=new URLSearchParams(window.location.search);
-  var tok=params.get('token');
-  function showBlocked(){var gate=document.getElementById('access-gate');gate.querySelector('.gate-card').innerHTML='<div class="gate-icon">🔐</div><h2>Access Required</h2><p>The Sweepstake Organiser Hub requires a valid access link.<br>Purchase the Sweepstake or Bundle to get your personal link.</p><a href="/landing.html" class="gate-btn">Get Access →</a>';}
-  function hideGate(){var gate=document.getElementById('access-gate');if(gate)gate.remove();}
-  if(!tok){showBlocked();return;}
-  fetch('/api/verify-token?token='+encodeURIComponent(tok)).then(function(r){return r.json();}).then(function(data){
-    if(data&&data.valid){var name=(data.productName||'').toLowerCase();if(name.indexOf('sweep')!==-1||name.indexOf('bundle')!==-1){hideGate();}else{var gate=document.getElementById('access-gate');gate.querySelector('.gate-card').innerHTML='<div class="gate-icon">📊</div><h2>Dashboard Access Only</h2><p>Your access link is for the Live Dashboard, not the Sweepstake Hub.<br>Upgrade to the Bundle to get both.</p><a href="/dashboard.html?token='+encodeURIComponent(tok)+'" class="gate-btn" style="background:linear-gradient(135deg,#22d3ee,#0ea5e9)">Go to Dashboard →</a>';}}else{showBlocked();}
-  }).catch(function(){hideGate();});
+  var params = new URLSearchParams(window.location.search);
+  var tok = params.get('token');
+  function showBlocked(){
+    var gate = document.getElementById('access-gate');
+    gate.querySelector('.gate-card').innerHTML =
+      '<div class="gate-icon">🔐</div>' +
+      '<h2>Access Required</h2>' +
+      '<p>The Sweepstake Organiser Hub requires a valid access link.<br>Purchase the Sweepstake or Bundle to get your personal link.</p>' +
+      '<a href="/landing.html" class="gate-btn">Get Access →</a>';
+  }
+  function hideGate(){
+    var gate = document.getElementById('access-gate');
+    if(gate) gate.remove();
+  }
+  if(!tok){ showBlocked(); return; }
+  fetch('/api/verify-token?token=' + encodeURIComponent(tok))
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data && data.valid){
+        var name = (data.productName || '').toLowerCase();
+        if(name.indexOf('sweep') !== -1 || name.indexOf('bundle') !== -1){
+          hideGate();
+        } else {
+          var gate = document.getElementById('access-gate');
+          gate.querySelector('.gate-card').innerHTML =
+            '<div class="gate-icon">📊</div>' +
+            '<h2>Dashboard Access Only</h2>' +
+            '<p>Your access link is for the Live Dashboard, not the Sweepstake Hub.<br>Upgrade to the Bundle to get both.</p>' +
+            '<a href="/dashboard.html?token=' + encodeURIComponent(tok) + '" class="gate-btn" style="background:linear-gradient(135deg,#22d3ee,#0ea5e9)">Go to Dashboard →</a>';
+        }
+      } else {
+        showBlocked();
+      }
+    })
+    .catch(function(){ hideGate(); });
 })();
 </script>
+
+<!-- DRAW ANIMATION MODAL -->
+<div id="draw-modal">
+  <div class="draw-modal-header">
+    <div class="draw-modal-title">🎰 The Draw Is Live!</div>
+  </div>
+  <div id="draw-reveal-card">
+    <div id="draw-reveal-name" style="color:#475569;font-size:14px">Balls are bouncing — drawing soon...</div>
+    <div id="draw-reveal-team"></div>
+  </div>
+  <canvas id="draw-canvas" width="520" height="280"></canvas>
+  <div class="draw-modal-controls">
+    <button class="btn btn-outline" onclick="DA.speed=3;toast('⚡ Speed up!')">⚡ Speed Up (3×)</button>
+    <button class="btn btn-gold" onclick="skipToResults()">Skip to Results →</button>
+  </div>
+  <div id="draw-progress">Get ready...</div>
+</div>
 
 <nav>
   <div class="nav-logo">
@@ -188,7 +251,7 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
   </div>
 </nav>
 
-<!-- WELCOME -->
+<!-- WELCOME SCREEN -->
 <div class="screen active" id="screen-welcome">
   <div style="text-align:center;padding:48px 20px 32px">
     <div style="font-size:52px;margin-bottom:16px">🎲</div>
@@ -201,19 +264,36 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
     <p style="margin-top:24px;font-size:11px;color:#1e3a5f">Your sweepstake data is saved in your browser link — bookmark it to return later</p>
   </div>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;max-width:860px;margin:0 auto;padding:0 20px">
-    <div class="card" style="text-align:center"><div style="font-size:28px;margin-bottom:8px">📋</div><div style="font-weight:700;margin-bottom:5px">Set Up in Minutes</div><div style="font-size:12px;color:#475569">Enter names, set buy-in prices, choose a draw time</div></div>
-    <div class="card" style="text-align:center"><div style="font-size:28px;margin-bottom:8px">🔗</div><div style="font-weight:700;margin-bottom:5px">Share One Link</div><div style="font-size:12px;color:#475569">Participants register themselves — no chasing needed</div></div>
-    <div class="card" style="text-align:center"><div style="font-size:28px;margin-bottom:8px">🎲</div><div style="font-weight:700;margin-bottom:5px">Live Draw</div><div style="font-size:12px;color:#475569">Watch each name drawn from the machine one by one</div></div>
-    <div class="card" style="text-align:center"><div style="font-size:28px;margin-bottom:8px">📊</div><div style="font-weight:700;margin-bottom:5px">Live Tracking</div><div style="font-size:12px;color:#475569">Bracket updates live. Track who's still in automatically</div></div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:8px">📋</div>
+      <div style="font-weight:700;margin-bottom:5px">Set Up in Minutes</div>
+      <div style="font-size:12px;color:#475569">Enter names, set buy-in prices, choose a draw time</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:8px">🔗</div>
+      <div style="font-weight:700;margin-bottom:5px">Share One Link</div>
+      <div style="font-size:12px;color:#475569">Participants register themselves — no chasing needed</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:8px">🎰</div>
+      <div style="font-weight:700;margin-bottom:5px">Lottery Draw</div>
+      <div style="font-size:12px;color:#475569">Watch the live ball draw. Everyone gets emailed their team automatically</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:8px">📊</div>
+      <div style="font-weight:700;margin-bottom:5px">Live Tracking</div>
+      <div style="font-size:12px;color:#475569">Bracket updates live. Track who's still in automatically</div>
+    </div>
   </div>
 </div>
 
-<!-- SETUP -->
+<!-- SETUP SCREEN -->
 <div class="screen" id="screen-setup">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
     <button class="btn btn-outline btn-sm" onclick="showScreen('screen-welcome')">← Back</button>
     <div style="font-size:18px;font-weight:900">Set Up Your Sweepstake</div>
   </div>
+
   <div class="card">
     <div class="card-title">⚙️ Sweepstake Settings</div>
     <div class="form-row col2">
@@ -225,23 +305,28 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
       <div><label class="lbl">Currency Symbol</label><input class="inp" id="cfg-cur" value="£" maxlength="3"></div>
     </div>
     <div class="form-row col2">
-      <div><label class="lbl">Auto-Draw Date & Time</label><input class="inp" id="cfg-drawDate" type="datetime-local" value="2026-06-11T17:00"></div>
+      <div><label class="lbl">Auto-Draw Date &amp; Time</label><input class="inp" id="cfg-drawDate" type="datetime-local" value="2026-06-11T17:00"></div>
       <div><label class="lbl">Organiser PIN (keep private)</label><input class="inp" id="cfg-pin" type="password" value="2026" placeholder="Set your PIN"></div>
     </div>
   </div>
+
   <div class="card">
     <div class="card-title">📋 Legal Notice</div>
-    <div style="font-size:12px;color:#64748b;line-height:1.8">⚖️ This sweepstake is a <strong style="color:#e2e8f0">private lottery</strong> under UK law (Gambling Act 2005) and is legal when run within a single workplace or social group. The prize pot must be paid out to participants — the organiser cannot take a profit from the pot. All money is exchanged between participants directly — this platform does not handle any payments. By using this tool you confirm it is for private, non-commercial use within your own group.</div>
+    <div style="font-size:12px;color:#64748b;line-height:1.8">
+      ⚖️ This sweepstake is a <strong style="color:#e2e8f0">private lottery</strong> under UK law (Gambling Act 2005) and is legal when run within a single workplace or social group. The prize pot must be paid out to participants — the organiser cannot take a profit from the pot. All money is exchanged between participants directly — this platform does not handle any payments. By using this tool you confirm it is for private, non-commercial use within your own group.
+    </div>
     <label style="display:flex;align-items:center;gap:8px;margin-top:12px;cursor:pointer">
       <input type="checkbox" id="legal-check" style="width:16px;height:16px;cursor:pointer">
       <span style="font-size:12px;color:#94a3b8">I understand and confirm this is a private sweepstake within my own group</span>
     </label>
   </div>
+
   <button class="btn btn-gold btn-full" style="font-size:14px;padding:14px" onclick="startSweepstake()">✅ Create Sweepstake →</button>
 </div>
 
-<!-- MAIN DASHBOARD -->
+<!-- MAIN DASHBOARD SCREEN -->
 <div class="screen" id="screen-dashboard">
+
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
     <div>
       <div style="font-size:20px;font-weight:900" id="dash-title">My Sweepstake</div>
@@ -249,49 +334,62 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn btn-outline btn-sm" onclick="goToTab('tab-entries')">👥 Entries</button>
-      <button class="btn btn-outline btn-sm" onclick="goToTab('tab-draw')">🎲 Draw</button>
+      <button class="btn btn-outline btn-sm" onclick="goToTab('tab-draw')">🎰 Draw</button>
       <button class="btn btn-outline btn-sm" onclick="goToTab('tab-elim')">❌ Eliminations</button>
       <button class="btn btn-outline btn-sm" onclick="goToTab('tab-lb')">📊 Leaderboard</button>
     </div>
   </div>
+
+  <!-- Stats -->
   <div class="stats-row">
     <div class="stat-box"><div class="stat-val" id="st-entries">0</div><div class="stat-lbl">Entries</div></div>
     <div class="stat-box"><div class="stat-val" id="st-paid">£0</div><div class="stat-lbl">Pot (paid)</div></div>
     <div class="stat-box"><div class="stat-val" id="st-alive">0</div><div class="stat-lbl">Still In</div></div>
     <div class="stat-box"><div class="stat-val" id="st-draw">—</div><div class="stat-lbl">Draw In</div></div>
   </div>
+
+  <!-- JOIN LINK SECTION -->
   <div class="card gold" id="join-link-card">
     <div class="card-title">🔗 Share Join Link With Your Group</div>
-    <p style="font-size:12px;color:#64748b;margin-bottom:12px">Send this link to everyone. They register themselves — no chasing needed.</p>
+    <p style="font-size:12px;color:#64748b;margin-bottom:12px">Send this link to everyone. They enter their name and email — their entry registers automatically. No codes needed.</p>
     <div class="share-row">
       <input class="share-inp" id="join-link-inp" readonly>
       <button class="btn btn-gold" onclick="copyJoinLink()">📋 Copy Link</button>
       <button class="btn btn-outline" onclick="shareJoinLink()">📤 Share</button>
     </div>
+    <p style="font-size:11px;color:#334155;margin-top:8px">After each person registers, their name appears below automatically. They'll get a confirmation email straight away.</p>
   </div>
 
+  <!-- TABS -->
   <div id="tab-entries" class="tab-content">
     <div class="card">
-      <div class="card-title">👥 Add Participants</div>
-      <div style="background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.15);border-radius:8px;padding:14px;margin-bottom:16px">
-        <div style="font-size:11px;color:#22d3ee;font-weight:700;letter-spacing:1px;margin-bottom:8px">📨 PASTE JOIN CODE FROM PARTICIPANT</div>
-        <div style="display:flex;gap:8px">
-          <input class="inp" id="join-code-inp" placeholder="Paste join code here e.g. V1:eyJu..." style="font-family:monospace;font-size:11px">
-          <button class="btn btn-primary" onclick="decodeJoinCode()">Add</button>
+      <div class="card-title">👥 Participants</div>
+
+      <!-- Live Registrations from Server -->
+      <div style="background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.2);border-radius:8px;padding:14px;margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div style="font-size:11px;color:#4ade80;font-weight:700;letter-spacing:1px">🟢 LIVE — REGISTERED VIA JOIN LINK</div>
+          <button class="btn btn-outline btn-sm" onclick="fetchServerEntries()">↻ Refresh</button>
         </div>
-        <div id="join-code-preview" style="display:none;margin-top:10px;padding:10px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:7px;font-size:12px"></div>
+        <div id="server-entries-list" style="font-size:12px;color:#475569">Waiting for registrations...</div>
       </div>
-      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
-        <input class="inp" id="ent-name" placeholder="Or add manually — enter name" style="flex:1;min-width:140px" onkeydown="if(event.key==='Enter')addEntry()">
+
+      <!-- Manual add -->
+      <div style="font-size:11px;color:#67e8f9;font-weight:700;letter-spacing:1px;margin-bottom:8px">➕ ADD MANUALLY</div>
+      <div style="display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+        <input class="inp" id="ent-name" placeholder="Name" style="flex:2;min-width:120px" onkeydown="if(event.key==='Enter')addEntry()">
+        <input class="inp" id="ent-email" type="email" placeholder="Email (optional — for draw result)" style="flex:3;min-width:160px">
         <button class="btn btn-primary" onclick="addEntry()">+ Add</button>
       </div>
       <div style="font-size:11px;color:#334155;margin-bottom:12px" id="ent-price-info">Buy-in: £3 per entry · Max 48 entries</div>
+
       <div class="entry-list" id="entry-list"></div>
+
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:8px">
         <div style="font-size:12px;color:#475569" id="entry-summary">0 entries</div>
         <div style="display:flex;gap:8px">
           <button class="btn btn-red btn-sm" onclick="clearEntries()">🗑 Clear All</button>
-          <button class="btn btn-gold" onclick="goToTab('tab-draw')">🎲 Go to Draw →</button>
+          <button class="btn btn-gold" onclick="goToTab('tab-draw')" id="go-draw-btn">🎰 Go to Draw →</button>
         </div>
       </div>
     </div>
@@ -299,26 +397,32 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
 
   <div id="tab-draw" class="tab-content" style="display:none">
     <div class="card">
-      <div class="card-title">🎲 Run The Draw</div>
+      <div class="card-title">🎰 Run The Draw</div>
+
       <div id="draw-countdown-box" style="display:none" class="draw-countdown">
         <div class="dc-time" id="draw-cd">--:--:--</div>
         <div class="dc-lbl">Until Scheduled Auto-Draw</div>
       </div>
+
       <div id="draw-not-done">
-        <p style="font-size:13px;color:#64748b;margin-bottom:16px">Ready to draw? Make sure all entries are in. The draw randomly assigns a team to every participant — watch each name get pulled from the machine live!</p>
-        <button class="btn btn-gold btn-full" style="font-size:15px;padding:16px" onclick="runDraw()">🎰 Start The Draw!</button>
+        <p style="font-size:13px;color:#64748b;margin-bottom:16px">Ready? Hit the button to start the live lottery draw — watch the balls fly, then everyone with an email gets their team sent to them automatically.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-gold btn-full" style="font-size:15px;padding:16px" onclick="runDraw()">🎰 Start The Draw!</button>
+        </div>
       </div>
+
       <div id="draw-done" style="display:none">
         <div style="text-align:center;padding:12px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:8px;margin-bottom:16px">
           <div style="font-size:20px;margin-bottom:4px">🎉</div>
           <div style="font-weight:700;color:#4ade80">Draw Complete!</div>
-          <div style="font-size:11px;color:#475569;margin-top:3px">Send each person their personal bracket link below</div>
+          <div style="font-size:11px;color:#475569;margin-top:3px" id="email-sent-status">Everyone with an email address has been sent their team.</div>
         </div>
         <div class="draw-grid" id="draw-result-grid"></div>
         <div style="margin-top:16px">
           <div class="card-title" style="margin-bottom:10px">📨 Personal Bracket Links</div>
+          <p style="font-size:11px;color:#475569;margin-bottom:10px">Share these links with anyone who needs them. Participants with emails were sent their link automatically.</p>
           <div id="plink-list"></div>
-          <button class="btn btn-outline btn-sm" style="margin-top:8px" onclick="copyAllLinks()">📋 Copy All Links</button>
+          <button class="btn btn-outline btn-sm" style="margin-top:8px" onclick="copyAllLinks()">📋 Copy All Links (formatted)</button>
         </div>
         <button class="btn btn-red btn-sm" style="margin-top:12px" onclick="redoDraw()">🔄 Re-run Draw</button>
       </div>
@@ -328,7 +432,7 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
   <div id="tab-elim" class="tab-content" style="display:none">
     <div class="card">
       <div class="card-title">❌ Mark Eliminations</div>
-      <p style="font-size:12px;color:#475569;margin-bottom:14px">Click a team to toggle them as eliminated.</p>
+      <p style="font-size:12px;color:#475569;margin-bottom:14px">Click a team to toggle them as eliminated. Their owner moves to the "Out" section of the leaderboard.</p>
       <div class="elim-grid" id="elim-grid"></div>
     </div>
   </div>
@@ -341,293 +445,580 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
     </div>
     <div class="lb-list" id="lb-list"></div>
   </div>
+
 </div>
 
-<!-- DRAW ANIMATION MODAL -->
-<div id="draw-anim-modal">
-  <div class="dam-inner">
-    <div class="dam-title">🎲 THE DRAW</div>
-    <div class="dam-counter" id="dam-counter">GET READY...</div>
-
-    <div class="dam-machine" id="dam-machine">
-      <canvas id="ball-canvas" width="420" height="200" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
-      <div class="dam-machine-label">DRAW MACHINE</div>
-    </div>
-
-    <div class="dam-reveal" id="dam-reveal">
-      <span class="dam-reveal-flag" id="dam-flag">⚽</span>
-      <div class="dam-reveal-team" id="dam-team">—</div>
-      <div class="dam-reveal-arrow">GOES TO</div>
-      <div class="dam-reveal-name" id="dam-name">—</div>
-    </div>
-
-    <div class="dam-picks" id="dam-picks"></div>
-
-    <div class="dam-controls">
-      <button class="btn btn-outline btn-sm" id="dam-speed-btn" onclick="toggleDrawSpeed()">⏩ Speed Up</button>
-      <button class="btn btn-outline btn-sm" onclick="skipDrawAnimation()">⏭ Skip to Results</button>
-    </div>
-  </div>
-</div>
-
+<!-- TOAST -->
 <div id="toast">✅ Saved</div>
 
 <script>
-const ALL_TEAMS=[
-  {name:"Mexico",flag:"🇲🇽",group:"A"},{name:"Ecuador",flag:"🇪🇨",group:"A"},{name:"S.Korea",flag:"🇰🇷",group:"A"},{name:"Sweden",flag:"🇸🇪",group:"A"},
-  {name:"Canada",flag:"🇨🇦",group:"B"},{name:"Italy",flag:"🇮🇹",group:"B"},{name:"Croatia",flag:"🇭🇷",group:"B"},{name:"Belgium",flag:"🇧🇪",group:"B"},
-  {name:"Brazil",flag:"🇧🇷",group:"C"},{name:"Morocco",flag:"🇲🇦",group:"C"},{name:"Scotland",flag:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",group:"C"},{name:"Haiti",flag:"🇭🇹",group:"C"},
-  {name:"USA",flag:"🇺🇸",group:"D"},{name:"Netherlands",flag:"🇳🇱",group:"D"},{name:"Japan",flag:"🇯🇵",group:"D"},{name:"Gambia",flag:"🇬🇲",group:"D"},
-  {name:"Germany",flag:"🇩🇪",group:"E"},{name:"Spain",flag:"🇪🇸",group:"E"},{name:"Uruguay",flag:"🇺🇾",group:"E"},{name:"Tunisia",flag:"🇹🇳",group:"E"},
-  {name:"Colombia",flag:"🇨🇴",group:"F"},{name:"Portugal",flag:"🇵🇹",group:"F"},{name:"Ivory Coast",flag:"🇨🇮",group:"F"},{name:"S.Arabia",flag:"🇸🇦",group:"F"},
-  {name:"Iran",flag:"🇮🇷",group:"G"},{name:"Egypt",flag:"🇪🇬",group:"G"},{name:"N.Zealand",flag:"🇳🇿",group:"G"},{name:"Ghana",flag:"🇬🇭",group:"G"},
-  {name:"France",flag:"🇫🇷",group:"H"},{name:"Austria",flag:"🇦🇹",group:"H"},{name:"Senegal",flag:"🇸🇳",group:"H"},{name:"Qatar",flag:"🇶🇦",group:"H"},
-  {name:"Argentina",flag:"🇦🇷",group:"I"},{name:"Peru",flag:"🇵🇪",group:"I"},{name:"Nigeria",flag:"🇳🇬",group:"I"},{name:"Israel",flag:"🇮🇱",group:"I"},
-  {name:"England",flag:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",group:"J"},{name:"Denmark",flag:"🇩🇰",group:"J"},{name:"Serbia",flag:"🇷🇸",group:"J"},{name:"Panama",flag:"🇵🇦",group:"J"},
-  {name:"Uzbekistan",flag:"🇺🇿",group:"K"},{name:"Chile",flag:"🇨🇱",group:"K"},{name:"Algeria",flag:"🇩🇿",group:"K"},{name:"China",flag:"🇨🇳",group:"K"},
-  {name:"Belarus",flag:"🇧🇾",group:"L"},{name:"Romania",flag:"🇷🇴",group:"L"},{name:"Turkey",flag:"🇹🇷",group:"L"},{name:"Australia",flag:"🇦🇺",group:"L"},
+// ══════════════════════════════════════════════════
+// TEAM DATA
+// ══════════════════════════════════════════════════
+const ALL_TEAMS = [
+  {name:"Mexico",abbr:"MEX",flag:"🇲🇽",group:"A"},{name:"Ecuador",abbr:"ECU",flag:"🇪🇨",group:"A"},{name:"S.Korea",abbr:"KOR",flag:"🇰🇷",group:"A"},{name:"Sweden",abbr:"SWE",flag:"🇸🇪",group:"A"},
+  {name:"Canada",abbr:"CAN",flag:"🇨🇦",group:"B"},{name:"Italy",abbr:"ITA",flag:"🇮🇹",group:"B"},{name:"Croatia",abbr:"CRO",flag:"🇭🇷",group:"B"},{name:"Qatar",abbr:"QAT",flag:"🇶🇦",group:"B"},
+  {name:"Brazil",abbr:"BRA",flag:"🇧🇷",group:"C"},{name:"Morocco",abbr:"MAR",flag:"🇲🇦",group:"C"},{name:"Scotland",abbr:"SCO",flag:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",group:"C"},{name:"Haiti",abbr:"HAI",flag:"🇭🇹",group:"C"},
+  {name:"USA",abbr:"USA",flag:"🇺🇸",group:"D"},{name:"Netherlands",abbr:"NED",flag:"🇳🇱",group:"D"},{name:"Japan",abbr:"JPN",flag:"🇯🇵",group:"D"},{name:"Gambia",abbr:"GAM",flag:"🇬🇲",group:"D"},
+  {name:"Germany",abbr:"GER",flag:"🇩🇪",group:"E"},{name:"Spain",abbr:"ESP",flag:"🇪🇸",group:"E"},{name:"Uruguay",abbr:"URU",flag:"🇺🇾",group:"E"},{name:"Tunisia",abbr:"TUN",flag:"🇹🇳",group:"E"},
+  {name:"Colombia",abbr:"COL",flag:"🇨🇴",group:"F"},{name:"Portugal",abbr:"POR",flag:"🇵🇹",group:"F"},{name:"Ivory Coast",abbr:"CIV",flag:"🇨🇮",group:"F"},{name:"S.Arabia",abbr:"KSA",flag:"🇸🇦",group:"F"},
+  {name:"Belgium",abbr:"BEL",flag:"🇧🇪",group:"G"},{name:"Iran",abbr:"IRN",flag:"🇮🇷",group:"G"},{name:"Egypt",abbr:"EGY",flag:"🇪🇬",group:"G"},{name:"N.Zealand",abbr:"NZL",flag:"🇳🇿",group:"G"},
+  {name:"France",abbr:"FRA",flag:"🇫🇷",group:"H"},{name:"Austria",abbr:"AUT",flag:"🇦🇹",group:"H"},{name:"Senegal",abbr:"SEN",flag:"🇸🇳",group:"H"},{name:"Ghana",abbr:"GHA",flag:"🇬🇭",group:"H"},
+  {name:"Argentina",abbr:"ARG",flag:"🇦🇷",group:"I"},{name:"Peru",abbr:"PER",flag:"🇵🇪",group:"I"},{name:"Nigeria",abbr:"NGA",flag:"🇳🇬",group:"I"},{name:"Israel",abbr:"ISR",flag:"🇮🇱",group:"I"},
+  {name:"England",abbr:"ENG",flag:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",group:"J"},{name:"Denmark",abbr:"DEN",flag:"🇩🇰",group:"J"},{name:"Serbia",abbr:"SRB",flag:"🇷🇸",group:"J"},{name:"Panama",abbr:"PAN",flag:"🇵🇦",group:"J"},
+  {name:"Portugal B",abbr:"POR2",flag:"🇵🇹",group:"K"},{name:"Uzbekistan",abbr:"UZB",flag:"🇺🇿",group:"K"},{name:"Chile",abbr:"CHI",flag:"🇨🇱",group:"K"},{name:"Algeria",abbr:"ALG",flag:"🇩🇿",group:"K"},
+  {name:"Croatia B",abbr:"CRO2",flag:"🇭🇷",group:"L"},{name:"Belarus",abbr:"BLR",flag:"🇧🇾",group:"L"},{name:"China",abbr:"CHN",flag:"🇨🇳",group:"L"},{name:"Scotland B",abbr:"SCO2",flag:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",group:"L"},
 ];
 
 const COLOURS=["#FF6B6B","#4ECDC4","#45B7D1","#96CEB4","#FFEAA7","#DDA0DD","#98D8C8","#F7DC6F","#BB8FCE","#85C1E9","#F0B27A","#82E0AA","#F1948A","#7FB3D3","#F9E79F","#A9CCE3","#A3E4D7","#F8C471","#C39BD3","#76D7C4","#F0A500","#00B4D8","#E63946","#06D6A0","#FFB703","#8338EC","#FB5607","#3A86FF","#FF006E","#FFBE0B","#57CC99","#E07A5F","#81B29A","#F2CC8F","#118AB2","#EF476F","#48CAE4","#FFD166","#26547C","#C77DFF","#7B2D8B","#FF9F1C","#2EC4B6","#E71D36","#A8DADC","#CBF3F0","#FFBF69","#52B788"];
 
-const BALL_COLOURS=['#FF6B6B','#4ECDC4','#45B7D1','#FFEAA7','#DDA0DD','#98D8C8','#F7DC6F','#BB8FCE','#85C1E9','#F0B27A','#82E0AA','#F1948A'];
-
-let SW={id:genId(),config:{name:'Office WC2026 Sweepstake',organiser:'',priceRandom:3,currency:'£',pin:'2026',drawDate:'2026-06-11T17:00'},entries:[],drawDone:false,eliminated:[]};
-let currentTab='tab-entries';
-
-// DRAW ANIMATION STATE
-let DA={speed:1,picks:[],idx:0,balls:[],ctx:null,animId:null,timeout:null};
+// ══════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════
+let SW = {
+  id: genId(),
+  config: {name:'Office WC2026 Sweepstake',organiser:'',priceRandom:3,currency:'£',pin:'2026',drawDate:'2026-06-11T17:00'},
+  entries: [],
+  drawDone: false,
+  eliminated: [],
+  emailResults: null,
+};
+let currentTab = 'tab-entries';
 
 function genId(){return Math.random().toString(36).substring(2,8).toUpperCase();}
 function genToken(){return Math.random().toString(36).substring(2,12);}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function toast(msg,dur=2500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
 
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+// ══════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
 
 function goToTab(tabId){
   document.querySelectorAll('.tab-content').forEach(t=>t.style.display='none');
-  const el=document.getElementById(tabId);if(el)el.style.display='block';
+  const el=document.getElementById(tabId);
+  if(el)el.style.display='block';
   currentTab=tabId;
   if(tabId==='tab-lb')renderLeaderboard();
   if(tabId==='tab-elim')renderElimGrid();
   if(tabId==='tab-draw')renderDrawTab();
 }
 
+// ══════════════════════════════════════════════════
+// SETUP
+// ══════════════════════════════════════════════════
 function startSweepstake(){
   if(!document.getElementById('legal-check').checked){toast('⚠️ Please confirm the legal notice');return;}
   const g=id=>document.getElementById(id).value.trim();
-  SW.config={name:g('cfg-name')||'Office WC2026 Sweepstake',organiser:g('cfg-org'),priceRandom:parseFloat(g('cfg-priceR'))||3,currency:g('cfg-cur')||'£',pin:g('cfg-pin')||'2026',drawDate:g('cfg-drawDate')};
-  showScreen('screen-dashboard');updateDashHeader();updateJoinLink();renderEntryList();renderElimGrid();startDrawCountdown();saveState();
+  SW.config={
+    name:g('cfg-name')||'Office WC2026 Sweepstake',
+    organiser:g('cfg-org'),
+    priceRandom:parseFloat(g('cfg-priceR'))||3,
+    currency:g('cfg-cur')||'£',
+    pin:g('cfg-pin')||'2026',
+    drawDate:g('cfg-drawDate'),
+  };
+  showScreen('screen-dashboard');
+  updateDashHeader();
+  updateJoinLink();
+  renderEntryList();
+  renderElimGrid();
+  startDrawCountdown();
+  startServerPoll();
+  saveState();
 }
 
 function updateDashHeader(){
   document.getElementById('dash-title').textContent=SW.config.name;
   document.getElementById('dash-org').textContent='Organiser: '+SW.config.organiser;
   document.getElementById('nav-sweep-name').textContent=SW.config.name;
-  document.getElementById('ent-price-info').textContent='Buy-in: '+SW.config.currency+SW.config.priceRandom+' per entry · Max 48 entries';
+  document.getElementById('ent-price-info').textContent=`Buy-in: ${SW.config.currency}${SW.config.priceRandom} per entry · Max 48 entries`;
 }
 
+// ══════════════════════════════════════════════════
+// JOIN LINK
+// ══════════════════════════════════════════════════
 function updateJoinLink(){
-  const params=new URLSearchParams({s:SW.id,name:SW.config.name,r:SW.config.priceRandom,c:SW.config.currency,organiser:SW.config.organiser});
-  document.getElementById('join-link-inp').value=window.location.origin+'/sweep-join.html?'+params.toString();
+  const params=new URLSearchParams({
+    s:SW.id,
+    name:SW.config.name,
+    r:SW.config.priceRandom,
+    c:SW.config.currency,
+    organiser:SW.config.organiser
+  });
+  const url=window.location.origin+'/sweep-join.html?'+params.toString();
+  document.getElementById('join-link-inp').value=url;
 }
 
-function copyJoinLink(){navigator.clipboard.writeText(document.getElementById('join-link-inp').value).then(()=>toast('🔗 Join link copied!'));}
-function shareJoinLink(){const v=document.getElementById('join-link-inp').value;if(navigator.share)navigator.share({title:SW.config.name,text:'Join our sweepstake!',url:v});else copyJoinLink();}
-
-function decodeJoinCode(){
-  const raw=document.getElementById('join-code-inp').value.trim();
-  try{
-    const json=JSON.parse(atob(raw.replace('V1:','')));
-    const preview=document.getElementById('join-code-preview');
-    preview.style.display='block';
-    preview.innerHTML='<strong>'+esc(json.n)+'</strong> wants to join<br><button class="btn btn-green btn-sm" style="margin-top:8px" onclick="confirmJoin(''+encodeURIComponent(JSON.stringify(json))+'')">✅ Confirm & Add</button>';
-  }catch(e){toast('❌ Invalid join code');document.getElementById('join-code-preview').style.display='none';}
+function copyJoinLink(){
+  const v=document.getElementById('join-link-inp').value;
+  navigator.clipboard.writeText(v).then(()=>toast('🔗 Join link copied!'));
 }
 
-function confirmJoin(encoded){
-  try{
-    const json=JSON.parse(decodeURIComponent(encoded));
-    const colour=COLOURS[SW.entries.length%COLOURS.length];
-    SW.entries.push({id:json.ts||Date.now(),name:json.n,type:json.t,teamName:null,colour,paid:false,eliminated:false,token:json.tok||genToken()});
-    document.getElementById('join-code-inp').value='';document.getElementById('join-code-preview').style.display='none';
-    renderEntryList();updateStats();saveState();toast('✅ '+json.n+' added!');
-  }catch(e){toast('❌ Error adding entry');}
+function shareJoinLink(){
+  const v=document.getElementById('join-link-inp').value;
+  const name=SW.config.name;
+  if(navigator.share){
+    navigator.share({title:name,text:`Join our ${name} sweepstake!`,url:v});
+  } else {
+    copyJoinLink();
+  }
 }
 
+// ══════════════════════════════════════════════════
+// SERVER ENTRIES (auto-registration via join link)
+// ══════════════════════════════════════════════════
+let serverEntryTokens = new Set();
+let serverPollInterval = null;
+
+async function fetchServerEntries(){
+  if(!SW.id) return;
+  try {
+    const res = await fetch(`/api/sweep-entries?id=${SW.id}`);
+    if(!res.ok) return;
+    const data = await res.json();
+    const entries = data.entries || [];
+    renderServerEntriesList(entries);
+    mergeServerEntries(entries);
+  } catch(e) {
+    console.error('Failed to fetch server entries:', e);
+  }
+}
+
+function mergeServerEntries(serverEntries){
+  let added = 0;
+  serverEntries.forEach(se => {
+    const exists = SW.entries.find(e => e.token === se.token || (se.email && e.email && e.email === se.email));
+    if(!exists){
+      const colour = COLOURS[SW.entries.length % COLOURS.length];
+      SW.entries.push({
+        id: se.id || Date.now(),
+        name: se.name,
+        email: se.email || '',
+        type: 'link',
+        teamName: null,
+        colour: se.colour || colour,
+        paid: se.paid || false,
+        eliminated: false,
+        token: se.token || genToken(),
+        source: 'link',
+      });
+      added++;
+    }
+  });
+  if(added > 0){
+    renderEntryList();
+    updateStats();
+    saveState();
+    toast(`✅ ${added} new registration${added>1?'s':''} synced!`);
+  }
+}
+
+function renderServerEntriesList(entries){
+  const el = document.getElementById('server-entries-list');
+  if(!el) return;
+  if(!entries.length){
+    el.innerHTML = '<div style="color:#334155;font-size:12px;padding:4px 0">No registrations yet — share the join link above ↑</div>';
+    return;
+  }
+  el.innerHTML = entries.map(e => `
+    <div class="live-reg-item">
+      <div class="live-dot"></div>
+      <div style="flex:1;font-size:12px;font-weight:600">${esc(e.name)}</div>
+      <div style="font-size:10px;color:#475569">${e.email ? esc(e.email) : 'No email'}</div>
+      <div style="font-size:9px;color:#334155;margin-left:8px">${e.registeredAt ? new Date(e.registeredAt).toLocaleDateString() : ''}</div>
+    </div>
+  `).join('');
+}
+
+function startServerPoll(){
+  fetchServerEntries();
+  if(serverPollInterval) clearInterval(serverPollInterval);
+  serverPollInterval = setInterval(fetchServerEntries, 15000);
+}
+
+// ══════════════════════════════════════════════════
+// ENTRIES
+// ══════════════════════════════════════════════════
 function addEntry(){
-  const name=document.getElementById('ent-name').value.trim();
+  const name = document.getElementById('ent-name').value.trim();
+  const emailEl = document.getElementById('ent-email');
+  const email = emailEl ? emailEl.value.trim() : '';
   if(!name){toast('Enter a name');return;}
   if(SW.entries.find(e=>e.name.toLowerCase()===name.toLowerCase())){toast('Name already added');return;}
   if(SW.entries.length>=48){toast('Max 48 entries');return;}
-  SW.entries.push({id:Date.now(),name,type:'random',teamName:null,colour:COLOURS[SW.entries.length%COLOURS.length],paid:false,eliminated:false,token:genToken()});
-  document.getElementById('ent-name').value='';renderEntryList();updateStats();saveState();
+  const colour = COLOURS[SW.entries.length % COLOURS.length];
+  SW.entries.push({id:Date.now(),name,email,type:'random',teamName:null,colour,paid:false,eliminated:false,token:genToken(),source:'manual'});
+  document.getElementById('ent-name').value='';
+  if(emailEl) emailEl.value='';
+  renderEntryList();updateStats();saveState();
 }
 
-function removeEntry(id){if(SW.drawDone){toast('Cannot remove after draw');return;}SW.entries=SW.entries.filter(e=>e.id!==id);renderEntryList();updateStats();saveState();}
-function togglePaid(id){const e=SW.entries.find(e=>e.id===id);if(e){e.paid=!e.paid;renderEntryList();updateStats();saveState();}}
-function clearEntries(){if(!confirm('Remove all entries?'))return;SW.entries=[];SW.drawDone=false;renderEntryList();updateStats();saveState();}
+function removeEntry(id){
+  if(SW.drawDone){toast('Cannot remove after draw');return;}
+  SW.entries=SW.entries.filter(e=>e.id!==id);
+  renderEntryList();updateStats();saveState();
+}
+
+function togglePaid(id){
+  const e=SW.entries.find(e=>e.id===id);
+  if(e){e.paid=!e.paid;renderEntryList();updateStats();saveState();}
+}
+
+function clearEntries(){
+  if(!confirm('Remove all entries?'))return;
+  SW.entries=[];SW.drawDone=false;
+  renderEntryList();updateStats();saveState();
+}
+
 function calcPot(){return SW.entries.reduce((s,e)=>s+(e.paid?SW.config.priceRandom:0),0);}
-function getFlag(name){const t=ALL_TEAMS.find(t=>t.name===name);return t?t.flag:'';}
 
 function renderEntryList(){
-  const el=document.getElementById('entry-list');if(!el)return;
-  if(!SW.entries.length){el.innerHTML='<div style="text-align:center;padding:20px;color:#334155;font-size:12px">No entries yet. Share the join link or add manually above.</div>';return;}
-  el.innerHTML=SW.entries.map(e=>'<div class="entry-item"><div class="entry-dot" style="background:'+e.colour+'"></div><div class="entry-name">'+esc(e.name)+'</div>'+(e.teamName?'<div class="entry-team">'+getFlag(e.teamName)+' '+e.teamName+'</div>':'')+'<button class="paid-btn '+(e.paid?'paid-yes':'paid-no')+'" onclick="togglePaid('+e.id+')">'+(e.paid?'✓ Paid':'Mark Paid')+'</button>'+(!SW.drawDone?'<button class="remove-btn" onclick="removeEntry('+e.id+')">✕</button>':'')+'</div>').join('');
-  document.getElementById('entry-summary').textContent=SW.entries.length+' entries · Pot: '+SW.config.currency+calcPot()+' (paid)';
+  const el=document.getElementById('entry-list');
+  if(!el)return;
+  if(!SW.entries.length){
+    el.innerHTML='<div style="text-align:center;padding:20px;color:#334155;font-size:12px">No entries yet. Share the join link or add manually above.</div>';
+    return;
+  }
+  el.innerHTML=SW.entries.map(e=>`
+    <div class="entry-item">
+      <div class="entry-dot" style="background:${e.colour}"></div>
+      <div style="flex:1;min-width:0">
+        <div class="entry-name">${esc(e.name)}</div>
+        ${e.email?`<div style="font-size:10px;color:#334155">${esc(e.email)}</div>`:''}
+      </div>
+      ${e.teamName?`<div class="entry-team">${getFlag(e.teamName)} ${e.teamName}</div>`:''}
+      ${e.source==='link'?'<span style="font-size:9px;color:#4ade80;flex-shrink:0">LINK</span>':''}
+      <button class="paid-btn ${e.paid?'paid-yes':'paid-no'}" onclick="togglePaid(${e.id})">${e.paid?'✓ Paid':'Mark Paid'}</button>
+      ${!SW.drawDone?`<button class="remove-btn" onclick="removeEntry(${e.id})" title="Remove">✕</button>`:''}
+    </div>`).join('');
+  document.getElementById('entry-summary').textContent=`${SW.entries.length} entries · Pot: ${SW.config.currency}${calcPot()} (paid)`;
 }
 
-// ══ DRAW ══
-function renderDrawTab(){
-  if(SW.drawDone){document.getElementById('draw-not-done').style.display='none';document.getElementById('draw-done').style.display='block';renderDrawResult();renderParticipantLinks();}
-  else{document.getElementById('draw-not-done').style.display='block';document.getElementById('draw-done').style.display='none';}
-}
+function getFlag(name){const t=ALL_TEAMS.find(t=>t.name===name);return t?t.flag:'';}
 
+// ══════════════════════════════════════════════════
+// DRAW ANIMATION STATE
+// ══════════════════════════════════════════════════
+let DA = {
+  speed: 1,
+  picks: [],
+  idx: 0,
+  balls: [],
+  ctx: null,
+  animId: null,
+  revealTimeout: null,
+  done: false,
+};
+
+// ══════════════════════════════════════════════════
+// DRAW
+// ══════════════════════════════════════════════════
 function runDraw(){
   if(!SW.entries.length){toast('Add entries first');return;}
   if(SW.drawDone&&!confirm('Re-run the draw? All team assignments will be reset.'))return;
-  // Assign teams
-  const pool=[...ALL_TEAMS].sort(()=>Math.random()-.5);
-  SW.entries.forEach((e,i)=>{e.teamName=pool[i%pool.length].name;});
-  SW.drawDone=true;saveState();
   startDrawAnimation();
 }
 
 function startDrawAnimation(){
-  // Build reveal order (shuffle for suspense)
-  DA.picks=[...SW.entries].sort(()=>Math.random()-.5).map(e=>({entry:e,team:ALL_TEAMS.find(t=>t.name===e.teamName)||{name:e.teamName,flag:'⚽'}}));
-  DA.idx=0;DA.speed=1;
-  document.getElementById('dam-speed-btn').textContent='⏩ Speed Up';
+  // Assign teams randomly
+  const pool=[...ALL_TEAMS].sort(()=>Math.random()-.5);
+  SW.entries.forEach((e,i)=>{
+    const t=pool[i%pool.length];
+    e.teamName=t.name;
+    e.teamFlag=t.flag;
+  });
 
-  // Init canvas balls
-  const canvas=document.getElementById('ball-canvas');
-  const w=canvas.width,h=canvas.height;
+  // Randomise reveal order
+  DA.picks=[...SW.entries].sort(()=>Math.random()-.5);
+  DA.idx=0;
+  DA.speed=1;
+  DA.done=false;
+
+  // Set up canvas
+  const canvas=document.getElementById('draw-canvas');
   DA.ctx=canvas.getContext('2d');
-  const teams=[...ALL_TEAMS].sort(()=>Math.random()-.5);
-  DA.balls=teams.slice(0,Math.min(12,Math.max(SW.entries.length,6))).map((t,i)=>({
-    x:30+Math.random()*(w-60),y:25+Math.random()*(h-50),
-    vx:(Math.random()-.5)*3+(Math.random()>.5?1.5:-1.5),
-    vy:(Math.random()-.5)*3+(Math.random()>.5?1.5:-1.5),
-    r:22,flag:t.flag,col:BALL_COLOURS[i%BALL_COLOURS.length],active:true
+
+  // Create balls — one per team (up to 48)
+  DA.balls=ALL_TEAMS.slice(0,48).map((t,i)=>({
+    x:40+Math.random()*440,
+    y:40+Math.random()*200,
+    vx:(Math.random()-.5)*5,
+    vy:(Math.random()-.5)*5,
+    r:20,
+    flag:t.flag,
+    col:COLOURS[i%COLOURS.length],
+    picked:false,
   }));
 
   // Show modal
-  const modal=document.getElementById('draw-anim-modal');
-  modal.style.display='flex';
-  document.getElementById('dam-picks').innerHTML='';
-  document.getElementById('dam-counter').textContent='GET READY...';
-  const rev=document.getElementById('dam-reveal');
-  rev.style.opacity='0';rev.style.transform='scale(0.9)';rev.style.transition='none';
+  document.getElementById('draw-modal').style.display='flex';
+  document.getElementById('draw-reveal-name').textContent='';
+  document.getElementById('draw-reveal-name').style.color='#475569';
+  document.getElementById('draw-reveal-name').style.fontSize='14px';
+  document.getElementById('draw-reveal-name').textContent='Balls are bouncing — first pick in 3 seconds...';
+  document.getElementById('draw-reveal-team').textContent='';
+  document.getElementById('draw-progress').textContent=`0 / ${DA.picks.length} drawn`;
 
-  animBalls();
-  DA.timeout=setTimeout(doNextPick,2200);
+  // Start loop
+  if(DA.animId) cancelAnimationFrame(DA.animId);
+  animLoop();
+
+  // First reveal after 3 seconds
+  clearTimeout(DA.revealTimeout);
+  DA.revealTimeout=setTimeout(revealNext, 3000);
 }
 
-function animBalls(){
-  const canvas=document.getElementById('ball-canvas');
-  const ctx=DA.ctx;if(!ctx)return;
-  const w=canvas.width,h=canvas.height;
-  ctx.clearRect(0,0,w,h);
-  const spd=DA.speed;
+function animLoop(){
+  const canvas=document.getElementById('draw-canvas');
+  const ctx=DA.ctx;
+  const W=canvas.width, H=canvas.height;
+
+  ctx.clearRect(0,0,W,H);
+
+  // Background
+  ctx.fillStyle='rgba(2,8,20,1)';
+  ctx.fillRect(0,0,W,H);
+
+  // Border glow
+  ctx.strokeStyle='rgba(255,213,74,.15)';
+  ctx.lineWidth=2;
+  ctx.strokeRect(1,1,W-2,H-2);
+
+  const activeBalls=DA.balls.filter(b=>!b.picked);
+
+  // Collision detection
+  for(let i=0;i<activeBalls.length;i++){
+    const b=activeBalls[i];
+    // Wall bounce
+    if(b.x-b.r<0){b.x=b.r;b.vx=Math.abs(b.vx)*0.95;}
+    if(b.x+b.r>W){b.x=W-b.r;b.vx=-Math.abs(b.vx)*0.95;}
+    if(b.y-b.r<0){b.y=b.r;b.vy=Math.abs(b.vy)*0.95;}
+    if(b.y+b.r>H){b.y=H-b.r;b.vy=-Math.abs(b.vy)*0.95;}
+    // Ball collision
+    for(let j=i+1;j<activeBalls.length;j++){
+      const b2=activeBalls[j];
+      const dx=b2.x-b.x, dy=b2.y-b.y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<b.r+b2.r&&dist>0.1){
+        const nx=dx/dist, ny=dy/dist;
+        const overlap=(b.r+b2.r-dist)/2;
+        b.x-=nx*overlap*0.5; b.y-=ny*overlap*0.5;
+        b2.x+=nx*overlap*0.5; b2.y+=ny*overlap*0.5;
+        const dvx=b.vx-b2.vx, dvy=b.vy-b2.vy;
+        const dot=dvx*nx+dvy*ny;
+        if(dot>0){
+          b.vx-=dot*nx*0.8; b.vy-=dot*ny*0.8;
+          b2.vx+=dot*nx*0.8; b2.vy+=dot*ny*0.8;
+        }
+      }
+    }
+    // Move
+    b.x+=b.vx*DA.speed;
+    b.y+=b.vy*DA.speed;
+    // Cap speed
+    const spd=Math.sqrt(b.vx*b.vx+b.vy*b.vy);
+    const maxSpd=6*DA.speed;
+    if(spd>maxSpd){b.vx=b.vx/spd*maxSpd;b.vy=b.vy/spd*maxSpd;}
+    // Maintain minimum speed
+    if(spd<2){b.vx+=(Math.random()-.5)*1;b.vy+=(Math.random()-.5)*1;}
+  }
+
+  // Draw balls
   DA.balls.forEach(b=>{
-    if(!b.active)return;
-    b.x+=b.vx*spd;b.y+=b.vy*spd;
-    if(b.x-b.r<0){b.x=b.r;b.vx=Math.abs(b.vx)+(Math.random()*.5);}
-    if(b.x+b.r>w){b.x=w-b.r;b.vx=-(Math.abs(b.vx)+(Math.random()*.5));}
-    if(b.y-b.r<0){b.y=b.r;b.vy=Math.abs(b.vy)+(Math.random()*.5);}
-    if(b.y+b.r>h){b.y=h-b.r;b.vy=-(Math.abs(b.vy)+(Math.random()*.5));}
-    // Glow
-    ctx.shadowColor=b.col;ctx.shadowBlur=12;
-    ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
-    ctx.fillStyle=b.col;ctx.fill();
-    ctx.shadowBlur=0;
-    ctx.strokeStyle='rgba(255,255,255,0.25)';ctx.lineWidth=2;ctx.stroke();
-    ctx.font='17px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillStyle='rgba(0,0,0,0.3)';ctx.fillText(b.flag,b.x+1,b.y+1);
-    ctx.fillStyle='#fff';ctx.fillText(b.flag,b.x,b.y);
+    if(b.picked) return;
+    ctx.save();
+    ctx.shadowColor=b.col;
+    ctx.shadowBlur=15;
+    ctx.beginPath();
+    ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
+    // Gradient fill
+    const grd=ctx.createRadialGradient(b.x-5,b.y-5,2,b.x,b.y,b.r);
+    grd.addColorStop(0,'rgba(255,255,255,.25)');
+    grd.addColorStop(1,b.col+'44');
+    ctx.fillStyle=grd;
+    ctx.fill();
+    ctx.strokeStyle=b.col;
+    ctx.lineWidth=2;
+    ctx.stroke();
+    ctx.restore();
+    // Flag emoji
+    ctx.font=`${b.r*0.95}px serif`;
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText(b.flag,b.x,b.y+1);
   });
-  DA.animId=requestAnimationFrame(animBalls);
+
+  DA.animId=requestAnimationFrame(animLoop);
 }
 
-function doNextPick(){
-  if(DA.idx>=DA.picks.length){finishDraw();return;}
+function revealNext(){
+  if(DA.idx>=DA.picks.length){
+    finishDraw();
+    return;
+  }
+
   const pick=DA.picks[DA.idx];
-  const num=DA.idx+1,total=DA.picks.length;
-  document.getElementById('dam-counter').textContent='PICK '+num+' OF '+total;
+  const team=ALL_TEAMS.find(t=>t.name===pick.teamName);
 
-  // Remove a ball from the machine
-  const active=DA.balls.filter(b=>b.active);
-  if(active.length>0)(active.find(b=>b.flag===pick.team.flag)||active[Math.floor(Math.random()*active.length)]).active=false;
+  // Remove ball with matching flag from canvas
+  const ball=DA.balls.find(b=>b.flag===(team?team.flag:''));
+  if(ball) ball.picked=true;
 
-  // Reveal animation
-  const rev=document.getElementById('dam-reveal');
-  rev.style.transition='none';rev.style.opacity='0';rev.style.transform='scale(0.75)';
-  const delay=DA.speed>1?80:180;
-  setTimeout(()=>{
-    document.getElementById('dam-flag').textContent=pick.team.flag;
-    document.getElementById('dam-team').textContent=pick.team.name;
-    document.getElementById('dam-name').textContent=pick.entry.name;
-    rev.style.transition='opacity 0.35s cubic-bezier(.34,1.56,.64,1),transform 0.35s cubic-bezier(.34,1.56,.64,1)';
-    rev.style.opacity='1';rev.style.transform='scale(1)';
-  },delay);
+  // Update reveal panel
+  const nameEl=document.getElementById('draw-reveal-name');
+  const teamEl=document.getElementById('draw-reveal-team');
+  nameEl.textContent=pick.name;
+  nameEl.style.color='#fff';
+  nameEl.style.fontSize='22px';
+  teamEl.innerHTML=team?`<span style="font-size:32px">${team.flag}</span><span style="color:#ffd54a;font-size:18px">${team.name}</span>`:'❓';
 
-  const addDelay=DA.speed>1?450:1300;
-  setTimeout(()=>{
-    const list=document.getElementById('dam-picks');
-    const item=document.createElement('div');
-    item.className='dam-pick-item';
-    item.style.borderLeft='3px solid '+pick.entry.colour;
-    item.innerHTML='<span style="font-size:18px">'+pick.team.flag+'</span><span style="font-size:12px;font-weight:700;flex:1">'+esc(pick.entry.name)+'</span><span style="font-size:11px;color:#475569">'+pick.team.name+'</span>';
-    list.appendChild(item);list.scrollTop=list.scrollHeight;
-    DA.idx++;
-    DA.timeout=setTimeout(doNextPick,DA.speed>1?500:1800);
-  },addDelay);
+  // Animate the reveal card
+  const card=document.getElementById('draw-reveal-card');
+  card.style.animation='none';
+  void card.offsetWidth; // reflow
+  card.style.animation='revealPop .45s ease';
+
+  DA.idx++;
+  document.getElementById('draw-progress').textContent=`${DA.idx} / ${DA.picks.length} drawn`;
+
+  // Schedule next reveal
+  if(DA.idx<DA.picks.length){
+    DA.revealTimeout=setTimeout(revealNext, 2400/DA.speed);
+  } else {
+    DA.revealTimeout=setTimeout(finishDraw, 2000/DA.speed);
+  }
 }
 
-function finishDraw(){
-  if(DA.animId)cancelAnimationFrame(DA.animId);
+function skipToResults(){
+  clearTimeout(DA.revealTimeout);
+  cancelAnimationFrame(DA.animId);
+  finishDraw();
+}
+
+async function finishDraw(){
+  clearTimeout(DA.revealTimeout);
+  cancelAnimationFrame(DA.animId);
+
+  SW.drawDone=true;
+  saveState();
+
+  // Close modal
+  document.getElementById('draw-modal').style.display='none';
+
+  // Confetti!
   fireConfetti();
-  setTimeout(()=>{
-    document.getElementById('draw-anim-modal').style.display='none';
-    renderDrawTab();goToTab('tab-draw');toast('🎲 Draw complete!',3000);
-  },2000);
+  toast('🎲 Draw complete! Sending result emails...', 3500);
+
+  // Send draw emails automatically
+  await sendDrawEmails();
+
+  renderDrawTab();
+  goToTab('tab-draw');
 }
 
-function skipDrawAnimation(){
-  if(DA.timeout)clearTimeout(DA.timeout);
-  if(DA.animId)cancelAnimationFrame(DA.animId);
-  document.getElementById('draw-anim-modal').style.display='none';
-  renderDrawTab();goToTab('tab-draw');fireConfetti();toast('🎲 Draw complete!',3000);
-}
-
-function toggleDrawSpeed(){
-  DA.speed=DA.speed>1?1:3;
-  document.getElementById('dam-speed-btn').textContent=DA.speed>1?'🐢 Normal':'⏩ Speed Up';
+async function sendDrawEmails(){
+  try {
+    const res=await fetch('/api/sweep-draw-email',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        sweepstakeName:SW.config.name,
+        organiser:SW.config.organiser,
+        currency:SW.config.currency,
+        entries:SW.entries,
+        eliminated:SW.eliminated,
+      }),
+    });
+    const data=await res.json();
+    if(data.success){
+      const r=data.results;
+      SW.emailResults=r;
+      saveState();
+      const statusEl=document.getElementById('email-sent-status');
+      if(statusEl){
+        statusEl.textContent=`📧 ${r.sent} email${r.sent!==1?'s':''} sent · ${r.skipped} skipped (no email)${r.failed>0?' · '+r.failed+' failed':''}`;
+      }
+      toast(`📧 Done — ${r.sent} result email${r.sent!==1?'s':''} sent!`,4000);
+    }
+  } catch(e){
+    console.error('Draw email failed:',e);
+    const statusEl=document.getElementById('email-sent-status');
+    if(statusEl) statusEl.textContent='Emails could not be sent — copy links below to share manually.';
+  }
 }
 
 function redoDraw(){
   if(!confirm('Re-run draw? Team assignments will be reset.'))return;
-  SW.drawDone=false;SW.entries.forEach(e=>e.teamName=null);renderDrawTab();saveState();
+  SW.drawDone=false;SW.emailResults=null;
+  SW.entries.forEach(e=>{e.teamName=null;e.teamFlag=null;});
+  renderDrawTab();saveState();
+}
+
+function renderDrawTab(){
+  if(SW.drawDone){
+    document.getElementById('draw-not-done').style.display='none';
+    document.getElementById('draw-done').style.display='block';
+    // Update email status if results saved
+    if(SW.emailResults){
+      const r=SW.emailResults;
+      const statusEl=document.getElementById('email-sent-status');
+      if(statusEl) statusEl.textContent=`📧 ${r.sent} email${r.sent!==1?'s':''} sent · ${r.skipped} skipped (no email)`;
+    }
+    renderDrawResult();
+    renderParticipantLinks();
+  } else {
+    document.getElementById('draw-not-done').style.display='block';
+    document.getElementById('draw-done').style.display='none';
+  }
 }
 
 function renderDrawResult(){
-  const el=document.getElementById('draw-result-grid');if(!el)return;
-  el.innerHTML=SW.entries.map(e=>{const t=ALL_TEAMS.find(x=>x.name===e.teamName);return '<div class="draw-card '+(e.eliminated?'out':'')+'" style="border-color:'+e.colour+';border-left-color:'+e.colour+'"><span style="font-size:20px">'+(t?t.flag:'❓')+'</span><div><div style="font-size:12px;font-weight:700">'+esc(e.name)+'</div><div style="font-size:10px;color:#475569">'+(e.teamName||'—')+(e.eliminated?' · <span style="color:#f87171">OUT</span>':'')+'</div></div></div>';}).join('');
-}
-
-function renderParticipantLinks(){
-  const el=document.getElementById('plink-list');if(!el)return;
-  const baseUrl=window.location.origin+'/sweep-view.html';
+  const el=document.getElementById('draw-result-grid');
+  if(!el)return;
   el.innerHTML=SW.entries.map(e=>{
-    const data={n:SW.config.name,org:SW.config.organiser,cur:SW.config.currency,entries:SW.entries.map(x=>({name:x.name,teamName:x.teamName,colour:x.colour,eliminated:x.eliminated,paid:x.paid,token:x.token})),eliminated:SW.eliminated,tok:e.token};
-    const url=baseUrl+'#V1:'+btoa(JSON.stringify(data));
     const t=ALL_TEAMS.find(x=>x.name===e.teamName);
-    return '<div class="plink-item"><div style="width:10px;height:10px;border-radius:50%;background:'+e.colour+';flex-shrink:0"></div><div class="plink-name">'+esc(e.name)+'</div><div class="plink-team">'+(t?t.flag+' ':'')+e.teamName+'</div><input class="plink-inp" value="'+url+'" readonly><button class="btn btn-primary btn-sm" onclick="copyLink(''+encodeURIComponent(url)+'',''+esc(e.name)+'')">Copy</button></div>';
+    return `<div class="draw-card ${e.eliminated?'out':''}" style="border-color:${e.colour};border-left-color:${e.colour}">
+      <span style="font-size:20px">${t?t.flag:'❓'}</span>
+      <div>
+        <div style="font-size:12px;font-weight:700">${esc(e.name)}</div>
+        <div style="font-size:10px;color:#475569">${e.teamName||'—'} ${e.eliminated?'· <span style="color:#f87171">OUT</span>':''}</div>
+      </div>
+    </div>`;
   }).join('');
 }
 
-function copyLink(encoded,name){navigator.clipboard.writeText(decodeURIComponent(encoded)).then(()=>toast('🔗 '+name+"'s link copied!"));}
+function renderParticipantLinks(){
+  const el=document.getElementById('plink-list');
+  if(!el)return;
+  const baseUrl=window.location.origin+'/sweep-view.html';
+  el.innerHTML=SW.entries.map(e=>{
+    const data={n:SW.config.name,org:SW.config.organiser,cur:SW.config.currency,entries:SW.entries.map(x=>({name:x.name,teamName:x.teamName,colour:x.colour,eliminated:x.eliminated,paid:x.paid,token:x.token})),eliminated:SW.eliminated,tok:e.token};
+    const hash='V1:'+btoa(JSON.stringify(data));
+    const url=baseUrl+'#'+hash;
+    const t=ALL_TEAMS.find(x=>x.name===e.teamName);
+    return `<div class="plink-item">
+      <div class="plink-dot" style="background:${e.colour}"></div>
+      <div style="flex:1;min-width:0">
+        <div class="plink-name">${esc(e.name)}</div>
+        ${e.email?`<div style="font-size:9px;color:#4ade80">📧 emailed</div>`:'<div style="font-size:9px;color:#334155">no email</div>'}
+      </div>
+      <div class="plink-team">${t?t.flag+' ':''}<span style="font-size:11px;color:#475569">${e.teamName||'—'}</span></div>
+      <input class="plink-inp" value="${url}" readonly>
+      <button class="btn btn-primary btn-sm" onclick="copyLink('${encodeURIComponent(url)}','${esc(e.name)}')">Copy</button>
+    </div>`;
+  }).join('');
+}
+
+function copyLink(encoded,name){
+  const url=decodeURIComponent(encoded);
+  navigator.clipboard.writeText(url).then(()=>toast('🔗 '+name+"'s link copied!"));
+}
 
 function copyAllLinks(){
   const baseUrl=window.location.origin+'/sweep-view.html';
@@ -635,35 +1026,68 @@ function copyAllLinks(){
     const data={n:SW.config.name,org:SW.config.organiser,cur:SW.config.currency,entries:SW.entries.map(x=>({name:x.name,teamName:x.teamName,colour:x.colour,eliminated:x.eliminated,paid:x.paid,token:x.token})),eliminated:SW.eliminated,tok:e.token};
     const url=baseUrl+'#V1:'+btoa(JSON.stringify(data));
     const t=ALL_TEAMS.find(x=>x.name===e.teamName);
-    return e.name+' — '+(t?t.flag+' ':'')+e.teamName+'\n'+url;
+    return `${e.name} — ${t?t.flag+' ':''} ${e.teamName||'TBD'}\n${url}`;
   });
-  navigator.clipboard.writeText('🎲 '+SW.config.name+' — Your Personal Bracket Links\n\n'+lines.join('\n\n')).then(()=>toast('📋 All links copied!'));
+  const text=`🎲 ${SW.config.name} — Your Personal Bracket Links\n\n${lines.join('\n\n')}`;
+  navigator.clipboard.writeText(text).then(()=>toast('📋 All links copied!'));
 }
 
-// ══ ELIMINATIONS ══
+// ══════════════════════════════════════════════════
+// ELIMINATIONS
+// ══════════════════════════════════════════════════
 function renderElimGrid(){
-  const el=document.getElementById('elim-grid');if(!el)return;
-  el.innerHTML=ALL_TEAMS.map(t=>{const out=SW.eliminated.includes(t.name);return '<div class="elim-tile '+(out?'out':'')+'" onclick="toggleElim(''+t.name.replace(/'/g,"\'")+'')" ><span style="font-size:16px">'+t.flag+'</span><span class="elim-name">'+t.name+'</span>'+(out?'<span class="elim-mark">OUT</span>':'')+'</div>';}).join('');
+  const el=document.getElementById('elim-grid');
+  if(!el)return;
+  el.innerHTML=ALL_TEAMS.map(t=>{
+    const out=SW.eliminated.includes(t.name);
+    return `<div class="elim-tile ${out?'out':''}" onclick="toggleElim('${t.name.replace(/'/g,"\\'")}')">
+      <span style="font-size:16px">${t.flag}</span>
+      <span class="elim-name">${t.name}</span>
+      ${out?'<span class="elim-mark">OUT</span>':''}
+    </div>`;
+  }).join('');
 }
 
 function toggleElim(name){
-  if(SW.eliminated.includes(name))SW.eliminated=SW.eliminated.filter(n=>n!==name);else SW.eliminated.push(name);
+  if(SW.eliminated.includes(name))SW.eliminated=SW.eliminated.filter(n=>n!==name);
+  else SW.eliminated.push(name);
   SW.entries.forEach(e=>{if(e.teamName)e.eliminated=SW.eliminated.includes(e.teamName);});
-  renderElimGrid();updateStats();saveState();if(SW.drawDone)renderParticipantLinks();
+  renderElimGrid();updateStats();saveState();
+  if(SW.drawDone)renderParticipantLinks();
 }
 
-// ══ LEADERBOARD ══
+// ══════════════════════════════════════════════════
+// LEADERBOARD
+// ══════════════════════════════════════════════════
 function renderLeaderboard(){
-  const el=document.getElementById('lb-list');const pot=calcPot();
+  const el=document.getElementById('lb-list');
+  const pot=calcPot();
   document.getElementById('lb-pot').textContent=SW.config.currency+pot;
-  document.getElementById('lb-sub').textContent=SW.entries.length+' entries · Organiser pays out the winner';
+  document.getElementById('lb-sub').textContent=`${SW.entries.length} entries · Organiser pays out the winner`;
   if(!el)return;
-  if(!SW.drawDone||!SW.entries.length){el.innerHTML='<div style="text-align:center;padding:24px;color:#334155;font-size:13px">Run the draw first to see the leaderboard</div>';return;}
+  if(!SW.drawDone||!SW.entries.length){
+    el.innerHTML='<div style="text-align:center;padding:24px;color:#334155;font-size:13px">Run the draw first to see the leaderboard</div>';
+    return;
+  }
   const sorted=[...SW.entries].sort((a,b)=>Number(a.eliminated)-Number(b.eliminated));
-  el.innerHTML=sorted.map((e,i)=>{const t=ALL_TEAMS.find(x=>x.name===e.teamName);const isChamp=!e.eliminated&&SW.eliminated.length>=47;return '<div class="lb-row '+(e.eliminated?'':'alive')+'"><div class="lb-pos '+(i===0?'p1':i===1?'p2':i===2?'p3':'')+'">'+(i+1)+'</div><div class="lb-dot" style="background:'+e.colour+'"></div><div class="lb-info"><div class="lb-name">'+esc(e.name)+'</div><div class="lb-team">'+(t?t.flag+' '+t.name:'No team')+'</div></div><span class="lb-badge '+(isChamp?'badge-champ':e.eliminated?'badge-out':'badge-alive')+'">'+(isChamp?'🏆 Winner':e.eliminated?'Eliminated':'🟢 Active')+'</span></div>';}).join('');
+  el.innerHTML=sorted.map((e,i)=>{
+    const t=ALL_TEAMS.find(x=>x.name===e.teamName);
+    const isChamp=!e.eliminated&&SW.eliminated.length>=47;
+    return `<div class="lb-row ${!e.eliminated?'alive':''}">
+      <div class="lb-pos ${i===0?'p1':i===1?'p2':i===2?'p3':''}">${i+1}</div>
+      <div class="lb-dot" style="background:${e.colour}"></div>
+      <div class="lb-info">
+        <div class="lb-name">${esc(e.name)}</div>
+        <div class="lb-team">${t?t.flag+' '+t.name:'No team'}</div>
+      </div>
+      <span class="lb-badge ${isChamp?'badge-champ':e.eliminated?'badge-out':'badge-alive'}">${isChamp?'🏆 Winner':e.eliminated?'Eliminated':'🟢 Active'}</span>
+    </div>`;
+  }).join('');
 }
 
-// ══ STATS ══
+// ══════════════════════════════════════════════════
+// STATS & COUNTDOWN
+// ══════════════════════════════════════════════════
 function updateStats(){
   const alive=SW.entries.filter(e=>!e.eliminated).length;
   document.getElementById('st-entries').textContent=SW.entries.length;
@@ -672,24 +1096,37 @@ function updateStats(){
 }
 
 function startDrawCountdown(){
-  const box=document.getElementById('draw-countdown-box'),el=document.getElementById('draw-cd'),statEl=document.getElementById('st-draw');
+  const box=document.getElementById('draw-countdown-box');
+  const el=document.getElementById('draw-cd');
+  const statEl=document.getElementById('st-draw');
   if(!SW.config.drawDate)return;
   const target=new Date(SW.config.drawDate).getTime();
   function tick(){
     const diff=target-Date.now();
-    if(diff<=0){if(box)box.style.display='none';if(statEl)statEl.textContent='NOW';return;}
-    const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+    if(diff<=0){
+      if(box)box.style.display='none';
+      if(statEl)statEl.textContent='NOW';
+      if(!SW.drawDone&&SW.entries.length>0)toast('⏰ Auto-draw time! Hit Start The Draw.',4000);
+      return;
+    }
+    const d=Math.floor(diff/86400000);
+    const h=Math.floor((diff%86400000)/3600000);
+    const m=Math.floor((diff%3600000)/60000);
+    const s=Math.floor((diff%60000)/1000);
     const pad=n=>n<10?'0'+n:''+n;
-    if(el)el.textContent=d>0?d+'d '+pad(h)+':'+pad(m)+':'+pad(s):pad(h)+':'+pad(m)+':'+pad(s);
+    if(el)el.textContent=d>0?`${d}d ${pad(h)}:${pad(m)}:${pad(s)}`:`${pad(h)}:${pad(m)}:${pad(s)}`;
     if(statEl)statEl.textContent=d>0?d+'d':pad(h)+':'+pad(m);
     if(box)box.style.display='block';
   }
   tick();setInterval(tick,1000);
 }
 
-// ══ SAVE/LOAD ══
+// ══════════════════════════════════════════════════
+// SAVE / LOAD
+// ══════════════════════════════════════════════════
 function saveState(){
-  history.replaceState(null,'',window.location.pathname+'#ORG:'+btoa(JSON.stringify(SW)));
+  const hash='ORG:'+btoa(JSON.stringify(SW));
+  history.replaceState(null,'',window.location.pathname+window.location.search+'#'+hash);
   toast('💾 Saved — bookmark this page!',2000);
 }
 
@@ -697,23 +1134,33 @@ function loadFromSave(){
   try{
     const h=window.location.hash.slice(1);
     if(!h||!h.startsWith('ORG:'))throw new Error('No save');
-    SW={...SW,...JSON.parse(atob(h.replace('ORG:','')))};
-    showScreen('screen-dashboard');updateDashHeader();updateJoinLink();renderEntryList();renderElimGrid();updateStats();startDrawCountdown();
-    if(SW.drawDone)goToTab('tab-draw');toast('✅ Sweepstake loaded!');
-  }catch(e){toast('No saved sweepstake found');}
+    const d=JSON.parse(atob(h.replace('ORG:','')));
+    SW={...SW,...d};
+    showScreen('screen-dashboard');
+    updateDashHeader();updateJoinLink();renderEntryList();renderElimGrid();updateStats();startDrawCountdown();
+    startServerPoll();
+    if(SW.drawDone){goToTab('tab-draw');}
+    toast('✅ Sweepstake loaded!');
+  }catch(e){
+    toast('No saved sweepstake found');
+  }
 }
 
-// ══ CONFETTI ══
+// ══════════════════════════════════════════════════
+// CONFETTI
+// ══════════════════════════════════════════════════
 function fireConfetti(){
   const cols=["#FFD700","#FF6B6B","#4ECDC4","#00FF88","#FFA500","#fff","#FF006E"];
-  for(let i=0;i<70;i++)setTimeout(()=>{
+  for(let i=0;i<80;i++)setTimeout(()=>{
     const el=document.createElement('div');
-    el.style.cssText='position:fixed;width:'+(5+Math.random()*8)+'px;height:'+(5+Math.random()*8)+'px;left:'+Math.random()*100+'vw;top:-10px;background:'+cols[i%cols.length]+';z-index:9999;border-radius:'+(Math.random()>.5?'50%':'2px')+';pointer-events:none;animation:confettiFall '+(1.5+Math.random()*2)+'s ease-in forwards;animation-delay:'+Math.random()*.8+'s';
+    el.style.cssText=`position:fixed;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;left:${Math.random()*100}vw;top:-10px;background:${cols[i%cols.length]};z-index:999;border-radius:${Math.random()>.5?'50%':'2px'};pointer-events:none;animation:confettiFall ${1.5+Math.random()*2}s ease-in forwards;animation-delay:${Math.random()*.8}s`;
     document.body.appendChild(el);setTimeout(()=>el.remove(),4000);
   },i*25);
 }
 
-// ══ INIT ══
+// ══════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
   const h=window.location.hash.slice(1);
   if(h&&h.startsWith('ORG:'))loadFromSave();
