@@ -134,7 +134,7 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
 .step.done .step-lbl{color:#4ade80}
 
 /* DRAW ANIMATION MODAL */
-#draw-modal{position:fixed;inset:0;background:rgba(0,0,5,.95);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+#draw-modal{position:fixed;inset:0;background:rgba(0,0,5,.95);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
 .draw-modal-header{text-align:center;margin-bottom:16px}
 .draw-modal-title{font-size:20px;font-weight:900;color:#ffd54a;letter-spacing:2px;text-transform:uppercase}
 #draw-reveal-card{min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:12px;animation:revealPop .5s ease}
@@ -160,7 +160,7 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
   .form-row.col2,.form-row.col3{grid-template-columns:1fr}
   .step-lbl{display:none}
   .share-row{flex-direction:column}
-  #draw-canvas{width:100%;height:auto}
+  #draw-canvas{width:100%;height:auto;max-height:160px}
 }
 </style>
 </head>
@@ -231,11 +231,11 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
     <div id="draw-reveal-name" style="color:#475569;font-size:14px">Balls are bouncing — drawing soon...</div>
     <div id="draw-reveal-team"></div>
   </div>
-  <canvas id="draw-canvas" width="520" height="280"></canvas>
   <div class="draw-modal-controls">
     <button class="btn btn-outline" onclick="DA.speed=3;toast('⚡ Speed up!')">⚡ Speed Up (3×)</button>
-    <button class="btn btn-gold" onclick="skipToResults()">Skip to Results →</button>
+    <button class="btn btn-gold" onclick="skipToResults()">⏭ Skip to Results</button>
   </div>
+  <canvas id="draw-canvas" width="520" height="280"></canvas>
   <div id="draw-progress">Get ready...</div>
 </div>
 
@@ -433,7 +433,7 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
           <div id="plink-list"></div>
           <button class="btn btn-outline btn-sm" style="margin-top:8px" onclick="copyAllLinks()">📋 Copy All Links (formatted)</button>
         </div>
-        <button class="btn btn-red btn-sm" style="margin-top:12px" onclick="redoDraw()">🔄 Re-run Draw</button>
+        <button id="redo-draw-btn" class="btn btn-red btn-sm" style="margin-top:12px" onclick="redoDraw()">🔄 Re-run Draw</button>
       </div>
     </div>
   </div>
@@ -763,7 +763,7 @@ let DA = {
 // ══════════════════════════════════════════════════
 function runDraw(){
   if(!SW.entries.length){toast('Add entries first');return;}
-  if(SW.drawDone&&!confirm('Re-run the draw? All team assignments will be reset.'))return;
+  if(SW.drawDone){toast('Use the Re-run Draw button to reset.');return;}
   startDrawAnimation();
 }
 
@@ -996,7 +996,15 @@ async function sendDrawEmails(){
 }
 
 function redoDraw(){
-  if(!confirm('Re-run draw? Team assignments will be reset.'))return;
+  const btn=document.getElementById('redo-draw-btn');
+  if(!btn._confirming){
+    btn._confirming=true;
+    btn.textContent='⚠️ Confirm re-run?';
+    btn.style.background='#dc2626';
+    setTimeout(()=>{if(btn._confirming){btn._confirming=false;btn.textContent='🔄 Re-run Draw';btn.style.background='';}},3000);
+    return;
+  }
+  btn._confirming=false;btn.textContent='🔄 Re-run Draw';btn.style.background='';
   SW.drawDone=false;SW.emailResults=null;
   SW.entries.forEach(e=>{e.teamName=null;e.teamFlag=null;});
   renderDrawTab();saveState();
