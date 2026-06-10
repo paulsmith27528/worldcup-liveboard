@@ -1124,25 +1124,38 @@ function startDrawCountdown(){
 // ══════════════════════════════════════════════════
 // SAVE / LOAD
 // ══════════════════════════════════════════════════
+const LS_KEY='sweepstake_autosave';
+
 function saveState(){
   const hash='ORG:'+btoa(JSON.stringify(SW));
   history.replaceState(null,'',window.location.pathname+window.location.search+'#'+hash);
-  toast('💾 Saved — bookmark this page!',2000);
+  try{localStorage.setItem(LS_KEY,JSON.stringify(SW));}catch(e){}
 }
 
 function loadFromSave(){
   try{
+    // Prefer URL hash; fall back to localStorage
+    let d=null;
     const h=window.location.hash.slice(1);
-    if(!h||!h.startsWith('ORG:'))throw new Error('No save');
-    const d=JSON.parse(atob(h.replace('ORG:','')));
+    if(h&&h.startsWith('ORG:')){
+      d=JSON.parse(atob(h.replace('ORG:','')));
+    } else {
+      const ls=localStorage.getItem(LS_KEY);
+      if(ls) d=JSON.parse(ls);
+    }
+    if(!d)throw new Error('No save');
     SW={...SW,...d};
+    // Restore URL hash if it was missing
+    const newHash='ORG:'+btoa(JSON.stringify(SW));
+    history.replaceState(null,'',window.location.pathname+window.location.search+'#'+newHash);
     showScreen('screen-dashboard');
     updateDashHeader();updateJoinLink();renderEntryList();renderElimGrid();updateStats();startDrawCountdown();
     startServerPoll();
     if(SW.drawDone){goToTab('tab-draw');}
     toast('✅ Sweepstake loaded!');
+    return true;
   }catch(e){
-    toast('No saved sweepstake found');
+    return false;
   }
 }
 
@@ -1163,8 +1176,9 @@ function fireConfetti(){
 // ══════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
   const h=window.location.hash.slice(1);
-  if(h&&h.startsWith('ORG:'))loadFromSave();
-  goToTab('tab-entries');
+  const loaded=(h&&h.startsWith('ORG:'))||localStorage.getItem(LS_KEY);
+  if(loaded)loadFromSave();
+  if(!SW.drawDone)goToTab('tab-entries');
 });
 </script>
 </body>
