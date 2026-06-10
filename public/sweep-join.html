@@ -24,23 +24,28 @@ body{background:radial-gradient(ellipse at 50% 0%,#0d2847,#061020 40%,#020810 10
 .inp{width:100%;background:rgba(0,0,0,.5);border:1px solid rgba(34,211,238,.2);border-radius:8px;color:#fff;padding:12px 14px;font-size:14px;outline:none;transition:border-color .2s;margin-bottom:14px}
 .inp:focus{border-color:rgba(34,211,238,.55)}
 .inp::placeholder{color:#334155}
+.inp.error{border-color:rgba(239,68,68,.6)}
 
 .btn{display:block;width:100%;font-weight:900;font-size:14px;padding:14px;border-radius:10px;cursor:pointer;border:none;transition:all .18s;text-align:center}
 .btn-gold{background:linear-gradient(135deg,#ffd54a,#f59e0b);color:#000}
 .btn-gold:hover{box-shadow:0 0 24px rgba(255,213,74,.5);transform:translateY(-1px)}
-.btn-outline{background:transparent;border:1px solid rgba(34,211,238,.3);color:#22d3ee;margin-top:8px}
+.btn-gold:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
-.success{display:none;text-align:center}
-.success.show{display:block;animation:fadeUp .4s ease}
-.code-box{background:rgba(0,0,0,.5);border:1px solid rgba(34,211,238,.3);border-radius:10px;padding:16px;font-family:monospace;font-size:12px;color:#22d3ee;word-break:break-all;margin:12px 0;text-align:left}
-.bookmark-box{background:rgba(255,213,74,.07);border:1px solid rgba(255,213,74,.25);border-radius:10px;padding:16px;margin:12px 0}
-.bookmark-link{font-family:monospace;font-size:11px;color:#94a3b8;word-break:break-all;display:block;margin-top:6px}
+.alert{border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:12px;line-height:1.5}
+.alert-info{background:rgba(34,211,238,.07);border:1px solid rgba(34,211,238,.2);color:#67e8f9}
+.alert-warn{background:rgba(255,213,74,.07);border:1px solid rgba(255,213,74,.2);color:#ffd54a}
+.alert-err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);color:#f87171}
+
+.success{display:none;text-align:center;animation:fadeUp .4s ease}
+.success.show{display:block}
+.code-box{background:rgba(0,0,0,.5);border:1px solid rgba(34,211,238,.3);border-radius:10px;padding:14px;font-family:monospace;font-size:12px;color:#22d3ee;word-break:break-all;margin:12px 0;text-align:left}
 
 #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(10,25,50,.95);border:1px solid rgba(34,211,238,.3);border-radius:10px;padding:10px 22px;font-size:12px;font-weight:700;color:#fff;z-index:999;transition:transform .3s}
 #toast.show{transform:translateX(-50%) translateY(0)}
 
 .divider{height:1px;background:rgba(255,255,255,.07);margin:16px 0}
 .note{font-size:11px;color:#334155;text-align:center;line-height:1.6;margin-top:12px}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,0,0,.3);border-top-color:#000;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
 </style>
 </head>
 <body>
@@ -52,79 +57,139 @@ body{background:radial-gradient(ellipse at 50% 0%,#0d2847,#061020 40%,#020810 10
   <div class="sweep-name" id="sweep-name">WC2026 Sweepstake</div>
   <div class="sweep-org" id="sweep-org"></div>
 
-  <div id="step-type">
-    <div style="font-size:12px;color:#64748b;margin-bottom:14px;text-align:center">Enter your name to register:</div>
+  <!-- Registration form -->
+  <div id="step-register">
+    <div id="form-alert" style="display:none"></div>
+
     <label class="lbl">Your Name</label>
-    <input class="inp" id="entrant-name" placeholder="Enter your name" autocomplete="name">
-    <button class="btn btn-gold" onclick="submitEntry()">Register My Entry →</button>
-    <div class="note">💰 Money is paid directly to the organiser — not through this app</div>
-  </div>
+    <input class="inp" id="entrant-name" placeholder="Enter your full name" autocomplete="name">
 
-  <div class="success" id="success-state">
-    <div style="font-size:48px;margin-bottom:12px">🎉</div>
-    <div style="font-size:20px;font-weight:900;margin-bottom:6px">You're in!</div>
-    <div style="font-size:13px;color:#64748b;margin-bottom:16px" id="success-name"></div>
+    <label class="lbl">Your Email Address</label>
+    <input class="inp" id="entrant-email" type="email" placeholder="you@example.com" autocomplete="email">
 
-    <div class="divider"></div>
-
-    <div style="font-size:12px;color:#94a3b8;margin-bottom:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase">Step 1 — Send Your Join Code to the Organiser</div>
-    <div style="font-size:12px;color:#64748b;margin-bottom:8px">Copy this code and send it to <strong style="color:#e2e8f0" id="organiser-name">the organiser</strong> via WhatsApp or email:</div>
-    <div class="code-box" id="join-code-display"></div>
-    <button class="btn btn-outline" onclick="copyCode()" style="margin-bottom:16px">📋 Copy Join Code</button>
-
-    <div class="divider"></div>
-
-    <div class="bookmark-box">
-      <div style="font-size:12px;color:#ffd54a;font-weight:700;margin-bottom:6px">Step 2 — Bookmark Your Personal Bracket Link</div>
-      <div style="font-size:11px;color:#64748b;margin-bottom:6px">Once the organiser confirms you and runs the draw, this link will show your team and the live bracket:</div>
-      <span class="bookmark-link" id="bracket-link-preview">Your link will appear here after the organiser confirms your entry</span>
+    <div class="alert alert-warn" style="margin-bottom:14px">
+      <strong>⚽ Want more than one team?</strong><br>
+      Each email address = one entry. To get a second team, register again using a different email address.
     </div>
 
-    <button class="btn btn-gold" onclick="copyBracketLink()" id="copy-bracket-btn" style="display:none">⭐ Copy Your Bracket Link</button>
+    <button class="btn btn-gold" id="register-btn" onclick="submitEntry()">Register My Entry →</button>
+    <div class="note">💰 Buy-in paid directly to the organiser — not through this app</div>
+  </div>
 
-    <div class="note" style="margin-top:16px">The organiser will confirm your entry and let you know when the draw has been run. Pay your organiser directly — not through this app.</div>
+  <!-- Success state -->
+  <div class="success" id="success-state">
+    <div style="font-size:48px;margin-bottom:12px">🎉</div>
+    <div style="font-size:20px;font-weight:900;margin-bottom:6px">You're registered!</div>
+    <div style="font-size:13px;color:#64748b;margin-bottom:16px" id="success-name"></div>
+
+    <div class="alert alert-info" style="text-align:left">
+      <strong>✅ Confirmation email sent</strong><br>
+      Check your inbox — we've sent a confirmation to <span id="success-email" style="color:#fff"></span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="font-size:13px;color:#94a3b8;line-height:1.7">
+      <strong style="color:#fff" id="organiser-name2">The organiser</strong> will run the draw soon. You'll get another email the moment your team is revealed — no need to do anything else.
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="alert alert-warn" style="text-align:left">
+      <strong>Want a second team?</strong><br>
+      Register again on this page using a <strong>different email address</strong>.
+    </div>
+
+    <button class="btn btn-gold" onclick="registerAnother()" style="margin-top:4px">Register Another Entry →</button>
   </div>
 </div>
 
-<div id="toast">✅</div>
+<div id="toast"></div>
 
 <script>
 let params={};
 
 function toast(msg,dur=2500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
-function genToken(){return Math.random().toString(36).substring(2,12);}
+
+function showAlert(msg,type='err'){
+  const el=document.getElementById('form-alert');
+  el.className='alert alert-'+type;
+  el.textContent=msg;
+  el.style.display='block';
+}
+function clearAlert(){document.getElementById('form-alert').style.display='none';}
 
 window.addEventListener('DOMContentLoaded',()=>{
   params=Object.fromEntries(new URLSearchParams(window.location.search));
   document.getElementById('sweep-name').textContent=params.name||'WC2026 Sweepstake';
-  document.getElementById('sweep-org').textContent=params.organiser?'Organised by '+params.organiser:'';
+  if(params.organiser)document.getElementById('sweep-org').textContent='Organised by '+params.organiser;
 });
 
-function submitEntry(){
+async function submitEntry(){
+  clearAlert();
   const name=document.getElementById('entrant-name').value.trim();
-  if(!name){toast('Please enter your name');return;}
+  const email=document.getElementById('entrant-email').value.trim();
 
-  const tok=genToken();
-  const payload={n:name,t:'random',team:null,tok,ts:Date.now(),sid:params.s||''};
-  const code='V1:'+btoa(JSON.stringify(payload));
+  if(!name){showAlert('Please enter your name');document.getElementById('entrant-name').focus();return;}
+  if(!email||!/^[^@]+@[^@]+\.[^@]+$/.test(email)){showAlert('Please enter a valid email address');document.getElementById('entrant-email').focus();return;}
+  if(!params.s){showAlert('Invalid join link — please ask the organiser to resend it.','err');return;}
 
-  document.getElementById('step-type').style.display='none';
-  const succ=document.getElementById('success-state');
-  succ.classList.add('show');
-  document.getElementById('success-name').textContent=name;
-  document.getElementById('organiser-name').textContent=params.organiser||'the organiser';
-  document.getElementById('join-code-display').textContent=code;
-  document.getElementById('bracket-link-preview').textContent='Your bracket link will be sent by '+(params.organiser||'the organiser')+' once the draw is run.';
+  const btn=document.getElementById('register-btn');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span>Registering...';
+
+  try{
+    const res=await fetch('/api/sweep-register',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        sweepstakeId:params.s,
+        sweepstakeName:params.name||'WC2026 Sweepstake',
+        organiser:params.organiser||'',
+        name,
+        email,
+        currency:params.c||'£',
+        pricePerEntry:params.r||null,
+      })
+    });
+
+    const data=await res.json();
+
+    if(res.status===409){
+      showAlert(data.error||'This email is already registered. Use a different email for a second entry.');
+      btn.disabled=false;btn.innerHTML='Register My Entry →';
+      return;
+    }
+    if(!res.ok){
+      showAlert(data.error||'Something went wrong. Please try again.');
+      btn.disabled=false;btn.innerHTML='Register My Entry →';
+      return;
+    }
+
+    // Success
+    document.getElementById('step-register').style.display='none';
+    const succ=document.getElementById('success-state');
+    succ.classList.add('show');
+    document.getElementById('success-name').textContent=name;
+    document.getElementById('success-email').textContent=email;
+    document.getElementById('organiser-name2').textContent=params.organiser||'The organiser';
+
+  }catch(err){
+    showAlert('Network error — please check your connection and try again.');
+    btn.disabled=false;btn.innerHTML='Register My Entry →';
+  }
 }
 
-function copyCode(){
-  const code=document.getElementById('join-code-display').textContent;
-  navigator.clipboard.writeText(code).then(()=>toast('📋 Join code copied — send it to the organiser!'));
-}
-
-function copyBracketLink(){
-  const link=document.getElementById('bracket-link-preview').textContent;
-  navigator.clipboard.writeText(link).then(()=>toast('⭐ Bracket link copied — bookmark it!'));
+function registerAnother(){
+  // Reset form for another registration
+  document.getElementById('entrant-name').value='';
+  document.getElementById('entrant-email').value='';
+  document.getElementById('success-state').classList.remove('show');
+  document.getElementById('step-register').style.display='block';
+  const btn=document.getElementById('register-btn');
+  btn.disabled=false;btn.innerHTML='Register My Entry →';
+  clearAlert();
+  document.getElementById('entrant-name').focus();
 }
 </script>
 </body>
