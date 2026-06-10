@@ -20,14 +20,6 @@ body{background:radial-gradient(ellipse at 50% 0%,#0d2847,#061020 40%,#020810 10
 .sweep-name{font-size:22px;font-weight:900;text-align:center;margin-bottom:4px}
 .sweep-org{font-size:12px;color:#475569;text-align:center;margin-bottom:24px}
 
-.price-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
-.price-box{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
-.price-box.selected{border-color:rgba(255,213,74,.6);background:rgba(255,213,74,.08)}
-.price-box input[type=radio]{position:absolute;opacity:0;width:0;height:0}
-.price-type{font-size:10px;color:#475569;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
-.price-amt{font-size:28px;font-weight:900;color:#ffd54a;line-height:1}
-.price-desc{font-size:10px;color:#334155;margin-top:4px}
-
 .lbl{display:block;font-size:10px;color:#475569;letter-spacing:1px;font-weight:700;text-transform:uppercase;margin-bottom:5px}
 .inp{width:100%;background:rgba(0,0,0,.5);border:1px solid rgba(34,211,238,.2);border-radius:8px;color:#fff;padding:12px 14px;font-size:14px;outline:none;transition:border-color .2s;margin-bottom:14px}
 .inp:focus{border-color:rgba(34,211,238,.55)}
@@ -38,7 +30,6 @@ body{background:radial-gradient(ellipse at 50% 0%,#0d2847,#061020 40%,#020810 10
 .btn-gold:hover{box-shadow:0 0 24px rgba(255,213,74,.5);transform:translateY(-1px)}
 .btn-outline{background:transparent;border:1px solid rgba(34,211,238,.3);color:#22d3ee;margin-top:8px}
 
-/* SUCCESS STATE */
 .success{display:none;text-align:center}
 .success.show{display:block;animation:fadeUp .4s ease}
 .code-box{background:rgba(0,0,0,.5);border:1px solid rgba(34,211,238,.3);border-radius:10px;padding:16px;font-family:monospace;font-size:12px;color:#22d3ee;word-break:break-all;margin:12px 0;text-align:left}
@@ -61,15 +52,14 @@ body{background:radial-gradient(ellipse at 50% 0%,#0d2847,#061020 40%,#020810 10
   <div class="sweep-name" id="sweep-name">WC2026 Sweepstake</div>
   <div class="sweep-org" id="sweep-org"></div>
 
-  <!-- Step 1: Choose type -->
   <div id="step-type">
     <div style="font-size:12px;color:#64748b;margin-bottom:14px;text-align:center">Enter your name to register:</div>
-
-    <button class="btn btn-gold" onclick="submitEntry()">✅ Register My Entry</button>
+    <label class="lbl">Your Name</label>
+    <input class="inp" id="entrant-name" placeholder="Enter your name" autocomplete="name">
+    <button class="btn btn-gold" onclick="submitEntry()">Register My Entry →</button>
     <div class="note">💰 Money is paid directly to the organiser — not through this app</div>
   </div>
 
-  <!-- Success state -->
   <div class="success" id="success-state">
     <div style="font-size:48px;margin-bottom:12px">🎉</div>
     <div style="font-size:20px;font-weight:900;margin-bottom:6px">You're in!</div>
@@ -99,21 +89,6 @@ body{background:radial-gradient(ellipse at 50% 0%,#0d2847,#061020 40%,#020810 10
 <div id="toast">✅</div>
 
 <script>
-const ALL_TEAMS=[
-  {name:"Mexico",flag:"🇲🇽"},{name:"Ecuador",flag:"🇪🇨"},{name:"S.Korea",flag:"🇰🇷"},{name:"Sweden",flag:"🇸🇪"},
-  {name:"Canada",flag:"🇨🇦"},{name:"Italy",flag:"🇮🇹"},{name:"Croatia",flag:"🇭🇷"},
-  {name:"Brazil",flag:"🇧🇷"},{name:"Morocco",flag:"🇲🇦"},{name:"Scotland",flag:"🏴󠁧󠁢󠁳󠁣󠁴󠁿"},{name:"Haiti",flag:"🇭🇹"},
-  {name:"USA",flag:"🇺🇸"},{name:"Netherlands",flag:"🇳🇱"},{name:"Japan",flag:"🇯🇵"},{name:"Gambia",flag:"🇬🇲"},
-  {name:"Germany",flag:"🇩🇪"},{name:"Spain",flag:"🇪🇸"},{name:"Uruguay",flag:"🇺🇾"},{name:"Tunisia",flag:"🇹🇳"},
-  {name:"Colombia",flag:"🇨🇴"},{name:"Portugal",flag:"🇵🇹"},{name:"Ivory Coast",flag:"🇨🇮"},{name:"S.Arabia",flag:"🇸🇦"},
-  {name:"Belgium",flag:"🇧🇪"},{name:"Iran",flag:"🇮🇷"},{name:"Egypt",flag:"🇪🇬"},{name:"N.Zealand",flag:"🇳🇿"},
-  {name:"France",flag:"🇫🇷"},{name:"Austria",flag:"🇦🇹"},{name:"Senegal",flag:"🇸🇳"},{name:"Qatar",flag:"🇶🇦"},
-  {name:"Argentina",flag:"🇦🇷"},{name:"Peru",flag:"🇵🇪"},{name:"Nigeria",flag:"🇳🇬"},{name:"Israel",flag:"🇮🇱"},
-  {name:"England",flag:"🏴󠁧󠁢󠁥󠁮󠁧󠁿"},{name:"Denmark",flag:"🇩🇰"},{name:"Serbia",flag:"🇷🇸"},{name:"Panama",flag:"🇵🇦"},
-  {name:"Uzbekistan",flag:"🇺🇿"},{name:"Chile",flag:"🇨🇱"},{name:"Ghana",flag:"🇬🇭"},
-  {name:"Belarus",flag:"🇧🇾"},{name:"Algeria",flag:"🇩🇿"},{name:"China",flag:"🇨🇳"},
-];
-
 let params={};
 
 function toast(msg,dur=2500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
@@ -123,36 +98,24 @@ window.addEventListener('DOMContentLoaded',()=>{
   params=Object.fromEntries(new URLSearchParams(window.location.search));
   document.getElementById('sweep-name').textContent=params.name||'WC2026 Sweepstake';
   document.getElementById('sweep-org').textContent=params.organiser?'Organised by '+params.organiser:'';
-  const cur=params.c||'£';
-  document.getElementById('price-r').textContent=cur+(params.r||3);
-  document.getElementById('price-p').textContent=cur+(params.p||8);
-  renderTeamGrid();
 });
-
-
-
-
 
 function submitEntry(){
   const name=document.getElementById('entrant-name').value.trim();
   if(!name){toast('Please enter your name');return;}
 
-
   const tok=genToken();
   const payload={n:name,t:'random',team:null,tok,ts:Date.now(),sid:params.s||''};
   const code='V1:'+btoa(JSON.stringify(payload));
 
-  // Show success
   document.getElementById('step-type').style.display='none';
   const succ=document.getElementById('success-state');
   succ.classList.add('show');
   document.getElementById('success-name').textContent=name;
   document.getElementById('organiser-name').textContent=params.organiser||'the organiser';
   document.getElementById('join-code-display').textContent=code;
-
-  // Note about bracket link (available after organiser confirms)
-  document.getElementById('bracket-link-preview').textContent='Your bracket link will be sent by '+( params.organiser||'the organiser')+' once the draw is run.';
-});
+  document.getElementById('bracket-link-preview').textContent='Your bracket link will be sent by '+(params.organiser||'the organiser')+' once the draw is run.';
+}
 
 function copyCode(){
   const code=document.getElementById('join-code-display').textContent;
