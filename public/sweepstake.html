@@ -186,20 +186,36 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
 (function(){
   var params = new URLSearchParams(window.location.search);
   var tok = params.get('token');
+
   function showBlocked(){
     var gate = document.getElementById('access-gate');
     gate.querySelector('.gate-card').innerHTML =
       '<div class="gate-icon">🔐</div>' +
       '<h2>Access Required</h2>' +
-      '<p>The Sweepstake Organiser Hub requires a valid access link.<br>Purchase the Sweepstake or Bundle to get your personal link.</p>' +
-      '<a href="/landing.html" class="gate-btn">Get Access →</a>';
+      '<p>Your organiser link could not be verified. If you have a saved bookmark or hub link, paste it below to restore access.</p>' +
+      '<input id="gate-link-inp" placeholder="Paste your saved hub link here..." style="width:100%;background:rgba(0,0,0,.4);border:1px solid rgba(255,213,74,.3);border-radius:8px;color:#fff;padding:10px 14px;font-size:13px;margin:12px 0;outline:none" />' +
+      '<button onclick="(function(){var v=document.getElementById('gate-link-inp').value;var h=v.indexOf('#ORG:');if(h>-1){window.location.href=v;}else{alert('No saved hub link found in that URL.');}})()" style="display:block;width:100%;background:linear-gradient(135deg,#ffd54a,#f59e0b);color:#000;font-weight:900;font-size:14px;padding:12px 24px;border-radius:50px;border:none;cursor:pointer;margin-bottom:12px">Restore from saved link</button>' +
+      '<a href="/landing.html" class="gate-btn" style="font-size:13px;padding:10px 24px">Get new access</a>';
   }
+
   function hideGate(){
     var gate = document.getElementById('access-gate');
     if(gate) gate.remove();
   }
+
+  // ORG: hash bypass — if valid organiser state saved in URL hash, let them through directly
+  var savedHash = window.location.hash.slice(1);
+  if(savedHash && savedHash.startsWith('ORG:')){
+    try{
+      var decodedOrg = decodeURIComponent(escape(atob(savedHash.replace('ORG:',''))));
+      var parsedOrg = JSON.parse(decodedOrg);
+      if(parsedOrg && parsedOrg.config){ hideGate(); return; }
+    }catch(e){}
+  }
+
   if(!tok){ showBlocked(); return; }
-  fetch('/api/verify-token?token=' + encodeURIComponent(tok))
+
+  fetch('/api/verify-token?' + new URLSearchParams({token:tok}).toString())
     .then(function(r){ return r.json(); })
     .then(function(data){
       if(data && data.valid){
@@ -211,8 +227,8 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
           gate.querySelector('.gate-card').innerHTML =
             '<div class="gate-icon">📊</div>' +
             '<h2>Dashboard Access Only</h2>' +
-            '<p>Your access link is for the Live Dashboard, not the Sweepstake Hub.<br>Upgrade to the Bundle to get both.</p>' +
-            '<a href="/dashboard.html?token=' + encodeURIComponent(tok) + '" class="gate-btn" style="background:linear-gradient(135deg,#22d3ee,#0ea5e9)">Go to Dashboard →</a>';
+            '<p>Your access link is for the Live Dashboard, not the Sweepstake Hub. Upgrade to the Bundle to get both.</p>' +
+            '<a href="/dashboard.html?' + new URLSearchParams({token:tok}).toString() + '" class="gate-btn" style="background:linear-gradient(135deg,#22d3ee,#0ea5e9)">Go to Dashboard</a>';
         }
       } else {
         showBlocked();
