@@ -851,7 +851,7 @@ function startDrawAnimation(){
 
   // First reveal after 3 seconds
   clearTimeout(DA.revealTimeout);
-  DA.revealTimeout=setTimeout(revealNext, 3000);
+  DA.revealTimeout=setTimeout(revealNext, 8000);
 }
 
 function animLoop(){
@@ -969,7 +969,7 @@ function revealNext(){
 
   // Schedule next reveal
   if(DA.idx<DA.picks.length){
-    DA.revealTimeout=setTimeout(revealNext, 2400/DA.speed);
+    DA.revealTimeout=setTimeout(revealNext, 8000/DA.speed);
   } else {
     DA.revealTimeout=setTimeout(finishDraw, 2000/DA.speed);
   }
@@ -1231,7 +1231,7 @@ function recoveryUrl(){
 
 function saveState(){
   if(!SW.orgToken)SW.orgToken=genToken();
-  const hash='ORG:'+btoa(JSON.stringify(SW));
+  const hash='ORG:'+btoa(unescape(encodeURIComponent(JSON.stringify(SW))));
   history.replaceState(null,'',window.location.pathname+window.location.search+'#'+hash);
   try{localStorage.setItem(LS_KEY,JSON.stringify(SW));}catch(e){}
   // Silently sync to server (fire-and-forget)
@@ -1290,7 +1290,7 @@ async function loadFromSave(){
   let d=null;
   const h=window.location.hash.slice(1);
   if(h&&h.startsWith('ORG:')){
-    try{d=JSON.parse(atob(h.replace('ORG:','')));}catch(e){}
+    try{d=JSON.parse(decodeURIComponent(escape(atob(h.replace('ORG:','')))));}catch(e){}
   }
   if(!d){
     try{const ls=localStorage.getItem(LS_KEY);if(ls)d=JSON.parse(ls);}catch(e){}
