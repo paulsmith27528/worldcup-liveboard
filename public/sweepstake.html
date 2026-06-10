@@ -322,7 +322,15 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
     </div>
     <div class="form-row col2">
       <div><label class="lbl">Auto-Draw Date &amp; Time</label><input class="inp" id="cfg-drawDate" type="datetime-local" value="2026-06-11T17:00"></div>
-      <div><label class="lbl">Organiser PIN (keep private)</label><input class="inp" id="cfg-pin" type="password" value="2026" placeholder="Set your PIN"></div>
+      <div>
+        <label class="lbl" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:6px">
+          <input type="checkbox" id="cfg-pin-toggle" onchange="togglePinField(this)" style="cursor:pointer;width:15px;height:15px">
+          PIN protect this sweepstake (optional)
+        </label>
+        <div id="cfg-pin-box" style="display:none">
+          <input class="inp" id="cfg-pin" type="password" placeholder="Choose a PIN — keep this private">
+        </div>
+      </div>
     </div>
   </div>
 
@@ -503,7 +511,7 @@ const COLOURS=["#FF6B6B","#4ECDC4","#45B7D1","#96CEB4","#FFEAA7","#DDA0DD","#98D
 let SW = {
   id: genId(),
   orgToken: genToken(),
-  config: {name:'Office WC2026 Sweepstake',organiser:'',priceRandom:3,currency:'£',pin:'2026',drawDate:'2026-06-11T17:00'},
+  config: {name:'Office WC2026 Sweepstake',organiser:'',priceRandom:3,currency:'£',pin:'',drawDate:'2026-06-11T17:00'},
   entries: [],
   drawDone: false,
   eliminated: [],
@@ -512,6 +520,10 @@ let SW = {
 let currentTab = 'tab-entries';
 
 function genId(){return Math.random().toString(36).substring(2,8).toUpperCase();}
+function togglePinField(cb){
+  document.getElementById('cfg-pin-box').style.display=cb.checked?'block':'none';
+  if(!cb.checked)document.getElementById('cfg-pin').value='';
+}
 function genToken(){return Math.random().toString(36).substring(2,12);}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function toast(msg,dur=2500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
@@ -547,7 +559,7 @@ function startSweepstake(){
     organiserEmail:g('cfg-org-email'),
     priceRandom:parseFloat(g('cfg-priceR'))||3,
     currency:(g('cfg-cur').replace(/[0-9]/g,'')||'£'),
-    pin:g('cfg-pin')||'2026',
+    pin:document.getElementById('cfg-pin-toggle').checked ? (g('cfg-pin')||'') : '',
     drawDate:g('cfg-drawDate'),
   };
   showScreen('screen-dashboard');
