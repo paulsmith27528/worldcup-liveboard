@@ -258,10 +258,18 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
     <div style="font-size:28px;font-weight:900;margin-bottom:8px">WC2026 Sweepstake</div>
     <div style="font-size:14px;color:#475569;margin-bottom:36px">The automated office sweepstake platform for the 2026 World Cup</div>
     <div style="display:flex;flex-direction:column;gap:10px;max-width:320px;margin:0 auto">
+      <div id="resume-prompt" style="display:none;background:rgba(255,213,74,.08);border:1px solid rgba(255,213,74,.3);border-radius:12px;padding:14px;margin-bottom:10px;text-align:left">
+        <div style="font-size:12px;font-weight:700;color:#ffd54a;margin-bottom:6px">⚠️ You have an existing sweepstake saved</div>
+        <div style="font-size:11px;color:#94a3b8;margin-bottom:10px">This looks like a new purchase, but your browser has a saved sweepstake. What would you like to do?</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-gold btn-sm" onclick="loadFromSave()">📂 Resume Existing Draw</button>
+          <button class="btn btn-outline btn-sm" onclick="clearAndSetup()">🆕 Start Fresh</button>
+        </div>
+      </div>
       <button class="btn btn-gold btn-full" style="font-size:14px;padding:14px" onclick="showScreen('screen-setup')">🎲 Create New Sweepstake</button>
-      <button class="btn btn-outline btn-full" onclick="loadFromSave()">📂 Load Saved Sweepstake</button>
+      <button class="btn btn-outline btn-full" onclick="loadFromSave()">📂 Resume Saved Sweepstake</button>
     </div>
-    <p style="margin-top:24px;font-size:11px;color:#1e3a5f">Your sweepstake data is saved in your browser link — bookmark it to return later</p>
+    <p style="margin-top:24px;font-size:11px;color:#1e3a5f">Your sweepstake data is saved in your browser — use the Leaderboard tab to get your recovery link</p>
   </div>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;max-width:860px;margin:0 auto;padding:0 20px">
     <div class="card" style="text-align:center">
@@ -1235,11 +1243,29 @@ document.addEventListener('DOMContentLoaded',async()=>{
   const hasHash=h&&h.startsWith('ORG:');
   const hasRecovery=params.get('sw')&&params.get('k');
   const hasLocal=!!localStorage.getItem(LS_KEY);
-  if(hasHash||hasRecovery||hasLocal){
+  // Fresh Stripe purchase (token= but no saved state in URL) → show welcome screen
+  // so user can choose to start fresh OR resume existing. Don't silently clobber.
+  const isFreshPurchase=params.get('token')&&!hasHash&&!hasRecovery;
+  if(hasHash||hasRecovery||(hasLocal&&!isFreshPurchase)){
     await loadFromSave();
+  } else if(isFreshPurchase&&hasLocal){
+    // Show a resume banner on the welcome screen
+    showResumePrompt();
   }
   if(!SW.drawDone)goToTab('tab-entries');
 });
+
+function showResumePrompt(){
+  const el=document.getElementById('resume-prompt');
+  if(el)el.style.display='block';
+}
+
+function clearAndSetup(){
+  if(!confirm('Start a fresh sweepstake? Your existing saved data will be cleared from this browser.'))return;
+  try{localStorage.removeItem(LS_KEY);}catch(e){}
+  history.replaceState(null,'',window.location.pathname+window.location.search);
+  showScreen('screen-setup');
+}
 </script>
 </body>
 </html>
