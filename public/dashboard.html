@@ -414,8 +414,8 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
       }
     })
     .catch(function(){
-      // On network error, fail open so valid users aren't locked out
-      hideGate();
+      // On network error, block access - don't give free access
+      showBlocked();
     });
 })();
 </script>
