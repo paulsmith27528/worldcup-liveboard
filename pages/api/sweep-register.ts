@@ -9,7 +9,7 @@ const redis = new Redis({
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
-const BASE_URL = 'https://worldcupsweepstake-liveboard.com';
+const BASE_URL = 'https://www.worldcupliveboard.com';
 const FROM_EMAIL = 'noreply@worldcupsweepstake-liveboard.com';
 const FROM_NAME = 'WC2026 Sweepstake';
 
