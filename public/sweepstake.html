@@ -236,7 +236,7 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
         showBlocked();
       }
     })
-    .catch(function(){ clearTimeout(timer); hideGate(); });
+    .catch(function(){ clearTimeout(timer); showBlocked(); });
 })();
 </script>
 
