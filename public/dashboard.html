@@ -1093,20 +1093,16 @@ window.addEventListener('DOMContentLoaded',function(){
           '<div class="g-fixed">'+fixedRows+'</div>'+
           '<div class="g-scroll"><table class="g-table"><thead><tr>'+
             '<th class="g-th">P</th>'+
-            '<th class="g-th">W</th>'+
-            '<th class="g-th">D</th>'+
-            '<th class="g-th">L</th>'+
+            '<th class="g-th">GF</th>'+
             '<th class="g-th wide">GD</th>'+
             '<th class="g-th wide">PTS</th>'+
           '</tr></thead><tbody>';
       teams.forEach(function(t,r){
         var gd=t.gd||0,gdc=gd>0?'#4ade80':gd<0?'#f87171':'#475569';
-        var w=t.won||0,d=t.drawn||0,l=t.lost||0;
+        var gf=t.gf||0;
         h+='<tr>'+
           '<td class="g-td"><span class="t-stat">'+t.played+'</span></td>'+
-          '<td class="g-td"><span class="t-stat">'+w+'</span></td>'+
-          '<td class="g-td"><span class="t-stat">'+d+'</span></td>'+
-          '<td class="g-td"><span class="t-stat">'+l+'</span></td>'+
+          '<td class="g-td"><span class="t-stat">'+gf+'</span></td>'+
           '<td class="g-td"><span class="t-stat" style="color:'+gdc+'">'+gd_sign(gd)+'</span></td>'+
           '<td class="g-td"><span class="t-stat t-pts '+(r<2?'top':'')+'">'+t.points+'</span></td>'+
         '</tr>';
@@ -1578,13 +1574,14 @@ if(typeof B!=="undefined")initMobileBracket();
     var gds=function(n){return n>0?'+'+n:String(n);};
     document.getElementById('gm-title').textContent='GROUP '+id;
     document.getElementById('gm-body').innerHTML=teams.map(function(t,r){
-      var gd=t.gd||0,w=t.won||0,d=t.drawn||0,l=t.lost||0;
-      var gdcls=gd>0?' class="gm-gd-pos"':gd<0?' class="gm-gd-neg"':'';
+      var gd=t.gd||0,gf=t.gf||0;
+      var gdcls=gd>0?'gm-gd-pos':gd<0?'gm-gd-neg':'';
       return '<tr class="'+(r<2?'gm-q':'')+'">'+
         '<td><div class="gm-team"><span class="gm-pos">'+(r+1)+'</span>'+flagImg(t.code)+
         '<span class="gm-name">'+t.code+'</span></div></td>'+
-        '<td>'+t.played+'</td><td>'+w+'</td><td>'+d+'</td><td>'+l+'</td>'+
-        '<td'+gdcls+'>'+gds(gd)+'</td>'+
+        '<td>'+t.played+'</td>'+
+        '<td>'+gf+'</td>'+
+        '<td class="'+gdcls+'">'+gds(gd)+'</td>'+
         '<td class="gm-pts">'+t.points+'</td></tr>';
     }).join('');
     document.getElementById('gm-overlay').classList.add('open');
@@ -1602,7 +1599,7 @@ if(typeof B!=="undefined")initMobileBracket();
     <div class="gm-title" id="gm-title"></div>
     <table class="gm-tbl">
       <thead><tr>
-        <th>TEAM</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>PTS</th>
+        <th>TEAM</th><th>P</th><th>GF</th><th>GD</th><th>PTS</th>
       </tr></thead>
       <tbody id="gm-body"></tbody>
     </table>
