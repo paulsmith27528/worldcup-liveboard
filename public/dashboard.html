@@ -71,24 +71,25 @@ header{position:sticky;top:0;z-index:90;background:transparent;backdrop-filter:b
 .g-card.cyan-glow{border-color:rgba(34,211,238,.5)}
 .g-hdr{margin-bottom:4px;padding-bottom:4px;border-bottom:1px solid rgba(34,211,238,.12)}
 .g-id{color:#38dfff;font-weight:900;font-size:9px;letter-spacing:2px;display:block}
-.g-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}
-.g-table{border-collapse:collapse;width:100%;table-layout:fixed}
-.g-table td,.g-table th{padding:0;vertical-align:middle;white-space:nowrap}
-.g-tc-freeze{width:58px;min-width:58px;max-width:58px;position:sticky;left:0;background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));z-index:2}
-.g-tc-stat{width:19px;min-width:19px;text-align:center}
-.g-tc-wide{width:22px;min-width:22px;text-align:center}
-.g-th{font-size:7px;color:#1e3a5f;padding:2px 0 3px;border-bottom:1px solid rgba(34,211,238,.08)}
-.g-td{padding:3px 0;border-top:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .12s}
-.g-td:hover{background:rgba(34,211,238,.07)}
-.g-tr.q .g-tc-freeze{border-left:2px solid rgba(34,211,238,.55)}
-.g-freeze-inner{display:flex;align-items:center;gap:2px}
+.g-body{display:flex;align-items:stretch}
+.g-fixed{flex-shrink:0;width:62px}
+.g-fixed-hdr{height:18px}
+.g-fixed-row{display:flex;align-items:center;gap:2px;padding:3px 0;border-top:1px solid rgba(255,255,255,.04);height:20px;box-sizing:border-box}
+.g-fixed-row:first-of-type{border-top:none}
+.g-fixed-row.q{border-left:2px solid rgba(34,211,238,.55);padding-left:2px}
+.g-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;flex:1;min-width:0}
+.g-table{border-collapse:collapse;table-layout:auto}
+.g-table td,.g-table th{padding:0 0 0 2px;vertical-align:middle;white-space:nowrap}
+.g-th{font-size:7px;color:#1e3a5f;padding:2px 2px 3px;border-bottom:1px solid rgba(34,211,238,.08);text-align:center;width:19px}
+.g-th.wide{width:22px}
+.g-td{padding:3px 2px;border-top:1px solid rgba(255,255,255,.04);text-align:center;height:20px;box-sizing:border-box}
+.g-td:first-child{border-top:none}
 .t-pos{color:#1e3a5f;font-size:7px;width:9px;flex-shrink:0}
-.t-abbr{font-size:8px;width:22px;font-weight:400;flex-shrink:0}
+.t-abbr{font-size:8px;width:22px;font-weight:400;flex-shrink:0;overflow:hidden}
 .t-abbr.top{font-weight:700;color:#e2e8f0}
 .t-abbr.bot{color:#64748b}
-.t-flag{width:20px;flex-shrink:0;padding-right:3px}
-.t-stat{font-size:7px;color:#475569;text-align:center;display:block}
-.t-stat.wide{}
+.t-flag{width:20px;flex-shrink:0}
+.t-stat{font-size:7px;color:#475569;text-align:center;display:block;width:100%}
 .t-pts{font-weight:700}
 .t-pts.top{color:#22d3ee}
 .g-col{font-size:7px;color:#1e3a5f;text-align:center;display:block}
@@ -1056,33 +1057,39 @@ window.addEventListener('DOMContentLoaded',function(){
       var teams=groups[id];
       if(!teams||!teams.length)return;
       var gd_sign=function(n){return n>0?'+'+n:String(n);};
-      var h='<div class="g-card" id="gc-'+id+'"><div class="g-hdr"><span class="g-id">GROUP '+id+'</span></div><div class="g-scroll"><table class="g-table"><thead><tr>'+
-        '<th class="g-tc-freeze g-th"></th>'+
-        '<th class="g-tc-stat g-th"><span class="g-col">P</span></th>'+
-        '<th class="g-tc-stat g-th"><span class="g-col">W</span></th>'+
-        '<th class="g-tc-stat g-th"><span class="g-col">D</span></th>'+
-        '<th class="g-tc-stat g-th"><span class="g-col">L</span></th>'+
-        '<th class="g-tc-wide g-th"><span class="g-col">GD</span></th>'+
-        '<th class="g-tc-wide g-th"><span class="g-col">PTS</span></th>'+
-        '</tr></thead><tbody>';
+      var fixedRows='<div class="g-fixed-hdr"></div>';
+      teams.forEach(function(t,r){
+        fixedRows+='<div class="g-fixed-row'+(r<2?' q':'')+'">'+
+          '<span class="t-pos">'+(r+1)+'</span>'+
+          '<span class="t-abbr '+(r<2?'top':'bot')+'">'+t.code+'</span>'+
+          '<span class="t-flag">'+flagImg(t.code)+'</span>'+
+        '</div>';
+      });
+      var h='<div class="g-card" id="gc-'+id+'"><div class="g-hdr"><span class="g-id">GROUP '+id+'</span></div>'+
+        '<div class="g-body">'+
+          '<div class="g-fixed">'+fixedRows+'</div>'+
+          '<div class="g-scroll"><table class="g-table"><thead><tr>'+
+            '<th class="g-th">P</th>'+
+            '<th class="g-th">W</th>'+
+            '<th class="g-th">D</th>'+
+            '<th class="g-th">L</th>'+
+            '<th class="g-th wide">GD</th>'+
+            '<th class="g-th wide">PTS</th>'+
+          '</tr></thead><tbody>';
       teams.forEach(function(t,r){
         var gd=t.gd||0,gdc=gd>0?'#4ade80':gd<0?'#f87171':'#475569';
         var w=t.won||0,d=t.drawn||0,l=t.lost||0;
-        h+='<tr class="g-tr'+(r<2?' q':'')+'">'+
-          '<td class="g-tc-freeze g-td"><div class="g-freeze-inner">'+
-            '<span class="t-pos">'+(r+1)+'</span>'+
-            '<span class="t-abbr '+(r<2?'top':'bot')+'">'+t.code+'</span>'+
-            '<span class="t-flag">'+flagImg(t.code)+'</span>'+
-          '</div></td>'+
-          '<td class="g-tc-stat g-td"><span class="t-stat">'+t.played+'</span></td>'+
-          '<td class="g-tc-stat g-td"><span class="t-stat">'+w+'</span></td>'+
-          '<td class="g-tc-stat g-td"><span class="t-stat">'+d+'</span></td>'+
-          '<td class="g-tc-stat g-td"><span class="t-stat">'+l+'</span></td>'+
-          '<td class="g-tc-wide g-td"><span class="t-stat" style="color:'+gdc+'">'+gd_sign(gd)+'</span></td>'+
-          '<td class="g-tc-wide g-td"><span class="t-stat t-pts '+(r<2?'top':'')+'">'+t.points+'</span></td>'+
+        h+='<tr>'+
+          '<td class="g-td"><span class="t-stat">'+t.played+'</span></td>'+
+          '<td class="g-td"><span class="t-stat">'+w+'</span></td>'+
+          '<td class="g-td"><span class="t-stat">'+d+'</span></td>'+
+          '<td class="g-td"><span class="t-stat">'+l+'</span></td>'+
+          '<td class="g-td"><span class="t-stat" style="color:'+gdc+'">'+gd_sign(gd)+'</span></td>'+
+          '<td class="g-td"><span class="t-stat t-pts '+(r<2?'top':'')+'">'+t.points+'</span></td>'+
         '</tr>';
       });
-      h+='</tbody></table></div></div>';
+      h+='</tbody></table></div>'+
+        '</div></div>';
       if(i<6)lh+=h;else rh+=h;
       ah+=h;
     });
