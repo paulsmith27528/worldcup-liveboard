@@ -367,25 +367,25 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
 .mob-final-score{font-size:42px;font-weight:900;color:#ffd54a;flex-shrink:0;padding:0 4px}
 .mob-champ{color:#22c55e;font-size:10px;letter-spacing:3px;margin-top:14px;font-weight:700}
 
-/* Group modal */
-.gm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9000;align-items:center;justify-content:center}
+/* ── Group expand modal ─────────────────────────────── */
+.gm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:9000;align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
 .gm-overlay.open{display:flex}
-.gm-box{background:linear-gradient(150deg,rgba(4,15,34,.99),rgba(2,8,20,1));border:1px solid rgba(34,211,238,.35);border-radius:16px;padding:20px 24px;min-width:320px;max-width:94vw;position:relative}
-.gm-close{position:absolute;top:12px;right:14px;background:none;border:none;color:#38dfff;font-size:18px;cursor:pointer;line-height:1}
-.gm-title{color:#38dfff;font-weight:900;font-size:13px;letter-spacing:3px;margin-bottom:14px}
-.gm-table{border-collapse:collapse;width:100%}
-.gm-table th{font-size:9px;color:#1e3a5f;padding:4px 10px;text-align:center;border-bottom:1px solid rgba(34,211,238,.12)}
-.gm-table th.gm-left{text-align:left;padding-left:0}
-.gm-table td{padding:6px 10px;text-align:center;border-top:1px solid rgba(255,255,255,.05);font-size:11px;color:#475569}
-.gm-table td.gm-left{text-align:left;padding-left:0}
-.gm-table tr.gm-q td{color:#94a3b8}
-.gm-table tr.gm-q td.gm-name{color:#e2e8f0;font-weight:700}
-.gm-table tr td.gm-pts{font-weight:700;color:#475569}
-.gm-table tr.gm-q td.gm-pts{color:#22d3ee;font-weight:700}
-.gm-table tr.gm-q{border-left:3px solid rgba(34,211,238,.55)}
-.gm-team-cell{display:flex;align-items:center;gap:8px}
-.gm-pos{color:#1e3a5f;font-size:9px;width:12px}
-.gm-flag img{width:24px;height:auto}
+.gm-box{background:linear-gradient(150deg,rgba(4,15,34,.99),rgba(2,8,20,1));border:1px solid rgba(34,211,238,.3);border-radius:14px;padding:18px 20px 14px;width:340px;max-width:100%;position:relative}
+.gm-close{position:absolute;top:12px;right:14px;background:none;border:none;color:#38dfff;font-size:16px;cursor:pointer;line-height:1;padding:0}
+.gm-title{color:#38dfff;font-weight:900;font-size:11px;letter-spacing:3px;margin-bottom:12px}
+.gm-tbl{border-collapse:collapse;width:100%}
+.gm-tbl th{font-size:8px;color:#1e3a5f;padding:3px 8px;text-align:center;border-bottom:1px solid rgba(34,211,238,.12);white-space:nowrap}
+.gm-tbl th:first-child{text-align:left;padding-left:0;min-width:120px}
+.gm-tbl td{padding:7px 8px;text-align:center;border-top:1px solid rgba(255,255,255,.05);font-size:11px;color:#475569;white-space:nowrap}
+.gm-tbl td:first-child{text-align:left;padding-left:0}
+.gm-tbl tr.gm-q td{color:#94a3b8}
+.gm-tbl tr.gm-q .gm-name{color:#e2e8f0;font-weight:700}
+.gm-tbl .gm-pts{font-weight:700}
+.gm-tbl tr.gm-q .gm-pts{color:#22d3ee}
+.gm-tbl tr.gm-q{border-left:3px solid rgba(34,211,238,.55)}
+.gm-team{display:flex;align-items:center;gap:7px}
+.gm-pos{font-size:9px;color:#1e3a5f;width:10px;flex-shrink:0}
+.gm-name{font-size:12px}
 .gm-gd-pos{color:#4ade80}
 .gm-gd-neg{color:#f87171}
 .g-card{cursor:pointer}
@@ -1088,7 +1088,7 @@ window.addEventListener('DOMContentLoaded',function(){
           '<span class="t-flag">'+flagImg(t.code)+'</span>'+
         '</div>';
       });
-      var h='<div class="g-card" id="gc-'+id+'" onclick="openGroupModal(\''+id+'\')" title="Click to expand"><div class="g-hdr"><span class="g-id">GROUP '+id+'</span></div>'+
+      var h='<div class="g-card" id="gc-'+id+'" onclick="openGM(\''+id+'\')" title="Tap to expand"><div class="g-hdr"><span class="g-id">GROUP '+id+'</span></div>'+
         '<div class="g-body">'+
           '<div class="g-fixed">'+fixedRows+'</div>'+
           '<div class="g-scroll"><table class="g-table"><thead><tr>'+
@@ -1116,7 +1116,7 @@ window.addEventListener('DOMContentLoaded',function(){
       if(i<6)lh+=h;else rh+=h;
       ah+=h;
     });
-    _groupsData=groups;
+    _gdata=groups;
     if(lgEl)lgEl.innerHTML=lh||loading;
     if(rgEl)rgEl.innerHTML=rh||loading;
     if(agEl)agEl.innerHTML=ah||loading;
@@ -1572,45 +1572,37 @@ function mobShowRound(idx){
 }
 if(typeof B!=="undefined")initMobileBracket();
 
-  var _groupsData={};
-  function openGroupModal(id){
-    var teams=_groupsData[id];
-    if(!teams)return;
+  var _gdata={};
+  function openGM(id){
+    var teams=_gdata[id]; if(!teams)return;
+    var gds=function(n){return n>0?'+'+n:String(n);};
     document.getElementById('gm-title').textContent='GROUP '+id;
-    var gd_sign=function(n){return n>0?'+'+n:String(n);};
-    var rows='';
-    teams.forEach(function(t,r){
+    document.getElementById('gm-body').innerHTML=teams.map(function(t,r){
       var gd=t.gd||0,w=t.won||0,d=t.drawn||0,l=t.lost||0;
-      var gdcls=gd>0?'gm-gd-pos':gd<0?'gm-gd-neg':'';
-      rows+='<tr class="'+(r<2?'gm-q':'')+'">'+
-        '<td class="gm-left gm-pos">'+(r+1)+'</td>'+
-        '<td class="gm-left"><div class="gm-team-cell"><span class="gm-flag">'+flagImg(t.code)+'</span>'+
-          '<span class="'+(r<2?'gm-name':'')+'" style="font-size:12px;color:'+(r<2?'#e2e8f0':'#64748b')+'">'+t.code+'</span></div></td>'+
+      var gdcls=gd>0?' class="gm-gd-pos"':gd<0?' class="gm-gd-neg"':'';
+      return '<tr class="'+(r<2?'gm-q':'')+'">'+
+        '<td><div class="gm-team"><span class="gm-pos">'+(r+1)+'</span>'+flagImg(t.code)+
+        '<span class="gm-name">'+t.code+'</span></div></td>'+
         '<td>'+t.played+'</td><td>'+w+'</td><td>'+d+'</td><td>'+l+'</td>'+
-        '<td class="'+gdcls+'">'+gd_sign(gd)+'</td>'+
-        '<td class="gm-pts">'+t.points+'</td>'+
-      '</tr>';
-    });
-    document.getElementById('gm-body').innerHTML=rows;
+        '<td'+gdcls+'>'+gds(gd)+'</td>'+
+        '<td class="gm-pts">'+t.points+'</td></tr>';
+    }).join('');
     document.getElementById('gm-overlay').classList.add('open');
   }
-  function closeGroupModal(){
-    document.getElementById('gm-overlay').classList.remove('open');
-  }
-  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeGroupModal();});
+  function closeGM(){document.getElementById('gm-overlay').classList.remove('open');}
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeGM();});
 </script>
 
 
 
 
-<div class="gm-overlay" id="gm-overlay" onclick="if(event.target===this)closeGroupModal()">
+<div class="gm-overlay" id="gm-overlay" onclick="if(event.target===this)closeGM()">
   <div class="gm-box">
-    <button class="gm-close" onclick="closeGroupModal()">✕</button>
-    <div class="gm-title" id="gm-title">GROUP A</div>
-    <table class="gm-table">
+    <button class="gm-close" onclick="closeGM()">✕</button>
+    <div class="gm-title" id="gm-title"></div>
+    <table class="gm-tbl">
       <thead><tr>
-        <th class="gm-left" colspan="2">TEAM</th>
-        <th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>PTS</th>
+        <th>TEAM</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>PTS</th>
       </tr></thead>
       <tbody id="gm-body"></tbody>
     </table>
