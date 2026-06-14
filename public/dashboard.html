@@ -77,7 +77,7 @@ header{position:sticky;top:0;z-index:90;background:transparent;backdrop-filter:b
 .g-fixed-row{display:flex;align-items:center;gap:2px;padding:3px 0;border-top:1px solid rgba(255,255,255,.04);height:20px;box-sizing:border-box}
 .g-fixed-row:first-of-type{border-top:none}
 .g-fixed-row.q{border-left:2px solid rgba(34,211,238,.55);padding-left:2px}
-.g-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;flex:1;min-width:0}
+.g-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;flex:1;min-width:0;max-width:136px}
 .g-table{border-collapse:collapse;table-layout:auto}
 .g-table td,.g-table th{padding:0 0 0 2px;vertical-align:middle;white-space:nowrap}
 .g-th{font-size:7px;color:#1e3a5f;padding:2px 2px 3px;border-bottom:1px solid rgba(34,211,238,.08);text-align:center;width:19px}
@@ -366,6 +366,29 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
 .mob-ft-name{font-size:12px;font-weight:900;color:#e2e8f0;letter-spacing:1px}
 .mob-final-score{font-size:42px;font-weight:900;color:#ffd54a;flex-shrink:0;padding:0 4px}
 .mob-champ{color:#22c55e;font-size:10px;letter-spacing:3px;margin-top:14px;font-weight:700}
+
+/* Group modal */
+.gm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9000;align-items:center;justify-content:center}
+.gm-overlay.open{display:flex}
+.gm-box{background:linear-gradient(150deg,rgba(4,15,34,.99),rgba(2,8,20,1));border:1px solid rgba(34,211,238,.35);border-radius:16px;padding:20px 24px;min-width:320px;max-width:94vw;position:relative}
+.gm-close{position:absolute;top:12px;right:14px;background:none;border:none;color:#38dfff;font-size:18px;cursor:pointer;line-height:1}
+.gm-title{color:#38dfff;font-weight:900;font-size:13px;letter-spacing:3px;margin-bottom:14px}
+.gm-table{border-collapse:collapse;width:100%}
+.gm-table th{font-size:9px;color:#1e3a5f;padding:4px 10px;text-align:center;border-bottom:1px solid rgba(34,211,238,.12)}
+.gm-table th.gm-left{text-align:left;padding-left:0}
+.gm-table td{padding:6px 10px;text-align:center;border-top:1px solid rgba(255,255,255,.05);font-size:11px;color:#475569}
+.gm-table td.gm-left{text-align:left;padding-left:0}
+.gm-table tr.gm-q td{color:#94a3b8}
+.gm-table tr.gm-q td.gm-name{color:#e2e8f0;font-weight:700}
+.gm-table tr td.gm-pts{font-weight:700;color:#475569}
+.gm-table tr.gm-q td.gm-pts{color:#22d3ee;font-weight:700}
+.gm-table tr.gm-q{border-left:3px solid rgba(34,211,238,.55)}
+.gm-team-cell{display:flex;align-items:center;gap:8px}
+.gm-pos{color:#1e3a5f;font-size:9px;width:12px}
+.gm-flag img{width:24px;height:auto}
+.gm-gd-pos{color:#4ade80}
+.gm-gd-neg{color:#f87171}
+.g-card{cursor:pointer}
 </style>
 </head>
 <body>
@@ -1065,7 +1088,7 @@ window.addEventListener('DOMContentLoaded',function(){
           '<span class="t-flag">'+flagImg(t.code)+'</span>'+
         '</div>';
       });
-      var h='<div class="g-card" id="gc-'+id+'"><div class="g-hdr"><span class="g-id">GROUP '+id+'</span></div>'+
+      var h='<div class="g-card" id="gc-'+id+'" onclick="openGroupModal(\''+id+'\')" title="Click to expand"><div class="g-hdr"><span class="g-id">GROUP '+id+'</span></div>'+
         '<div class="g-body">'+
           '<div class="g-fixed">'+fixedRows+'</div>'+
           '<div class="g-scroll"><table class="g-table"><thead><tr>'+
@@ -1093,6 +1116,7 @@ window.addEventListener('DOMContentLoaded',function(){
       if(i<6)lh+=h;else rh+=h;
       ah+=h;
     });
+    _groupsData=groups;
     if(lgEl)lgEl.innerHTML=lh||loading;
     if(rgEl)rgEl.innerHTML=rh||loading;
     if(agEl)agEl.innerHTML=ah||loading;
@@ -1547,9 +1571,50 @@ function mobShowRound(idx){
   el.innerHTML=round.matches.map(function(m){var hs=parseInt(m[2]),as=parseInt(m[5]),played=m[6]==="FT"||m[6]==="PEN"||m[6]==="AET",hw=played&&hs>as,aw=played&&as>hs;return '<div class="mob-match"><div class="mob-match-header"><div class="mob-match-team'+(hw?' winner':'')+'">'+m[1]+' '+m[0]+'</div><div class="mob-match-score"><span class="mob-sv'+(hw?' win':'')+'">'+m[2]+'</span><span class="mob-sep">'+(played?m[6]:"vs")+'</span><span class="mob-sv'+(aw?' win':'')+'">'+m[5]+'</span></div><div class="mob-match-team away'+(aw?' winner':'')+'">'+m[3]+' '+m[4]+'</div></div>'+(m[9]?'<div class="mob-stad">&#128205; '+m[9]+'</div>':'')+'</div>';}).join("");
 }
 if(typeof B!=="undefined")initMobileBracket();
+
+  var _groupsData={};
+  function openGroupModal(id){
+    var teams=_groupsData[id];
+    if(!teams)return;
+    document.getElementById('gm-title').textContent='GROUP '+id;
+    var gd_sign=function(n){return n>0?'+'+n:String(n);};
+    var rows='';
+    teams.forEach(function(t,r){
+      var gd=t.gd||0,w=t.won||0,d=t.drawn||0,l=t.lost||0;
+      var gdcls=gd>0?'gm-gd-pos':gd<0?'gm-gd-neg':'';
+      rows+='<tr class="'+(r<2?'gm-q':'')+'">'+
+        '<td class="gm-left gm-pos">'+(r+1)+'</td>'+
+        '<td class="gm-left"><div class="gm-team-cell"><span class="gm-flag">'+flagImg(t.code)+'</span>'+
+          '<span class="'+(r<2?'gm-name':'')+'" style="font-size:12px;color:'+(r<2?'#e2e8f0':'#64748b')+'">'+t.code+'</span></div></td>'+
+        '<td>'+t.played+'</td><td>'+w+'</td><td>'+d+'</td><td>'+l+'</td>'+
+        '<td class="'+gdcls+'">'+gd_sign(gd)+'</td>'+
+        '<td class="gm-pts">'+t.points+'</td>'+
+      '</tr>';
+    });
+    document.getElementById('gm-body').innerHTML=rows;
+    document.getElementById('gm-overlay').classList.add('open');
+  }
+  function closeGroupModal(){
+    document.getElementById('gm-overlay').classList.remove('open');
+  }
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeGroupModal();});
 </script>
 
 
 
+
+<div class="gm-overlay" id="gm-overlay" onclick="if(event.target===this)closeGroupModal()">
+  <div class="gm-box">
+    <button class="gm-close" onclick="closeGroupModal()">✕</button>
+    <div class="gm-title" id="gm-title">GROUP A</div>
+    <table class="gm-table">
+      <thead><tr>
+        <th class="gm-left" colspan="2">TEAM</th>
+        <th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>PTS</th>
+      </tr></thead>
+      <tbody id="gm-body"></tbody>
+    </table>
+  </div>
+</div>
 </body>
 </html>
