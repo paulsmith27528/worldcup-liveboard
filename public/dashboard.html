@@ -1187,6 +1187,13 @@ window.addEventListener('DOMContentLoaded',function(){
       if(pEl)pEl.textContent=played;
       if(gEl)gEl.textContent=goals;
       if(aEl)aEl.textContent=played>0?(goals/played).toFixed(2):'-';
+      // Also update overview panel in bracket sidebar
+      var op=document.getElementById('ov-played');
+      var og=document.getElementById('ov-goals');
+      var oa=document.getElementById('ov-avg');
+      if(op)op.textContent=played;
+      if(og)og.textContent=goals;
+      if(oa)oa.textContent=played>0?(goals/played).toFixed(2):'-';
     }).catch(function(e){console.warn('bracket fetch failed',e);});
   }
   loadAll();
