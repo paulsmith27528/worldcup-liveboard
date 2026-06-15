@@ -1524,6 +1524,7 @@ function switchPopTab(tab){
 
 
 function openPopByAbbr(abbr){
+  // First try static G[] data (has full w/d/l stats)
   var team=null;
   for(var i=0;i<G.length;i++){
     for(var j=0;j<G[i].t.length;j++){
@@ -1531,7 +1532,26 @@ function openPopByAbbr(abbr){
     }
     if(team)break;
   }
-  if(team)openPop(team);
+  if(team){openPop(team);return;}
+  // Fall back to live _gdata (from API)
+  var lteam=null;
+  for(var g in _gdata){
+    var arr=_gdata[g];
+    for(var k=0;k<arr.length;k++){
+      if(arr[k].code===abbr){lteam=arr[k];break;}
+    }
+    if(lteam)break;
+  }
+  if(lteam){
+    var ga=(lteam.gf||0)-(lteam.gd||0);
+    openPop({
+      a:lteam.code, n:lteam.name||lteam.code,
+      f:flagImg(lteam.code,40),
+      p:lteam.played||0, w:'-', d:'-', l:'-',
+      gs:lteam.gf||0, ga:ga,
+      pts:lteam.points||0
+    });
+  }
 }
 function closePop(){
   document.getElementById('pop-ov').style.display='none';
