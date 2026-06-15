@@ -1186,6 +1186,32 @@ window.addEventListener('DOMContentLoaded',function(){
 
   /* Stats scorers */
   /* Top scorers + stats: fetch from live API */
+  
+  var NAT_FLAG={
+    'Mexico':'mx','Brazil':'br','Argentina':'ar','France':'fr','Germany':'de',
+    'Spain':'es','Portugal':'pt','England':'gb-eng','Netherlands':'nl','Belgium':'be',
+    'Croatia':'hr','Italy':'it','Uruguay':'uy','Colombia':'co','Ecuador':'ec',
+    'South Korea':'kr','Japan':'jp','Senegal':'sn','Morocco':'ma','Tunisia':'tn',
+    'Switzerland':'ch','Serbia':'rs','Poland':'pl','Denmark':'dk','Sweden':'se',
+    'Australia':'au','Canada':'ca','United States':'us','USA':'us','Qatar':'qa',
+    'Saudi Arabia':'sa','Iran':'ir','Ghana':'gh','Cameroon':'cm','Nigeria':'ng',
+    'Egypt':'eg','South Africa':'za','New Zealand':'nz','Wales':'gb-wls',
+    'Scotland':'gb-sct','Bosnia and Herzegovina':'ba','Czech Republic':'cz',
+    'Norway':'no','Algeria':'dz','China':'cn','Peru':'pe','Panama':'pa',
+    'Costa Rica':'cr','Haiti':'ht','Jamaica':'jm','Chile':'cl','Paraguay':'py',
+    'Bolivia':'bo','Venezuela':'ve','Honduras':'hn','Guatemala':'gt',
+    'El Salvador':'sv','Trinidad and Tobago':'tt','Cuba':'cu','Nicaragua':'ni',
+    'Cape Verde':'cv','Congo':'cg','Gambia':'gm','Ivory Coast':'ci',
+    'Uzbekistan':'uz','Belarus':'by','Israel':'il','Austria':'at','Turkey':'tr',
+    'Ukraine':'ua','Russia':'ru','Greece':'gr','Romania':'ro','Hungary':'hu',
+    'Slovakia':'sk','Slovenia':'si','Finland':'fi','Ireland':'ie',
+    'New Zealand':'nz','Korea Republic':'kr','Iran':'ir'
+  };
+  function natFlag(nat,sz){
+    var code=NAT_FLAG[nat];
+    if(!code)return '';
+    return '<img src="https://flagcdn.com/w'+(sz||20)+'/'+code+'.png" style="height:11px;width:auto;border-radius:1px;vertical-align:middle;margin-left:4px" alt="'+nat+'">';
+  }
   function loadTopScorers(){
     fetch('/api/top-scorers').then(function(r){return r.json();}).then(function(d){
       var players=d.players||[];
@@ -1193,7 +1219,7 @@ window.addEventListener('DOMContentLoaded',function(){
       var html=players.map(function(p,i){
         return '<div style="display:flex;align-items:center;gap:9px;padding:9px 0;border-top:'+(i===0?'none':'1px solid rgba(255,255,255,.05)')+'">'+
           '<span style="color:#1e3a5f;min-width:18px;font-weight:700;font-size:13px">'+(i+1)+'</span>'+
-          '<div style="flex:1"><div style="font-weight:700;font-size:12px">'+p.name+'</div><div style="font-size:8.5px;color:#475569">'+p.nationality+'</div></div>'+
+          '<div style="flex:1"><div style="font-weight:700;font-size:12px;display:flex;align-items:center">'+p.name+natFlag(p.nationality)+'</div><div style="font-size:8.5px;color:#475569">'+p.nationality+'</div></div>'+
           '<div style="text-align:right"><div style="font-size:18px;font-weight:700;color:#ffd54a">'+p.goals+'</div><div style="font-size:7.5px;color:#334155">GOALS</div></div>'+
           '<div style="text-align:right;margin-left:9px"><div style="font-size:15px;font-weight:700;color:#22d3ee">'+(p.assists||0)+'</div><div style="font-size:7.5px;color:#334155">AST</div></div>'+
         '</div>';
@@ -1203,7 +1229,7 @@ window.addEventListener('DOMContentLoaded',function(){
       /* Also update sidebar */
       var scSide=document.getElementById('sc-sidebar');
       if(scSide)scSide.innerHTML=players.slice(0,5).map(function(p,i){
-        return '<div class="sc-row"><span class="sc-num">'+(i+1)+'</span><span class="sc-name">'+p.name+'</span><span class="sc-g">'+p.goals+' &#9917;</span></div>';
+        return '<div class="sc-row"><span class="sc-num">'+(i+1)+'</span><span class="sc-name">'+p.name+natFlag(p.nationality)+'</span><span class="sc-g">'+p.goals+' &#9917;</span></div>';
       }).join('');
     }).catch(function(e){console.warn('top-scorers fetch failed',e);});
   }
