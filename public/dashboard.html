@@ -745,9 +745,9 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
         <div class="panel">
           <div class="ptitle">&#128202; OVERVIEW</div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:6px">
-            <div class="stat-box" style="text-align:center"><div class="stat-val" style="color:#22d3ee;font-size:22px">48</div><div class="stat-lbl">PLAYED</div></div>
-            <div class="stat-box" style="text-align:center"><div class="stat-val" style="color:#ffd54a;font-size:22px">128</div><div class="stat-lbl">GOALS</div></div>
-            <div class="stat-box" style="text-align:center"><div class="stat-val" style="color:#4ade80;font-size:20px">2.67</div><div class="stat-lbl">AVG</div></div>
+            <div class="stat-box" style="text-align:center"><div class="stat-val" style="color:#22d3ee;font-size:22px" id="ov2-played">-</div><div class="stat-lbl">PLAYED</div></div>
+            <div class="stat-box" style="text-align:center"><div class="stat-val" style="color:#ffd54a;font-size:22px" id="ov2-goals">-</div><div class="stat-lbl">GOALS</div></div>
+            <div class="stat-box" style="text-align:center"><div class="stat-val" style="color:#4ade80;font-size:20px" id="ov2-avg">-</div><div class="stat-lbl">AVG</div></div>
           </div>
         </div>
         <div class="panel" style="border-color:rgba(255,213,74,.28)" id="champ-panel">
@@ -1194,6 +1194,13 @@ window.addEventListener('DOMContentLoaded',function(){
       if(op)op.textContent=played;
       if(og)og.textContent=goals;
       if(oa)oa.textContent=played>0?(goals/played).toFixed(2):'-';
+      // Also update stats tab overview
+      var op2=document.getElementById('ov2-played');
+      var og2=document.getElementById('ov2-goals');
+      var oa2=document.getElementById('ov2-avg');
+      if(op2)op2.textContent=played;
+      if(og2)og2.textContent=goals;
+      if(oa2)oa2.textContent=played>0?(goals/played).toFixed(2):'-';
     }).catch(function(e){console.warn('bracket fetch failed',e);});
   }
   loadAll();
