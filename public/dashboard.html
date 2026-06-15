@@ -663,40 +663,10 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
   <div class="bot-row">
 
     <!-- Live Match Center ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ always gold glow -->
-    <div class="panel gold-glow" style="border-color:rgba(255,213,74,.5)">
+    <div class="panel gold-glow" style="border-color:rgba(255,213,74,.5);overflow-y:auto">
       <div class="ptitle">&#9917;&nbsp; LIVE MATCH CENTER</div>
-      <div class="lmc-header">
-        <span class="live-badge live-ring"><span class="blink" style="width:6px;height:6px;border-radius:50%;background:#fff;display:inline-block"></span>&nbsp;LIVE 78'</span>
-        <span style="font-size:7.5px;color:#475569">&#127967; MetLife Stadium, New Jersey</span>
-      </div>
-      <div class="lmc-teams">
-        <div class="lmc-team">
-          <img src="https://flagcdn.com/w40/br.png" style="height:32px;width:auto;border-radius:2px;display:block;margin:0 auto">
-          <div class="lmc-tname" style="font-size:13px;margin-top:5px">BRAZIL</div>
-        </div>
-        <div>
-          <div class="lmc-score" style="font-size:40px;letter-spacing:4px">2 &mdash; 1</div>
-          <div style="text-align:center;font-size:8px;color:#ef4444;font-weight:700;letter-spacing:2px;margin-top:2px">LIVE</div>
-        </div>
-        <div class="lmc-team">
-          <img src="https://flagcdn.com/w40/ar.png" style="height:32px;width:auto;border-radius:2px;display:block;margin:0 auto">
-          <div class="lmc-tname" style="font-size:13px;margin-top:5px">ARGENTINA</div>
-        </div>
-      </div>
-      <div class="lmc-scorers">
-        <div class="lmc-scorer">&#9917; <span style="color:#22d3ee">Vini Jr. 27'</span> &nbsp;&nbsp; &#9917; <span style="color:#22d3ee">Raphinha 72'</span></div>
-        <div class="lmc-scorer" style="text-align:right">M. Alvarez 45+1' &#9917;</div>
-      </div>
-      <div class="poss-row">
-        <span class="poss-lbl">56%</span>
-        <div class="poss-bar"><div class="poss-fill" style="width:56%"></div></div>
-        <span class="poss-lbl" style="text-align:right">44%</span>
-      </div>
-      <div style="font-size:7.5px;color:#1e3a5f;text-align:center;margin-top:2px;letter-spacing:1px">POSSESSION</div>
-      <div class="lmc-stats-row" style="margin-top:6px">
-        <div class="card-stat"><span class="ycard"></span><span style="margin:0 2px">3</span><span class="rcard"></span><span style="margin-left:2px">1</span></div>
-        <div style="font-size:7px;color:#1e3a5f;letter-spacing:.5px">CARDS</div>
-        <div class="card-stat"><span style="margin-right:2px">2</span><span class="ycard"></span><span style="margin:0 2px">2</span><span class="rcard"></span></div>
+      <div id="lv-sidebar" style="flex:1">
+        <div style="color:#475569;font-size:11px;text-align:center;padding:12px">Loading live data…</div>
       </div>
     </div>
 
@@ -1171,9 +1141,12 @@ window.addEventListener('DOMContentLoaded',function(){
       if(d.matches)renderBracket(d.matches);
       var live=d.liveMatches||[];
       if(lvEl&&live.length){
-        lvEl.innerHTML=live.map(function(m){
+        var liveHtml=live.map(function(m){
           return makeLiveCard({id:m.id,status:m.status,minute:m.minute,hTeam:m.hTeam,hAbbr:m.hAbbr,aTeam:m.aTeam,aAbbr:m.aAbbr,hScore:m.hScore,aScore:m.aScore,venue:m.venue,scorers:m.scorers||[]});
         }).join('');
+        lvEl.innerHTML=liveHtml;
+        var sb=document.getElementById('lv-sidebar');
+        if(sb)sb.innerHTML=liveHtml;
       }
       var ind=document.getElementById('live-ind');
       if(ind&&live.length){ind.style.display='flex';ind.innerHTML='<span class="blink" style="width:5px;height:5px;border-radius:50%;background:#ef4444;display:inline-block"></span> '+live.length+' LIVE MATCH'+(live.length>1?'ES':'');}
@@ -1280,7 +1253,14 @@ window.addEventListener('DOMContentLoaded',function(){
 
   /* Live scores fetch */
   function fetchScores(){
-    fetch('/api/live-scores').then(function(r){return r.json()}).then(function(d){if(d&&d.matches)document.getElementById('lv').innerHTML=d.matches.map(makeLiveCard).join('')}).catch(function(){});
+    fetch('/api/live-scores').then(function(r){return r.json()}).then(function(d){
+      if(d&&d.matches){
+        var html=d.matches.map(makeLiveCard).join('');
+        document.getElementById('lv').innerHTML=html;
+        var sb=document.getElementById('lv-sidebar');
+        if(sb)sb.innerHTML=html||'<div style="color:#475569;font-size:11px;text-align:center;padding:12px">No matches right now</div>';
+      }
+    }).catch(function(){});
   }
   fetchScores(); setInterval(fetchScores,20000);
 
