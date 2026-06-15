@@ -1087,8 +1087,8 @@ window.addEventListener('DOMContentLoaded',function(){
       teams.forEach(function(t,r){
         fixedRows+='<div class="g-fixed-row'+(r<2?' q':'')+'">'+
           '<span class="t-pos">'+(r+1)+'</span>'+
-          '<span class="t-abbr '+(r<2?'top':'bot')+'">'+t.code+'</span>'+
-          '<span class="t-flag">'+flagImg(t.code)+'</span>'+
+          '<span class="t-abbr '+(r<2?'top':'bot')+'" onclick="event.stopPropagation();openPopByAbbr(\''+t.code+'\')" style="cursor:pointer">'+t.code+'</span>'+
+          '<span class="t-flag" onclick="event.stopPropagation();openPopByAbbr(\''+t.code+'\')" style="cursor:pointer">'+flagImg(t.code)+'</span>'+
         '</div>';
       });
       var h='<div class="g-card" id="gc-'+id+'" onclick="openGM(\''+id+'\')" title="Tap to expand"><div class="g-hdr"><span class="g-id">GROUP '+id+'</span></div>'+
