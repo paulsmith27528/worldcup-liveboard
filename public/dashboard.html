@@ -1026,7 +1026,6 @@ function makeFinal(){
 }
 
 function makeLiveCard(m){
-  // Normalise API fields vs legacy demo fields
   var hAbbr=m.hAbbr||m.homeCode||'';
   var aAbbr=m.aAbbr||m.awayCode||'';
   var hTeam=m.hTeam||m.homeTeam||hAbbr;
@@ -1034,13 +1033,37 @@ function makeLiveCard(m){
   var hScore=m.hScore!==undefined?m.hScore:m.homeScore;
   var aScore=m.aScore!==undefined?m.aScore:m.awayScore;
   var scorers=m.scorers||[];
-  var venue=m.venue||m.group||'';
+  var venue=m.venue||'';
   var live=m.status==='LIVE',ht=m.status==='HT';
-  var bg=live?'#ef4444':ht?'#f59e0b':'#1d4ed8';
-  var lbl=live?'LIVE '+m.minute+"'":ht?'HALF TIME':m.status==='FT'?'FULL TIME':m.status==='PEN'?'PENALTIES':m.status==='ET'?'EXTRA TIME':m.status;
+  var finished=m.status==='FT'||m.status==='AET'||m.status==='PEN';
+  var ns=m.status==='NS';
+
+  // Upcoming match - compact row style
+  if(ns){
+    var ko='';
+    if(m.date){var d=new Date(m.date);ko=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/London'});}
+    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:8px;background:rgba(255,255,255,.03);border:1px solid rgba(34,211,238,.1);border-radius:10px">'+
+      '<div style="flex:1;display:flex;align-items:center;gap:6px;justify-content:flex-end">'+
+        flagImg(hAbbr,20)+
+        '<span style="font-size:12px;font-weight:700;color:#94a3b8">'+hAbbr+'</span>'+
+      '</div>'+
+      '<div style="text-align:center;min-width:60px">'+
+        '<div style="font-size:13px;font-weight:700;color:#22d3ee">'+ko+'</div>'+
+        '<div style="font-size:8px;color:#334155;margin-top:1px">'+venue+'</div>'+
+      '</div>'+
+      '<div style="flex:1;display:flex;align-items:center;gap:6px">'+
+        '<span style="font-size:12px;font-weight:700;color:#94a3b8">'+aAbbr+'</span>'+
+        flagImg(aAbbr,20)+
+      '</div>'+
+    '</div>';
+  }
+
+  // Live or finished match - full card
+  var bg=live?'#ef4444':ht?'#f59e0b':finished?'#334155':'#1d4ed8';
+  var lbl=live?'LIVE '+m.minute+"'":ht?'HALF TIME':finished?(m.status==='PEN'?'PENS':m.status==='AET'?'AET':'FULL TIME'):'';
   var sc=hScore!==null&&hScore!==undefined?hScore+'&ndash;'+aScore:'VS';
   var sr=scorers.map(function(s){return '<span style="font-size:8px;color:#475569">&#9917; '+s+'</span>';}).join('');
-  return '<div style="background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid '+(live?'rgba(239,68,68,.38)':ht?'rgba(251,191,36,.28)':'rgba(34,211,238,.17)')+';border-radius:12px;padding:13px 15px;margin-bottom:10px">'+
+  return '<div style="background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid '+(live?'rgba(239,68,68,.38)':ht?'rgba(251,191,36,.28)':'rgba(34,211,238,.12)')+';border-radius:12px;padding:13px 15px;margin-bottom:10px">'+
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">'+
       '<span style="background:'+bg+';color:#fff;font-weight:700;font-size:9px;padding:3px 9px;border-radius:4px;letter-spacing:1px">'+lbl+'</span>'+
       '<span style="font-size:8px;color:#334155">'+venue+'</span></div>'+
@@ -1255,10 +1278,24 @@ window.addEventListener('DOMContentLoaded',function(){
   function fetchScores(){
     fetch('/api/live-scores').then(function(r){return r.json()}).then(function(d){
       if(d&&d.matches){
-        var html=d.matches.map(makeLiveCard).join('');
+        var live=d.matches.filter(function(m){return m.status==='LIVE'||m.status==='HT';});
+        var done=d.matches.filter(function(m){return m.status==='FT'||m.status==='AET'||m.status==='PEN';});
+        var upcoming=d.matches.filter(function(m){return m.status==='NS';});
+        // Sort upcoming by kick-off time
+        upcoming.sort(function(a,b){return new Date(a.date)-new Date(b.date);});
+        var sorted=live.concat(done).concat(upcoming);
+        var html=sorted.length?sorted.map(makeLiveCard).join(''):'<div style="color:#475569;font-size:11px;text-align:center;padding:20px">No matches scheduled today</div>';
+        // Add section header if there are upcoming matches and no live
+        if(!live.length&&upcoming.length){
+          html='<div style="font-size:9px;color:#475569;letter-spacing:2px;padding:4px 0 10px">UPCOMING TODAY</div>'+html;
+        } else if(live.length&&upcoming.length){
+          html=live.concat(done).map(makeLiveCard).join('')+
+            '<div style="font-size:9px;color:#475569;letter-spacing:2px;padding:10px 0 8px">UPCOMING TODAY</div>'+
+            upcoming.map(makeLiveCard).join('');
+        }
         document.getElementById('lv').innerHTML=html;
         var sb=document.getElementById('lv-sidebar');
-        if(sb)sb.innerHTML=html||'<div style="color:#475569;font-size:11px;text-align:center;padding:12px">No matches right now</div>';
+        if(sb)sb.innerHTML=html;
       }
     }).catch(function(){});
   }
