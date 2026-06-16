@@ -39,8 +39,6 @@ body.day-mode .night-badge{display:none}
 @keyframes goldPulse{0%,100%{box-shadow:0 0 22px rgba(255,213,74,.35),0 0 50px rgba(255,213,74,.12)}50%{box-shadow:0 0 45px rgba(255,213,74,.75),0 0 90px rgba(255,213,74,.3)}}
 @keyframes cyanPulse{0%,100%{box-shadow:0 0 14px rgba(34,211,238,.25),0 0 30px rgba(34,211,238,.1)}50%{box-shadow:0 0 28px rgba(34,211,238,.55),0 0 60px rgba(34,211,238,.22)}}
 @keyframes livering{0%{box-shadow:0 0 0 0 rgba(239,68,68,.7)}70%{box-shadow:0 0 0 8px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
-@keyframes goldRing{0%,100%{box-shadow:0 0 0 2px rgba(255,213,74,.5),0 0 16px rgba(255,213,74,.2)}50%{box-shadow:0 0 0 3px rgba(255,213,74,.95),0 0 28px rgba(255,213,74,.5)}}
-.live-ring{animation:goldRing 1.6s ease-in-out infinite}
 @keyframes tFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 .blink{animation:blink 1.2s ease-in-out infinite}
 .gold-glow{animation:goldPulse 3s ease-in-out infinite}
@@ -120,12 +118,12 @@ header{position:sticky;top:0;z-index:90;background:transparent;backdrop-filter:b
 .bc{height:68px;background:rgba(2,7,18,.88);border:1px solid rgba(34,211,238,.2);border-radius:7px;padding:3px 8px;display:flex;flex-direction:column;justify-content:space-around;cursor:pointer;transition:border-color .15s,box-shadow .15s}
 .bc:hover{border-color:rgba(34,211,238,.55);box-shadow:0 0 14px rgba(34,211,238,.18)}
 .bc.gold{border-color:rgba(255,213,74,.4)}
-.bc-row{display:flex;justify-content:space-between;align-items:center;gap:3px;font-size:9px;color:rgba(255,255,255,.72)}
+.bc-row{display:flex;justify-content:space-between;align-items:center;gap:3px;font-size:9px;color:rgba(255,255,255,.32)}
 .bc-row.win{color:#e2e8f0;font-weight:700}
 .bc-team{display:flex;align-items:center;gap:3px;overflow:hidden;flex:1}
 .bc-code{color:#1e3a5f;font-size:7px;min-width:18px;flex-shrink:0}
 .bc-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bc-score{color:rgba(255,255,255,.55);flex-shrink:0;min-width:14px;text-align:right}
+.bc-score{color:rgba(255,255,255,.2);flex-shrink:0;min-width:14px;text-align:right}
 .bc-score.win{color:#22d3ee;text-shadow:0 0 7px rgba(34,211,238,.6)}
 .bc-score.gold{color:#ffd54a;text-shadow:0 0 7px rgba(255,213,74,.6)}
 .bc-stad{font-size:6px;color:#1e3a5f;text-align:center;letter-spacing:.3px;margin-top:2px;border-top:1px solid rgba(34,211,238,.06);padding-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -979,25 +977,19 @@ function makeGroup(g){
   return h+'</div>';
 }
 
-function makeBC(m,gold,mirror){
+function makeBC(m,gold){
   var hs=parseInt(m[2]),as=parseInt(m[5]),hw=hs>as,aw=as>hs,acc=gold?'gold':'win';
   var hCode=m[7]?'<span class="bc-code">'+m[7]+'</span>':'';
   var aCode=m[8]?'<span class="bc-code">'+m[8]+'</span>':'';
   var stadium=m[9]?'<div class="bc-stad">&#127967; '+m[9]+'</div>':'';
-  if(mirror){
-    return '<div class="bc'+(gold?' gold':'')+'">' +
-      '<div class="bc-row'+(hw?' win':'')+'" onclick="openPopByAbbr(\''+m[0]+'\')" style="cursor:pointer"><span class="bc-score'+(hw?' '+acc+'":"')+'">' +m[2]+'</span><div class="bc-team" style="justify-content:flex-end">'+flagImg(m[0])+'<span class="bc-name">'+m[0]+'</span>'+hCode+'</div></div>'+
-      '<div class="bc-row'+(aw?' win':'')+'" onclick="openPopByAbbr(\''+m[3]+'\')" style="cursor:pointer"><span class="bc-score'+(aw?' '+acc+'":"')+'">' +m[5]+'</span><div class="bc-team" style="justify-content:flex-end">'+flagImg(m[3])+'<span class="bc-name">'+m[3]+'</span>'+aCode+'</div></div>'+
-      '<div class="bc-st">'+(m[6]==='PEN'?'<span class="bc-var">PEN</span> ':m[6]==='ET'?'<span class="bc-var">ET</span> ':'')+m[6]+'</div>'+stadium+'</div>';
-  }
-  return '<div class="bc'+(gold?' gold':'')+'">' +
-    '<div class="bc-row'+(hw?' win':'')+'" onclick="openPopByAbbr(\''+m[0]+'\')" style="cursor:pointer"><div class="bc-team">'+hCode+flagImg(m[0])+'<span class="bc-name">'+m[0]+'</span></div><span class="bc-score'+(hw?' '+acc:'')+'">' +m[2]+'</span></div>'+
-    '<div class="bc-row'+(aw?' win':'')+'" onclick="openPopByAbbr(\''+m[3]+'\')" style="cursor:pointer"><div class="bc-team">'+aCode+flagImg(m[3])+'<span class="bc-name">'+m[3]+'</span></div><span class="bc-score'+(aw?' '+acc:'')+'">' +m[5]+'</span></div>'+
+  return '<div class="bc'+(gold?' gold':'')+'">'+
+    '<div class="bc-row'+(hw?' win':'')+'" onclick="openPopByAbbr(\''+m[0]+'\')" style="cursor:pointer"><div class="bc-team">'+hCode+flagImg(m[0])+'<span class="bc-name">'+m[0]+'</span></div><span class="bc-score'+(hw?' '+acc:'')+'">'+m[2]+'</span></div>'+
+    '<div class="bc-row'+(aw?' win':'')+'" onclick="openPopByAbbr(\''+m[3]+'\')" style="cursor:pointer"><div class="bc-team">'+aCode+flagImg(m[3])+'<span class="bc-name">'+m[3]+'</span></div><span class="bc-score'+(aw?' '+acc:'')+'">'+m[5]+'</span></div>'+
     '<div class="bc-st">'+(m[6]==='PEN'?'<span class="bc-var">PEN</span> ':m[6]==='ET'?'<span class="bc-var">ET</span> ':'')+m[6]+'</div>'+stadium+'</div>';
 }
 
-function makeCol(ms,gold,mirror){
-  return '<div class="b-col">'+ms.map(function(m){return makeBC(m,gold,mirror)}).join('')+'</div>';
+function makeCol(ms,gold){
+  return '<div class="b-col">'+ms.map(function(m){return makeBC(m,gold)}).join('')+'</div>';
 }
 
 function makeFinal(){
@@ -1070,7 +1062,7 @@ function makeLiveCard(m){
   var lbl=live?'LIVE '+m.minute+"'":ht?'HALF TIME':finished?(m.status==='PEN'?'PENS':m.status==='AET'?'AET':'FULL TIME'):'';
   var sc=hScore!==null&&hScore!==undefined?hScore+'&ndash;'+aScore:'VS';
   var sr=scorers.map(function(s){return '<span style="font-size:8px;color:#475569">&#9917; '+s+'</span>';}).join('');
-  return '<div'+(live?' class="live-ring"':'')+' style="background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid '+(live?'rgba(255,213,74,.5)':ht?'rgba(251,191,36,.28)':'rgba(34,211,238,.12)')+';border-radius:12px;padding:13px 15px;margin-bottom:10px">'+
+  return '<div style="background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid '+(live?'rgba(239,68,68,.38)':ht?'rgba(251,191,36,.28)':'rgba(34,211,238,.12)')+';border-radius:12px;padding:13px 15px;margin-bottom:10px">'+
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">'+
       '<span style="background:'+bg+';color:#fff;font-weight:700;font-size:9px;padding:3px 9px;border-radius:4px;letter-spacing:1px">'+lbl+'</span>'+
       '<span style="font-size:8px;color:#334155">'+venue+'</span></div>'+
@@ -1144,24 +1136,21 @@ window.addEventListener('DOMContentLoaded',function(){
       var hs=m.homeScore!=null?String(m.homeScore):'-';
       var as=m.awayScore!=null?String(m.awayScore):'-';
       var st=m.status==='NS'?'':m.status;
-      var row=[m.homeCode,'',hs,m.awayCode,'',as,st,'','',m.venue||'',m.date||''];
+      var row=[m.homeCode,'',hs,m.awayCode,'',as,st,'','',m.venue||''];
       if(r.indexOf('round of 32')>=0)L32.push(row);
       else if(r.indexOf('round of 16')>=0)L16.push(row);
       else if(r.indexOf('quarter')>=0)LQF.push(row);
       else if(r.indexOf('semi')>=0)LSF.push(row);
       else if(r.indexOf('final')>=0&&r.indexOf('semi')<0&&r.indexOf('quarter')<0&&r.indexOf('3rd')<0&&r.indexOf('third')<0)FIN.push(row);
     });
-    // Sort each round by date so bracket order is chronological
-    function sortByDate(arr){return arr.slice().sort(function(a,b){return (a[10]||'')>(b[10]||'')?1:-1;});}
-    L32=sortByDate(L32);L16=sortByDate(L16);LQF=sortByDate(LQF);LSF=sortByDate(LSF);
-    // Split left/right halves by match index; right side is mirrored
+    // Split left/right halves by match index
     var half=Math.ceil(L32.length/2);
     bgEl.innerHTML=
-      makeCol(L32.slice(0,half))+makeCol(L16.slice(0,Math.ceil(L16.length/2)))+
-      makeCol(LQF.slice(0,Math.ceil(LQF.length/2)))+makeCol(LSF.slice(0,Math.ceil(LSF.length/2)))+
+      makeCol(L32.slice(0,half))+makeCol(L16.slice(0,L16.length/2))+
+      makeCol(LQF.slice(0,LQF.length/2))+makeCol(LSF.slice(0,LSF.length/2))+
       (FIN.length?makeCol(FIN,true):makeFinalPlaceholder())+
-      makeCol(LSF.slice(Math.ceil(LSF.length/2)),false,true)+makeCol(LQF.slice(Math.ceil(LQF.length/2)),false,true)+
-      makeCol(L16.slice(Math.ceil(L16.length/2)),false,true)+makeCol(L32.slice(half),false,true);
+      makeCol(LSF.slice(LSF.length/2))+makeCol(LQF.slice(LQF.length/2))+
+      makeCol(L16.slice(L16.length/2))+makeCol(L32.slice(half));
   }
 
   function makeFinalPlaceholder(){
