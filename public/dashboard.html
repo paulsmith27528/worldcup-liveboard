@@ -1143,22 +1143,13 @@ window.addEventListener('DOMContentLoaded',function(){
       else if(r.indexOf('semi')>=0)LSF.push(row);
       else if(r.indexOf('final')>=0&&r.indexOf('semi')<0&&r.indexOf('quarter')<0&&r.indexOf('3rd')<0&&r.indexOf('third')<0)FIN.push(row);
     });
-    // If no Round of 32 matches yet, build placeholders from knockoutSlots
-    if(L32.length===0&&slots){
-      var order=['M73','M75','M79','M81','M85','M87','M83','M88','M74','M77','M80','M82','M84','M86','M78','M76'];
-      order.forEach(function(id){
-        var s=slots[id];
-        if(!s)return;
-        var h=s.home?s.home.code:'TBD';
-        var a=s.away?s.away.code:'TBD';
-        L32.push([h,'','-',a,'','-','','','','']);
-      });
-    }
-    // Fill empty rounds with predetermined path placeholders
+    // Path placeholder helper - uses knockoutPaths labels for all rounds
     function pathRow(id){var p=paths&&paths[id];var h=p?p.home:'TBD';var a=p?p.away:'TBD';return [h,'','-',a,'','-','','','',''];}
+    var r32order=['M73','M75','M79','M81','M85','M87','M83','M88','M74','M77','M80','M82','M84','M86','M78','M76'];
     var r16order=['M89','M90','M91','M92','M93','M94','M95','M96'];
     var qforder=['M97','M98','M99','M100'];
     var sforder=['M101','M102'];
+    if(L32.length===0){r32order.forEach(function(id){L32.push(pathRow(id));});}
     if(L16.length===0){r16order.forEach(function(id){L16.push(pathRow(id));});}
     if(LQF.length===0){qforder.forEach(function(id){LQF.push(pathRow(id));});}
     if(LSF.length===0){sforder.forEach(function(id){LSF.push(pathRow(id));});}
