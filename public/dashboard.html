@@ -1128,7 +1128,7 @@ window.addEventListener('DOMContentLoaded',function(){
     if(agEl)agEl.innerHTML=ah||loading;
   }
 
-  function renderBracket(matches){
+  function renderBracket(matches,slots){
     if(!bgEl)return;
     var L32=[],L16=[],LQF=[],LSF=[],FIN=[],RSF=[],RQF=[],R16=[],R32=[];
     matches.forEach(function(m){
@@ -1143,6 +1143,17 @@ window.addEventListener('DOMContentLoaded',function(){
       else if(r.indexOf('semi')>=0)LSF.push(row);
       else if(r.indexOf('final')>=0&&r.indexOf('semi')<0&&r.indexOf('quarter')<0&&r.indexOf('3rd')<0&&r.indexOf('third')<0)FIN.push(row);
     });
+    // If no Round of 32 matches yet, build placeholders from knockoutSlots
+    if(L32.length===0&&slots){
+      var order=['M73','M75','M79','M81','M85','M87','M83','M88','M74','M77','M80','M82','M84','M86','M78','M76'];
+      order.forEach(function(id){
+        var s=slots[id];
+        if(!s)return;
+        var h=s.home?s.home.code:'TBD';
+        var a=s.away?s.away.code:'TBD';
+        L32.push([h,'','-',a,'','-','','','','']);
+      });
+    }
     // Split left/right halves by match index
     var half=Math.ceil(L32.length/2);
     bgEl.innerHTML=
@@ -1160,7 +1171,7 @@ window.addEventListener('DOMContentLoaded',function(){
   function loadAll(){
     fetch('/api/bracket').then(function(r){return r.json();}).then(function(d){
       if(d.groups)renderGroups(d.groups);
-      if(d.matches)renderBracket(d.matches);
+      if(d.matches)renderBracket(d.matches,d.knockoutSlots||{});
       var live=d.liveMatches||[];
       if(lvEl&&live.length){
         var liveHtml=live.map(function(m){
