@@ -1154,6 +1154,11 @@ window.addEventListener('DOMContentLoaded',function(){
         L32.push([h,'','-',a,'','-','','','','']);
       });
     }
+    // Fill empty rounds with TBD placeholders
+    function tbd(){return ['TBD','','-','TBD','','-','','','',''];}
+    if(L16.length===0){for(var i=0;i<8;i++)L16.push(tbd());}
+    if(LQF.length===0){for(var i=0;i<4;i++)LQF.push(tbd());}
+    if(LSF.length===0){for(var i=0;i<2;i++)LSF.push(tbd());}
     // Split left/right halves by match index
     var half=Math.ceil(L32.length/2);
     bgEl.innerHTML=
