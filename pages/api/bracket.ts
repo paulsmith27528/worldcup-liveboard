@@ -147,12 +147,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }));
 
     const knockoutPaths: Record<string,{id:string,home:string,away:string}> = {
+      // Round of 32 - predetermined FIFA structure labels
+      M73:{id:"M73",home:"2nd-A",away:"2nd-B"},
+      M74:{id:"M74",home:"1st-E",away:"3rd-EFGI"},
+      M75:{id:"M75",home:"1st-F",away:"2nd-C"},
+      M76:{id:"M76",home:"1st-C",away:"2nd-F"},
+      M77:{id:"M77",home:"1st-I",away:"3rd-BFIK"},
+      M78:{id:"M78",home:"2nd-E",away:"2nd-I"},
+      M79:{id:"M79",home:"1st-A",away:"3rd-ABCD"},
+      M80:{id:"M80",home:"1st-L",away:"3rd-JKLA"},
+      M81:{id:"M81",home:"1st-D",away:"3rd-DEFG"},
+      M82:{id:"M82",home:"1st-G",away:"3rd-GHIJ"},
+      M83:{id:"M83",home:"2nd-K",away:"2nd-L"},
+      M84:{id:"M84",home:"1st-H",away:"2nd-J"},
+      M85:{id:"M85",home:"1st-B",away:"3rd-BCEH"},
+      M86:{id:"M86",home:"1st-J",away:"2nd-H"},
+      M87:{id:"M87",home:"1st-K",away:"3rd-IJKL"},
+      M88:{id:"M88",home:"2nd-D",away:"2nd-G"},
+      // Round of 16
       M89:{id:"M89",home:"W-M73",away:"W-M74"}, M90:{id:"M90",home:"W-M75",away:"W-M76"},
       M91:{id:"M91",home:"W-M77",away:"W-M78"}, M92:{id:"M92",home:"W-M79",away:"W-M80"},
       M93:{id:"M93",home:"W-M81",away:"W-M82"}, M94:{id:"M94",home:"W-M83",away:"W-M84"},
       M95:{id:"M95",home:"W-M85",away:"W-M86"}, M96:{id:"M96",home:"W-M87",away:"W-M88"},
+      // Quarter Finals
       M97:{id:"M97",home:"W-M89",away:"W-M90"}, M98:{id:"M98",home:"W-M91",away:"W-M92"},
       M99:{id:"M99",home:"W-M93",away:"W-M94"}, M100:{id:"M100",home:"W-M95",away:"W-M96"},
+      // Semi Finals
       M101:{id:"M101",home:"W-M97",away:"W-M98"}, M102:{id:"M102",home:"W-M99",away:"W-M100"},
     };
     return res.status(200).json({
