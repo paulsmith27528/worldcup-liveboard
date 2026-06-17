@@ -146,9 +146,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       venue: f.fixture.venue?.name || "", scorers: [],
     }));
 
+    const knockoutPaths: Record<string,{id:string,home:string,away:string}> = {
+      M89:{id:"M89",home:"W-M73",away:"W-M74"}, M90:{id:"M90",home:"W-M75",away:"W-M76"},
+      M91:{id:"M91",home:"W-M77",away:"W-M78"}, M92:{id:"M92",home:"W-M79",away:"W-M80"},
+      M93:{id:"M93",home:"W-M81",away:"W-M82"}, M94:{id:"M94",home:"W-M83",away:"W-M84"},
+      M95:{id:"M95",home:"W-M85",away:"W-M86"}, M96:{id:"M96",home:"W-M87",away:"W-M88"},
+      M97:{id:"M97",home:"W-M89",away:"W-M90"}, M98:{id:"M98",home:"W-M91",away:"W-M92"},
+      M99:{id:"M99",home:"W-M93",away:"W-M94"}, M100:{id:"M100",home:"W-M95",away:"W-M96"},
+      M101:{id:"M101",home:"W-M97",away:"W-M98"}, M102:{id:"M102",home:"W-M99",away:"W-M100"},
+    };
     return res.status(200).json({
       updatedAt: new Date().toISOString(),
-      matches, liveMatches, groups, qualifying3rds, knockoutSlots,
+      matches, liveMatches, groups, qualifying3rds, knockoutSlots, knockoutPaths,
     });
   } catch (err) {
     return res.status(500).json({ error: "Failed to fetch bracket data", message: String(err) });
