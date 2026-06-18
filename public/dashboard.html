@@ -113,6 +113,9 @@ header{position:sticky;top:0;z-index:90;background:transparent;backdrop-filter:b
 
 /* Each round column */
 .b-col{height:720px;display:flex;flex-direction:column;justify-content:space-around}
+.b-col[data-col="1"],.b-col[data-col="7"]{height:900px}
+.b-col[data-col="2"],.b-col[data-col="6"]{height:1000px}
+.b-col[data-col="3"],.b-col[data-col="5"]{height:1050px}
 
 /* Match cards */
 .bc{height:68px;background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid rgba(34,211,238,.18);border-radius:10px;padding:3px 8px;display:flex;flex-direction:column;justify-content:space-around;cursor:pointer;transition:border-color .15s,box-shadow .15s;box-shadow:0 0 8px rgba(34,211,238,.08)}
@@ -1132,11 +1135,11 @@ window.addEventListener('DOMContentLoaded',function(){
     // Split left/right halves by match index
     var half=Math.ceil(L32.length/2);
     bgEl.innerHTML=
-      makeCol(L32.slice(0,half))+makeCol(L16.slice(0,L16.length/2))+
-      makeCol(LQF.slice(0,LQF.length/2))+makeCol(LSF.slice(0,LSF.length/2))+
-      (FIN.length?makeCol(FIN,true):makeFinalPlaceholder())+
-      makeCol(LSF.slice(LSF.length/2))+makeCol(LQF.slice(LQF.length/2))+
-      makeCol(L16.slice(L16.length/2))+makeCol(L32.slice(half));
+      makeCol(L32.slice(0,half),false,0)+makeCol(L16.slice(0,Math.ceil(L16.length/2)),false,1)+
+      makeCol(LQF.slice(0,Math.ceil(LQF.length/2)),false,2)+makeCol(LSF.slice(0,Math.ceil(LSF.length/2)),false,3)+
+      (FIN.length?makeCol(FIN,true,4):makeFinalPlaceholder())+
+      makeCol(LSF.slice(Math.ceil(LSF.length/2)),false,5)+makeCol(LQF.slice(Math.ceil(LQF.length/2)),false,6)+
+      makeCol(L16.slice(Math.ceil(L16.length/2)),false,7)+makeCol(L32.slice(half),false,8);
   }
 
   function makeFinalPlaceholder(){
