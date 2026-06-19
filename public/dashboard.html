@@ -735,6 +735,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
     <div class="pop-tabs">
       <button class="pop-tab active" onclick="switchPopTab(&#39;stats&#39;)">📊 TOURNAMENT STATS</button>
       <button class="pop-tab" onclick="switchPopTab(&#39;squad&#39;)">👤 SQUAD CARDS</button>
+      <button class="pop-tab" onclick="switchPopTab(&#39;stadium&#39;)">🏟 STADIUM</button>
     </div>
     <!-- Stats tab -->
     <div id="pop-stats-view">
@@ -758,6 +759,10 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
     <div id="pop-squad-view" style="display:none">
       <div id="squad-grid" class="squad-grid"></div>
     </div>
+    <!-- Stadium tab -->
+    <div id="pop-stadium-view" style="display:none">
+      <div id="pop-stad-content"></div>
+    </div>
   </div>
 </div>
 
@@ -780,35 +785,6 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
       <div style="margin-top:6px;color:#334155">🔒 Your key stays on the server ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ never exposed in the browser</div>
     </div>
     <button class="api-save-btn" onclick="closeApiModal()">✓ Got it ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ I'll set it up in Vercel</button>
-<!-- STADIUM POPUP -->
-<div id="stad-ov" onclick="closeStadPop()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:999;align-items:center;justify-content:center;padding:12px;overflow-y:auto">
-  <div id="stad-box" onclick="event.stopPropagation()" style="background:linear-gradient(150deg,rgba(4,15,34,.98),rgba(2,8,20,.99));border:1px solid rgba(34,211,238,.2);border-radius:16px;padding:20px 22px;max-width:400px;width:100%;max-height:82vh;overflow-y:auto">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
-      <div>
-        <div style="font-size:32px;line-height:1;margin-bottom:6px">🏟</div>
-        <div id="stad-name" style="font-weight:900;font-size:18px;color:#fff;line-height:1.2"></div>
-        <div id="stad-loc" style="font-size:10px;color:#22d3ee;letter-spacing:1.5px;margin-top:4px"></div>
-      </div>
-      <button onclick="closeStadPop()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:7px;padding:5px 10px;cursor:pointer;font-size:13px;flex-shrink:0">✕</button>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:18px">
-      <div style="background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.15);border-radius:10px;padding:10px 8px;text-align:center">
-        <div id="stad-cap" style="font-size:12px;font-weight:700;color:#22d3ee"></div>
-        <div style="font-size:7.5px;color:#475569;letter-spacing:1px;margin-top:4px">CAPACITY</div>
-      </div>
-      <div style="background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.15);border-radius:10px;padding:10px 8px;text-align:center">
-        <div id="stad-surf" style="font-size:12px;font-weight:700;color:#fff"></div>
-        <div style="font-size:7.5px;color:#475569;letter-spacing:1px;margin-top:4px">SURFACE</div>
-      </div>
-      <div style="background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.15);border-radius:10px;padding:10px 8px;text-align:center">
-        <div id="stad-roof" style="font-size:12px;font-weight:700;color:#fff"></div>
-        <div style="font-size:7.5px;color:#475569;letter-spacing:1px;margin-top:4px">ROOF</div>
-      </div>
-    </div>
-    <div style="font-size:9px;color:#475569;letter-spacing:1.5px;margin-bottom:10px;font-weight:700">WORLD CUP 2026 FIXTURES</div>
-    <div id="stad-matches"></div>
-  </div>
-</div>
     <button onclick="closeApiModal()" style="width:100%;background:transparent;border:1px solid rgba(255,255,255,.1);color:#475569;border-radius:8px;padding:8px;cursor:pointer;margin-top:6px;font-size:11px">Close ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ use local squad data for now</button>
   </div>
 </div>
@@ -1021,19 +997,22 @@ function fmtKODate(d){
     return dt.getDate()+' '+mo[dt.getMonth()]+' \xb7 '+(h<10?'0':'')+h+':'+(mi<10?'0':'')+mi;
   }catch(e){return '';}
 }
+var _koMatches={};
 function makeBC(m,gold,ci){
   var hs=parseInt(m[2]),as=parseInt(m[5]),hw=hs>as,aw=as>hs,acc=gold?'gold':'win';
   var hCode=m[7]?'<span class="bc-code">'+m[7]+'</span>':'';
   var aCode=m[8]?'<span class="bc-code">'+m[8]+'</span>':'';
   var venue=m[9]||'',dateStr=fmtKODate(m[11]||'');
-  var venueHtml=venue?'<span onclick="event.stopPropagation();openStadPop(\''+venue.replace(/\\/g,'\\\\').replace(/'/g,"\\'")+'\')" style="cursor:pointer;text-decoration:underline;text-decoration-color:rgba(34,211,238,.35)">&#127967; '+venue+'</span>':'';
+  var venueHtml=venue?'<span onclick="event.stopPropagation();openStadiumTab(\''+venue.replace(/\\/g,'\\\\').replace(/'/g,"\\'")+'\')" style="cursor:pointer;text-decoration:underline;text-decoration-color:rgba(34,211,238,.35)">&#127967; '+venue+'</span>':'';
   var stadLine=venueHtml+((venue&&dateStr)?' \xb7 ':'')+dateStr;
   var stadium=stadLine?'<div class="bc-stad">'+stadLine+'</div>':'';
   var mid=m[10]||'';
+  if(mid)_koMatches[mid]=m;
   var hdr=mid?'<div class="bc-hdr">MATCH '+mid.replace(/^M/,'')+'</div>':'';
-  var cc=ci!==undefined?' wc'+(ci%6):'';return '<div class="bc'+(gold?' gold':'')+cc+'">'+hdr+
-    '<div class="bc-row'+(hw?' win':'')+'" onclick="openPopByAbbr(\''+m[0]+'\')" style="cursor:pointer"><div class="bc-team">'+hCode+flagImg(m[0])+'<span class="bc-name">'+m[0]+'</span></div><span class="bc-score'+(hw?' '+acc:'')+'">'+m[2]+'</span></div>'+
-    '<div class="bc-row'+(aw?' win':'')+'" onclick="openPopByAbbr(\''+m[3]+'\')" style="cursor:pointer"><div class="bc-team">'+aCode+flagImg(m[3])+'<span class="bc-name">'+m[3]+'</span></div><span class="bc-score'+(aw?' '+acc:'')+'">'+m[5]+'</span></div>'+
+  var outerClick=mid?'onclick="openKOMatch(\''+mid+'\')"':'';
+  var cc=ci!==undefined?' wc'+(ci%6):'';return '<div class="bc'+(gold?' gold':'')+cc+'" '+outerClick+'>'+hdr+
+    '<div class="bc-row'+(hw?' win':'')+'" onclick="event.stopPropagation();openPopByAbbr(\''+m[0]+'\')" style="cursor:pointer"><div class="bc-team">'+hCode+flagImg(m[0])+'<span class="bc-name">'+m[0]+'</span></div><span class="bc-score'+(hw?' '+acc:'')+'">'+m[2]+'</span></div>'+
+    '<div class="bc-row'+(aw?' win':'')+'" onclick="event.stopPropagation();openPopByAbbr(\''+m[3]+'\')" style="cursor:pointer"><div class="bc-team">'+aCode+flagImg(m[3])+'<span class="bc-name">'+m[3]+'</span></div><span class="bc-score'+(aw?' '+acc:'')+'">'+m[5]+'</span></div>'+
     '<div class="bc-st">'+(m[6]==='PEN'?'<span class="bc-var">PEN</span> ':m[6]==='ET'?'<span class="bc-var">ET</span> ':'')+m[6]+'</div>'+stadium+'</div>';
 }
 
@@ -1431,6 +1410,7 @@ function closeApiModal(){document.getElementById('api-modal').style.display='non
 function saveApiKey(){closeApiModal();}
 
 var _currentTeam=null;
+var _currentVenue=null;
 
 function fetchSquadFromApi(abbr,flag,onDone){
   var teamId=TEAM_IDS[abbr];
@@ -1617,13 +1597,53 @@ function openPop(t){
 function switchPopTab(tab){
   document.getElementById('pop-stats-view').style.display=tab==='stats'?'block':'none';
   document.getElementById('pop-squad-view').style.display=tab==='squad'?'block':'none';
-  document.querySelectorAll('.pop-tab').forEach(function(b,i){b.className='pop-tab'+(((i===0&&tab==='stats')||(i===1&&tab==='squad'))?' active':'');});
+  document.getElementById('pop-stadium-view').style.display=tab==='stadium'?'block':'none';
+  document.querySelectorAll('.pop-tab').forEach(function(b,i){b.className='pop-tab'+(((i===0&&tab==='stats')||(i===1&&tab==='squad')||(i===2&&tab==='stadium'))?' active':'');});
   if(tab==='squad'&&_currentTeam){
     var t=_currentTeam;
     fetchSquadFromApi(t.a,t.f,function(players,src){
       if(players.length>0)document.getElementById('squad-grid').innerHTML=players.map(function(p){return makePremiumCard(p,t.f,SQUADS[t.a])}).join('');
     });
   }
+  if(tab==='stadium'){renderStadiumTab(_currentVenue);}
+}
+function renderStadiumTab(name){
+  var el=document.getElementById('pop-stad-content');
+  if(!name){el.innerHTML='<div style="color:#334155;font-size:10px;padding:16px 0;text-align:center">No stadium selected</div>';return;}
+  var s=STADIUMS[name]||{city:'',country:'',cap:'',surface:'Grass',roof:'Open'};
+  var loc=[s.city,s.country].filter(Boolean).join(', ');
+  var rows=[];
+  for(var id in koSchedule){
+    if(koSchedule[id].venue===name){
+      var dt=fmtKODate(koSchedule[id].date);
+      var rnd=id<'M89'?'Round of 32':id<'M97'?'Round of 16':id<'M101'?id<'M99'?'Quarter-Final':'Semi-Final':id==='M103'?'3rd Place':'Final';
+      rows.push({id:id,rnd:rnd,dt:dt});
+    }
+  }
+  rows.sort(function(a,b){return a.id<b.id?-1:1;});
+  var matchHtml=rows.map(function(r){
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(34,211,238,.07)">'+
+      '<div><div style="font-size:9px;color:#22d3ee;font-weight:700">'+r.rnd+'</div>'+
+      '<div style="font-size:8px;color:#64748b;margin-top:1px">MATCH '+r.id.replace(/^M/,'')+'</div></div>'+
+      '<div style="font-size:8.5px;color:#94a3b8">'+r.dt+'</div></div>';
+  }).join('');
+  el.innerHTML=
+    '<div style="font-size:22px;line-height:1;margin-bottom:8px">🏟</div>'+
+    '<div style="font-weight:900;font-size:16px;color:#fff;margin-bottom:2px">'+name+'</div>'+
+    '<div style="font-size:9.5px;color:#22d3ee;letter-spacing:1px;margin-bottom:14px">'+loc+'</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">'+
+      '<div style="background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.15);border-radius:10px;padding:10px 8px;text-align:center">'+
+        '<div style="font-size:11px;font-weight:700;color:#22d3ee">'+(s.cap||'\u2014')+'</div>'+
+        '<div style="font-size:7.5px;color:#475569;letter-spacing:1px;margin-top:4px">CAPACITY</div></div>'+
+      '<div style="background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.15);border-radius:10px;padding:10px 8px;text-align:center">'+
+        '<div style="font-size:11px;font-weight:700;color:#fff">'+(s.surface||'Grass')+'</div>'+
+        '<div style="font-size:7.5px;color:#475569;letter-spacing:1px;margin-top:4px">SURFACE</div></div>'+
+      '<div style="background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.15);border-radius:10px;padding:10px 8px;text-align:center">'+
+        '<div style="font-size:11px;font-weight:700;color:#fff">'+(s.roof||'Open')+'</div>'+
+        '<div style="font-size:7.5px;color:#475569;letter-spacing:1px;margin-top:4px">ROOF</div></div>'+
+    '</div>'+
+    '<div style="font-size:9px;color:#475569;letter-spacing:1.5px;margin-bottom:8px;font-weight:700">WORLD CUP 2026 FIXTURES</div>'+
+    (matchHtml||'<div style="color:#334155;font-size:9px;padding:8px 0">Schedule TBC</div>');
 }
 
 
@@ -1661,37 +1681,45 @@ function closePop(){
   document.getElementById('pop-ov').style.display='none';
   document.getElementById('pop-ov').className='';
   _currentTeam=null;
+  _currentVenue=null;
 }
-function openStadPop(name){
-  var s=STADIUMS[name]||{city:'',country:'',cap:'',surface:'Grass',roof:'Open'};
-  var loc=[s.city,s.country].filter(Boolean).join(', ');
-  // build match schedule for this venue
-  var rows=[];
-  for(var id in koSchedule){
-    if(koSchedule[id].venue===name){
-      var dt=fmtKODate(koSchedule[id].date);
-      var rnd=id<'M89'?'Round of 32':id<'M97'?'Round of 16':id<'M101'?id<'M99'?'Quarter-Final':'Semi-Final':id==='M103'?'3rd Place':'Final';
-      rows.push({id:id,dt:dt,rnd:rnd,raw:koSchedule[id].date});
-    }
-  }
-  rows.sort(function(a,b){return a.raw<b.raw?-1:1;});
-  var matchHtml=rows.map(function(r){
-    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(34,211,238,.07)">'
-      +'<span style="color:#22d3ee;font-weight:700;font-size:9px;letter-spacing:.5px">'+r.id.replace('M','MATCH ')+'</span>'
-      +'<span style="color:#64748b;font-size:8.5px">'+r.rnd+'</span>'
-      +'<span style="color:#94a3b8;font-size:8.5px">'+r.dt+'</span>'
-      +'</div>';
-  }).join('');
-  document.getElementById('stad-name').textContent=name;
-  document.getElementById('stad-loc').textContent=loc;
-  document.getElementById('stad-cap').textContent=s.cap?s.cap:'—';
-  document.getElementById('stad-surf').textContent=s.surface||'Grass';
-  document.getElementById('stad-roof').textContent=s.roof||'Open';
-  document.getElementById('stad-matches').innerHTML=matchHtml||'<div style="color:#334155;font-size:9px;padding:8px 0">Schedule TBC</div>';
-  document.getElementById('stad-ov').style.display='flex';
+function openKOMatch(id){
+  var m=_koMatches[id];if(!m)return;
+  var hs=parseInt(m[2]),as=parseInt(m[5]),played=!isNaN(hs)&&!isNaN(as)&&m[6]&&m[6]!=='-';
+  var hw=played&&hs>as,aw=played&&as>hs;
+  var venue=m[9]||'',dateStr=fmtKODate(m[11]||'');
+  var rndNum=parseInt(id.replace(/^M/,''));
+  var rnd=rndNum<89?'ROUND OF 32':rndNum<97?'ROUND OF 16':rndNum<101?rndNum<99?'QUARTER-FINAL':'SEMI-FINAL':rndNum===103?'3RD PLACE PLAY-OFF':'FINAL';
+  var statusTxt=m[6]==='PEN'?'FULL TIME (PEN)':m[6]==='ET'?'EXTRA TIME':m[6]==='FT'?'FULL TIME':m[6]==='-'?'UPCOMING':m[6]||'UPCOMING';
+  document.getElementById('kom-round').textContent=rnd+'\u00b7 MATCH '+id.replace(/^M/,'');
+  document.getElementById('kom-status').textContent=statusTxt;
+  document.getElementById('kom-home-flag').innerHTML=flagImg(m[0]);
+  document.getElementById('kom-home-name').textContent=m[0];
+  document.getElementById('kom-home-score').textContent=played?m[2]:'-';
+  document.getElementById('kom-home-score').style.color=hw?'#22d3ee':'#fff';
+  document.getElementById('kom-away-flag').innerHTML=flagImg(m[3]);
+  document.getElementById('kom-away-name').textContent=m[3];
+  document.getElementById('kom-away-score').textContent=played?m[5]:'-';
+  document.getElementById('kom-away-score').style.color=aw?'#22d3ee':'#fff';
+  document.getElementById('kom-venue').innerHTML=venue?'<span onclick="event.stopPropagation();openStadiumTab(\''+venue.replace(/\'/g,"\\'")+'\');closeKOM()" style="cursor:pointer;color:#22d3ee;text-decoration:underline">\u{1f3df} '+venue+'</span>':'';
+  document.getElementById('kom-date').textContent=dateStr;
+  document.getElementById('kom-overlay').classList.add('open');
 }
-function closeStadPop(){document.getElementById('stad-ov').style.display='none';}
-document.addEventListener('keydown',function(e){if(e.key==='Escape'){closePop();closeApiModal();closeStadPop();}});
+function closeKOM(){document.getElementById('kom-overlay').classList.remove('open');}
+function openStadiumTab(name){
+  _currentVenue=name;
+  document.getElementById('pf').textContent='🏟';
+  var s=STADIUMS[name]||{};
+  document.getElementById('pn').textContent=name;
+  document.getElementById('pa').textContent=[s.city,s.country].filter(Boolean).join(', ');
+  document.getElementById('prank').textContent='';
+  document.getElementById('pop-ov').className='open';
+  document.getElementById('pop-ov').style.display='flex';
+  switchPopTab('stadium');
+}
+
+
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closePop();closeApiModal();closeKOM();}});
 </script>
 <script src="./World Cup 2026 LiveBoard friday_files/squads-data.js"></script>
 <style>
@@ -1791,6 +1819,50 @@ if(typeof B!=="undefined")initMobileBracket();
       </tr></thead>
       <tbody id="gm-body"></tbody>
     </table>
+  </div>
+</div>
+<style>
+.kom-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:999;align-items:center;justify-content:center;padding:16px}
+.kom-overlay.open{display:flex}
+.kom-box{background:linear-gradient(150deg,rgba(4,15,34,.98),rgba(2,8,20,.99));border:1px solid rgba(34,211,238,.2);border-radius:16px;padding:22px 24px;max-width:360px;width:100%;position:relative}
+.kom-round{font-size:9px;font-weight:700;letter-spacing:2px;color:rgba(34,211,238,.6);text-transform:uppercase;text-align:center;margin-bottom:4px}
+.kom-status{font-size:8px;color:#475569;letter-spacing:1.5px;text-align:center;margin-bottom:18px}
+.kom-teams{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:18px}
+.kom-team{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
+.kom-flag{font-size:36px;line-height:1}
+.kom-name{font-size:11px;font-weight:700;color:#e2e8f0;letter-spacing:1px;text-align:center}
+.kom-score{font-size:36px;font-weight:900;color:#fff;min-width:36px;text-align:center}
+.kom-vs{font-size:12px;color:#334155;font-weight:700}
+.kom-scores{display:flex;align-items:center;gap:8px}
+.kom-info{border-top:1px solid rgba(34,211,238,.1);padding-top:12px;text-align:center}
+.kom-venue-line{font-size:10px;margin-bottom:4px}
+.kom-date-line{font-size:9px;color:#64748b}
+.kom-close{position:absolute;top:10px;right:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:7px;padding:4px 9px;cursor:pointer;font-size:12px}
+</style>
+<div class="kom-overlay" id="kom-overlay" onclick="if(event.target===this)closeKOM()">
+  <div class="kom-box">
+    <button class="kom-close" onclick="closeKOM()">✕</button>
+    <div class="kom-round" id="kom-round"></div>
+    <div class="kom-status" id="kom-status"></div>
+    <div class="kom-teams">
+      <div class="kom-team">
+        <div class="kom-flag" id="kom-home-flag"></div>
+        <div class="kom-name" id="kom-home-name"></div>
+      </div>
+      <div class="kom-scores">
+        <div class="kom-score" id="kom-home-score"></div>
+        <div class="kom-vs">–</div>
+        <div class="kom-score" id="kom-away-score"></div>
+      </div>
+      <div class="kom-team">
+        <div class="kom-flag" id="kom-away-flag"></div>
+        <div class="kom-name" id="kom-away-name"></div>
+      </div>
+    </div>
+    <div class="kom-info">
+      <div class="kom-venue-line" id="kom-venue"></div>
+      <div class="kom-date-line" id="kom-date"></div>
+    </div>
   </div>
 </div>
 
