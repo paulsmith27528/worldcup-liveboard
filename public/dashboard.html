@@ -101,7 +101,7 @@ header{position:sticky;top:0;z-index:90;background:transparent;backdrop-filter:b
 .bracket-outer{width:100%;display:flex;flex-direction:column}
 
 /* Round labels & bracket grid share the SAME fr column template */
-.r-lbls,.b-grid{display:grid;grid-template-columns:115fr 115fr 115fr 115fr 180fr 115fr 115fr 115fr 115fr;gap:6px}
+.r-lbls,.b-grid{display:grid;grid-template-columns:115fr 115fr 115fr 115fr 60fr 115fr 115fr 115fr 115fr;gap:6px}
 .r-lbls{color:#1e3a5f;font-size:7.5px;letter-spacing:.8px;margin-bottom:7px;text-align:center;text-transform:uppercase;white-space:nowrap}
 .r-lbl-final{color:rgba(255,213,74,.65);font-weight:700}
 
@@ -112,13 +112,13 @@ header{position:sticky;top:0;z-index:90;background:transparent;backdrop-filter:b
 .conn-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5}
 
 /* Each round column */
-.b-col{height:650px;position:relative}
+.b-col{height:750px;position:relative}
 
 /* Match cards */
-.bc{height:72px;background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid rgba(34,211,238,.18);border-radius:10px;padding:3px 8px;display:flex;flex-direction:column;justify-content:space-around;cursor:pointer;transition:border-color .15s,box-shadow .15s;box-shadow:0 0 8px rgba(34,211,238,.08)}
+.bc{height:88px;background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid rgba(34,211,238,.18);border-radius:10px;padding:3px 8px;display:flex;flex-direction:column;justify-content:space-around;cursor:pointer;transition:border-color .15s,box-shadow .15s;box-shadow:0 0 8px rgba(34,211,238,.08)}
 .bc:hover{border-color:rgba(34,211,238,.65);box-shadow:0 0 16px rgba(34,211,238,.3)}
 .bc.gold{border-color:rgba(255,213,74,.4)}
-.bc-row{display:flex;justify-content:space-between;align-items:center;gap:3px;font-size:9px;color:rgba(255,255,255,.75)}
+.bc.wc0{background:linear-gradient(150deg,rgba(76,29,149,.88),rgba(45,12,90,.97));border-color:rgba(124,58,237,.55);box-shadow:0 0 10px rgba(109,40,217,.15)}.bc.wc1{background:linear-gradient(150deg,rgba(30,58,138,.88),rgba(10,22,70,.97));border-color:rgba(59,130,246,.55);box-shadow:0 0 10px rgba(37,99,235,.15)}.bc.wc2{background:linear-gradient(150deg,rgba(54,83,20,.88),rgba(20,40,5,.97));border-color:rgba(132,204,22,.55);box-shadow:0 0 10px rgba(101,163,13,.15)}.bc.wc3{background:linear-gradient(150deg,rgba(124,45,18,.88),rgba(70,18,4,.97));border-color:rgba(249,115,22,.55);box-shadow:0 0 10px rgba(234,88,12,.15)}.bc.wc4{background:linear-gradient(150deg,rgba(127,29,29,.88),rgba(70,10,10,.97));border-color:rgba(239,68,68,.55);box-shadow:0 0 10px rgba(185,28,28,.15)}.bc.wc5{background:linear-gradient(150deg,rgba(8,51,68,.88),rgba(3,22,35,.97));border-color:rgba(6,182,212,.55);box-shadow:0 0 10px rgba(8,145,178,.15)}.bc-row{display:flex;justify-content:space-between;align-items:center;gap:3px;font-size:9px;color:rgba(255,255,255,.75)}
 .bc-row.win{color:#e2e8f0;font-weight:700}
 .bc-team{display:flex;align-items:center;gap:3px;overflow:hidden;flex:1}
 .bc-code{color:#1e3a5f;font-size:7px;min-width:18px;flex-shrink:0}
@@ -132,7 +132,7 @@ header{position:sticky;top:0;z-index:90;background:transparent;backdrop-filter:b
 .bc-var{font-size:6px;background:rgba(34,211,238,.2);color:#22d3ee;padding:0 3px;border-radius:2px;font-weight:700}
 
 /* Final column */
-.final-col{height:650px;position:relative}
+.final-col{height:750px;position:relative}
 .final-inner{width:100%;background:radial-gradient(ellipse at 50% 20%,rgba(255,213,74,.16),rgba(0,0,0,.75));border:1px solid rgba(255,213,74,.6);border-radius:14px;padding:14px 10px;display:flex;flex-direction:column;align-items:center}
 .final-inner.gold-glow{animation:goldPulse 3s ease-in-out infinite}
 
@@ -536,7 +536,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
             </div>
 
             <!-- Glowing connector SVG ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ position:absolute, covers exact grid area -->
-            <svg class="conn-svg" viewBox="0 0 986 650" preserveAspectRatio="none">
+            <svg class="conn-svg" viewBox="0 0 986 750" preserveAspectRatio="none">
               <defs>
                 <filter id="cg" x="-40%" y="-40%" width="180%" height="180%">
                   <fegaussianblur in="SourceGraphic" stdDeviation="1.2" result="b"></fegaussianblur>
@@ -549,40 +549,40 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
               </defs>
               <!-- LEFT: R32 → R16 -->
               <g fill="none" stroke="rgba(34,211,238,.22)" stroke-width="1" filter="url(#cg)">
-                <path d="M98,42 H101 V82 H104"></path><path d="M98,122 H101 V82"></path>
-                <path d="M98,202 H101 V242 H104"></path><path d="M98,282 H101 V242"></path>
-                <path d="M98,362 H101 V402 H104"></path><path d="M98,442 H101 V402"></path>
-                <path d="M98,522 H101 V562 H104"></path><path d="M98,602 H101 V562"></path>
+                <path d="M110,48 H113 V95 H116"></path><path d="M110,142 H113 V95"></path>
+                <path d="M110,236 H113 V283 H116"></path><path d="M110,330 H113 V283"></path>
+                <path d="M110,424 H113 V471 H116"></path><path d="M110,518 H113 V471"></path>
+                <path d="M110,612 H113 V659 H116"></path><path d="M110,706 H113 V659"></path>
               </g>
               <!-- LEFT: R16 → QF -->
               <g fill="none" stroke="rgba(34,211,238,.28)" stroke-width="1.2" filter="url(#cg)">
-                <path d="M202,82 H205 V162 H208"></path><path d="M202,242 H205 V162"></path>
-                <path d="M202,402 H205 V482 H208"></path><path d="M202,562 H205 V482"></path>
+                <path d="M226,95 H229 V189 H232"></path><path d="M226,283 H229 V189"></path>
+                <path d="M226,471 H229 V565 H232"></path><path d="M226,659 H229 V565"></path>
               </g>
               <!-- LEFT: QF → SF -->
               <g fill="none" stroke="rgba(34,211,238,.32)" stroke-width="1.4" filter="url(#cg)">
-                <path d="M306,162 H309 V322 H312"></path><path d="M306,482 H309 V322"></path>
+                <path d="M342,189 H345 V377 H348"></path><path d="M342,565 H345 V377"></path>
               </g>
               <!-- LEFT: SF → Final -->
-              <path fill="none" stroke="rgba(255,213,74,.6)" stroke-width="1.6" filter="url(#gg)" d="M410,322 H413 V75 H416"></path>
+              <path fill="none" stroke="rgba(255,213,74,.6)" stroke-width="1.6" filter="url(#gg)" d="M403,333 V130"></path>
               <!-- RIGHT: R32 → R16 -->
               <g fill="none" stroke="rgba(34,211,238,.22)" stroke-width="1" filter="url(#cg)">
-                <path d="M888,42 H885 V82 H882"></path><path d="M888,122 H885 V82"></path>
-                <path d="M888,202 H885 V242 H882"></path><path d="M888,282 H885 V242"></path>
-                <path d="M888,362 H885 V402 H882"></path><path d="M888,442 H885 V402"></path>
-                <path d="M888,522 H885 V562 H882"></path><path d="M888,602 H885 V562"></path>
+                <path d="M875,48 H872 V95 H869"></path><path d="M875,142 H872 V95"></path>
+                <path d="M875,236 H872 V283 H869"></path><path d="M875,330 H872 V283"></path>
+                <path d="M875,424 H872 V471 H869"></path><path d="M875,518 H872 V471"></path>
+                <path d="M875,612 H872 V659 H869"></path><path d="M875,706 H872 V659"></path>
               </g>
               <!-- RIGHT: R16 → QF -->
               <g fill="none" stroke="rgba(34,211,238,.28)" stroke-width="1.2" filter="url(#cg)">
-                <path d="M784,82 H781 V162 H778"></path><path d="M784,242 H781 V162"></path>
-                <path d="M784,402 H781 V482 H778"></path><path d="M784,562 H781 V482"></path>
+                <path d="M759,95 H756 V189 H753"></path><path d="M759,283 H756 V189"></path>
+                <path d="M759,471 H756 V565 H753"></path><path d="M759,659 H756 V565"></path>
               </g>
               <!-- RIGHT: QF → SF -->
               <g fill="none" stroke="rgba(34,211,238,.32)" stroke-width="1.4" filter="url(#cg)">
-                <path d="M680,162 H677 V322 H674"></path><path d="M680,482 H677 V322"></path>
+                <path d="M643,189 H640 V377 H637"></path><path d="M643,565 H640 V377"></path>
               </g>
               <!-- RIGHT: SF → Final -->
-              <path fill="none" stroke="rgba(255,213,74,.6)" stroke-width="1.6" filter="url(#gg)" d="M576,322 H573 V75 H570"></path>
+              <path fill="none" stroke="rgba(255,213,74,.6)" stroke-width="1.6" filter="url(#gg)" d="M582,333 V130"></path>
             </svg>
 
             <!-- Bracket grid ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ identical fr columns to r-lbls -->
@@ -618,13 +618,13 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
     <div class="bot-row">
 
     <!-- Live Match Center ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ always gold glow -->
-          <div class="panel gold-glow" style="border-color:rgba(255,213,74,.5);overflow-y:auto">
+          <div class="panel gold-glow" style="border-color:rgba(255,213,74,.5);overflow-y:auto;background:linear-gradient(150deg,rgba(76,29,149,.15),rgba(4,15,34,.97))">
       <div class="ptitle">⚽&nbsp; LIVE MATCH CENTER</div>
       <div id="lv-sidebar" style="flex:1"><div style="font-size:9px;color:#475569;letter-spacing:2px;padding:4px 0 10px">UPCOMING TODAY</div><div style="background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid rgba(34,211,238,.12);border-radius:12px;padding:13px 15px;margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px"><span style="background:#334155;color:#fff;font-weight:700;font-size:9px;padding:3px 9px;border-radius:4px;letter-spacing:1px">FULL TIME</span><span style="font-size:8px;color:#334155">Estadio Akron</span></div><div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px"><div style="text-align:center"><div style="margin:0 auto 3px"><img src="./World Cup 2026 LiveBoard friday_files/mx(1).png" style="height:14px;width:auto;border-radius:1px;vertical-align:middle;margin-right:2px" alt="MEX"></div><div style="font-weight:700;font-size:11px;margin-top:3px">Mexico</div></div><div style="text-align:center;font-size:26px;font-weight:900;color:#22d3ee">1–0</div><div style="text-align:center"><div style="margin:0 auto 3px"><img src="./World Cup 2026 LiveBoard friday_files/kr(1).png" style="height:14px;width:auto;border-radius:1px;vertical-align:middle;margin-right:2px" alt="KOR"></div><div style="font-weight:700;font-size:11px;margin-top:3px">South Korea</div></div></div></div><div style="display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:8px;background:rgba(255,255,255,.03);border:1px solid rgba(34,211,238,.1);border-radius:10px"><div style="flex:1;display:flex;align-items:center;gap:6px;justify-content:flex-end"><img src="./World Cup 2026 LiveBoard friday_files/us.png" style="height:10px;width:auto;border-radius:1px;vertical-align:middle;margin-right:2px" alt="USA"><span style="font-size:12px;font-weight:700;color:#94a3b8">USA</span></div><div style="text-align:center;min-width:60px"><div style="font-size:13px;font-weight:700;color:#22d3ee">20:00</div><div style="font-size:8px;color:#334155;margin-top:1px">Lumen Field</div></div><div style="flex:1;display:flex;align-items:center;gap:6px"><span style="font-size:12px;font-weight:700;color:#94a3b8">AUS</span><img src="./World Cup 2026 LiveBoard friday_files/au.png" style="height:10px;width:auto;border-radius:1px;vertical-align:middle;margin-right:2px" alt="AUS"></div></div><div style="display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:8px;background:rgba(255,255,255,.03);border:1px solid rgba(34,211,238,.1);border-radius:10px"><div style="flex:1;display:flex;align-items:center;gap:6px;justify-content:flex-end"><img src="./World Cup 2026 LiveBoard friday_files/gb-sct.png" style="height:10px;width:auto;border-radius:1px;vertical-align:middle;margin-right:2px" alt="SCO"><span style="font-size:12px;font-weight:700;color:#94a3b8">SCO</span></div><div style="text-align:center;min-width:60px"><div style="font-size:13px;font-weight:700;color:#22d3ee">23:00</div><div style="font-size:8px;color:#334155;margin-top:1px">Gillette Stadium</div></div><div style="flex:1;display:flex;align-items:center;gap:6px"><span style="font-size:12px;font-weight:700;color:#94a3b8">MOR</span><img src="./World Cup 2026 LiveBoard friday_files/ma.png" style="height:10px;width:auto;border-radius:1px;vertical-align:middle;margin-right:2px" alt="MOR"></div></div></div>
     </div>
 
     <!-- Top Scorers -->
-    <div class="panel">
+    <div class="panel" style="border-color:rgba(59,130,246,.5);background:linear-gradient(150deg,rgba(30,58,138,.15),rgba(4,15,34,.97))">
       <div class="ptitle">👞 TOP SCORERS</div>
       <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between">
         <div id="sc-sidebar"><div class="sc-row"><span class="sc-num">1</span><span class="sc-name">J. David<img src="./World Cup 2026 LiveBoard friday_files/ca.png" style="height:11px;width:auto;border-radius:1px;vertical-align:middle;margin-left:4px" alt="Canada"></span><span class="sc-g">3 ⚽</span></div><div class="sc-row"><span class="sc-num">2</span><span class="sc-name">L. Messi<img src="./World Cup 2026 LiveBoard friday_files/ar.png" style="height:11px;width:auto;border-radius:1px;vertical-align:middle;margin-left:4px" alt="Argentina"></span><span class="sc-g">3 ⚽</span></div><div class="sc-row"><span class="sc-num">3</span><span class="sc-name">J. Manzambi<img src="./World Cup 2026 LiveBoard friday_files/ch.png" style="height:11px;width:auto;border-radius:1px;vertical-align:middle;margin-left:4px" alt="Switzerland"></span><span class="sc-g">2 ⚽</span></div><div class="sc-row"><span class="sc-num">4</span><span class="sc-name">C. Larin<img src="./World Cup 2026 LiveBoard friday_files/ca.png" style="height:11px;width:auto;border-radius:1px;vertical-align:middle;margin-left:4px" alt="Canada"></span><span class="sc-g">2 ⚽</span></div><div class="sc-row"><span class="sc-num">5</span><span class="sc-name">F. Balogun<img src="./World Cup 2026 LiveBoard friday_files/us.png" style="height:11px;width:auto;border-radius:1px;vertical-align:middle;margin-left:4px" alt="USA"></span><span class="sc-g">2 ⚽</span></div></div>
@@ -633,7 +633,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
     </div>
 
     <!-- Tournament Stats -->
-    <div class="panel">
+    <div class="panel" style="border-color:rgba(132,204,22,.5);background:linear-gradient(150deg,rgba(54,83,20,.15),rgba(4,15,34,.97))">
       <div class="ptitle">📊 TOURNAMENT STATS</div>
       <div style="flex:1;display:flex;flex-direction:column;justify-content:space-around">
         <div class="stat-2col">
@@ -648,7 +648,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
     </div>
 
     <!-- Features -->
-    <div class="panel">
+    <div class="panel" style="border-color:rgba(249,115,22,.5);background:linear-gradient(150deg,rgba(124,45,18,.15),rgba(4,15,34,.97))">
       <div class="ptitle">✨ FEATURES</div>
       <div style="flex:1;display:flex;flex-direction:column;justify-content:space-around">
         <div class="feat-item">🔴 Live Scores</div>
@@ -661,7 +661,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
     </div>
 
     <!-- Mobile App Preview -->
-    <div class="panel">
+    <div class="panel" style="border-color:rgba(239,68,68,.5);background:linear-gradient(150deg,rgba(127,29,29,.15),rgba(4,15,34,.97))">
       <div class="ptitle">📱 MOBILE APP PREVIEW</div>
       <div class="mob-phones" style="flex:1;align-content:space-around">
         <div class="mob-phone"><div class="mob-lbl">Home</div><div class="mob-val" style="font-size:10px">🇧🇷 2–1 🇦🇷</div><div class="mob-sub">78' LIVE</div></div>
@@ -929,21 +929,21 @@ function makeGroup(g){
   return h+'</div>';
 }
 
-function makeBC(m,gold){
+function makeBC(m,gold,ci){
   var hs=parseInt(m[2]),as=parseInt(m[5]),hw=hs>as,aw=as>hs,acc=gold?'gold':'win';
   var hCode=m[7]?'<span class="bc-code">'+m[7]+'</span>':'';
   var aCode=m[8]?'<span class="bc-code">'+m[8]+'</span>':'';
   var stadium=m[9]?'<div class="bc-stad">&#127967; '+m[9]+'</div>':'';
-  return '<div class="bc'+(gold?' gold':'')+'">'+
+  var cc=ci!==undefined?' wc'+(ci%6):'';return '<div class="bc'+(gold?' gold':'')+cc+'">'+
     '<div class="bc-row'+(hw?' win':'')+'" onclick="openPopByAbbr(\''+m[0]+'\')" style="cursor:pointer"><div class="bc-team">'+hCode+flagImg(m[0])+'<span class="bc-name">'+m[0]+'</span></div><span class="bc-score'+(hw?' '+acc:'')+'">'+m[2]+'</span></div>'+
     '<div class="bc-row'+(aw?' win':'')+'" onclick="openPopByAbbr(\''+m[3]+'\')" style="cursor:pointer"><div class="bc-team">'+aCode+flagImg(m[3])+'<span class="bc-name">'+m[3]+'</span></div><span class="bc-score'+(aw?' '+acc:'')+'">'+m[5]+'</span></div>'+
     '<div class="bc-st">'+(m[6]==='PEN'?'<span class="bc-var">PEN</span> ':m[6]==='ET'?'<span class="bc-var">ET</span> ':'')+m[6]+'</div>'+stadium+'</div>';
 }
 
 function makeCol(ms,gold,col){
-  var tops=[[6,86,166,246,326,406,486,566],[46,206,366,526],[126,446],[286],[20],[286],[126,446],[46,206,366,526],[6,86,166,246,326,406,486,566]];
+  var tops=[[4,98,192,286,380,474,568,662],[52,244,436,628],[148,532],[333],[20],[333],[148,532],[52,244,436,628],[4,98,192,286,380,474,568,662]];
   var t=tops[col]||[];
-  var cards=ms.map(function(m,i){var top=t[i]!==undefined?t[i]:i*84+6;return '<div style="position:absolute;top:'+top+'px;left:0;right:0">'+makeBC(m,gold)+'</div>';}).join('');
+  var cards=ms.map(function(m,i){var top=t[i]!==undefined?t[i]:i*94+4;var ci=(col*3+i)%6;return '<div style="position:absolute;top:'+top+'px;left:0;right:0">'+makeBC(m,gold,ci)+'</div>';}).join('');
   return '<div class="b-col" data-col="'+col+'">'+cards+'</div>';
 }
 
@@ -1119,7 +1119,7 @@ window.addEventListener('DOMContentLoaded',function(){
   }
 
   function makeFinalPlaceholder(){
-    return '<div class="final-col"><div class="final-inner" style="position:absolute;top:20px;left:4px;right:4px"><div style="color:#ffd54a;font-weight:900;font-size:16px;letter-spacing:5px;margin-bottom:2px">FINAL</div><div style="color:#64748b;font-size:8px;letter-spacing:1px">JULY 19, 2026</div><div style="color:#475569;font-size:7px;margin-bottom:10px;letter-spacing:.5px">METLIFE STADIUM &middot; NEW JERSEY, USA</div><div style="color:#475569;font-size:11px;text-align:center;padding:16px 0">To be decided</div></div><div style="position:absolute;top:478px;left:4px;right:4px;background:linear-gradient(150deg,rgba(4,15,34,.95),rgba(2,8,20,.98));border:1px solid rgba(148,163,184,.2);border-radius:10px;padding:8px 10px;text-align:center"><div style="color:#94a3b8;font-weight:700;font-size:11px;letter-spacing:3px;margin-bottom:4px">3RD PLACE</div><div style="color:#64748b;font-size:8px;letter-spacing:.5px">JULY 19, 2026</div><div style="color:#475569;font-size:7px;margin-bottom:8px;letter-spacing:.3px">METLIFE STADIUM &middot; NEW JERSEY, USA</div><div style="color:#475569;font-size:10px;text-align:center;padding:8px 0">To be decided</div></div></div>';
+    return '<div class="final-col"><div class="final-inner" style="position:absolute;top:20px;left:-50px;right:-50px"><div style="color:#ffd54a;font-weight:900;font-size:16px;letter-spacing:5px;margin-bottom:2px">FINAL</div><div style="color:#64748b;font-size:8px;letter-spacing:1px">JULY 19, 2026</div><div style="color:#475569;font-size:7px;margin-bottom:10px;letter-spacing:.5px">METLIFE STADIUM &middot; NEW JERSEY, USA</div><div style="color:#475569;font-size:11px;text-align:center;padding:16px 0">To be decided</div></div><div style="position:absolute;top:478px;left:-50px;right:-50px;background:linear-gradient(150deg,rgba(4,15,34,.95),rgba(2,8,20,.98));border:1px solid rgba(148,163,184,.2);border-radius:10px;padding:8px 10px;text-align:center"><div style="color:#94a3b8;font-weight:700;font-size:11px;letter-spacing:3px;margin-bottom:4px">3RD PLACE</div><div style="color:#64748b;font-size:8px;letter-spacing:.5px">JULY 19, 2026</div><div style="color:#475569;font-size:7px;margin-bottom:8px;letter-spacing:.3px">METLIFE STADIUM &middot; NEW JERSEY, USA</div><div style="color:#475569;font-size:10px;text-align:center;padding:8px 0">To be decided</div></div></div>';
   }
 
   function loadAll(){
