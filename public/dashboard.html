@@ -112,11 +112,11 @@ header{position:sticky;top:0;z-index:90;background:transparent;backdrop-filter:b
 .conn-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5}
 
 /* Each round column */
-.b-col{height:960px;position:relative}
+.b-col{height:640px;position:relative}
 
 /* Match cards */
-.bc{height:108px;background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:2px solid rgba(34,211,238,.4);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:border-color .15s,box-shadow .15s;box-shadow:0 0 8px rgba(34,211,238,.08)}
-.bc-final{height:200px;background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:2px solid #ffd54a;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;transition:border-color .15s,box-shadow .15s;box-shadow:0 0 20px rgba(255,213,74,.25)}
+.bc{height:64px;background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:2px solid rgba(34,211,238,.4);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:border-color .15s,box-shadow .15s;box-shadow:0 0 8px rgba(34,211,238,.08)}
+.bc-final{height:140px;background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:2px solid #ffd54a;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;transition:border-color .15s,box-shadow .15s;box-shadow:0 0 20px rgba(255,213,74,.25)}
 .bc-band{height:4px;flex-shrink:0;width:100%}
 .bc-body{flex:1;display:flex;flex-direction:column;justify-content:space-around;padding:3px 8px 2px}
 .bc-info{font-size:6.5px;color:#334155;text-align:center;padding:0 6px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.2px}
@@ -563,7 +563,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
             </div>
 
             <!-- Glowing connector SVG ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ position:absolute, covers exact grid area -->
-            <svg class="conn-svg" viewBox="0 0 983 960" preserveAspectRatio="none">
+            <svg class="conn-svg" viewBox="0 0 983 640" preserveAspectRatio="none">
               <defs>
                 <filter id="cg" x="-40%" y="-40%" width="180%" height="180%">
                   <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="b"/>
@@ -576,40 +576,40 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
               </defs>
               <!-- LEFT: R32 ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ R16 -->
               <g fill="none" stroke="rgba(34,211,238,.85)" stroke-width="2" filter="url(#cg)">
-                <path d="M95,60 H103 V120 H111"/><path d="M95,180 H103 V120"/>
-                <path d="M95,300 H103 V360 H111"/><path d="M95,420 H103 V360"/>
-                <path d="M95,540 H103 V600 H111"/><path d="M95,660 H103 V600"/>
-                <path d="M95,780 H103 V840 H111"/><path d="M95,900 H103 V840"/>
+                <path d="M95,40 H103 V80 H111"/><path d="M95,120 H103 V80"/>
+                <path d="M95,200 H103 V240 H111"/><path d="M95,280 H103 V240"/>
+                <path d="M95,360 H103 V400 H111"/><path d="M95,440 H103 V400"/>
+                <path d="M95,520 H103 V560 H111"/><path d="M95,600 H103 V560"/>
               </g>
               <!-- LEFT: R16 ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ QF -->
               <g fill="none" stroke="rgba(34,211,238,.9)" stroke-width="2.5" filter="url(#cg)">
-                <path d="M206,120 H214 V240 H222"/><path d="M206,360 H214 V240"/>
-                <path d="M206,600 H214 V720 H222"/><path d="M206,840 H214 V720"/>
+                <path d="M206,80 H214 V160 H222"/><path d="M206,240 H214 V160"/>
+                <path d="M206,400 H214 V480 H222"/><path d="M206,560 H214 V480"/>
               </g>
               <!-- LEFT: QF ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ SF -->
               <g fill="none" stroke="rgba(34,211,238,1)" stroke-width="3" filter="url(#cg)">
-                <path d="M317,240 H325 V480 H333"/><path d="M317,720 H325 V480"/>
+                <path d="M317,160 H325 V320 H333"/><path d="M317,480 H325 V320"/>
               </g>
               <!-- LEFT: SF ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Final -->
-              <path fill="none" stroke="rgba(255,213,74,1)" stroke-width="4" filter="url(#gg)" d="M428,480 H444"/>
+              <path fill="none" stroke="rgba(255,213,74,1)" stroke-width="4" filter="url(#gg)" d="M428,320 H444"/>
               <!-- RIGHT: R32 ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ R16 -->
               <g fill="none" stroke="rgba(34,211,238,.85)" stroke-width="2" filter="url(#cg)">
-                <path d="M888,60 H880 V120 H872"/><path d="M888,180 H880 V120"/>
-                <path d="M888,300 H880 V360 H872"/><path d="M888,420 H880 V360"/>
-                <path d="M888,540 H880 V600 H872"/><path d="M888,660 H880 V600"/>
-                <path d="M888,780 H880 V840 H872"/><path d="M888,900 H880 V840"/>
+                <path d="M888,40 H880 V80 H872"/><path d="M888,120 H880 V80"/>
+                <path d="M888,200 H880 V240 H872"/><path d="M888,280 H880 V240"/>
+                <path d="M888,360 H880 V400 H872"/><path d="M888,440 H880 V400"/>
+                <path d="M888,520 H880 V560 H872"/><path d="M888,600 H880 V560"/>
               </g>
               <!-- RIGHT: R16 ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ QF -->
               <g fill="none" stroke="rgba(34,211,238,.9)" stroke-width="2.5" filter="url(#cg)">
-                <path d="M777,120 H769 V240 H761"/><path d="M777,360 H769 V240"/>
-                <path d="M777,600 H769 V720 H761"/><path d="M777,840 H769 V720"/>
+                <path d="M777,80 H769 V160 H761"/><path d="M777,240 H769 V160"/>
+                <path d="M777,400 H769 V480 H761"/><path d="M777,560 H769 V480"/>
               </g>
               <!-- RIGHT: QF ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ SF -->
               <g fill="none" stroke="rgba(34,211,238,1)" stroke-width="3" filter="url(#cg)">
-                <path d="M666,240 H658 V480 H650"/><path d="M666,720 H658 V480"/>
+                <path d="M666,160 H658 V320 H650"/><path d="M666,480 H658 V320"/>
               </g>
               <!-- RIGHT: SF ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Final -->
-              <path fill="none" stroke="rgba(255,213,74,1)" stroke-width="4" filter="url(#gg)" d="M555,480 H539"/>
+              <path fill="none" stroke="rgba(255,213,74,1)" stroke-width="4" filter="url(#gg)" d="M555,320 H539"/>
             </svg>
 
             <!-- Bracket grid ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ identical fr columns to r-lbls -->
@@ -990,7 +990,7 @@ function makeBC(m,gold,col){
 }
 
 function makeCol(ms,gold,col){
-  var tops=[[6,126,246,366,486,606,726,846],[66,306,546,786],[186,666],[426],[380,600],[426],[186,666],[66,306,546,786],[6,126,246,366,486,606,726,846]];
+  var tops=[[8,88,168,248,328,408,488,568],[48,208,368,528],[128,448],[288],[250,406],[288],[128,448],[48,208,368,528],[8,88,168,248,328,408,488,568]];
   var t=tops[col]||[];
   var cards=ms.map(function(m,i){var top=t[i]!==undefined?t[i]:i*120+6;return '<div style="position:absolute;top:'+top+'px;left:0;right:0">'+makeBC(m,gold,col)+'</div>';}).join('');
   return '<div class="b-col" data-col="'+col+'">'+cards+'</div>';
@@ -1172,21 +1172,21 @@ window.addEventListener('DOMContentLoaded',function(){
 
   function makeFinalPlaceholder(){
     return '<div class="b-col" data-col="4">'+
-      '<div style="position:absolute;top:380px;left:0;right:0">'+
+      '<div style="position:absolute;top:250px;left:0;right:0">'+
         '<div class="bc-final gold" style="border-color:#ffd54a">'+
           '<div style="text-align:center;padding:0 8px">'+
-            '<div style="color:#ffd54a;font-weight:900;font-size:13px;letter-spacing:4px;text-shadow:0 0 16px rgba(255,213,74,.8)">FINAL</div>'+
-            '<div style="color:#64748b;font-size:7.5px;letter-spacing:1px;margin-top:5px">JULY 19, 2026</div>'+
-            '<div style="color:#334155;font-size:6.5px;margin-top:2px">METLIFE STADIUM · NEW JERSEY</div>'+
+            '<div style="color:#ffd54a;font-weight:900;font-size:12px;letter-spacing:4px;text-shadow:0 0 16px rgba(255,213,74,.8)">FINAL</div>'+
+            '<div style="color:#64748b;font-size:7px;letter-spacing:1px;margin-top:4px">JULY 19, 2026</div>'+
+            '<div style="color:#334155;font-size:6px;margin-top:2px">METLIFE STADIUM · NEW JERSEY</div>'+
           '</div>'+
         '</div>'+
       '</div>'+
-      '<div style="position:absolute;top:600px;left:0;right:0">'+
+      '<div style="position:absolute;top:406px;left:0;right:0">'+
         '<div class="bc-final" style="border-color:#ffd54a">'+
           '<div style="text-align:center;padding:0 8px">'+
-            '<div style="color:#94a3b8;font-weight:700;font-size:11px;letter-spacing:3px">3RD PLACE</div>'+
-            '<div style="color:#475569;font-size:7.5px;letter-spacing:1px;margin-top:5px">JULY 18, 2026</div>'+
-            '<div style="color:#334155;font-size:6.5px;margin-top:2px">HARD ROCK STADIUM · MIAMI</div>'+
+            '<div style="color:#94a3b8;font-weight:700;font-size:10px;letter-spacing:3px">3RD PLACE</div>'+
+            '<div style="color:#475569;font-size:7px;letter-spacing:1px;margin-top:4px">JULY 18, 2026</div>'+
+            '<div style="color:#334155;font-size:6px;margin-top:2px">HARD ROCK STADIUM · MIAMI</div>'+
           '</div>'+
         '</div>'+
       '</div>'+
