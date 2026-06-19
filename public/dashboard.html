@@ -932,11 +932,21 @@ function makeGroup(g){
   return h+'</div>';
 }
 
+function fmtKODate(d){
+  if(!d)return '';
+  try{var dt=new Date(d);if(isNaN(dt))return '';
+    var mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var h=dt.getUTCHours(),mi=dt.getUTCMinutes();
+    return dt.getUTCDate()+' '+mo[dt.getUTCMonth()]+' \xb7 '+(h<10?'0':'')+h+':'+(mi<10?'0':'')+mi+' UTC';
+  }catch(e){return '';}
+}
 function makeBC(m,gold,ci){
   var hs=parseInt(m[2]),as=parseInt(m[5]),hw=hs>as,aw=as>hs,acc=gold?'gold':'win';
   var hCode=m[7]?'<span class="bc-code">'+m[7]+'</span>':'';
   var aCode=m[8]?'<span class="bc-code">'+m[8]+'</span>':'';
-  var stadium=m[9]?'<div class="bc-stad">&#127967; '+m[9]+'</div>':'';
+  var venue=m[9]||'',dateStr=fmtKODate(m[11]||'');
+  var stadLine=(venue?'&#127967; '+venue:'')+((venue&&dateStr)?' \xb7 ':'')+dateStr;
+  var stadium=stadLine?'<div class="bc-stad">'+stadLine+'</div>':'';
   var mid=m[10]||'';
   var hdr=mid?'<div class="bc-hdr">MATCH '+mid.replace(/^M/,'')+'</div>':'';
   var cc=ci!==undefined?' wc'+(ci%6):'';return '<div class="bc'+(gold?' gold':'')+cc+'">'+hdr+
@@ -1097,7 +1107,7 @@ window.addEventListener('DOMContentLoaded',function(){
       var hs=m.homeScore!=null?String(m.homeScore):'-';
       var as=m.awayScore!=null?String(m.awayScore):'-';
       var st=m.status==='NS'?'':m.status;
-      var row=[m.homeCode,'',hs,m.awayCode,'',as,st,'','',m.venue||'',''];
+      var row=[m.homeCode,'',hs,m.awayCode,'',as,st,'','',m.venue||'','',m.date||''];
       if(r.indexOf('round of 32')>=0)L32.push(row);
       else if(r.indexOf('round of 16')>=0)L16.push(row);
       else if(r.indexOf('quarter')>=0)LQF.push(row);
@@ -1105,7 +1115,7 @@ window.addEventListener('DOMContentLoaded',function(){
       else if(r.indexOf('final')>=0&&r.indexOf('semi')<0&&r.indexOf('quarter')<0&&r.indexOf('3rd')<0&&r.indexOf('third')<0)FIN.push(row);
     });
     // Path placeholder helper - uses knockoutPaths labels for all rounds
-    function pathRow(id){var p=paths&&paths[id];var h=p?p.home:'TBD';var a=p?p.away:'TBD';return [h,'','-',a,'','-','','','','',id];}
+    function pathRow(id){var p=paths&&paths[id];var h=p?p.home:'TBD';var a=p?p.away:'TBD';var dt=p&&p.date?p.date:'';return [h,'','-',a,'','-','','','','',id,'',dt];}
     function assignIds(arr,order){arr.forEach(function(r,i){if(!r[10]&&order[i])r[10]=order[i];});}
     var r32order=['M73','M75','M79','M81','M85','M87','M83','M88','M74','M77','M80','M82','M84','M86','M78','M76'];
     var r16order=['M89','M90','M91','M92','M93','M94','M95','M96'];
