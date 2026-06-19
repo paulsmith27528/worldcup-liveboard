@@ -115,7 +115,8 @@ header{position:sticky;top:0;z-index:90;background:transparent;backdrop-filter:b
 .b-col{height:960px;position:relative}
 
 /* Match cards */
-.bc{height:108px;background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid rgba(34,211,238,.18);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:border-color .15s,box-shadow .15s;box-shadow:0 0 8px rgba(34,211,238,.08)}
+.bc{height:108px;background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:2px solid rgba(34,211,238,.4);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:border-color .15s,box-shadow .15s;box-shadow:0 0 8px rgba(34,211,238,.08)}
+.bc-final{height:200px;background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:2px solid #ffd54a;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;transition:border-color .15s,box-shadow .15s;box-shadow:0 0 20px rgba(255,213,74,.25)}
 .bc-band{height:4px;flex-shrink:0;width:100%}
 .bc-body{flex:1;display:flex;flex-direction:column;justify-content:space-around;padding:3px 8px 2px}
 .bc-info{font-size:6.5px;color:#334155;text-align:center;padding:0 6px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.2px}
@@ -977,7 +978,8 @@ function makeBC(m,gold,col){
   var aCode=m[8]?'<span class="bc-code">'+m[8]+'</span>':'';
   var status=m[6]==='PEN'?'<span class="bc-var">PEN</span> '+m[6]:m[6]==='ET'?'<span class="bc-var">ET</span> '+m[6]:m[6];
   var dtv=[fmtKODate(m[10]),m[9]].filter(Boolean).join(' · ');
-  return '<div class="bc'+(gold?' gold':'')+'" style="border-color:'+band+'">'+
+  var cls=(col===4?'bc-final':'bc')+(gold?' gold':'');
+  return '<div class="'+cls+'" style="border-color:'+band+'">'+
     '<div class="bc-body">'+
       '<div class="bc-row'+(hw?' win':'')+'" onclick="openPopByAbbr(\''+m[0]+'\')" style="cursor:pointer"><div class="bc-team">'+hCode+flagImg(m[0])+'<span class="bc-name">'+m[0]+'</span></div><span class="bc-score'+(hw?' '+acc:'')+'">'+m[2]+'</span></div>'+
       '<div class="bc-row'+(aw?' win':'')+'" onclick="openPopByAbbr(\''+m[3]+'\')" style="cursor:pointer"><div class="bc-team">'+aCode+flagImg(m[3])+'<span class="bc-name">'+m[3]+'</span></div><span class="bc-score'+(aw?' '+acc:'')+'">'+m[5]+'</span></div>'+
@@ -988,7 +990,7 @@ function makeBC(m,gold,col){
 }
 
 function makeCol(ms,gold,col){
-  var tops=[[6,126,246,366,486,606,726,846],[66,306,546,786],[186,666],[426],[426],[426],[186,666],[66,306,546,786],[6,126,246,366,486,606,726,846]];
+  var tops=[[6,126,246,366,486,606,726,846],[66,306,546,786],[186,666],[426],[380,600],[426],[186,666],[66,306,546,786],[6,126,246,366,486,606,726,846]];
   var t=tops[col]||[];
   var cards=ms.map(function(m,i){var top=t[i]!==undefined?t[i]:i*120+6;return '<div style="position:absolute;top:'+top+'px;left:0;right:0">'+makeBC(m,gold,col)+'</div>';}).join('');
   return '<div class="b-col" data-col="'+col+'">'+cards+'</div>';
@@ -1170,11 +1172,22 @@ window.addEventListener('DOMContentLoaded',function(){
 
   function makeFinalPlaceholder(){
     return '<div class="b-col" data-col="4">'+
-      '<div style="position:absolute;top:426px;left:0;right:0">'+
-        '<div class="bc gold" style="border-color:#ffd54a;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px">'+
-          '<div style="color:#ffd54a;font-weight:900;font-size:12px;letter-spacing:4px;text-shadow:0 0 14px rgba(255,213,74,.7)">FINAL</div>'+
-          '<div style="color:#64748b;font-size:7px;letter-spacing:1px">JULY 19, 2026</div>'+
-          '<div style="color:#334155;font-size:6px">METLIFE STADIUM</div>'+
+      '<div style="position:absolute;top:380px;left:0;right:0">'+
+        '<div class="bc-final gold" style="border-color:#ffd54a">'+
+          '<div style="text-align:center;padding:0 8px">'+
+            '<div style="color:#ffd54a;font-weight:900;font-size:13px;letter-spacing:4px;text-shadow:0 0 16px rgba(255,213,74,.8)">FINAL</div>'+
+            '<div style="color:#64748b;font-size:7.5px;letter-spacing:1px;margin-top:5px">JULY 19, 2026</div>'+
+            '<div style="color:#334155;font-size:6.5px;margin-top:2px">METLIFE STADIUM · NEW JERSEY</div>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+      '<div style="position:absolute;top:600px;left:0;right:0">'+
+        '<div class="bc-final" style="border-color:#ffd54a">'+
+          '<div style="text-align:center;padding:0 8px">'+
+            '<div style="color:#94a3b8;font-weight:700;font-size:11px;letter-spacing:3px">3RD PLACE</div>'+
+            '<div style="color:#475569;font-size:7.5px;letter-spacing:1px;margin-top:5px">JULY 18, 2026</div>'+
+            '<div style="color:#334155;font-size:6.5px;margin-top:2px">HARD ROCK STADIUM · MIAMI</div>'+
+          '</div>'+
         '</div>'+
       '</div>'+
     '</div>';
