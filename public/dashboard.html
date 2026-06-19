@@ -932,12 +932,46 @@ function makeGroup(g){
   return h+'</div>';
 }
 
+var koSchedule={
+  'M73':{date:'2026-06-28T19:00:00Z',venue:'SoFi Stadium'},
+  'M74':{date:'2026-06-29T20:30:00Z',venue:'Gillette Stadium'},
+  'M75':{date:'2026-06-30T01:00:00Z',venue:'Estadio BBVA'},
+  'M76':{date:'2026-06-29T17:00:00Z',venue:'NRG Stadium'},
+  'M77':{date:'2026-06-30T21:00:00Z',venue:'MetLife Stadium'},
+  'M78':{date:'2026-06-30T17:00:00Z',venue:'AT&T Stadium'},
+  'M79':{date:'2026-07-01T01:00:00Z',venue:'Estadio Azteca'},
+  'M80':{date:'2026-07-01T16:00:00Z',venue:'Mercedes-Benz Stadium'},
+  'M81':{date:'2026-07-02T00:00:00Z',venue:"Levi's Stadium"},
+  'M82':{date:'2026-07-01T20:00:00Z',venue:'Lumen Field'},
+  'M83':{date:'2026-07-02T23:00:00Z',venue:'BMO Field'},
+  'M84':{date:'2026-07-02T19:00:00Z',venue:'SoFi Stadium'},
+  'M85':{date:'2026-07-03T03:00:00Z',venue:'BC Place'},
+  'M86':{date:'2026-07-03T22:00:00Z',venue:'Hard Rock Stadium'},
+  'M87':{date:'2026-07-04T01:30:00Z',venue:'Arrowhead Stadium'},
+  'M88':{date:'2026-07-03T18:00:00Z',venue:'AT&T Stadium'},
+  'M89':{date:'2026-07-04T17:00:00Z',venue:'NRG Stadium'},
+  'M90':{date:'2026-07-04T21:00:00Z',venue:'Lincoln Financial Field'},
+  'M91':{date:'2026-07-05T20:00:00Z',venue:'MetLife Stadium'},
+  'M92':{date:'2026-07-06T00:00:00Z',venue:'Estadio Azteca'},
+  'M93':{date:'2026-07-06T19:00:00Z',venue:'AT&T Stadium'},
+  'M94':{date:'2026-07-07T00:00:00Z',venue:'Lumen Field'},
+  'M95':{date:'2026-07-07T16:00:00Z',venue:'Mercedes-Benz Stadium'},
+  'M96':{date:'2026-07-07T20:00:00Z',venue:'BC Place'},
+  'M97':{date:'2026-07-09T19:00:00Z',venue:'Gillette Stadium'},
+  'M98':{date:'2026-07-10T19:00:00Z',venue:'SoFi Stadium'},
+  'M99':{date:'2026-07-11T19:00:00Z',venue:'Hard Rock Stadium'},
+  'M100':{date:'2026-07-11T23:00:00Z',venue:'Arrowhead Stadium'},
+  'M101':{date:'2026-07-14T19:00:00Z',venue:'AT&T Stadium'},
+  'M102':{date:'2026-07-15T19:00:00Z',venue:'Mercedes-Benz Stadium'},
+  'M103':{date:'2026-07-18T21:00:00Z',venue:'Hard Rock Stadium'},
+  'M104':{date:'2026-07-19T19:00:00Z',venue:'MetLife Stadium'}
+};
 function fmtKODate(d){
   if(!d)return '';
   try{var dt=new Date(d);if(isNaN(dt))return '';
     var mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var h=dt.getUTCHours(),mi=dt.getUTCMinutes();
-    return dt.getUTCDate()+' '+mo[dt.getUTCMonth()]+' \xb7 '+(h<10?'0':'')+h+':'+(mi<10?'0':'')+mi+' UTC';
+    var h=dt.getHours(),mi=dt.getMinutes();
+    return dt.getDate()+' '+mo[dt.getMonth()]+' \xb7 '+(h<10?'0':'')+h+':'+(mi<10?'0':'')+mi;
   }catch(e){return '';}
 }
 function makeBC(m,gold,ci){
@@ -1115,7 +1149,7 @@ window.addEventListener('DOMContentLoaded',function(){
       else if(r.indexOf('final')>=0&&r.indexOf('semi')<0&&r.indexOf('quarter')<0&&r.indexOf('3rd')<0&&r.indexOf('third')<0)FIN.push(row);
     });
     // Path placeholder helper - uses knockoutPaths labels for all rounds
-    function pathRow(id){var p=paths&&paths[id];var h=p?p.home:'TBD';var a=p?p.away:'TBD';var dt=p&&p.date?p.date:'';return [h,'','-',a,'','-','','','','',id,'',dt];}
+    function pathRow(id){var p=paths&&paths[id];var h=p?p.home:'TBD';var a=p?p.away:'TBD';var ks=koSchedule[id]||{};return [h,'','-',a,'','-','','','',ks.venue||'',id,ks.date||''];}
     function assignIds(arr,order){arr.forEach(function(r,i){if(!r[10]&&order[i])r[10]=order[i];});}
     var r32order=['M73','M75','M79','M81','M85','M87','M83','M88','M74','M77','M80','M82','M84','M86','M78','M76'];
     var r16order=['M89','M90','M91','M92','M93','M94','M95','M96'];
