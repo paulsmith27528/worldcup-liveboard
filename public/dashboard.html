@@ -112,7 +112,7 @@ header{position:sticky;top:0;z-index:90;background:transparent;backdrop-filter:b
 .conn-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5}
 
 /* Each round column */
-.b-col{height:1200px;position:relative}
+.b-col{height:960px;position:relative}
 
 /* Match cards */
 .bc{height:108px;background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid rgba(34,211,238,.18);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:border-color .15s,box-shadow .15s;box-shadow:0 0 8px rgba(34,211,238,.08)}
@@ -135,7 +135,7 @@ header{position:sticky;top:0;z-index:90;background:transparent;backdrop-filter:b
 .bc-var{font-size:6px;background:rgba(34,211,238,.2);color:#22d3ee;padding:0 3px;border-radius:2px;font-weight:700}
 
 /* Final column */
-.final-col{height:1200px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8px 6px}
+.final-col{height:960px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:8px 6px}
 .final-inner{width:100%;background:radial-gradient(ellipse at 50% 20%,rgba(255,213,74,.16),rgba(0,0,0,.75));border:1px solid rgba(255,213,74,.6);border-radius:14px;padding:14px 10px;display:flex;flex-direction:column;align-items:center}
 .final-inner.gold-glow{animation:goldPulse 3s ease-in-out infinite}
 
@@ -562,61 +562,53 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
             </div>
 
             <!-- Glowing connector SVG ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ position:absolute, covers exact grid area -->
-            <svg class="conn-svg" viewBox="0 0 986 1200" preserveAspectRatio="none">
+            <svg class="conn-svg" viewBox="0 0 986 960" preserveAspectRatio="none">
               <defs>
-                <filter id="cg" x="-60%" y="-60%" width="220%" height="220%">
-                  <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="b"/>
+                <filter id="cg" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="b"/>
                   <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
                 </filter>
-                <filter id="gg" x="-60%" y="-60%" width="220%" height="220%">
-                  <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b"/>
+                <filter id="gg" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="b"/>
                   <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
                 </filter>
               </defs>
               <!-- LEFT: R32 ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ R16 -->
-              <!-- LEFT: R32 to R16 -->
-              <g fill="none" stroke="rgba(34,211,238,.9)" stroke-width="2" filter="url(#cg)">
-                <path d="M115,60 H118 V135 H121"/><path d="M115,210 H118 V135"/>
-                <path d="M115,360 H118 V435 H121"/><path d="M115,510 H118 V435"/>
-                <path d="M115,660 H118 V735 H121"/><path d="M115,810 H118 V735"/>
-                <path d="M115,960 H118 V1035 H121"/><path d="M115,1110 H118 V1035"/>
+              <g fill="none" stroke="rgba(34,211,238,.75)" stroke-width="1.5" filter="url(#cg)">
+                <path d="M115,60 H118 V120 H121"/><path d="M115,180 H118 V120"/>
+                <path d="M115,300 H118 V360 H121"/><path d="M115,420 H118 V360"/>
+                <path d="M115,540 H118 V600 H121"/><path d="M115,660 H118 V600"/>
+                <path d="M115,780 H118 V840 H121"/><path d="M115,900 H118 V840"/>
               </g>
               <!-- LEFT: R16 ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ QF -->
-              <!-- LEFT: R16 to QF -->
-              <g fill="none" stroke="rgba(34,211,238,.95)" stroke-width="2.5" filter="url(#cg)">
-                <path d="M221,135 H224 V285 H227"/><path d="M221,435 H224 V285"/>
-                <path d="M221,735 H224 V885 H227"/><path d="M221,1035 H224 V885"/>
+              <g fill="none" stroke="rgba(34,211,238,.85)" stroke-width="2" filter="url(#cg)">
+                <path d="M221,120 H224 V240 H227"/><path d="M221,360 H224 V240"/>
+                <path d="M221,600 H224 V720 H227"/><path d="M221,840 H224 V720"/>
               </g>
               <!-- LEFT: QF ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ SF -->
-              <!-- LEFT: QF to SF -->
-              <g fill="none" stroke="rgba(34,211,238,1)" stroke-width="3" filter="url(#cg)">
-                <path d="M315,285 H318 V585 H321"/><path d="M315,885 H318 V585"/>
+              <g fill="none" stroke="rgba(34,211,238,.95)" stroke-width="2.5" filter="url(#cg)">
+                <path d="M315,240 H318 V480 H321"/><path d="M315,720 H318 V480"/>
               </g>
               <!-- LEFT: SF ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Final -->
-              <!-- LEFT: SF to Final (gold) -->
-              <path fill="none" stroke="rgba(255,213,74,1)" stroke-width="4" filter="url(#gg)" d="M397,585 H403"/>
+              <path fill="none" stroke="rgba(255,213,74,.95)" stroke-width="3" filter="url(#gg)" d="M397,480 H403"/>
               <!-- RIGHT: R32 ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ R16 -->
-              <!-- RIGHT: R32 to R16 -->
-              <g fill="none" stroke="rgba(34,211,238,.9)" stroke-width="2" filter="url(#cg)">
-                <path d="M871,60 H868 V135 H865"/><path d="M871,210 H868 V135"/>
-                <path d="M871,360 H868 V435 H865"/><path d="M871,510 H868 V435"/>
-                <path d="M871,660 H868 V735 H865"/><path d="M871,810 H868 V735"/>
-                <path d="M871,960 H868 V1035 H865"/><path d="M871,1110 H868 V1035"/>
+              <g fill="none" stroke="rgba(34,211,238,.75)" stroke-width="1.5" filter="url(#cg)">
+                <path d="M871,60 H868 V120 H865"/><path d="M871,180 H868 V120"/>
+                <path d="M871,300 H868 V360 H865"/><path d="M871,420 H868 V360"/>
+                <path d="M871,540 H868 V600 H865"/><path d="M871,660 H868 V600"/>
+                <path d="M871,780 H868 V840 H865"/><path d="M871,900 H868 V840"/>
               </g>
               <!-- RIGHT: R16 ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ QF -->
-              <!-- RIGHT: R16 to QF -->
-              <g fill="none" stroke="rgba(34,211,238,.95)" stroke-width="2.5" filter="url(#cg)">
-                <path d="M765,135 H762 V285 H759"/><path d="M765,435 H762 V285"/>
-                <path d="M765,735 H762 V885 H759"/><path d="M765,1035 H762 V885"/>
+              <g fill="none" stroke="rgba(34,211,238,.85)" stroke-width="2" filter="url(#cg)">
+                <path d="M765,120 H762 V240 H759"/><path d="M765,360 H762 V240"/>
+                <path d="M765,600 H762 V720 H759"/><path d="M765,840 H762 V720"/>
               </g>
               <!-- RIGHT: QF ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ SF -->
-              <!-- RIGHT: QF to SF -->
-              <g fill="none" stroke="rgba(34,211,238,1)" stroke-width="3" filter="url(#cg)">
-                <path d="M671,285 H668 V585 H665"/><path d="M671,885 H668 V585"/>
+              <g fill="none" stroke="rgba(34,211,238,.95)" stroke-width="2.5" filter="url(#cg)">
+                <path d="M671,240 H668 V480 H665"/><path d="M671,720 H668 V480"/>
               </g>
               <!-- RIGHT: SF ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Final -->
-              <!-- RIGHT: SF to Final (gold) -->
-              <path fill="none" stroke="rgba(255,213,74,1)" stroke-width="4" filter="url(#gg)" d="M589,585 H583"/>
+              <path fill="none" stroke="rgba(255,213,74,.95)" stroke-width="3" filter="url(#gg)" d="M589,480 H583"/>
             </svg>
 
             <!-- Bracket grid ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ identical fr columns to r-lbls -->
@@ -984,7 +976,7 @@ function makeBC(m,gold,col){
   var aCode=m[8]?'<span class="bc-code">'+m[8]+'</span>':'';
   var status=m[6]==='PEN'?'<span class="bc-var">PEN</span> '+m[6]:m[6]==='ET'?'<span class="bc-var">ET</span> '+m[6]:m[6];
   var dtv=[fmtKODate(m[10]),m[9]].filter(Boolean).join(' · ');
-  return '<div class="bc'+(gold?' gold':'')+'" style="border-color:'+band+'88">'+
+  return '<div class="bc'+(gold?' gold':'')+'">'+
     '<div class="bc-band" style="background:'+band+'"></div>'+
     '<div class="bc-body">'+
       '<div class="bc-row'+(hw?' win':'')+'" onclick="openPopByAbbr(\''+m[0]+'\')" style="cursor:pointer"><div class="bc-team">'+hCode+flagImg(m[0])+'<span class="bc-name">'+m[0]+'</span></div><span class="bc-score'+(hw?' '+acc:'')+'">'+m[2]+'</span></div>'+
@@ -996,7 +988,7 @@ function makeBC(m,gold,col){
 }
 
 function makeCol(ms,gold,col){
-  var tops=[[6,156,306,456,606,756,906,1056],[81,381,681,981],[231,831],[531],[],[531],[231,831],[81,381,681,981],[6,156,306,456,606,756,906,1056]];
+  var tops=[[6,126,246,366,486,606,726,846],[66,306,546,786],[186,666],[426],[],[426],[186,666],[66,306,546,786],[6,126,246,366,486,606,726,846]];
   var t=tops[col]||[];
   var cards=ms.map(function(m,i){var top=t[i]!==undefined?t[i]:i*120+6;return '<div style="position:absolute;top:'+top+'px;left:0;right:0">'+makeBC(m,gold,col)+'</div>';}).join('');
   return '<div class="b-col" data-col="'+col+'">'+cards+'</div>';
@@ -1183,7 +1175,7 @@ window.addEventListener('DOMContentLoaded',function(){
         '<div style="color:#64748b;font-size:7.5px;letter-spacing:1px;margin-top:2px">JULY 19, 2026</div>'+
         '<div style="color:#334155;font-size:6.5px;margin-top:1px">METLIFE STADIUM · NEW JERSEY</div>'+
       '</div>'+
-      '<div style="font-size:64px;margin:16px 0 8px">🏆</div>'+
+      '<img src="/world-cup-trophy.png" style="width:100%;max-height:520px;object-fit:contain;mix-blend-mode:screen;filter:drop-shadow(0 0 28px rgba(255,213,74,.85)) drop-shadow(0 0 8px rgba(255,213,74,.5));display:block;margin:0 auto" alt="World Cup Trophy"/>'+
       '<div style="color:#475569;font-size:9px;text-align:center;padding:8px 0;letter-spacing:1px">To be decided</div>'+
     '</div>';
   }
