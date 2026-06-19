@@ -115,6 +115,7 @@ header{position:sticky;top:0;z-index:90;background:transparent;backdrop-filter:b
 .b-col{height:750px;position:relative}
 
 /* Match cards */
+.bc-hdr{font-size:6.5px;font-weight:700;letter-spacing:1.5px;color:rgba(34,211,238,.55);text-transform:uppercase;padding-bottom:2px;border-bottom:1px solid rgba(34,211,238,.1);margin-bottom:1px}
 .bc{height:88px;background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid rgba(34,211,238,.18);border-radius:10px;padding:3px 8px;display:flex;flex-direction:column;justify-content:space-around;cursor:pointer;transition:border-color .15s,box-shadow .15s;box-shadow:0 0 8px rgba(34,211,238,.08)}
 .bc:hover{border-color:rgba(34,211,238,.65);box-shadow:0 0 16px rgba(34,211,238,.3)}
 .bc.gold{border-color:rgba(255,213,74,.4)}
@@ -936,7 +937,9 @@ function makeBC(m,gold,ci){
   var hCode=m[7]?'<span class="bc-code">'+m[7]+'</span>':'';
   var aCode=m[8]?'<span class="bc-code">'+m[8]+'</span>':'';
   var stadium=m[9]?'<div class="bc-stad">&#127967; '+m[9]+'</div>':'';
-  var cc=ci!==undefined?' wc'+(ci%6):'';return '<div class="bc'+(gold?' gold':'')+cc+'">'+
+  var mid=m[10]||'';
+  var hdr=mid?'<div class="bc-hdr">MATCH '+mid.replace(/^M/,'')+'</div>':'';
+  var cc=ci!==undefined?' wc'+(ci%6):'';return '<div class="bc'+(gold?' gold':'')+cc+'">'+hdr+
     '<div class="bc-row'+(hw?' win':'')+'" onclick="openPopByAbbr(\''+m[0]+'\')" style="cursor:pointer"><div class="bc-team">'+hCode+flagImg(m[0])+'<span class="bc-name">'+m[0]+'</span></div><span class="bc-score'+(hw?' '+acc:'')+'">'+m[2]+'</span></div>'+
     '<div class="bc-row'+(aw?' win':'')+'" onclick="openPopByAbbr(\''+m[3]+'\')" style="cursor:pointer"><div class="bc-team">'+aCode+flagImg(m[3])+'<span class="bc-name">'+m[3]+'</span></div><span class="bc-score'+(aw?' '+acc:'')+'">'+m[5]+'</span></div>'+
     '<div class="bc-st">'+(m[6]==='PEN'?'<span class="bc-var">PEN</span> ':m[6]==='ET'?'<span class="bc-var">ET</span> ':'')+m[6]+'</div>'+stadium+'</div>';
@@ -1094,7 +1097,7 @@ window.addEventListener('DOMContentLoaded',function(){
       var hs=m.homeScore!=null?String(m.homeScore):'-';
       var as=m.awayScore!=null?String(m.awayScore):'-';
       var st=m.status==='NS'?'':m.status;
-      var row=[m.homeCode,'',hs,m.awayCode,'',as,st,'','',m.venue||''];
+      var row=[m.homeCode,'',hs,m.awayCode,'',as,st,'','',m.venue||'',''];
       if(r.indexOf('round of 32')>=0)L32.push(row);
       else if(r.indexOf('round of 16')>=0)L16.push(row);
       else if(r.indexOf('quarter')>=0)LQF.push(row);
@@ -1102,15 +1105,17 @@ window.addEventListener('DOMContentLoaded',function(){
       else if(r.indexOf('final')>=0&&r.indexOf('semi')<0&&r.indexOf('quarter')<0&&r.indexOf('3rd')<0&&r.indexOf('third')<0)FIN.push(row);
     });
     // Path placeholder helper - uses knockoutPaths labels for all rounds
-    function pathRow(id){var p=paths&&paths[id];var h=p?p.home:'TBD';var a=p?p.away:'TBD';return [h,'','-',a,'','-','','','',''];}
+    function pathRow(id){var p=paths&&paths[id];var h=p?p.home:'TBD';var a=p?p.away:'TBD';return [h,'','-',a,'','-','','','','',id];}
+    function assignIds(arr,order){arr.forEach(function(r,i){if(!r[10]&&order[i])r[10]=order[i];});}
     var r32order=['M73','M75','M79','M81','M85','M87','M83','M88','M74','M77','M80','M82','M84','M86','M78','M76'];
     var r16order=['M89','M90','M91','M92','M93','M94','M95','M96'];
     var qforder=['M97','M98','M99','M100'];
     var sforder=['M101','M102'];
-    if(L32.length===0){r32order.forEach(function(id){L32.push(pathRow(id));});}
-    if(L16.length===0){r16order.forEach(function(id){L16.push(pathRow(id));});}
-    if(LQF.length===0){qforder.forEach(function(id){LQF.push(pathRow(id));});}
-    if(LSF.length===0){sforder.forEach(function(id){LSF.push(pathRow(id));});}
+    if(L32.length===0){r32order.forEach(function(id){L32.push(pathRow(id));});}else{assignIds(L32,r32order);}
+    if(L16.length===0){r16order.forEach(function(id){L16.push(pathRow(id));});}else{assignIds(L16,r16order);}
+    if(LQF.length===0){qforder.forEach(function(id){LQF.push(pathRow(id));});}else{assignIds(LQF,qforder);}
+    if(LSF.length===0){sforder.forEach(function(id){LSF.push(pathRow(id));});}else{assignIds(LSF,sforder);}
+    if(FIN.length>0){FIN.forEach(function(r,i){if(!r[10])r[10]=i===0?'M104':'M103';});}
     // Split left/right halves by match index
     var half=Math.ceil(L32.length/2);
     bgEl.innerHTML=
