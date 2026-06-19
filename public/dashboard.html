@@ -132,7 +132,7 @@ header{position:sticky;top:0;z-index:90;background:transparent;backdrop-filter:b
 .bc-var{font-size:6px;background:rgba(34,211,238,.2);color:#22d3ee;padding:0 3px;border-radius:2px;font-weight:700}
 
 /* Final column */
-.final-col{height:750px;position:relative}
+.final-col{height:750px;position:relative}.final-col .bc{height:120px}
 .final-inner{width:100%;background:radial-gradient(ellipse at 50% 20%,rgba(255,213,74,.16),rgba(0,0,0,.75));border:1px solid rgba(255,213,74,.6);border-radius:14px;padding:14px 10px;display:flex;flex-direction:column;align-items:center}
 .final-inner.gold-glow{animation:goldPulse 3s ease-in-out infinite}
 
@@ -564,7 +564,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
                 <path d="M342,189 H345 V377 H348"></path><path d="M342,565 H345 V377"></path>
               </g>
               <!-- LEFT: SF → Final -->
-              <path fill="none" stroke="rgba(255,213,74,.6)" stroke-width="1.6" filter="url(#gg)" d="M403,333 V130"></path>
+              <path fill="none" stroke="rgba(255,213,74,.6)" stroke-width="1.6" filter="url(#gg)" d="M403,333 V276"></path>
               <!-- RIGHT: R32 → R16 -->
               <g fill="none" stroke="rgba(34,211,238,.22)" stroke-width="1" filter="url(#cg)">
                 <path d="M875,48 H872 V95 H869"></path><path d="M875,142 H872 V95"></path>
@@ -582,7 +582,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
                 <path d="M643,189 H640 V377 H637"></path><path d="M643,565 H640 V377"></path>
               </g>
               <!-- RIGHT: SF → Final -->
-              <path fill="none" stroke="rgba(255,213,74,.6)" stroke-width="1.6" filter="url(#gg)" d="M582,333 V130"></path>
+              <path fill="none" stroke="rgba(255,213,74,.6)" stroke-width="1.6" filter="url(#gg)" d="M582,333 V276"></path>
             </svg>
 
             <!-- Bracket grid ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ identical fr columns to r-lbls -->
@@ -941,7 +941,7 @@ function makeBC(m,gold,ci){
 }
 
 function makeCol(ms,gold,col){
-  var tops=[[4,98,192,286,380,474,568,662],[52,244,436,628],[148,532],[333],[20],[333],[148,532],[52,244,436,628],[4,98,192,286,380,474,568,662]];
+  var tops=[[4,98,192,286,380,474,568,662],[52,244,436,628],[148,532],[333],[156],[333],[148,532],[52,244,436,628],[4,98,192,286,380,474,568,662]];
   var t=tops[col]||[];
   var colMap=[0,1,2,3,4,3,2,1,0];var cc=colMap[col]!==undefined?colMap[col]:col%6;
   var cards=ms.map(function(m,i){var top=t[i]!==undefined?t[i]:i*94+4;return '<div style="position:absolute;top:'+top+'px;left:0;right:0">'+makeBC(m,gold,cc)+'</div>';}).join('');
@@ -1120,7 +1120,7 @@ window.addEventListener('DOMContentLoaded',function(){
   }
 
   function makeFinalPlaceholder(){
-    return '<div class="final-col"><div class="final-inner" style="position:absolute;top:20px;left:-50px;right:-50px"><div style="color:#ffd54a;font-weight:900;font-size:16px;letter-spacing:5px;margin-bottom:2px">FINAL</div><div style="color:#64748b;font-size:8px;letter-spacing:1px">JULY 19, 2026</div><div style="color:#475569;font-size:7px;margin-bottom:10px;letter-spacing:.5px">METLIFE STADIUM &middot; NEW JERSEY, USA</div><div style="color:#475569;font-size:11px;text-align:center;padding:16px 0">To be decided</div></div><div style="position:absolute;top:478px;left:-50px;right:-50px;background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:2px solid rgba(34,211,238,.95);box-shadow:0 0 18px rgba(6,182,212,.55);border-radius:10px;padding:8px 10px;text-align:center"><div style="color:#94a3b8;font-weight:700;font-size:11px;letter-spacing:3px;margin-bottom:4px">3RD PLACE</div><div style="color:#64748b;font-size:8px;letter-spacing:.5px">JULY 19, 2026</div><div style="color:#475569;font-size:7px;margin-bottom:8px;letter-spacing:.3px">METLIFE STADIUM &middot; NEW JERSEY, USA</div><div style="color:#475569;font-size:10px;text-align:center;padding:8px 0">To be decided</div></div></div>';
+    return '<div class="final-col"><div style="position:absolute;top:156px;left:-50px;right:-50px;background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:2px solid rgba(248,113,113,.95);box-shadow:0 0 18px rgba(239,68,68,.55);border-radius:14px;padding:12px 12px;text-align:center"><div style="color:#ffd54a;font-weight:900;font-size:14px;letter-spacing:4px;margin-bottom:6px">FINAL</div><div style="color:#64748b;font-size:8px;letter-spacing:.5px;margin-bottom:4px">JULY 19, 2026</div><div style="color:#475569;font-size:7px;margin-bottom:12px;letter-spacing:.3px">METLIFE STADIUM &middot; NEW JERSEY, USA</div><div style="color:#475569;font-size:11px;text-align:center;padding:12px 0">To be decided</div></div><div style="position:absolute;top:478px;left:-50px;right:-50px;background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:2px solid rgba(34,211,238,.95);box-shadow:0 0 18px rgba(6,182,212,.55);border-radius:10px;padding:8px 10px;text-align:center"><div style="color:#94a3b8;font-weight:700;font-size:11px;letter-spacing:3px;margin-bottom:4px">3RD PLACE</div><div style="color:#64748b;font-size:8px;letter-spacing:.5px">JULY 19, 2026</div><div style="color:#475569;font-size:7px;margin-bottom:8px;letter-spacing:.3px">METLIFE STADIUM &middot; NEW JERSEY, USA</div><div style="color:#475569;font-size:10px;text-align:center;padding:8px 0">To be decided</div></div></div>';
   }
 
   function loadAll(){
