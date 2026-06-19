@@ -112,10 +112,10 @@ header{position:sticky;top:0;z-index:90;background:transparent;backdrop-filter:b
 .conn-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5}
 
 /* Each round column */
-.b-col{height:650px;position:relative}
+.b-col{height:750px;position:relative}
 
 /* Match cards */
-.bc{height:72px;background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid rgba(34,211,238,.18);border-radius:10px;padding:3px 8px;display:flex;flex-direction:column;justify-content:space-around;cursor:pointer;transition:border-color .15s,box-shadow .15s;box-shadow:0 0 8px rgba(34,211,238,.08)}
+.bc{height:88px;background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid rgba(34,211,238,.18);border-radius:10px;padding:3px 8px;display:flex;flex-direction:column;justify-content:space-around;cursor:pointer;transition:border-color .15s,box-shadow .15s;box-shadow:0 0 8px rgba(34,211,238,.08)}
 .bc:hover{border-color:rgba(34,211,238,.65);box-shadow:0 0 16px rgba(34,211,238,.3)}
 .bc.gold{border-color:rgba(255,213,74,.4)}
 .bc-row{display:flex;justify-content:space-between;align-items:center;gap:3px;font-size:9px;color:rgba(255,255,255,.75)}
@@ -132,7 +132,7 @@ header{position:sticky;top:0;z-index:90;background:transparent;backdrop-filter:b
 .bc-var{font-size:6px;background:rgba(34,211,238,.2);color:#22d3ee;padding:0 3px;border-radius:2px;font-weight:700}
 
 /* Final column */
-.final-col{height:650px;position:relative}
+.final-col{height:750px;position:relative}
 .final-inner{width:100%;background:radial-gradient(ellipse at 50% 20%,rgba(255,213,74,.16),rgba(0,0,0,.75));border:1px solid rgba(255,213,74,.6);border-radius:14px;padding:14px 10px;display:flex;flex-direction:column;align-items:center}
 .final-inner.gold-glow{animation:goldPulse 3s ease-in-out infinite}
 
@@ -536,7 +536,7 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
             </div>
 
             <!-- Glowing connector SVG ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ position:absolute, covers exact grid area -->
-            <svg class="conn-svg" viewBox="0 0 986 650" preserveAspectRatio="none">
+            <svg class="conn-svg" viewBox="0 0 986 750" preserveAspectRatio="none">
               <defs>
                 <filter id="cg" x="-40%" y="-40%" width="180%" height="180%">
                   <fegaussianblur in="SourceGraphic" stdDeviation="1.2" result="b"></fegaussianblur>
@@ -549,40 +549,40 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
               </defs>
               <!-- LEFT: R32 → R16 -->
               <g fill="none" stroke="rgba(34,211,238,.22)" stroke-width="1" filter="url(#cg)">
-                <path d="M98,42 H101 V82 H104"></path><path d="M98,122 H101 V82"></path>
-                <path d="M98,202 H101 V242 H104"></path><path d="M98,282 H101 V242"></path>
-                <path d="M98,362 H101 V402 H104"></path><path d="M98,442 H101 V402"></path>
-                <path d="M98,522 H101 V562 H104"></path><path d="M98,602 H101 V562"></path>
+                <path d="M98,48 H101 V95 H104"></path><path d="M98,142 H101 V95"></path>
+                <path d="M98,236 H101 V283 H104"></path><path d="M98,330 H101 V283"></path>
+                <path d="M98,424 H101 V471 H104"></path><path d="M98,518 H101 V471"></path>
+                <path d="M98,612 H101 V659 H104"></path><path d="M98,706 H101 V659"></path>
               </g>
               <!-- LEFT: R16 → QF -->
               <g fill="none" stroke="rgba(34,211,238,.28)" stroke-width="1.2" filter="url(#cg)">
-                <path d="M202,82 H205 V162 H208"></path><path d="M202,242 H205 V162"></path>
-                <path d="M202,402 H205 V482 H208"></path><path d="M202,562 H205 V482"></path>
+                <path d="M202,95 H205 V189 H208"></path><path d="M202,283 H205 V189"></path>
+                <path d="M202,471 H205 V565 H208"></path><path d="M202,659 H205 V565"></path>
               </g>
               <!-- LEFT: QF → SF -->
               <g fill="none" stroke="rgba(34,211,238,.32)" stroke-width="1.4" filter="url(#cg)">
-                <path d="M306,162 H309 V322 H312"></path><path d="M306,482 H309 V322"></path>
+                <path d="M306,189 H309 V194 H312"></path><path d="M306,565 H309 V194"></path>
               </g>
-              <!-- LEFT: SF → Final -->
-              <path fill="none" stroke="rgba(255,213,74,.6)" stroke-width="1.6" filter="url(#gg)" d="M410,322 H413 V75 H416"></path>
+              <!-- LEFT: SF → Final (vertical from SF top upward) -->
+              <path fill="none" stroke="rgba(255,213,74,.6)" stroke-width="1.6" filter="url(#gg)" d="M361,150 V130 H416"></path>
               <!-- RIGHT: R32 → R16 -->
               <g fill="none" stroke="rgba(34,211,238,.22)" stroke-width="1" filter="url(#cg)">
-                <path d="M888,42 H885 V82 H882"></path><path d="M888,122 H885 V82"></path>
-                <path d="M888,202 H885 V242 H882"></path><path d="M888,282 H885 V242"></path>
-                <path d="M888,362 H885 V402 H882"></path><path d="M888,442 H885 V402"></path>
-                <path d="M888,522 H885 V562 H882"></path><path d="M888,602 H885 V562"></path>
+                <path d="M888,48 H885 V95 H882"></path><path d="M888,142 H885 V95"></path>
+                <path d="M888,236 H885 V283 H882"></path><path d="M888,330 H885 V283"></path>
+                <path d="M888,424 H885 V471 H882"></path><path d="M888,518 H885 V471"></path>
+                <path d="M888,612 H885 V659 H882"></path><path d="M888,706 H885 V659"></path>
               </g>
               <!-- RIGHT: R16 → QF -->
               <g fill="none" stroke="rgba(34,211,238,.28)" stroke-width="1.2" filter="url(#cg)">
-                <path d="M784,82 H781 V162 H778"></path><path d="M784,242 H781 V162"></path>
-                <path d="M784,402 H781 V482 H778"></path><path d="M784,562 H781 V482"></path>
+                <path d="M784,95 H781 V189 H778"></path><path d="M784,283 H781 V189"></path>
+                <path d="M784,471 H781 V565 H778"></path><path d="M784,659 H781 V565"></path>
               </g>
               <!-- RIGHT: QF → SF -->
               <g fill="none" stroke="rgba(34,211,238,.32)" stroke-width="1.4" filter="url(#cg)">
-                <path d="M680,162 H677 V322 H674"></path><path d="M680,482 H677 V322"></path>
+                <path d="M680,189 H677 V194 H674"></path><path d="M680,565 H677 V194"></path>
               </g>
-              <!-- RIGHT: SF → Final -->
-              <path fill="none" stroke="rgba(255,213,74,.6)" stroke-width="1.6" filter="url(#gg)" d="M576,322 H573 V75 H570"></path>
+              <!-- RIGHT: SF → Final (vertical from SF top upward) -->
+              <path fill="none" stroke="rgba(255,213,74,.6)" stroke-width="1.6" filter="url(#gg)" d="M625,150 V130 H570"></path>
             </svg>
 
             <!-- Bracket grid ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ identical fr columns to r-lbls -->
@@ -941,7 +941,7 @@ function makeBC(m,gold){
 }
 
 function makeCol(ms,gold,col){
-  var tops=[[6,86,166,246,326,406,486,566],[46,206,366,526],[126,446],[286],[20],[286],[126,446],[46,206,366,526],[6,86,166,246,326,406,486,566]];
+  var tops=[[4,98,192,286,380,474,568,662],[51,239,427,615],[145,521],[150],[20],[150],[145,521],[51,239,427,615],[4,98,192,286,380,474,568,662]];
   var t=tops[col]||[];
   var cards=ms.map(function(m,i){var top=t[i]!==undefined?t[i]:i*84+6;return '<div style="position:absolute;top:'+top+'px;left:0;right:0">'+makeBC(m,gold)+'</div>';}).join('');
   return '<div class="b-col" data-col="'+col+'">'+cards+'</div>';
@@ -1119,7 +1119,7 @@ window.addEventListener('DOMContentLoaded',function(){
   }
 
   function makeFinalPlaceholder(){
-    return '<div class="final-col"><div class="final-inner" style="position:absolute;top:20px;left:4px;right:4px"><div style="color:#ffd54a;font-weight:900;font-size:16px;letter-spacing:5px;margin-bottom:2px">FINAL</div><div style="color:#64748b;font-size:8px;letter-spacing:1px">JULY 19, 2026</div><div style="color:#475569;font-size:7px;margin-bottom:10px;letter-spacing:.5px">METLIFE STADIUM &middot; NEW JERSEY, USA</div><div style="color:#475569;font-size:11px;text-align:center;padding:16px 0">To be decided</div></div><div style="position:absolute;top:478px;left:4px;right:4px;background:linear-gradient(150deg,rgba(4,15,34,.95),rgba(2,8,20,.98));border:1px solid rgba(148,163,184,.2);border-radius:10px;padding:8px 10px;text-align:center"><div style="color:#94a3b8;font-weight:700;font-size:11px;letter-spacing:3px;margin-bottom:4px">3RD PLACE</div><div style="color:#64748b;font-size:8px;letter-spacing:.5px">JULY 19, 2026</div><div style="color:#475569;font-size:7px;margin-bottom:8px;letter-spacing:.3px">METLIFE STADIUM &middot; NEW JERSEY, USA</div><div style="color:#475569;font-size:10px;text-align:center;padding:8px 0">To be decided</div></div></div>';
+    return '<div class="final-col"><div class="final-inner" style="position:absolute;top:20px;left:4px;right:4px"><div style="color:#ffd54a;font-weight:900;font-size:16px;letter-spacing:5px;margin-bottom:2px">FINAL</div><div style="color:#64748b;font-size:8px;letter-spacing:1px">JULY 19, 2026</div><div style="color:#475569;font-size:7px;margin-bottom:10px;letter-spacing:.5px">METLIFE STADIUM &middot; NEW JERSEY, USA</div><div style="color:#475569;font-size:11px;text-align:center;padding:16px 0">To be decided</div></div><div style="position:absolute;top:580px;left:4px;right:4px;background:linear-gradient(150deg,rgba(4,15,34,.95),rgba(2,8,20,.98));border:1px solid rgba(148,163,184,.2);border-radius:10px;padding:8px 10px;text-align:center"><div style="color:#94a3b8;font-weight:700;font-size:11px;letter-spacing:3px;margin-bottom:4px">3RD PLACE</div><div style="color:#64748b;font-size:8px;letter-spacing:.5px">JULY 19, 2026</div><div style="color:#475569;font-size:7px;margin-bottom:8px;letter-spacing:.3px">METLIFE STADIUM &middot; NEW JERSEY, USA</div><div style="color:#475569;font-size:10px;text-align:center;padding:8px 0">To be decided</div></div></div>';
   }
 
   function loadAll(){
