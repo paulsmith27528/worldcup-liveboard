@@ -780,6 +780,35 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
       <div style="margin-top:6px;color:#334155">🔒 Your key stays on the server ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ never exposed in the browser</div>
     </div>
     <button class="api-save-btn" onclick="closeApiModal()">✓ Got it ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ I'll set it up in Vercel</button>
+<!-- STADIUM POPUP -->
+<div id="stad-ov" onclick="closeStadPop()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:999;align-items:center;justify-content:center;padding:12px;overflow-y:auto">
+  <div id="stad-box" onclick="event.stopPropagation()" style="background:linear-gradient(150deg,rgba(4,15,34,.98),rgba(2,8,20,.99));border:1px solid rgba(34,211,238,.2);border-radius:16px;padding:20px 22px;max-width:400px;width:100%;max-height:82vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+      <div>
+        <div style="font-size:32px;line-height:1;margin-bottom:6px">🏟</div>
+        <div id="stad-name" style="font-weight:900;font-size:18px;color:#fff;line-height:1.2"></div>
+        <div id="stad-loc" style="font-size:10px;color:#22d3ee;letter-spacing:1.5px;margin-top:4px"></div>
+      </div>
+      <button onclick="closeStadPop()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:7px;padding:5px 10px;cursor:pointer;font-size:13px;flex-shrink:0">✕</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:18px">
+      <div style="background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.15);border-radius:10px;padding:10px 8px;text-align:center">
+        <div id="stad-cap" style="font-size:12px;font-weight:700;color:#22d3ee"></div>
+        <div style="font-size:7.5px;color:#475569;letter-spacing:1px;margin-top:4px">CAPACITY</div>
+      </div>
+      <div style="background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.15);border-radius:10px;padding:10px 8px;text-align:center">
+        <div id="stad-surf" style="font-size:12px;font-weight:700;color:#fff"></div>
+        <div style="font-size:7.5px;color:#475569;letter-spacing:1px;margin-top:4px">SURFACE</div>
+      </div>
+      <div style="background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.15);border-radius:10px;padding:10px 8px;text-align:center">
+        <div id="stad-roof" style="font-size:12px;font-weight:700;color:#fff"></div>
+        <div style="font-size:7.5px;color:#475569;letter-spacing:1px;margin-top:4px">ROOF</div>
+      </div>
+    </div>
+    <div style="font-size:9px;color:#475569;letter-spacing:1.5px;margin-bottom:10px;font-weight:700">WORLD CUP 2026 FIXTURES</div>
+    <div id="stad-matches"></div>
+  </div>
+</div>
     <button onclick="closeApiModal()" style="width:100%;background:transparent;border:1px solid rgba(255,255,255,.1);color:#475569;border-radius:8px;padding:8px;cursor:pointer;margin-top:6px;font-size:11px">Close ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ use local squad data for now</button>
   </div>
 </div>
@@ -932,6 +961,24 @@ function makeGroup(g){
   return h+'</div>';
 }
 
+var STADIUMS={
+  'SoFi Stadium':{city:'Inglewood, CA',country:'USA',cap:'70,240',surface:'Grass',roof:'Open'},
+  'Gillette Stadium':{city:'Foxborough, MA',country:'USA',cap:'65,878',surface:'Grass',roof:'Open'},
+  'Estadio BBVA':{city:'Guadalupe, NL',country:'Mexico',cap:'53,464',surface:'Grass',roof:'Open'},
+  'NRG Stadium':{city:'Houston, TX',country:'USA',cap:'72,220',surface:'Grass',roof:'Retractable'},
+  'MetLife Stadium':{city:'East Rutherford, NJ',country:'USA',cap:'82,500',surface:'Grass',roof:'Open'},
+  'AT&T Stadium':{city:'Arlington, TX',country:'USA',cap:'80,000',surface:'Grass',roof:'Retractable'},
+  'Estadio Azteca':{city:'Mexico City',country:'Mexico',cap:'87,523',surface:'Grass',roof:'Open'},
+  'Mercedes-Benz Stadium':{city:'Atlanta, GA',country:'USA',cap:'71,000',surface:'Grass',roof:'Retractable'},
+  "Levi's Stadium":{city:'Santa Clara, CA',country:'USA',cap:'68,500',surface:'Grass',roof:'Open'},
+  'Lumen Field':{city:'Seattle, WA',country:'USA',cap:'68,740',surface:'Grass',roof:'Open'},
+  'BMO Field':{city:'Toronto, ON',country:'Canada',cap:'45,736',surface:'Grass',roof:'Open'},
+  'BC Place':{city:'Vancouver, BC',country:'Canada',cap:'54,500',surface:'Grass',roof:'Retractable'},
+  'Hard Rock Stadium':{city:'Miami Gardens, FL',country:'USA',cap:'64,767',surface:'Grass',roof:'Open'},
+  'Arrowhead Stadium':{city:'Kansas City, MO',country:'USA',cap:'76,416',surface:'Grass',roof:'Open'},
+  'Lincoln Financial Field':{city:'Philadelphia, PA',country:'USA',cap:'69,328',surface:'Grass',roof:'Open'},
+  'Estadio Akron':{city:'Zapopan, Jalisco',country:'Mexico',cap:'49,850',surface:'Grass',roof:'Open'}
+};
 var koSchedule={
   'M73':{date:'2026-06-28T19:00:00Z',venue:'SoFi Stadium'},
   'M74':{date:'2026-06-29T20:30:00Z',venue:'Gillette Stadium'},
@@ -979,7 +1026,8 @@ function makeBC(m,gold,ci){
   var hCode=m[7]?'<span class="bc-code">'+m[7]+'</span>':'';
   var aCode=m[8]?'<span class="bc-code">'+m[8]+'</span>':'';
   var venue=m[9]||'',dateStr=fmtKODate(m[11]||'');
-  var stadLine=(venue?'&#127967; '+venue:'')+((venue&&dateStr)?' \xb7 ':'')+dateStr;
+  var venueHtml=venue?'<span onclick="event.stopPropagation();openStadPop(\''+venue.replace(/\\/g,'\\\\').replace(/'/g,"\\'")+'\')" style="cursor:pointer;text-decoration:underline;text-decoration-color:rgba(34,211,238,.35)">&#127967; '+venue+'</span>':'';
+  var stadLine=venueHtml+((venue&&dateStr)?' \xb7 ':'')+dateStr;
   var stadium=stadLine?'<div class="bc-stad">'+stadLine+'</div>':'';
   var mid=m[10]||'';
   var hdr=mid?'<div class="bc-hdr">MATCH '+mid.replace(/^M/,'')+'</div>':'';
@@ -1614,7 +1662,36 @@ function closePop(){
   document.getElementById('pop-ov').className='';
   _currentTeam=null;
 }
-document.addEventListener('keydown',function(e){if(e.key==='Escape'){closePop();closeApiModal();}});
+function openStadPop(name){
+  var s=STADIUMS[name]||{city:'',country:'',cap:'',surface:'Grass',roof:'Open'};
+  var loc=[s.city,s.country].filter(Boolean).join(', ');
+  // build match schedule for this venue
+  var rows=[];
+  for(var id in koSchedule){
+    if(koSchedule[id].venue===name){
+      var dt=fmtKODate(koSchedule[id].date);
+      var rnd=id<'M89'?'Round of 32':id<'M97'?'Round of 16':id<'M101'?id<'M99'?'Quarter-Final':'Semi-Final':id==='M103'?'3rd Place':'Final';
+      rows.push({id:id,dt:dt,rnd:rnd,raw:koSchedule[id].date});
+    }
+  }
+  rows.sort(function(a,b){return a.raw<b.raw?-1:1;});
+  var matchHtml=rows.map(function(r){
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(34,211,238,.07)">'
+      +'<span style="color:#22d3ee;font-weight:700;font-size:9px;letter-spacing:.5px">'+r.id.replace('M','MATCH ')+'</span>'
+      +'<span style="color:#64748b;font-size:8.5px">'+r.rnd+'</span>'
+      +'<span style="color:#94a3b8;font-size:8.5px">'+r.dt+'</span>'
+      +'</div>';
+  }).join('');
+  document.getElementById('stad-name').textContent=name;
+  document.getElementById('stad-loc').textContent=loc;
+  document.getElementById('stad-cap').textContent=s.cap?s.cap:'—';
+  document.getElementById('stad-surf').textContent=s.surface||'Grass';
+  document.getElementById('stad-roof').textContent=s.roof||'Open';
+  document.getElementById('stad-matches').innerHTML=matchHtml||'<div style="color:#334155;font-size:9px;padding:8px 0">Schedule TBC</div>';
+  document.getElementById('stad-ov').style.display='flex';
+}
+function closeStadPop(){document.getElementById('stad-ov').style.display='none';}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closePop();closeApiModal();closeStadPop();}});
 </script>
 <script src="./World Cup 2026 LiveBoard friday_files/squads-data.js"></script>
 <style>
