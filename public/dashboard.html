@@ -25,7 +25,7 @@ body.day-mode .bc-st{color:rgba(34,211,238,.55)!important}
 body.day-mode .final-col{border-color:rgba(255,213,74,.5)!important}
 body.day-mode .r-lbls{color:#2d5a7a!important}
 body.day-mode .r-lbl-final{color:rgba(255,213,74,.7)!important}
-body.day-mode .conn-svg g path,.conn-svg path{stroke-opacity:.6}
+body.day-mode .conn-svg g path,.conn-svg path{stroke-opacity:.85}
 body.day-mode .b-outer{background:linear-gradient(180deg,#0f2035,#162840)!important}
 /* Day mode indicator */
 .day-badge{display:none;align-items:center;gap:6px;background:rgba(74,174,217,.1);border:1px solid rgba(74,174,217,.25);border-radius:6px;padding:3px 10px;font-size:9px;color:#4aaed9;font-weight:700;letter-spacing:1px}
@@ -539,50 +539,50 @@ footer{margin-top:8px;border-top:1px solid rgba(34,211,238,.1);padding:9px 16px;
             <svg class="conn-svg" viewBox="0 0 986 750" preserveAspectRatio="none">
               <defs>
                 <filter id="cg" x="-40%" y="-40%" width="180%" height="180%">
-                  <fegaussianblur in="SourceGraphic" stdDeviation="1.2" result="b"></fegaussianblur>
+                  <fegaussianblur in="SourceGraphic" stdDeviation="1.8" result="b"></fegaussianblur>
                   <femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
                 </filter>
-                <filter id="gg" x="-40%" y="-40%" width="180%" height="180%">
-                  <fegaussianblur in="SourceGraphic" stdDeviation="2" result="b"></fegaussianblur>
+                <filter id="gg" x="-60%" y="-60%" width="220%" height="220%">
+                  <fegaussianblur in="SourceGraphic" stdDeviation="3" result="b"></fegaussianblur>
                   <femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
                 </filter>
               </defs>
               <!-- LEFT: R32 → R16 -->
-              <g fill="none" stroke="rgba(34,211,238,.22)" stroke-width="1" filter="url(#cg)">
+              <g fill="none" stroke="rgba(34,211,238,.58)" stroke-width="1.6" filter="url(#cg)">
                 <path d="M110,48 H113 V95 H116"></path><path d="M110,142 H113 V95"></path>
                 <path d="M110,236 H113 V283 H116"></path><path d="M110,330 H113 V283"></path>
                 <path d="M110,424 H113 V471 H116"></path><path d="M110,518 H113 V471"></path>
                 <path d="M110,612 H113 V659 H116"></path><path d="M110,706 H113 V659"></path>
               </g>
               <!-- LEFT: R16 → QF -->
-              <g fill="none" stroke="rgba(34,211,238,.28)" stroke-width="1.2" filter="url(#cg)">
+              <g fill="none" stroke="rgba(34,211,238,.7)" stroke-width="2" filter="url(#cg)">
                 <path d="M226,95 H229 V189 H232"></path><path d="M226,283 H229 V189"></path>
                 <path d="M226,471 H229 V565 H232"></path><path d="M226,659 H229 V565"></path>
               </g>
               <!-- LEFT: QF → SF -->
-              <g fill="none" stroke="rgba(34,211,238,.32)" stroke-width="1.4" filter="url(#cg)">
+              <g fill="none" stroke="rgba(34,211,238,.82)" stroke-width="2.4" filter="url(#cg)">
                 <path d="M342,189 H345 V377 H348"></path><path d="M342,565 H345 V377"></path>
               </g>
               <!-- LEFT: SF → Final -->
-              <path fill="none" stroke="rgba(255,213,74,.6)" stroke-width="1.6" filter="url(#gg)" d="M403,333 V276"></path>
+              <path fill="none" stroke="rgba(255,213,74,.98)" stroke-width="3" filter="url(#gg)" d="M403,333 V276"></path>
               <!-- RIGHT: R32 → R16 -->
-              <g fill="none" stroke="rgba(34,211,238,.22)" stroke-width="1" filter="url(#cg)">
+              <g fill="none" stroke="rgba(34,211,238,.58)" stroke-width="1.6" filter="url(#cg)">
                 <path d="M875,48 H872 V95 H869"></path><path d="M875,142 H872 V95"></path>
                 <path d="M875,236 H872 V283 H869"></path><path d="M875,330 H872 V283"></path>
                 <path d="M875,424 H872 V471 H869"></path><path d="M875,518 H872 V471"></path>
                 <path d="M875,612 H872 V659 H869"></path><path d="M875,706 H872 V659"></path>
               </g>
               <!-- RIGHT: R16 → QF -->
-              <g fill="none" stroke="rgba(34,211,238,.28)" stroke-width="1.2" filter="url(#cg)">
+              <g fill="none" stroke="rgba(34,211,238,.7)" stroke-width="2" filter="url(#cg)">
                 <path d="M759,95 H756 V189 H753"></path><path d="M759,283 H756 V189"></path>
                 <path d="M759,471 H756 V565 H753"></path><path d="M759,659 H756 V565"></path>
               </g>
               <!-- RIGHT: QF → SF -->
-              <g fill="none" stroke="rgba(34,211,238,.32)" stroke-width="1.4" filter="url(#cg)">
+              <g fill="none" stroke="rgba(34,211,238,.82)" stroke-width="2.4" filter="url(#cg)">
                 <path d="M643,189 H640 V377 H637"></path><path d="M643,565 H640 V377"></path>
               </g>
               <!-- RIGHT: SF → Final -->
-              <path fill="none" stroke="rgba(255,213,74,.6)" stroke-width="1.6" filter="url(#gg)" d="M582,333 V276"></path>
+              <path fill="none" stroke="rgba(255,213,74,.98)" stroke-width="3" filter="url(#gg)" d="M582,333 V276"></path>
             </svg>
 
             <!-- Bracket grid ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ identical fr columns to r-lbls -->
