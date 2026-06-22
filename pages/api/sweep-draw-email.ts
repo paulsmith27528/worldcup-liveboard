@@ -82,6 +82,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         from: { email: FROM_EMAIL, name: FROM_NAME },
         subject: `${flag} You've got ${entry.teamName}! — ${name}`,
         html,
+        trackingSettings: {
+          clickTracking: { enable: false, enableText: false },
+          openTracking: { enable: false },
+        },
       });
       results.sent++;
     } catch (err) {
