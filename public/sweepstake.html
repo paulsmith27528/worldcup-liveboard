@@ -654,11 +654,13 @@ function copyJoinLink(){
 
 function shareJoinLink(){
   const v=document.getElementById('join-link-inp').value;
+  if(!v){toast('Create your sweepstake first');return;}
   const name=SW.config.name;
+  const text=`Join our ${name} sweepstake! Register here: ${v}`;
   if(navigator.share){
-    navigator.share({title:name,text:`Join our ${name} sweepstake!`,url:v});
+    navigator.share({title:name,text:text,url:v});
   } else {
-    copyJoinLink();
+    navigator.clipboard.writeText(text).then(()=>toast('🔗 Join link copied!'));
   }
 }
 
