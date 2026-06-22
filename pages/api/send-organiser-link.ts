@@ -68,6 +68,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       from:    { email: FROM_EMAIL, name: FROM_NAME },
       subject: `🎲 Your organiser link — ${name}`,
       html,
+      trackingSettings: {
+        clickTracking: { enable: false, enableText: false },
+        openTracking: { enable: false },
+      },
     });
     return res.status(200).json({ success: true });
   } catch (err) {
