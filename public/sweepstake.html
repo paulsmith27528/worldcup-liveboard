@@ -667,11 +667,24 @@ function setupComplete(){
 }
 
 function updateShareButtons(){
-  const ready=setupComplete();
+  const nameVal=(document.getElementById('cfg-name')&&document.getElementById('cfg-name').value.trim())||'';
+  const orgVal=(document.getElementById('cfg-org')&&document.getElementById('cfg-org').value.trim())||'';
+  const emailVal=(document.getElementById('cfg-org-email')&&document.getElementById('cfg-org-email').value.trim())||'';
+  const priceVal=parseFloat((document.getElementById('cfg-priceR')&&document.getElementById('cfg-priceR').value)||3);
+  const curVal=(document.getElementById('cfg-cur')&&document.getElementById('cfg-cur').value)||'£';
+  const ready=!!(nameVal&&orgVal&&emailVal);
   const cb=document.getElementById('copy-link-btn');
   const sb=document.getElementById('share-link-btn');
   if(cb){cb.disabled=!ready;cb.style.opacity=ready?'1':'0.4';cb.style.cursor=ready?'pointer':'not-allowed';}
   if(sb){sb.disabled=!ready;sb.style.opacity=ready?'1':'0.4';sb.style.cursor=ready?'pointer':'not-allowed';}
+  if(ready){
+    // Update SW.config from form so join link is always current
+    SW.config.name=nameVal;SW.config.organiser=orgVal;SW.config.priceRandom=priceVal;SW.config.currency=curVal;
+    updateJoinLink();
+  } else {
+    const inp=document.getElementById('join-link-inp');
+    if(inp)inp.value='';
+  }
 }
 
 function copyJoinLink(){
