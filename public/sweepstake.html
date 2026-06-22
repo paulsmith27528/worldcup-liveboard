@@ -595,6 +595,12 @@ function startSweepstake(){
   startServerPoll();
   saveState();
   showRecoveryUrl();
+  // Register purchase token → sweepstake mapping so resume works cross-device
+  const purchaseToken = new URLSearchParams(window.location.search).get('token');
+  if(purchaseToken && SW.id && SW.orgToken){
+    fetch('/api/sweep-state',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({purchaseToken,id:SW.id,k:SW.orgToken})}).catch(()=>{});
+  }
   if(SW.config.organiserEmail) sendOrganiserLink();
 }
 
@@ -1333,6 +1339,26 @@ async function loadFromSave(){
     if(swId&&k){
       toast('Loading your sweepstake...',3000);
       d=await loadStateFromServer(swId,k);
+    }
+  }
+  // Fourth fallback: look up by purchase token (enables cross-device resume)
+  if(!d){
+    const purchaseToken=new URLSearchParams(window.location.search).get('token');
+    if(purchaseToken){
+      toast('Looking up your sweepstake...',3000);
+      try{
+        const res=await fetch('/api/sweep-state?purchaseToken='+encodeURIComponent(purchaseToken));
+        if(res.ok){
+          const data=await res.json();
+          if(data.state){
+            d=data.state;
+            // Update URL to recovery format so future loads use the faster path
+            if(data.sw&&data.k){
+              history.replaceState(null,'',window.location.pathname+'?token='+purchaseToken+'&sw='+data.sw+'&k='+data.k);
+            }
+          }
+        }
+      }catch(e){}
     }
   }
   if(!d){
