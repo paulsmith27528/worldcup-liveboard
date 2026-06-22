@@ -594,6 +594,7 @@ function startSweepstake(){
   startDrawCountdown();
   startServerPoll();
   saveState();
+  showRecoveryUrl();
   if(SW.config.organiserEmail) sendOrganiserLink();
 }
 
