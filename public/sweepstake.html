@@ -333,11 +333,11 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
   <div class="card">
     <div class="card-title">⚙️ Sweepstake Settings</div>
     <div class="form-row col2">
-      <div><label class="lbl">Sweepstake Name</label><input class="inp" id="cfg-name" placeholder="Office WC2026 Sweep" value="Office WC2026 Sweepstake"></div>
-      <div><label class="lbl">Your Name (Organiser)</label><input class="inp" id="cfg-org" placeholder="Your name"></div>
+      <div><label class="lbl">Sweepstake Name</label><input class="inp" id="cfg-name" oninput="updateShareButtons()" placeholder="Office WC2026 Sweep" value="Office WC2026 Sweepstake"></div>
+      <div><label class="lbl">Your Name (Organiser)</label><input class="inp" id="cfg-org" oninput="updateShareButtons()" placeholder="Your name"></div>
     </div>
     <div class="form-row">
-      <div><label class="lbl">Your Email <span style="color:#4ade80;font-size:10px">— we'll send your organiser link here so you can access from any device</span></label><input class="inp" id="cfg-org-email" type="email" placeholder="your@email.com"></div>
+      <div><label class="lbl">Your Email <span style="color:#4ade80;font-size:10px">— we'll send your organiser link here so you can access from any device</span></label><input class="inp" id="cfg-org-email" type="email" oninput="updateShareButtons()" placeholder="your@email.com"></div>
     </div>
     <div class="form-row col2">
       <div><label class="lbl">Buy-in per Entry</label><input class="inp" id="cfg-priceR" type="number" value="3" min="1" max="100"></div>
@@ -384,9 +384,9 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
     <div class="card-title">🔗 Share Join Link With Your Group</div>
     <p style="font-size:12px;color:#64748b;margin-bottom:12px">Send this link to everyone. They enter their name and email — their entry registers automatically. No codes needed.</p>
     <div class="share-row">
-      <input class="share-inp" id="join-link-inp" readonly>
-      <button class="btn btn-gold" onclick="copyJoinLink()">📋 Copy Link</button>
-      <button class="btn btn-outline" onclick="shareJoinLink()">📤 Share</button>
+      <input class="share-inp" id="join-link-inp" readonly placeholder="Fill in your details above first">
+      <button class="btn btn-gold" id="copy-link-btn" onclick="copyJoinLink()" disabled style="opacity:0.4;cursor:not-allowed">📋 Copy Link</button>
+      <button class="btn btn-outline" id="share-link-btn" onclick="shareJoinLink()" disabled style="opacity:0.4;cursor:not-allowed">📤 Share</button>
     </div>
     <p style="font-size:11px;color:#334155;margin-top:8px">After each person registers, their name appears below automatically. They'll get a confirmation email straight away.</p>
   </div>
@@ -659,14 +659,32 @@ function updateJoinLink(){
   document.getElementById('join-link-inp').value=url;
 }
 
+function setupComplete(){
+  const name=document.getElementById('cfg-name')&&document.getElementById('cfg-name').value.trim();
+  const org=document.getElementById('cfg-org')&&document.getElementById('cfg-org').value.trim();
+  const email=document.getElementById('cfg-org-email')&&document.getElementById('cfg-org-email').value.trim();
+  return !!(name&&org&&email);
+}
+
+function updateShareButtons(){
+  const ready=setupComplete();
+  const cb=document.getElementById('copy-link-btn');
+  const sb=document.getElementById('share-link-btn');
+  if(cb){cb.disabled=!ready;cb.style.opacity=ready?'1':'0.4';cb.style.cursor=ready?'pointer':'not-allowed';}
+  if(sb){sb.disabled=!ready;sb.style.opacity=ready?'1':'0.4';sb.style.cursor=ready?'pointer':'not-allowed';}
+}
+
 function copyJoinLink(){
+  if(!setupComplete()){toast('Please fill in your name, email and sweepstake name first');return;}
   const v=document.getElementById('join-link-inp').value;
+  if(!v){toast('Tap Create Sweepstake first to generate your link');return;}
   navigator.clipboard.writeText(v).then(()=>toast('🔗 Join link copied!'));
 }
 
 function shareJoinLink(){
+  if(!setupComplete()){toast('Please fill in your name, email and sweepstake name first');return;}
   const v=document.getElementById('join-link-inp').value;
-  if(!v){toast('Create your sweepstake first');return;}
+  if(!v){toast('Tap Create Sweepstake first to generate your link');return;}
   const name=SW.config.name;
   const text=`Join our ${name} sweepstake! Register here: ${v}`;
   if(navigator.share){
