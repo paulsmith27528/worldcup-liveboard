@@ -600,6 +600,12 @@ function startSweepstake(){
 
 async function sendOrganiserLink(){
   try{
+    // Use the original purchase token URL (always works) not the recovery URL (requires server sync)
+    const params=new URLSearchParams(window.location.search);
+    const tok=params.get('token');
+    const link=tok
+      ? window.location.origin+window.location.pathname+'?token='+tok
+      : recoveryUrl();
     await fetch('/api/send-organiser-link',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
@@ -607,7 +613,7 @@ async function sendOrganiserLink(){
         email:SW.config.organiserEmail,
         organiser:SW.config.organiser,
         sweepstakeName:SW.config.name,
-        organiserLink:recoveryUrl(),
+        organiserLink:link,
       }),
     });
   }catch(e){console.error('Organiser link email failed:',e);}
