@@ -125,6 +125,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       to: email,
       subject: `Your ${product.name} is ready`,
       html,
+      trackingSettings: {
+        clickTracking: { enable: false, enableText: false },
+        openTracking: { enable: false },
+      },
     });
     console.log("Email sent to:", email, "product:", product.type);
   } catch (mailErr: any) {
