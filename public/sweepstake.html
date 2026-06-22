@@ -369,18 +369,6 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
   </div>
 
   <button class="btn btn-gold btn-full" style="font-size:14px;padding:14px" onclick="startSweepstake()">✅ Create Sweepstake →</button>
-<!-- JOIN LINK SECTION -->
-  <div class="card gold" id="join-link-card">
-    <div class="card-title">🔗 Share Join Link With Your Group</div>
-    <p style="font-size:12px;color:#64748b;margin-bottom:12px">Send this link to everyone. They enter their name and email — their entry registers automatically. No codes needed.</p>
-    <div class="share-row">
-      <input class="share-inp" id="join-link-inp" readonly>
-      <button class="btn btn-gold" onclick="copyJoinLink()">📋 Copy Link</button>
-      <button class="btn btn-outline" onclick="shareJoinLink()">📤 Share</button>
-    </div>
-    <p style="font-size:11px;color:#334155;margin-top:8px">After each person registers, their name appears below automatically. They'll get a confirmation email straight away.</p>
-  </div>
-
   </div>
 
 <!-- MAIN DASHBOARD SCREEN -->
@@ -391,6 +379,18 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
       <div style="font-size:20px;font-weight:900" id="dash-title">My Sweepstake</div>
       <div style="font-size:11px;color:#475569" id="dash-org"></div>
     </div>
+  <!-- JOIN LINK SECTION -->
+  <div class="card gold" id="join-link-card" style="margin-bottom:16px">
+    <div class="card-title">🔗 Share Join Link With Your Group</div>
+    <p style="font-size:12px;color:#64748b;margin-bottom:12px">Send this link to everyone. They enter their name and email — their entry registers automatically. No codes needed.</p>
+    <div class="share-row">
+      <input class="share-inp" id="join-link-inp" readonly>
+      <button class="btn btn-gold" onclick="copyJoinLink()">📋 Copy Link</button>
+      <button class="btn btn-outline" onclick="shareJoinLink()">📤 Share</button>
+    </div>
+    <p style="font-size:11px;color:#334155;margin-top:8px">After each person registers, their name appears below automatically. They'll get a confirmation email straight away.</p>
+  </div>
+
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn btn-outline btn-sm" onclick="goToTab('tab-entries')">👥 Entries</button>
       <button class="btn btn-outline btn-sm" onclick="goToTab('tab-draw')">🎰 Draw</button>
