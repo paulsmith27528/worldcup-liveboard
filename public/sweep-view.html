@@ -212,6 +212,10 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
         </div>
       </div>
       <div class="lb-list" id="lb-list"></div>
+      <div style="margin-top:16px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#334155;margin-bottom:8px">🎲 THE DRAW</div>
+        <div id="draw-grid" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
     </div>
 
     <!-- BRACKET TAB -->
@@ -367,7 +371,23 @@ function renderSweepstake(){
       <span class="lb-badge ${isMe?'badge-me':isChamp?'badge-champ':e.eliminated?'badge-out':'badge-alive'}">${isMe?'YOU':isChamp?'🏆 Winner':e.eliminated?'Out':'Active'}</span>
     </div>`;
   }).join('');
-}
+
+  // Draw grid — all participants and their assigned teams
+  const drawEl=document.getElementById('draw-grid');
+  if(drawEl){
+    drawEl.innerHTML=entries.map(e=>{
+      const isMe=e.token===d.tok;
+      const flag=FLAGS[e.teamName]||'⚽';
+      return `<div style="display:flex;align-items:center;gap:12px;background:${isMe?'rgba(255,213,74,.08)':'rgba(0,0,0,.25)'};border:1px solid ${isMe?'rgba(255,213,74,.4)':'rgba(255,255,255,.06)'};border-radius:12px;padding:12px 14px">
+        <div style="font-size:32px;flex-shrink:0">${flag}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:14px;color:${isMe?'#ffd54a':'#e2e8f0'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(e.name)}${isMe?' <span style="font-size:9px;font-weight:900;background:#ffd54a;color:#000;padding:1px 5px;border-radius:4px;vertical-align:middle">YOU</span>':''}</div>
+          <div style="font-size:12px;color:#64748b;margin-top:2px">${e.teamName||'Draw pending'}</div>
+        </div>
+        ${e.eliminated?'<span style="font-size:10px;color:#f87171;font-weight:700">❌ Out</span>':'<span style="font-size:10px;color:#4ade80;font-weight:700">✅ Active</span>'}
+      </div>`;
+    }).join('');
+  }
 
 function renderBracket(){
   const myTeam=myEntry?myEntry.teamName:'';
