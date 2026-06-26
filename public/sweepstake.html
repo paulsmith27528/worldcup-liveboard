@@ -385,8 +385,8 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
     <p style="font-size:12px;color:#64748b;margin-bottom:12px">Send this link to everyone. They enter their name and email — their entry registers automatically. No codes needed.</p>
     <div class="share-row">
       <input class="share-inp" id="join-link-inp" readonly placeholder="Fill in your details above first">
-      <button class="btn btn-gold" id="copy-link-btn" onclick="copyJoinLink()" disabled style="opacity:0.4;cursor:not-allowed">📋 Copy Link</button>
-      <button class="btn btn-outline" id="share-link-btn" onclick="shareJoinLink()" disabled style="opacity:0.4;cursor:not-allowed">📤 Share</button>
+      <button class="btn btn-gold" id="copy-link-btn" onclick="copyJoinLink()" style="opacity:0.4;cursor:not-allowed;pointer-events:none">📋 Copy Link</button>
+      <button class="btn btn-outline" id="share-link-btn" onclick="shareJoinLink()" style="opacity:0.4;cursor:not-allowed;pointer-events:none">📤 Share</button>
     </div>
     <p style="font-size:11px;color:#334155;margin-top:8px">After each person registers, their name appears below automatically. They'll get a confirmation email straight away.</p>
   </div>
@@ -558,6 +558,7 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
+  if(id==='screen-setup')updateShareButtons();
 }
 
 function goToTab(tabId){
@@ -675,8 +676,8 @@ function updateShareButtons(){
   const ready=!!(nameVal&&orgVal&&emailVal);
   const cb=document.getElementById('copy-link-btn');
   const sb=document.getElementById('share-link-btn');
-  if(cb){cb.disabled=!ready;cb.style.opacity=ready?'1':'0.4';cb.style.cursor=ready?'pointer':'not-allowed';}
-  if(sb){sb.disabled=!ready;sb.style.opacity=ready?'1':'0.4';sb.style.cursor=ready?'pointer':'not-allowed';}
+  if(cb){cb.style.opacity=ready?'1':'0.4';cb.style.cursor=ready?'pointer':'not-allowed';cb.style.pointerEvents=ready?'auto':'none';}
+  if(sb){sb.style.opacity=ready?'1':'0.4';sb.style.cursor=ready?'pointer':'not-allowed';sb.style.pointerEvents=ready?'auto':'none';}
   if(ready){
     // Update SW.config from form so join link is always current
     SW.config.name=nameVal;SW.config.organiser=orgVal;SW.config.priceRandom=priceVal;SW.config.currency=curVal;
@@ -690,14 +691,14 @@ function updateShareButtons(){
 function copyJoinLink(){
   if(!setupComplete()){toast('Please fill in your name, email and sweepstake name first');return;}
   const v=document.getElementById('join-link-inp').value;
-  if(!v){toast('Tap Create Sweepstake first to generate your link');return;}
+  if(!v){toast('Please fill in your details above first');return;}
   navigator.clipboard.writeText(v).then(()=>toast('🔗 Join link copied!'));
 }
 
 function shareJoinLink(){
   if(!setupComplete()){toast('Please fill in your name, email and sweepstake name first');return;}
   const v=document.getElementById('join-link-inp').value;
-  if(!v){toast('Tap Create Sweepstake first to generate your link');return;}
+  if(!v){toast('Please fill in your details above first');return;}
   const name=SW.config.name;
   const text=`Join our ${name} sweepstake! Register here: ${v}`;
   if(navigator.share){
