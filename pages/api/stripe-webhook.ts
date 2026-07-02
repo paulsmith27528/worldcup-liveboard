@@ -17,8 +17,11 @@ const redis = new Redis({
 
 const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake" | "dashboard" | "bundle" }> = {
   price_1TeMKT3g62IhPcY7PvqpncJF: { name: "World Cup Sweepstake", emoji: "&#127967;", type: "sweepstake" },
+  price_1TodvS3g62IhPcY7Q9ePkimH: { name: "World Cup Sweepstake", emoji: "&#127967;", type: "sweepstake" },
   price_1TeMHw3g62IhPcY7CCZhO3T6: { name: "Live Dashboard", emoji: "&#128250;", type: "dashboard" },
+  price_1Todyt3g62IhPcY7ZA9hLaEz: { name: "Live Dashboard", emoji: "&#128250;", type: "dashboard" },
   price_1TetFJ3g62IhPcY7exBoTMtq: { name: "Bundle &mdash; Dashboard + Sweepstake", emoji: "&#9889;", type: "bundle" },
+  price_1Todzd3g62IhPcY7dq3Fmhcd: { name: "Bundle &mdash; Dashboard + Sweepstake", emoji: "&#9889;", type: "bundle" },
 };
 
 const BASE_URL = "https://www.worldcupliveboard.com";
