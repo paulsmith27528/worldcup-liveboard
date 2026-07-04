@@ -1,11 +1,21 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import sgMail from '@sendgrid/mail';
+import { Redis } from '@upstash/redis';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
 
 const BASE_URL = 'https://www.worldcupliveboard.com';
 const FROM_EMAIL = 'noreply@worldcupsweepstake-liveboard.com';
 const FROM_NAME = 'WC2026 Sweepstake';
+
+function genId(): string {
+  return Math.random().toString(36).substring(2, 10).toUpperCase();
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -42,18 +52,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       tok: entry.token,
     };
 
-    // Store bracket data in Redis and generate short link
+    // Store bracket data directly in Redis and generate short link
     let bracketUrl = `${BASE_URL}/sweep-view.html#V1:${Buffer.from(JSON.stringify(data)).toString('base64')}`;
     try {
-      const storeRes = await fetch(`${BASE_URL}/api/sweep-bracket`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ data }),
-      });
-      if (storeRes.ok) {
-        const { id } = await storeRes.json();
-        bracketUrl = `${BASE_URL}/sweep-view.html?bid=${id}`;
-      }
+      const bid = genId();
+      await redis.set(`bracket:${bid}`, JSON.stringify(data), { ex: 60 * 60 * 24 * 120 });
+      bracketUrl = `${BASE_URL}/sweep-view.html?bid=${bid}`;
     } catch (_) {}
     const flag = entry.teamFlag || '⚽';
     const name = sweepstakeName || 'WC2026 Sweepstake';
