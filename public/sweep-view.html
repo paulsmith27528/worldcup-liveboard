@@ -299,14 +299,35 @@ function showTab(id){
 
 let myEntry=null,sweepData=null;
 
-window.addEventListener('DOMContentLoaded',()=>{
+async function loadSweepData(){
+  // New short link: ?bid=XXXXXXXX
+  const params=new URLSearchParams(window.location.search);
+  const bid=params.get('bid');
+  if(bid){
+    try{
+      const res=await fetch('/api/sweep-bracket?bid='+encodeURIComponent(bid));
+      if(!res.ok)throw new Error('not found');
+      const json=await res.json();
+      return json.data;
+    }catch(e){
+      return null;
+    }
+  }
+  // Legacy: #V1:base64data
   const hash=window.location.hash.slice(1);
-  if(!hash||!hash.startsWith('V1:')){
+  if(!hash||!hash.startsWith('V1:'))return null;
+  try{
+    return JSON.parse(atob(hash.replace('V1:','')));
+  }catch(e){return null;}
+}
+
+window.addEventListener('DOMContentLoaded',async()=>{
+  const d=await loadSweepData();
+  if(!d){
     document.getElementById('not-found').style.display='block';
     return;
   }
   try{
-    const d=JSON.parse(atob(hash.replace('V1:','')));
     sweepData=d;
     myEntry=d.entries&&d.entries.find(e=>e.token===d.tok);
     if(!myEntry){document.getElementById('not-found').style.display='block';return;}
