@@ -306,10 +306,16 @@ async function loadSweepData(){
   if(bid){
     try{
       const res=await fetch('/api/sweep-bracket?bid='+encodeURIComponent(bid));
-      if(!res.ok)throw new Error('not found');
+      if(!res.ok){
+        document.getElementById('not-found').style.display='block';
+        document.getElementById('not-found').innerHTML='<p style="color:#f87171;padding:20px">Error loading bracket: API returned '+res.status+' for bid='+bid+'</p>';
+        return null;
+      }
       const json=await res.json();
       return json.data;
     }catch(e){
+      document.getElementById('not-found').style.display='block';
+      document.getElementById('not-found').innerHTML='<p style="color:#f87171;padding:20px">Error loading bracket: '+e.message+'</p>';
       return null;
     }
   }
