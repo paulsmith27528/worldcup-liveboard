@@ -203,13 +203,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Find this participant in the bracket entries
     const entries: any[] = bracketData.entries || [];
-    console.log("Bracket entries:", entries.map((e: any) => ({ email: e.email, e_mail: e.e_mail, mail: e.mail, name: e.name, keys: Object.keys(e) })));
+    console.log("Bracket entry keys:", entries.length > 0 ? Object.keys(entries[0]) : "no entries");
+    console.log("Bracket entries raw:", JSON.stringify(entries));
     console.log("Looking for email:", email);
-    // Try multiple possible email field names
+    // Try multiple possible email field names, then fall back to first entry
     const participant = entries.find((e: any) => {
-      const entryEmail = (e.email || e.e_mail || e.mail || e.emailAddress || "").toLowerCase().trim();
+      const entryEmail = (e.email || e.e_mail || e.mail || e.emailAddress || e.Email || "").toLowerCase().trim();
       return entryEmail === email.toLowerCase().trim();
-    });
+    }) || (entries.length > 0 ? entries[0] : null);
+    if (participant) console.log("Found participant:", participant.name, "team:", participant.teamName);
 
     if (!participant) {
       console.error("Participant not found in bracket for email:", email, "bid:", bid);
