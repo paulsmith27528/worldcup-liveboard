@@ -151,6 +151,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (product.type === "pro") {
     // The bid (bracket ID) is passed via Stripe metadata or custom fields
     const bid =
+      session.client_reference_id ||
       session.metadata?.bid ||
       session.custom_fields?.find((f: any) => f.key === "bracket_id" || f.key === "bracketid")?.text?.value ||
       null;
