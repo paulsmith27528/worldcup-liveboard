@@ -564,6 +564,89 @@ body.day-mode .stat-2col .stat-box:nth-child(8n+8){border-top:7px solid #1e90ff 
 })();
 </script>
 
+<!-- PRO BRACKET PERSONALISATION -->
+<script>
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var proToken = params.get('pro');
+  if(!proToken) return;
+
+  // Pro token present — bypass the normal access gate
+  var gate = document.getElementById('access-gate');
+  if(gate) gate.remove();
+
+  // Fetch participant data from the pro-bracket API
+  fetch('/api/pro-bracket?pro=' + encodeURIComponent(proToken))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d || !d.teamName) return;
+
+      // Inject the Pro banner at the top of the page (after header)
+      var banner = document.createElement('div');
+      banner.id = 'pro-banner';
+      banner.style.cssText = 'background:linear-gradient(135deg,rgba(255,213,74,.12),rgba(0,0,0,.6));border-bottom:1px solid rgba(255,213,74,.3);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:relative;z-index:80;';
+      banner.innerHTML =
+        '<div style="display:flex;align-items:center;gap:12px">' +
+          '<div style="font-size:28px">' + (d.teamFlag||'⚽') + '</div>' +
+          '<div>' +
+            '<div style="font-size:11px;color:#ffd54a;font-weight:900;letter-spacing:1.5px">🏆 YOUR PRO BRACKET</div>' +
+            '<div style="font-size:14px;font-weight:700;color:#fff">' + escHtml(d.name) + ' &mdash; ' + escHtml(d.teamName) + '</div>' +
+            '<div style="font-size:10px;color:#475569">' + escHtml(d.sweepstakeName||'WC2026 Sweepstake') + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<button onclick="document.getElementById(\'pro-draw-panel\').classList.toggle(\'pro-panel-open\')" style="background:rgba(255,213,74,.15);border:1px solid rgba(255,213,74,.3);color:#ffd54a;font-weight:700;font-size:11px;padding:7px 14px;border-radius:8px;cursor:pointer;letter-spacing:.5px">🎲 THE DRAW</button>';
+
+      var header = document.querySelector('header');
+      if(header && header.parentNode){
+        header.parentNode.insertBefore(banner, header.nextSibling);
+      } else {
+        document.body.insertBefore(banner, document.body.firstChild);
+      }
+
+      // Inject the sweepstake draw side panel
+      var panel = document.createElement('div');
+      panel.id = 'pro-draw-panel';
+      panel.style.cssText = 'position:fixed;top:0;right:-320px;width:300px;height:100vh;background:#020c1e;border-left:1px solid rgba(255,213,74,.2);z-index:200;overflow-y:auto;transition:right .3s ease;padding:16px;';
+      panel.innerHTML =
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">' +
+          '<div style="color:#ffd54a;font-weight:900;font-size:12px;letter-spacing:1.5px">🎲 THE DRAW</div>' +
+          '<button onclick="document.getElementById(\'pro-draw-panel\').classList.remove(\'pro-panel-open\')" style="background:none;border:none;color:#475569;font-size:18px;cursor:pointer">&times;</button>' +
+        '</div>' +
+        '<div style="font-size:10px;color:#334155;margin-bottom:12px">' + escHtml(d.sweepstakeName||'WC2026 Sweepstake') + ' &mdash; ' + (d.entries||[]).length + ' entries</div>' +
+        (d.entries||[]).map(function(e){
+          var isMe = e.name === d.name && e.teamName === d.teamName;
+          return '<div style="display:flex;align-items:center;gap:10px;padding:10px;background:' + (isMe?'rgba(255,213,74,.08)':'rgba(255,255,255,.03)') + ';border:1px solid ' + (isMe?'rgba(255,213,74,.35)':'rgba(255,255,255,.05)') + ';border-radius:10px;margin-bottom:6px">' +
+            '<div style="font-size:22px">' + (e.teamFlag||'⚽') + '</div>' +
+            '<div style="flex:1;min-width:0">' +
+              '<div style="font-size:12px;font-weight:700;color:' + (isMe?'#ffd54a':'#e2e8f0') + ';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' +
+                escHtml(e.name) + (isMe?' <span style="font-size:8px;background:#ffd54a;color:#000;padding:1px 5px;border-radius:3px;font-weight:900">YOU</span>':'') +
+              '</div>' +
+              '<div style="font-size:10px;color:#64748b">' + escHtml(e.teamName||'—') + '</div>' +
+            '</div>' +
+            (e.eliminated ? '<span style="font-size:9px;color:#f87171;font-weight:700">OUT</span>' : '<span style="font-size:9px;color:#4ade80;font-weight:700">ACTIVE</span>') +
+          '</div>';
+        }).join('');
+
+      document.body.appendChild(panel);
+
+      // Add the panel open style
+      var styleEl = document.createElement('style');
+      styleEl.textContent = '#pro-draw-panel.pro-panel-open{right:0!important}';
+      document.head.appendChild(styleEl);
+
+      // Store pro data globally so the rest of the page can use it
+      window._proData = d;
+    })
+    .catch(function(err){
+      console.warn('Pro bracket load failed:', err);
+    });
+
+  function escHtml(s){
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+})();
+</script>
+
 
 <!-- ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ HEADER ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ -->
 <header>
