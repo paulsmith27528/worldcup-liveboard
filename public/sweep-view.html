@@ -215,6 +215,15 @@ nav{background:rgba(1,4,14,.92);border-bottom:1px solid rgba(34,211,238,.15);pad
         <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#334155;margin-bottom:8px">🎲 THE DRAW</div>
         <div id="draw-grid" style="display:flex;flex-direction:column;gap:8px"></div>
       </div>
+
+      <!-- UPGRADE TO PRO -->
+      <div id="pro-upgrade-box" style="margin-top:20px;background:linear-gradient(135deg,rgba(255,213,74,.08),rgba(0,0,0,.5));border:1px solid rgba(255,213,74,.35);border-radius:14px;padding:20px;text-align:center">
+        <div style="font-size:24px;margin-bottom:8px">&#127942;</div>
+        <div style="font-size:15px;font-weight:900;color:#ffd54a;margin-bottom:6px">Upgrade to Pro</div>
+        <div style="font-size:12px;color:#94a3b8;line-height:1.7;margin-bottom:16px">Get the full live dashboard with your sweepstake built right in &mdash; live scores, bracket, group tables, squad cards, and your team highlighted everywhere.</div>
+        <a id="pro-upgrade-btn" href="#" style="display:inline-block;background:linear-gradient(135deg,#ffd54a,#f59e0b);color:#000;font-weight:900;font-size:14px;padding:13px 28px;border-radius:50px;text-decoration:none">&#9889; Upgrade to Pro &mdash; &pound;2.99</a>
+        <div style="font-size:10px;color:#334155;margin-top:10px">One-time payment &middot; yours for the whole tournament</div>
+      </div>
     </div>
 
     <!-- BRACKET TAB -->
@@ -342,6 +351,15 @@ window.addEventListener('DOMContentLoaded',async()=>{
     renderSweepstake();
     fetchLiveScores();
     setInterval(fetchLiveScores,20000);
+
+    // Wire up the Pro upgrade button with this bracket's bid pre-filled
+    const bid=new URLSearchParams(window.location.search).get('bid');
+    if(bid){
+      const proBtn=document.getElementById('pro-upgrade-btn');
+      if(proBtn){
+        proBtn.href='https://buy.stripe.com/28E8wI3tm36JcTQ3eV3F606?prefilled_custom_field_bracket_id='+encodeURIComponent(bid);
+      }
+    }
   }catch(e){
     document.getElementById('not-found').style.display='block';
   }
