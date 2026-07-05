@@ -381,9 +381,9 @@ function renderSweepstake(){
   statusEl.style.color=isElim?'#f87171':'#4ade80';
   document.getElementById('my-type-box').textContent=myEntry.type==='pick'?'✋ Pick':'🎲 Random';
 
-  // Leaderboard
+  // Leaderboard (optional - div may not be present)
   const el=document.getElementById('lb-list');
-  el.innerHTML=sorted.map((e,i)=>{
+  if(el){el.innerHTML=sorted.map((e,i)=>{
     const isMe=e.token===d.tok;
     const isChamp=!e.eliminated&&(d.eliminated||[]).length>=47;
     const flag=FLAGS[e.teamName]||'';
@@ -396,7 +396,7 @@ function renderSweepstake(){
       </div>
       <span class="lb-badge ${isMe?'badge-me':isChamp?'badge-champ':e.eliminated?'badge-out':'badge-alive'}">${isMe?'YOU':isChamp?'🏆 Winner':e.eliminated?'Out':'Active'}</span>
     </div>`;
-  }).join('');
+  }).join('');}
 
   // Draw grid — all participants and their assigned teams
   const drawEl=document.getElementById('draw-grid');
