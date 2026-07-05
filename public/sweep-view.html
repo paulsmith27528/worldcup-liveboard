@@ -357,7 +357,9 @@ window.addEventListener('DOMContentLoaded',async()=>{
     if(bid){
       const proBtn=document.getElementById('pro-upgrade-btn');
       if(proBtn){
-        proBtn.href='https://buy.stripe.com/28E8wI3tm36JcTQ3eV3F606?client_reference_id='+encodeURIComponent(bid)+'&prefilled_email='+encodeURIComponent((myEntry&&myEntry.email)||'');
+        // Use our pro-checkout API which passes bid as metadata to Stripe
+        const email=encodeURIComponent((myEntry&&myEntry.email)||'');
+        proBtn.href='/api/pro-checkout?bid='+encodeURIComponent(bid)+(email?'&email='+email:'');
       }
     }
   }catch(e){
