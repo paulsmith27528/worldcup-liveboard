@@ -107,7 +107,11 @@ function buildProEmailHtml(
     <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 12px">Hi <strong style="color:#fff">${participantName}</strong>,</p>
     <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 24px">Your Pro Bracket is unlocked. You get the full live dashboard with your sweepstake built right in &mdash; <strong style="color:#ffd54a">${teamFlag} ${teamName}</strong> is highlighted throughout as you follow the tournament.</p>
     <div style="text-align:center;margin:28px 0">
-      <a href="${proUrl}" style="display:inline-block;background:linear-gradient(135deg,#ffd54a,#f59e0b);color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">&#127942; Open My Pro Bracket &rarr;</a>
+      <a href="${proUrl}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif;mso-padding-alt:0">&#127942; Open My Pro Bracket &rarr;</a>
+    </div>
+    <div style="text-align:center;margin-bottom:16px">
+      <p style="color:#475569;font-size:12px;margin:0 0 4px">Or copy this link into your browser:</p>
+      <a href="${proUrl}" style="color:#ffd54a;font-size:11px;word-break:break-all;font-family:Arial,sans-serif">${proUrl}</a>
     </div>
     <div style="background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.12);border-radius:10px;padding:14px 16px">
       <p style="color:#22d3ee;font-size:11px;font-weight:700;margin:0 0 4px;letter-spacing:1px">&#128250; WHAT YOU GET</p>
@@ -266,7 +270,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       await sgMail.send({
         from: { name: "WC2026 Sweepstake", email: "noreply@worldcupsweepstake-liveboard.com" },
         to: email,
-        subject: `&#127942; Your Pro Bracket is ready — ${participant.teamFlag || ""} ${participant.teamName}`,
+        subject: `🏆 Your Pro Bracket is ready — ${participant.teamFlag || ""} ${participant.teamName}`,
         html: buildProEmailHtml(
           participant.name,
           participant.teamName,
