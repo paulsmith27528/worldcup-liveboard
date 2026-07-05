@@ -150,11 +150,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // ── PRO BRACKET FLOW ─────────────────────────────────────────────────────
   if (product.type === "pro") {
     // The bid (bracket ID) is passed via Stripe metadata or custom fields
+    // Log everything so we can debug
+    console.log("Pro session custom_fields:", JSON.stringify(session.custom_fields));
+    console.log("Pro session client_reference_id:", session.client_reference_id);
+    console.log("Pro session metadata:", JSON.stringify(session.metadata));
+
+    // Try every possible location Stripe might put the bracket ID
+    const customFieldValue = session.custom_fields?.find((f: any) =>
+      f.key === "bracket_id" ||
+      f.key === "bracketid" ||
+      f.key === "bracketID" ||
+      f.key === "bracket id" ||
+      f.label?.custom?.toLowerCase()?.includes("bracket")
+    )?.text?.value || null;
+
     const bid =
       session.client_reference_id ||
       session.metadata?.bid ||
-      session.custom_fields?.find((f: any) => f.key === "bracket_id" || f.key === "bracketid")?.text?.value ||
+      customFieldValue ||
       null;
+
+    console.log("Pro bid resolved to:", bid);
 
     if (!bid) {
       console.error("Pro payment received but no bid in session metadata:", session.id);
