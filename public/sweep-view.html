@@ -357,7 +357,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
     if(bid){
       const proBtn=document.getElementById('pro-upgrade-btn');
       if(proBtn){
-        proBtn.href='https://buy.stripe.com/28E8wI3tm36JcTQ3eV3F606?prefilled_custom_field_bracket_id='+encodeURIComponent(bid);
+        proBtn.href='https://buy.stripe.com/28E8wI3tm36JcTQ3eV3F606?client_reference_id='+encodeURIComponent(bid)+'&prefilled_email='+encodeURIComponent((myEntry&&myEntry.email)||'');
       }
     }
   }catch(e){
@@ -365,7 +365,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   }
 });
 
-const FLAGS={"Brazil":"🇧🇷","France":"🇫🇷","Argentina":"🇦🇷","Germany":"🇩🇪","England":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Spain":"🇪🇸","Portugal":"🇵🇹","Netherlands":"🇳🇱","Mexico":"🇲🇽","USA":"🇺🇸","Belgium":"🇧🇪","Croatia":"🇭🇷","Italy":"🇮🇹","Uruguay":"🇺🇾","Colombia":"🇨🇴","Senegal":"🇸🇳","Morocco":"🇲🇦","Japan":"🇯🇵","S.Korea":"🇰🇷","Canada":"🇨🇦","Denmark":"🇩🇰","Austria":"🇦🇹"};
+const FLAGS={"Brazil":"🇧🇷","France":"🇫🇷","Argentina":"🇦🇷","Germany":"🇩🇪","England":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Spain":"🇪🇸","Portugal":"🇵🇹","Netherlands":"🇳🇱","Mexico":"🇲🇽","USA":"🇺🇸","Belgium":"🇧🇪","Croatia":"🇭🇷","Italy":"🇮🇹","Uruguay":"🇺🇾","Colombia":"🇨🇴","Senegal":"🇸🇳","Morocco":"🇲🇦","Japan":"🇯🇵","South Korea":"🇰🇷","S.Korea":"🇰🇷","Canada":"🇨🇦","Denmark":"🇩🇰","Austria":"🇦🇹","Gambia":"🇬🇲","Ivory Coast":"🇨🇮","Ecuador":"🇪🇨","Switzerland":"🇨🇭","Australia":"🇦🇺","Saudi Arabia":"🇸🇦","Iran":"🇮🇷","Japan":"🇯🇵","Qatar":"🇶🇦","Cameroon":"🇨🇲","Ghana":"🇬🇭","Tunisia":"🇹🇳","Nigeria":"🇳🇬","Mali":"🇲🇱","South Africa":"🇿🇦","Algeria":"🇩🇿","Egypt":"🇪🇬","Scotland":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","Wales":"🏴󠁧󠁢󠁷󠁬󠁳󠁿","Ukraine":"🇺🇦","Poland":"🇵🇱","Turkey":"🇹🇷","Czech Republic":"🇨🇿","Slovakia":"🇸🇰","Hungary":"🇭🇺","Romania":"🇷🇴","Serbia":"🇷🇸","Slovenia":"🇸🇮","Albania":"🇦🇱","Chile":"🇨🇱","Peru":"🇵🇪","Paraguay":"🇵🇾","Bolivia":"🇧🇴","Venezuela":"🇻🇪","Costa Rica":"🇨🇷","Honduras":"🇭🇳","Panama":"🇵🇦","Jamaica":"🇯🇲","Haiti":"🇭🇹","Cuba":"🇨🇺","New Zealand":"🇳🇿","China":"🇨🇳","Indonesia":"🇮🇩","Iraq":"🇮🇶","Jordan":"🇯🇴","Uzbekistan":"🇺🇿","Norway":"🇳🇴","Sweden":"🇸🇪","Finland":"🇫🇮","Greece":"🇬🇷","Israel":"🇮🇱","Cape Verde":"🇨🇻","Congo":"🇨🇩","DR Congo":"🇨🇩","Bahrain":"🇧🇭","Kuwait":"🇰🇼","Oman":"🇴🇲","Guatemala":"🇬🇹","Trinidad":"🇹🇹","Trinidad and Tobago":"🇹🇹","Netherlands Antilles":"🇧🇶","Curacao":"🇨🇼","Kenya":"🇰🇪","Tanzania":"🇹🇿","Zambia":"🇿🇲","Angola":"🇦🇴","Mozambique":"🇲🇿","Zimbabwe":"🇿🇼"};
 
 function renderHero(){
   const e=myEntry;
