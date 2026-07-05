@@ -15,17 +15,19 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
 
-const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake" | "dashboard" | "bundle" }> = {
+const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake" | "dashboard" | "bundle" | "pro" }> = {
   price_1TeMKT3g62IhPcY7PvqpncJF: { name: "World Cup Sweepstake", emoji: "&#127967;", type: "sweepstake" },
   price_1TodvS3g62IhPcY7Q9ePkimH: { name: "World Cup Sweepstake", emoji: "&#127967;", type: "sweepstake" },
   price_1TeMHw3g62IhPcY7CCZhO3T6: { name: "Live Dashboard", emoji: "&#128250;", type: "dashboard" },
   price_1Todyt3g62IhPcY7ZA9hLaEz: { name: "Live Dashboard", emoji: "&#128250;", type: "dashboard" },
   price_1TetFJ3g62IhPcY7exBoTMtq: { name: "Bundle &mdash; Dashboard + Sweepstake", emoji: "&#9889;", type: "bundle" },
   price_1Todzd3g62IhPcY7dq3Fmhcd: { name: "Bundle &mdash; Dashboard + Sweepstake", emoji: "&#9889;", type: "bundle" },
+  price_1TpoVC3g62IhPcY79JRQOJV7: { name: "Pro Bracket", emoji: "&#127942;", type: "pro" },
 };
 
 const BASE_URL = "https://www.worldcupliveboard.com";
 const TTL = 60 * 60 * 24 * 30;
+const PRO_TTL = 60 * 60 * 24 * 120; // 120 days — lasts the tournament
 
 function generateToken(): string {
   return randomBytes(32).toString("hex");
@@ -84,6 +86,40 @@ ${bundleExtra}
 </body></html>`;
 }
 
+function buildProEmailHtml(
+  participantName: string,
+  teamName: string,
+  teamFlag: string,
+  sweepstakeName: string,
+  proUrl: string
+): string {
+  return `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#020810;font-family:Arial,sans-serif">
+<div style="max-width:520px;margin:0 auto;padding:32px 16px">
+  <div style="background:linear-gradient(150deg,#051226,#020914);border:1px solid rgba(255,213,74,.3);border-radius:18px;padding:32px">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:72px;margin-bottom:12px">${teamFlag}</div>
+      <h1 style="color:#ffd54a;font-size:26px;font-weight:900;margin:0 0 6px">Your Pro Bracket is ready! &#127942;</h1>
+      <p style="color:#475569;font-size:13px;margin:0">${sweepstakeName}</p>
+    </div>
+    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 12px">Hi <strong style="color:#fff">${participantName}</strong>,</p>
+    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 24px">Your Pro Bracket is unlocked. You get the full live dashboard with your sweepstake built right in &mdash; <strong style="color:#ffd54a">${teamFlag} ${teamName}</strong> is highlighted throughout as you follow the tournament.</p>
+    <div style="text-align:center;margin:28px 0">
+      <a href="${proUrl}" style="display:inline-block;background:linear-gradient(135deg,#ffd54a,#f59e0b);color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">&#127942; Open My Pro Bracket &rarr;</a>
+    </div>
+    <div style="background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.12);border-radius:10px;padding:14px 16px">
+      <p style="color:#22d3ee;font-size:11px;font-weight:700;margin:0 0 4px;letter-spacing:1px">&#128250; WHAT YOU GET</p>
+      <p style="color:#94a3b8;font-size:12px;margin:0;line-height:1.8">&#9989; Live scores and match centre<br>&#9989; Full knockout bracket with your team highlighted<br>&#9989; Group tables and tournament stats<br>&#9989; Your sweepstake draw embedded &mdash; see all participants and their teams<br>&#9989; Squad cards and stadium info</p>
+    </div>
+    <p style="color:#334155;font-size:11px;text-align:center;margin-top:24px">Bookmark your Pro link &mdash; it is yours for the entire tournament. Good luck! &#127942;</p>
+  </div>
+</div>
+</body>
+</html>`;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
@@ -111,6 +147,97 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const priceId = lineItems.data[0]?.price?.id ?? session.metadata?.price_id ?? "unknown";
   const product = PRICE_MAP[priceId] ?? { name: "World Cup Access", emoji: "&#9917;", type: "dashboard" };
 
+  // ── PRO BRACKET FLOW ─────────────────────────────────────────────────────
+  if (product.type === "pro") {
+    // The bid (bracket ID) is passed via Stripe metadata or custom fields
+    const bid =
+      session.metadata?.bid ||
+      session.custom_fields?.find((f: any) => f.key === "bracket_id" || f.key === "bracketid")?.text?.value ||
+      null;
+
+    if (!bid) {
+      console.error("Pro payment received but no bid in session metadata:", session.id);
+      // Still send a generic success email so they're not left hanging
+      try {
+        await sgMail.send({
+          from: { name: "WC2026 Sweepstake", email: "noreply@worldcupsweepstake-liveboard.com" },
+          to: email,
+          subject: "Your Pro Bracket — action needed",
+          html: `<p style="font-family:Arial,sans-serif;color:#fff;background:#020810;padding:32px">Hi, we received your Pro Bracket payment but couldn't find your sweepstake automatically. Please reply to this email and we'll get you set up straight away. Sorry for the inconvenience!</p>`,
+          trackingSettings: { clickTracking: { enable: false, enableText: false }, openTracking: { enable: false } },
+        });
+      } catch (_) {}
+      return res.status(200).json({ received: true });
+    }
+
+    // Look up the bracket data from Redis
+    let bracketData: any = null;
+    try {
+      const raw = await redis.get<string>(`bracket:${bid}`);
+      if (raw) bracketData = typeof raw === "string" ? JSON.parse(raw) : raw;
+    } catch (err) {
+      console.error("Failed to fetch bracket for Pro:", err);
+    }
+
+    if (!bracketData) {
+      console.error("No bracket data found for bid:", bid);
+      return res.status(200).json({ received: true });
+    }
+
+    // Find this participant in the bracket entries by email
+    const entries: any[] = bracketData.entries || [];
+    const participant = entries.find((e: any) => e.email?.toLowerCase() === email.toLowerCase());
+
+    if (!participant) {
+      console.error("Participant not found in bracket for email:", email, "bid:", bid);
+      return res.status(200).json({ received: true });
+    }
+
+    // Generate a Pro token and store it in Redis
+    const proToken = generateToken();
+    await redis.set(`protoken:${proToken}`, JSON.stringify({
+      email,
+      name: participant.name,
+      teamName: participant.teamName,
+      teamFlag: participant.teamFlag || "⚽",
+      colour: participant.colour || "#22d3ee",
+      bid,
+      sweepstakeName: bracketData.n || "WC2026 Sweepstake",
+      createdAt: Date.now(),
+    }), { ex: PRO_TTL });
+
+    // Build the Pro URL — opens the full dashboard with their pro token
+    const proUrl = `${BASE_URL}/dashboard.html?pro=${proToken}`;
+
+    // Send the Pro email
+    try {
+      await sgMail.send({
+        from: { name: "WC2026 Sweepstake", email: "noreply@worldcupsweepstake-liveboard.com" },
+        to: email,
+        subject: `&#127942; Your Pro Bracket is ready — ${participant.teamFlag || ""} ${participant.teamName}`,
+        html: buildProEmailHtml(
+          participant.name,
+          participant.teamName,
+          participant.teamFlag || "⚽",
+          bracketData.n || "WC2026 Sweepstake",
+          proUrl
+        ),
+        trackingSettings: {
+          clickTracking: { enable: false, enableText: false },
+          openTracking: { enable: false },
+        },
+      });
+      console.log("Pro email sent to:", email, "team:", participant.teamName, "bid:", bid);
+    } catch (mailErr: any) {
+      console.error("Pro mail error:", mailErr.message);
+      return res.status(500).json({ error: "Email failed", detail: mailErr.message });
+    }
+
+    return res.status(200).json({ received: true });
+  }
+  // ── END PRO BRACKET FLOW ─────────────────────────────────────────────────
+
+  // Existing flow: dashboard / sweepstake / bundle
   const dashToken = (product.type === "dashboard" || product.type === "bundle") ? generateToken() : null;
   const sweepToken = (product.type === "sweepstake" || product.type === "bundle") ? generateToken() : null;
 
