@@ -507,6 +507,10 @@ body.day-mode .stat-2col .stat-box:nth-child(8n+8){border-top:7px solid #1e90ff 
 
 .final-inner.gold-glow{animation:goldPulse 2.5s ease-in-out infinite!important;border:2px solid rgba(255,213,74,.9)!important}
 .final-col:has(.gold-glow){animation:goldPulse 3s ease-in-out infinite}
+
+/* Live match box glow - only shown while a match is playing, or within 1 hour of kickoff */
+@keyframes liveGlow{0%,100%{box-shadow:0 0 18px rgba(239,68,68,.55),0 0 6px rgba(239,68,68,.35)}50%{box-shadow:0 0 40px rgba(239,68,68,.95),0 0 16px rgba(239,68,68,.7)}}
+.live-ring{animation:liveGlow 1.8s ease-in-out infinite}
 </style>
 </head>
 <body class="day-mode">
@@ -1228,7 +1232,7 @@ function makeFinal(){
   var h=[];
   h.push('<div class="final-col">');
 
-  h.push('<div class="final-inner gold-glow" style="animation:goldPulse 2.5s ease-in-out infinite!important;box-shadow:0 0 40px rgba(255,213,74,.8),0 0 15px rgba(255,213,74,.6)!important;border:2px solid rgba(255,213,74,.9)!important">');
+  h.push('<div class="final-inner gold-glow">');
   h.push('<div style="color:#ffd54a;font-weight:900;font-size:16px;letter-spacing:5px;margin-bottom:2px">FINAL</div>');
   h.push('<div style="color:#64748b;font-size:8px;letter-spacing:1px">JULY 19, 2026</div>');
   h.push('<div style="color:#475569;font-size:7px;margin-bottom:10px;letter-spacing:.5px">METLIFE STADIUM &middot; NEW JERSEY, USA</div>');
@@ -1268,12 +1272,14 @@ function makeLiveCard(m){
   var live=m.status==='LIVE',ht=m.status==='HT';
   var finished=m.status==='FT'||m.status==='AET'||m.status==='PEN';
   var ns=m.status==='NS';
+  var startingSoon=false;
+  if(ns&&m.date){var msToKickoff=new Date(m.date).getTime()-Date.now();startingSoon=msToKickoff>0&&msToKickoff<=3600000;}
 
   // Upcoming match - compact row style
   if(ns){
     var ko='';
     if(m.date){var d=new Date(m.date);ko=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/London'});}
-    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:8px;background:rgba(255,255,255,.03);border:1px solid rgba(34,211,238,.1);border-radius:10px">'+
+    return '<div'+(startingSoon?' class="live-ring"':'')+' style="display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:8px;background:rgba(255,255,255,.03);border:1px solid rgba(34,211,238,.1);border-radius:10px">'+
       '<div style="flex:1;display:flex;align-items:center;gap:6px;justify-content:flex-end">'+
         flagImg(hAbbr,20)+
         '<span style="font-size:12px;font-weight:700;color:#94a3b8">'+hAbbr+'</span>'+
@@ -1294,7 +1300,7 @@ function makeLiveCard(m){
   var lbl=live?'LIVE '+m.minute+"'":ht?'HALF TIME':finished?(m.status==='PEN'?'PENS':m.status==='AET'?'AET':'FULL TIME'):'';
   var sc=hScore!==null&&hScore!==undefined?hScore+'&ndash;'+aScore:'VS';
   var sr=scorers.map(function(s){return '<span style="font-size:8px;color:#475569">&#9917; '+s+'</span>';}).join('');
-  return '<div'+(live?' class="live-ring"':'')+' style="background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid '+(live?'rgba(255,213,74,.4)':ht?'rgba(251,191,36,.28)':'rgba(34,211,238,.12)')+';border-radius:12px;padding:13px 15px;margin-bottom:10px">'+
+  return '<div'+((live||ht)?' class="live-ring"':'')+' style="background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid '+(live?'rgba(255,213,74,.4)':ht?'rgba(251,191,36,.28)':'rgba(34,211,238,.12)')+';border-radius:12px;padding:13px 15px;margin-bottom:10px">'+
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">'+
       '<span style="background:'+bg+';color:#fff;font-weight:700;font-size:9px;padding:3px 9px;border-radius:4px;letter-spacing:1px">'+lbl+'</span>'+
       '<span style="font-size:8px;color:#334155">'+venue+'</span></div>'+
