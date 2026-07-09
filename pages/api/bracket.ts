@@ -7,7 +7,7 @@ const WC_SEASON = 2026;
 const CODE_OVERRIDES: Record<number, string> = {
   1531: "RSA", 17: "KOR", 768: "AUT", 32: "AUS", 1113: "BIH",
   770: "CZE", 497: "IRN", 4301: "IRQ", 107: "COD", 6665: "CPV",
-  6667: "CUW", 5529: "CAN", 2: "KSA",
+  6667: "CUW", 5529: "CAN",
 };
 
 function getCode(teamId: number, apiCode: string | null, name: string): string {
