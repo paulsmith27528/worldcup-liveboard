@@ -1386,7 +1386,26 @@ window.addEventListener('DOMContentLoaded',function(){
     });
     // Path placeholder helper - uses knockoutPaths labels for all rounds
     function pathRow(id){var p=paths&&paths[id];var h=p?p.home:'TBD';var a=p?p.away:'TBD';var ks=koSchedule[id]||{};return [h,'','-',a,'','-','','','',ks.venue||'',id,ks.date||''];}
-    function assignIds(arr,order){arr.forEach(function(r,i){if(!r[10]&&order[i])r[10]=order[i];});}
+    function assignIds(arr,order){
+      var used={};
+      // First pass: match each real result to its bracket slot by venue (reliable, since koSchedule has the correct venue for every slot)
+      arr.forEach(function(r){
+        var v=(r[9]||'').toLowerCase();
+        if(!v)return;
+        for(var j=0;j<order.length;j++){
+          var id=order[j];
+          if(used[id])continue;
+          var sched=koSchedule[id];
+          if(sched&&sched.venue&&v.indexOf(sched.venue.toLowerCase())>=0){r[10]=id;used[id]=true;break;}
+        }
+      });
+      // Fallback: anything that didn't match a venue (e.g. venue text differs) falls back to order, using whichever slots are left
+      var remaining=order.filter(function(id){return !used[id];});
+      var ri=0;
+      arr.forEach(function(r){
+        if(!r[10]&&remaining[ri]){r[10]=remaining[ri];used[remaining[ri]]=true;ri++;}
+      });
+    }
     var r32order=['M73','M75','M79','M81','M85','M87','M83','M88','M74','M77','M80','M82','M84','M86','M78','M76'];
     var r16order=['M89','M90','M91','M92','M93','M94','M95','M96'];
     var qforder=['M97','M98','M99','M100'];
