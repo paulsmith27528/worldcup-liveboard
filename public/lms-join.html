@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Join Last Man Standing</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;background:#020810;color:#fff;font-family:Arial,sans-serif;min-height:100vh}
+  .wrap{max-width:480px;margin:0 auto;padding:48px 20px}
+  .eyebrow{text-align:center;color:#ef4444;font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:10px}
+  h1{text-align:center;font-size:28px;font-weight:900;margin:0 0 6px}
+  .sub{text-align:center;color:#5b6b85;font-size:13px;margin-bottom:32px;line-height:1.6}
+  .card{background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid rgba(239,68,68,.25);border-radius:18px;padding:28px}
+  label{display:block;font-size:11px;font-weight:800;letter-spacing:1px;color:#94a3b8;margin-bottom:6px;margin-top:18px}
+  label:first-child{margin-top:0}
+  input{width:100%;padding:13px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#fff;font-size:14px}
+  input:focus{outline:none;border-color:rgba(255,213,74,.5)}
+  button{width:100%;padding:16px;border:none;border-radius:12px;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:14px;letter-spacing:.5px;cursor:pointer;margin-top:24px}
+  .err{color:#ef4444;font-size:12px;margin-top:10px;text-align:center;display:none}
+  .success{display:none;text-align:center}
+  .success .icon{font-size:52px;margin-bottom:12px}
+  .loading{text-align:center;color:#5b6b85;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">☠ LAST MAN STANDING</div>
+  <h1 id="poolTitle">Join the Pool</h1>
+  <p class="sub" id="poolSub">Loading pool details…</p>
+
+  <div class="card">
+    <div id="loadingState" class="loading">Checking pool…</div>
+
+    <form id="f" style="display:none">
+      <label>YOUR NAME</label>
+      <input type="text" id="name" placeholder="Your name" required>
+
+      <label>YOUR EMAIL</label>
+      <input type="email" id="email" placeholder="you@example.com" required>
+
+      <button type="submit">Join Pool →</button>
+      <p class="err" id="err"></p>
+    </form>
+
+    <div class="success" id="success">
+      <div class="icon">☠</div>
+      <h2 style="margin:0 0 8px">You're in!</h2>
+      <p style="color:#94a3b8;font-size:13px;line-height:1.6">Check your email for your personal pick link — that's how you'll make your team selection each gameweek.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+var params = new URLSearchParams(window.location.search);
+var poolId = params.get('pool');
+
+if(!poolId){
+  document.getElementById('loadingState').textContent = 'No pool specified — check your join link.';
+} else {
+  fetch('/api/lms-join?poolId=' + encodeURIComponent(poolId))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.error){
+        document.getElementById('loadingState').textContent = 'This pool link isn\'t valid or has expired.';
+        return;
+      }
+      document.getElementById('poolTitle').textContent = d.name;
+      document.getElementById('poolSub').textContent = 'Organised by ' + d.organiser + ' — join below to get your pick link.';
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('f').style.display = 'block';
+    })
+    .catch(function(){
+      document.getElementById('loadingState').textContent = 'Something went wrong loading this pool. Try refreshing.';
+    });
+}
+
+document.getElementById('f').addEventListener('submit', function(e){
+  e.preventDefault();
+  var name = document.getElementById('name').value.trim();
+  var email = document.getElementById('email').value.trim();
+  var err = document.getElementById('err');
+  err.style.display = 'none';
+
+  if(!name || !/^[^@]+@[^@]+\.[^@]+$/.test(email)){
+    err.textContent = 'Please enter your name and a valid email address.';
+    err.style.display = 'block';
+    return;
+  }
+
+  fetch('/api/lms-join', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ poolId: poolId, name: name, email: email })
+  })
+  .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
+  .then(function(res){
+    if(res.status !== 200){
+      err.textContent = res.body.error || 'Something went wrong. Please try again.';
+      err.style.display = 'block';
+      return;
+    }
+    document.getElementById('f').style.display = 'none';
+    document.getElementById('success').style.display = 'block';
+  })
+  .catch(function(){
+    err.textContent = 'Something went wrong. Please try again.';
+    err.style.display = 'block';
+  });
+});
+</script>
+</body>
+</html>

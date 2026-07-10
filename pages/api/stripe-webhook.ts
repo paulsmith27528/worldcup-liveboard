@@ -15,7 +15,7 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
 
-const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake" | "dashboard" | "bundle" | "pro" }> = {
+const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake" | "dashboard" | "bundle" | "pro" | "lms" }> = {
   price_1TeMKT3g62IhPcY7PvqpncJF: { name: "World Cup Sweepstake", emoji: "&#127967;", type: "sweepstake" },
   price_1TodvS3g62IhPcY7Q9ePkimH: { name: "World Cup Sweepstake", emoji: "&#127967;", type: "sweepstake" },
   price_1TeMHw3g62IhPcY7CCZhO3T6: { name: "Live Dashboard", emoji: "&#128250;", type: "dashboard" },
@@ -23,7 +23,51 @@ const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake
   price_1TetFJ3g62IhPcY7exBoTMtq: { name: "Bundle &mdash; Dashboard + Sweepstake", emoji: "&#9889;", type: "bundle" },
   price_1Todzd3g62IhPcY7dq3Fmhcd: { name: "Bundle &mdash; Dashboard + Sweepstake", emoji: "&#9889;", type: "bundle" },
   price_1TpoVC3g62IhPcY79JRQOJV7: { name: "Pro Bracket", emoji: "&#127942;", type: "pro" },
+  price_1Trj6f3g62IhPcY7V2jgis7d: { name: "Last Man Standing", emoji: "&#128128;", type: "lms" },
 };
+
+const LMS_TTL = 60 * 60 * 24 * 300; // 300 days — covers a full PL season
+
+function genPoolId(): string {
+  return Math.random().toString(36).substring(2, 8).toUpperCase();
+}
+
+function buildLmsOrganiserEmailHtml(
+  poolName: string,
+  organiserName: string,
+  joinUrl: string,
+  hubUrl: string
+): string {
+  return `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#020810;font-family:Arial,sans-serif">
+<div style="max-width:520px;margin:0 auto;padding:32px 16px">
+  <div style="background:linear-gradient(150deg,#051226,#020914);border:1px solid rgba(239,68,68,.3);border-radius:18px;padding:32px">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:60px;margin-bottom:12px">&#128128;</div>
+      <h1 style="color:#ffd54a;font-size:24px;font-weight:900;margin:0 0 6px">Your pool is live!</h1>
+      <p style="color:#475569;font-size:13px;margin:0">${poolName}</p>
+    </div>
+    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">Hi <strong style="color:#fff">${organiserName}</strong>, Last Man Standing is set up and ready. Share the join link below with everyone you want in the pool — no limit on numbers.</p>
+    <div style="text-align:center;margin:24px 0">
+      <a href="${joinUrl}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">&#128128; Share Join Link &rarr;</a>
+    </div>
+    <div style="text-align:center;margin-bottom:20px">
+      <p style="color:#475569;font-size:12px;margin:0 0 4px">Join link — copy and share:</p>
+      <a href="${joinUrl}" style="color:#ffd54a;font-size:11px;word-break:break-all;font-family:Arial,sans-serif">${joinUrl}</a>
+    </div>
+    <div style="background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.15);border-radius:10px;padding:14px 16px;margin-bottom:16px">
+      <p style="color:#22d3ee;font-size:12px;font-weight:700;margin:0 0 4px;letter-spacing:1px">YOUR ORGANISER HUB</p>
+      <p style="color:#94a3b8;font-size:13px;margin:0 0 10px;line-height:1.6">See who's joined, track picks each week, and watch the pool narrow down.</p>
+      <a href="${hubUrl}" style="color:#ffd54a;font-size:11px;word-break:break-all;font-family:Arial,sans-serif">${hubUrl}</a>
+    </div>
+    <p style="color:#334155;font-size:11px;text-align:center;margin:0">Bookmark both links — they're yours for the whole season. Good luck! &#127942;</p>
+  </div>
+</div>
+</body>
+</html>`;
+}
 
 const BASE_URL = "https://www.worldcupliveboard.com";
 const TTL = 60 * 60 * 24 * 30;
@@ -292,6 +336,57 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json({ received: true });
   }
   // ── END PRO BRACKET FLOW ─────────────────────────────────────────────────
+
+  // ── LAST MAN STANDING FLOW ───────────────────────────────────────────────
+  if (product.type === "lms") {
+    const poolName = (session.metadata?.poolName as string) || "Last Man Standing";
+    const organiserName = (session.metadata?.organiser as string) || "The organiser";
+
+    const poolId = genPoolId();
+    const orgToken = generateToken();
+
+    try {
+      await redis.set(`lms:pool:${poolId}`, JSON.stringify({
+        id: poolId,
+        name: poolName,
+        organiser: organiserName,
+        organiserEmail: email,
+        orgToken,
+        currentGameweek: 1,
+        wipeoutRule: "rollback",
+        createdAt: Date.now(),
+        status: "active",
+      }), { ex: LMS_TTL });
+
+      await redis.set(`lms:orgtoken:${poolId}`, orgToken, { ex: LMS_TTL });
+    } catch (err) {
+      console.error("Failed to create LMS pool:", err);
+      return res.status(500).json({ error: "Failed to create pool" });
+    }
+
+    const joinUrl = `${BASE_URL}/lms-join.html?pool=${poolId}`;
+    const hubUrl = `${BASE_URL}/lms-organiser.html?pool=${poolId}&k=${orgToken}`;
+
+    try {
+      await sgMail.send({
+        from: { name: "Last Man Standing", email: "noreply@worldcupsweepstake-liveboard.com" },
+        to: email,
+        subject: `\uD83D\uDC80 Your Last Man Standing pool is ready — ${poolName}`,
+        html: buildLmsOrganiserEmailHtml(poolName, organiserName, joinUrl, hubUrl),
+        trackingSettings: {
+          clickTracking: { enable: false, enableText: false },
+          openTracking: { enable: false },
+        },
+      });
+      console.log("LMS organiser email sent to:", email, "pool:", poolId);
+    } catch (mailErr: any) {
+      console.error("LMS mail error:", mailErr.message);
+      return res.status(500).json({ error: "Email failed", detail: mailErr.message });
+    }
+
+    return res.status(200).json({ received: true });
+  }
+  // ── END LAST MAN STANDING FLOW ───────────────────────────────────────────
 
   // Existing flow: dashboard / sweepstake / bundle
   const dashToken = (product.type === "dashboard" || product.type === "bundle") ? generateToken() : null;
