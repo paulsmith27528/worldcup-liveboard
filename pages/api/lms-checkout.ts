@@ -20,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         price: 'price_1Trj6f3g62IhPcY7V2jgis7d',
         quantity: 1,
       }],
-      success_url: `${BASE_URL}/success.html`,
+      success_url: `${BASE_URL}/lms-success.html`,
       cancel_url: `${BASE_URL}/lms-create.html`,
       metadata: {
         product: 'lms',
