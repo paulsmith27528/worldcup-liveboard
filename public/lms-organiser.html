@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Last Man Standing Pool</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;background:#020810;color:#fff;font-family:Arial,sans-serif;min-height:100vh}
+  .wrap{max-width:640px;margin:0 auto;padding:40px 20px 80px}
+  .eyebrow{color:#ef4444;font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:8px}
+  h1{font-size:26px;font-weight:900;margin:0 0 4px}
+  .sub{color:#5b6b85;font-size:13px;margin-bottom:24px}
+
+  .card{background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid rgba(239,68,68,.25);border-radius:16px;padding:20px;margin-bottom:20px}
+  .card h2{font-size:12px;letter-spacing:1px;color:#94a3b8;font-weight:800;margin:0 0 12px}
+
+  .joinbox{display:flex;gap:8px;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 14px}
+  .joinbox span{flex:1;font-size:12px;color:#22d3ee;word-break:break-all}
+  .joinbox button{flex-shrink:0;padding:8px 14px;border:none;border-radius:8px;background:#ffd54a;color:#1a1200;font-weight:800;font-size:12px;cursor:pointer}
+
+  .stat-row{display:flex;gap:12px;margin-bottom:20px}
+  .stat{flex:1;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;text-align:center}
+  .stat .n{font-size:22px;font-weight:900;color:#ffd54a}
+  .stat .l{font-size:10px;color:#5b6b85;letter-spacing:1px;font-weight:800;margin-top:2px}
+
+  .player{display:flex;align-items:center;gap:12px;padding:12px 14px;margin-bottom:8px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
+  .player .name{flex:1;font-weight:700;font-size:13px}
+  .player .email{color:#5b6b85;font-size:11px}
+  .player .badge{font-size:10px;font-weight:800;letter-spacing:.5px;padding:4px 10px;border-radius:20px;background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.3)}
+
+  .empty{text-align:center;color:#5b6b85;font-size:13px;padding:24px}
+  .loading{text-align:center;color:#5b6b85;font-size:13px;padding:40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">☠ LAST MAN STANDING · ORGANISER HUB</div>
+  <h1 id="poolName">Loading…</h1>
+  <p class="sub" id="poolSub"></p>
+
+  <div id="content" style="display:none">
+    <div class="stat-row">
+      <div class="stat"><div class="n" id="playerCount">0</div><div class="l">JOINED</div></div>
+      <div class="stat"><div class="n" id="gwNum">1</div><div class="l">CURRENT GAMEWEEK</div></div>
+    </div>
+
+    <div class="card">
+      <h2>SHARE THIS TO INVITE PEOPLE</h2>
+      <div class="joinbox">
+        <span id="joinLink"></span>
+        <button onclick="copyLink()">Copy</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>WHO'S JOINED</h2>
+      <div id="playerList"></div>
+    </div>
+  </div>
+
+  <div class="loading" id="loadingMsg">Checking your link…</div>
+</div>
+
+<script>
+var params = new URLSearchParams(window.location.search);
+var poolId = params.get('pool');
+var k = params.get('k');
+var joinUrl = window.location.origin + '/lms-join.html?pool=' + poolId;
+
+if(!poolId || !k){
+  document.getElementById('loadingMsg').textContent = 'This organiser link looks incomplete — check the link from your email.';
+} else {
+  fetch('/api/lms-organiser?pool=' + encodeURIComponent(poolId) + '&k=' + encodeURIComponent(k))
+    .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
+    .then(function(res){
+      if(res.status !== 200){
+        document.getElementById('loadingMsg').textContent = res.body.error === 'Invalid organiser link'
+          ? 'This organiser link isn\'t valid — check the link from your email.'
+          : 'Something went wrong loading your pool.';
+        return;
+      }
+      var d = res.body;
+      document.getElementById('poolName').textContent = d.pool.name;
+      document.getElementById('poolSub').textContent = 'Organised by ' + d.pool.organiser;
+      document.getElementById('playerCount').textContent = d.players.length;
+      document.getElementById('gwNum').textContent = 'GW' + d.pool.currentGameweek;
+      document.getElementById('joinLink').textContent = joinUrl;
+
+      var list = document.getElementById('playerList');
+      if(d.players.length === 0){
+        list.innerHTML = '<div class="empty">No one has joined yet — share the link above to get started.</div>';
+      } else {
+        d.players.forEach(function(p){
+          var row = document.createElement('div');
+          row.className = 'player';
+          row.innerHTML = '<div class="name">' + p.name + '<div class="email">' + p.email + '</div></div>' +
+            '<div class="badge">' + (p.alive ? 'ALIVE' : 'OUT') + '</div>';
+          list.appendChild(row);
+        });
+      }
+
+      document.getElementById('loadingMsg').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+    })
+    .catch(function(){
+      document.getElementById('loadingMsg').textContent = 'Something went wrong loading your pool. Try refreshing.';
+    });
+}
+
+function copyLink(){
+  navigator.clipboard.writeText(joinUrl).then(function(){
+    var btn = event.target;
+    var old = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(function(){ btn.textContent = old; }, 1500);
+  });
+}
+</script>
+</body>
+</html>
