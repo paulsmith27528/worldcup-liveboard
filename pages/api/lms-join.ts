@@ -89,7 +89,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       <p style="color:#475569;font-size:12px;margin:0 0 4px">Or copy this link into your browser:</p>
       <a href="${pickUrl}" style="color:#ffd54a;font-size:11px;word-break:break-all;font-family:Arial,sans-serif">${pickUrl}</a>
     </div>
-    <p style="color:#334155;font-size:11px;text-align:center;margin:0">Bookmark this link — it's yours for the whole season. Good luck! &#127942;</p>
+    <p style="color:#334155;font-size:11px;text-align:center;margin:0">Bookmark this link — it's yours until the game ends. Good luck! &#127942;</p>
   </div>
 </div>
 </body>

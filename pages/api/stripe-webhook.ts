@@ -62,7 +62,7 @@ function buildLmsOrganiserEmailHtml(
       <p style="color:#94a3b8;font-size:13px;margin:0 0 10px;line-height:1.6">See who's joined, track picks each week, and watch the pool narrow down.</p>
       <a href="${hubUrl}" style="color:#ffd54a;font-size:11px;word-break:break-all;font-family:Arial,sans-serif">${hubUrl}</a>
     </div>
-    <p style="color:#334155;font-size:11px;text-align:center;margin:0">Bookmark both links — they're yours for the whole season. Good luck! &#127942;</p>
+    <p style="color:#334155;font-size:11px;text-align:center;margin:0">Bookmark both links — they're yours until the game ends. Good luck! &#127942;</p>
   </div>
 </div>
 </body>
