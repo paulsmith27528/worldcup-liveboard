@@ -36,6 +36,7 @@ function buildLmsOrganiserEmailHtml(
   poolName: string,
   organiserName: string,
   joinUrl: string,
+  shareUrl: string,
   hubUrl: string
 ): string {
   return `<!DOCTYPE html>
@@ -51,11 +52,11 @@ function buildLmsOrganiserEmailHtml(
     </div>
     <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">Hi <strong style="color:#fff">${organiserName}</strong>, Last Man Standing is set up and ready. Share the join link below with everyone you want in the pool — no limit on numbers.</p>
     <div style="text-align:center;margin:24px 0">
-      <a href="${joinUrl}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">&#128128; Share Join Link &rarr;</a>
+      <a href="${shareUrl}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">&#128128; Share Join Link &rarr;</a>
     </div>
     <div style="text-align:center;margin-bottom:20px">
-      <p style="color:#475569;font-size:12px;margin:0 0 4px">Join link — copy and share:</p>
-      <a href="${joinUrl}" style="color:#ffd54a;font-size:11px;word-break:break-all;font-family:Arial,sans-serif">${joinUrl}</a>
+      <p style="color:#475569;font-size:12px;margin:0 0 4px">Join link — copy and paste to share elsewhere:</p>
+      <span style="color:#ffd54a;font-size:11px;word-break:break-all;font-family:Arial,sans-serif">${joinUrl}</span>
     </div>
     <div style="background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.15);border-radius:10px;padding:14px 16px;margin-bottom:16px">
       <p style="color:#22d3ee;font-size:12px;font-weight:700;margin:0 0 4px;letter-spacing:1px">YOUR ORGANISER HUB</p>
@@ -365,6 +366,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const joinUrl = `${BASE_URL}/lms-join.html?pool=${poolId}`;
+    const shareUrl = `${BASE_URL}/lms-share.html?pool=${poolId}`;
     const hubUrl = `${BASE_URL}/lms-organiser.html?pool=${poolId}&k=${orgToken}`;
 
     try {
@@ -372,7 +374,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         from: { name: "Last Man Standing", email: "noreply@worldcupsweepstake-liveboard.com" },
         to: email,
         subject: `\uD83D\uDC80 Your Last Man Standing pool is ready — ${poolName}`,
-        html: buildLmsOrganiserEmailHtml(poolName, organiserName, joinUrl, hubUrl),
+        html: buildLmsOrganiserEmailHtml(poolName, organiserName, joinUrl, shareUrl, hubUrl),
         trackingSettings: {
           clickTracking: { enable: false, enableText: false },
           openTracking: { enable: false },
