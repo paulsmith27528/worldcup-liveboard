@@ -16,7 +16,7 @@
   .card h2{font-size:12px;letter-spacing:1px;color:#94a3b8;font-weight:800;margin:0 0 12px}
 
   .joinbox{display:flex;gap:8px;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 14px}
-  .joinbox span{flex:1;font-size:12px;color:#22d3ee;word-break:break-all}
+  .joinbox input{flex:1;font-size:12px;color:#22d3ee;word-break:break-all;background:transparent;border:none;outline:none;font-family:Arial,sans-serif}
   .joinbox button{flex-shrink:0;padding:8px 14px;border:none;border-radius:8px;background:#ffd54a;color:#1a1200;font-weight:800;font-size:12px;cursor:pointer}
 
   .stat-row{display:flex;gap:12px;margin-bottom:20px}
@@ -48,7 +48,7 @@
     <div class="card">
       <h2>SHARE THIS TO INVITE PEOPLE</h2>
       <div class="joinbox">
-        <span id="joinLink"></span>
+        <input id="joinLink" type="text" readonly onclick="this.select()">
         <button onclick="copyLink()">Copy</button>
       </div>
     </div>
@@ -85,7 +85,7 @@ if(!poolId || !k){
       document.getElementById('poolSub').textContent = 'Organised by ' + d.pool.organiser;
       document.getElementById('playerCount').textContent = d.players.length;
       document.getElementById('gwNum').textContent = 'GW' + d.pool.currentGameweek;
-      document.getElementById('joinLink').textContent = joinUrl;
+      document.getElementById('joinLink').value = joinUrl;
 
       var list = document.getElementById('playerList');
       if(d.players.length === 0){
