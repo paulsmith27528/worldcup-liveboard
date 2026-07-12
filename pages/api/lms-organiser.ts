@@ -24,8 +24,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!poolRaw) return res.status(404).json({ error: 'Pool not found' });
     const poolData = typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any;
 
-    const playersRaw = await redis.lrange(`lms:pool:${pool}:players`, 0, -1);
-    const players = playersRaw.map((raw: any) => typeof raw === 'string' ? JSON.parse(raw) : raw);
+    const playersRaw = await redis.hgetall<Record<string, string>>(`lms:pool:${pool}:players`);
+    const players = playersRaw ? Object.values(playersRaw).map((raw: any) => typeof raw === 'string' ? JSON.parse(raw) : raw) : [];
 
     return res.status(200).json({
       pool: {

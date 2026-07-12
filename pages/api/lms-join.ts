@@ -38,17 +38,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'Invalid email address' });
   }
 
-  // Confirm the pool exists
   const poolRaw = await redis.get<string>(`lms:pool:${poolId}`);
   if (!poolRaw) return res.status(404).json({ error: 'Pool not found' });
   const pool = typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any;
 
   const playersKey = `lms:pool:${poolId}:players`;
-  const existing = await redis.lrange(playersKey, 0, -1);
-  for (const raw of existing) {
-    const p = typeof raw === 'string' ? JSON.parse(raw) : raw;
-    if (p.email && p.email.toLowerCase() === email.toLowerCase()) {
-      return res.status(409).json({ error: 'This email has already joined this pool.' });
+  const existing = await redis.hgetall<Record<string, string>>(playersKey);
+  if (existing) {
+    for (const raw of Object.values(existing)) {
+      const p = typeof raw === 'string' ? JSON.parse(raw) : raw as any;
+      if (p.email && p.email.toLowerCase() === email.toLowerCase()) {
+        return res.status(409).json({ error: 'This email has already joined this pool.' });
+      }
     }
   }
 
@@ -60,12 +61,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     token,
     usedTeams: [] as string[],
     currentPick: null as string | null,
+    currentPickGw: null as number | null,
     alive: true,
     eliminatedWeek: null as number | null,
     joinedAt: new Date().toISOString(),
   };
 
-  await redis.rpush(playersKey, JSON.stringify(player));
+  // Field is keyed by token so a pick submission can look itself up and update in place
+  await redis.hset(playersKey, { [token]: JSON.stringify(player) });
   await redis.expire(playersKey, LMS_TTL);
 
   const pickUrl = `${BASE_URL}/lms-pick.html?pool=${poolId}&t=${token}`;
@@ -87,7 +90,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     </div>
     <div style="text-align:center;margin-bottom:16px">
       <p style="color:#475569;font-size:12px;margin:0 0 4px">Or copy this link into your browser:</p>
-      <a href="${pickUrl}" style="color:#ffd54a;font-size:11px;word-break:break-all;font-family:Arial,sans-serif">${pickUrl}</a>
+      <span style="color:#ffd54a;font-size:11px;word-break:break-all;font-family:Arial,sans-serif">${pickUrl}</span>
     </div>
     <p style="color:#334155;font-size:11px;text-align:center;margin:0">Bookmark this link — it's yours until the game ends. Good luck! &#127942;</p>
   </div>
