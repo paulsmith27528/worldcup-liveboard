@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no, address=no, email=no, date=no, url=no">
 <title>Share Your Pool Link</title>
 <style>
   *{box-sizing:border-box}
@@ -11,8 +12,9 @@
   .icon{font-size:52px;margin-bottom:16px}
   h1{font-size:22px;font-weight:900;margin:0 0 10px}
   p{color:#94a3b8;font-size:14px;line-height:1.6;margin:0 0 24px}
-  .joinbox{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px;margin-bottom:20px}
-  .joinbox input{width:100%;text-align:center;background:transparent;border:none;outline:none;color:#22d3ee;font-size:12px;font-family:Arial,sans-serif}
+  .joinbox{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+  .joinbox input{flex:1;width:100%;text-align:left;background:transparent;border:none;outline:none;color:#22d3ee;font-size:12px;font-family:Arial,sans-serif;pointer-events:none}
+  .copyBtn{flex-shrink:0;padding:8px 12px;border:none;border-radius:8px;background:rgba(255,213,74,.15);color:#ffd54a;font-weight:800;font-size:11px;cursor:pointer;border:1px solid rgba(255,213,74,.3)}
   button{width:100%;padding:16px;border:none;border-radius:12px;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:14px;cursor:pointer;margin-bottom:10px}
   .copied{color:#34d399;font-size:12px;margin-top:8px;display:none}
 </style>
@@ -23,8 +25,9 @@
   <h1 id="title">Share Your Pool</h1>
   <p id="sub">Loading…</p>
 
-  <div class="joinbox">
-    <input id="joinLink" type="text" readonly onclick="this.select()">
+  <div class="joinbox" onclick="doShare()" style="cursor:pointer">
+    <input id="joinLink" type="text" readonly tabindex="-1">
+    <button class="copyBtn" onclick="event.stopPropagation();copyLink()">Copy</button>
   </div>
 
   <button id="shareBtn" onclick="doShare()">Share Join Link →</button>
@@ -37,6 +40,13 @@ var poolId = params.get('pool');
 var joinUrl = window.location.origin + '/lms-join.html?pool=' + poolId;
 document.getElementById('joinLink').value = joinUrl;
 document.getElementById('sub').textContent = 'Send this to everyone you want in your Last Man Standing pool.';
+
+function copyLink(){
+  navigator.clipboard.writeText(joinUrl).then(function(){
+    document.getElementById('copiedMsg').style.display = 'block';
+    setTimeout(function(){ document.getElementById('copiedMsg').style.display = 'none'; }, 2000);
+  });
+}
 
 function doShare(){
   if(navigator.share){
