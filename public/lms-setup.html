@@ -64,7 +64,7 @@
       <button class="copyBtn" onclick="copyLink()">Copy link (backup)</button>
       <div class="copied" id="copiedMsg">Link copied!</div>
 
-      <a id="shareBtn" href="#" style="display:block;text-align:center;text-decoration:none;width:100%;padding:16px;border-radius:12px;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:14px;box-sizing:border-box;margin-bottom:12px">Share Join Link →</a>
+      <a id="shareBtn" href="javascript:void(0)" onclick="doShare()" style="display:block;text-align:center;text-decoration:none;width:100%;padding:16px;border-radius:12px;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:14px;box-sizing:border-box;margin-bottom:12px">Share Join Link →</a>
       <a id="hubLink" href="#" style="display:block;text-align:center;color:#22d3ee;font-size:12px;text-decoration:none">Go to your organiser hub →</a>
     </div>
   </div>
@@ -142,9 +142,20 @@ function showSuccess(poolName){
   document.getElementById('pageSub').textContent = '';
   document.getElementById('successPoolName').textContent = poolName || '';
   document.getElementById('joinLink').textContent = joinUrl;
-  document.getElementById('shareBtn').href = '/lms-share.html?pool=' + poolId;
   document.getElementById('hubLink').href = '/lms-organiser.html?pool=' + poolId + '&k=' + k;
   document.getElementById('successState').style.display = 'block';
+}
+
+function doShare(){
+  if(navigator.share){
+    navigator.share({
+      title: 'Join my Last Man Standing pool',
+      text: 'One wrong pick and you\'re out — winner takes all. Join my pool:',
+      url: joinUrl
+    }).catch(function(){});
+  } else {
+    copyLink();
+  }
 }
 
 function copyLink(){
