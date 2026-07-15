@@ -32,6 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         id: poolData.id,
         name: poolData.name,
         organiser: poolData.organiser,
+        buyIn: poolData.buyIn,
         currentGameweek: poolData.currentGameweek,
         status: poolData.status,
         createdAt: poolData.createdAt,

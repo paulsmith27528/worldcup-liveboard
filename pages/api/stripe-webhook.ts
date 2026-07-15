@@ -32,13 +32,7 @@ function genPoolId(): string {
   return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
-function buildLmsOrganiserEmailHtml(
-  poolName: string,
-  organiserName: string,
-  joinUrl: string,
-  shareUrl: string,
-  hubUrl: string
-): string {
+function buildLmsSetupEmailHtml(setupUrl: string): string {
   return `<!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -47,23 +41,14 @@ function buildLmsOrganiserEmailHtml(
   <div style="background:linear-gradient(150deg,#051226,#020914);border:1px solid rgba(239,68,68,.3);border-radius:18px;padding:32px">
     <div style="text-align:center;margin-bottom:24px">
       <div style="font-size:60px;margin-bottom:12px">&#128128;</div>
-      <h1 style="color:#ffd54a;font-size:24px;font-weight:900;margin:0 0 6px">Your pool is live!</h1>
-      <p style="color:#475569;font-size:13px;margin:0">${poolName}</p>
+      <h1 style="color:#ffd54a;font-size:24px;font-weight:900;margin:0 0 6px">You're in!</h1>
+      <p style="color:#475569;font-size:13px;margin:0">Last Man Standing</p>
     </div>
-    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">Hi <strong style="color:#fff">${organiserName}</strong>, Last Man Standing is set up and ready. Share the join link below with everyone you want in the pool — no limit on numbers.</p>
+    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">Payment received — one last step. Set your pool's name and buy-in amount, and we'll give you a link to share with everyone.</p>
     <div style="text-align:center;margin:24px 0">
-      <a href="${shareUrl}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">&#128128; Share Join Link &rarr;</a>
+      <a href="${setupUrl}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">&#128128; Set Up Your Pool &rarr;</a>
     </div>
-    <div style="text-align:center;margin-bottom:20px">
-      <p style="color:#475569;font-size:12px;margin:0 0 4px">Join link — copy and paste to share elsewhere:</p>
-      <span style="color:#ffd54a;font-size:11px;word-break:break-all;font-family:Arial,sans-serif">${joinUrl}</span>
-    </div>
-    <div style="background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.15);border-radius:10px;padding:14px 16px;margin-bottom:16px">
-      <p style="color:#22d3ee;font-size:12px;font-weight:700;margin:0 0 4px;letter-spacing:1px">YOUR ORGANISER HUB</p>
-      <p style="color:#94a3b8;font-size:13px;margin:0 0 10px;line-height:1.6">See who's joined, track picks each week, and watch the pool narrow down.</p>
-      <a href="${hubUrl}" style="color:#ffd54a;font-size:11px;word-break:break-all;font-family:Arial,sans-serif">${hubUrl}</a>
-    </div>
-    <p style="color:#334155;font-size:11px;text-align:center;margin:0">Bookmark both links — they're yours until the game ends. Good luck! &#127942;</p>
+    <p style="color:#334155;font-size:11px;text-align:center;margin:0">Bookmark this link — it's yours until the game ends. Good luck! &#127942;</p>
   </div>
 </div>
 </body>
@@ -340,23 +325,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // ── LAST MAN STANDING FLOW ───────────────────────────────────────────────
   if (product.type === "lms") {
-    const poolName = (session.metadata?.poolName as string) || "Last Man Standing";
-    const organiserName = (session.metadata?.organiser as string) || "The organiser";
-
     const poolId = genPoolId();
     const orgToken = generateToken();
 
     try {
       await redis.set(`lms:pool:${poolId}`, JSON.stringify({
         id: poolId,
-        name: poolName,
-        organiser: organiserName,
+        name: null,
+        organiser: null,
         organiserEmail: email,
         orgToken,
+        buyIn: null,
         currentGameweek: 1,
         wipeoutRule: "rollback",
         createdAt: Date.now(),
-        status: "active",
+        status: "pending_setup",
       }), { ex: LMS_TTL });
 
       await redis.set(`lms:orgtoken:${poolId}`, orgToken, { ex: LMS_TTL });
@@ -365,22 +348,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(500).json({ error: "Failed to create pool" });
     }
 
-    const joinUrl = `${BASE_URL}/lms-join.html?pool=${poolId}`;
-    const shareUrl = `${BASE_URL}/lms-share.html?pool=${poolId}`;
-    const hubUrl = `${BASE_URL}/lms-organiser.html?pool=${poolId}&k=${orgToken}`;
+    const setupUrl = `${BASE_URL}/lms-setup.html?pool=${poolId}&k=${orgToken}`;
 
     try {
       await sgMail.send({
         from: { name: "Last Man Standing", email: "noreply@worldcupsweepstake-liveboard.com" },
         to: email,
-        subject: `\uD83D\uDC80 Your Last Man Standing pool is ready — ${poolName}`,
-        html: buildLmsOrganiserEmailHtml(poolName, organiserName, joinUrl, shareUrl, hubUrl),
+        subject: `\uD83D\uDC80 You're in — set up your Last Man Standing pool`,
+        html: buildLmsSetupEmailHtml(setupUrl),
         trackingSettings: {
           clickTracking: { enable: false, enableText: false },
           openTracking: { enable: false },
         },
       });
-      console.log("LMS organiser email sent to:", email, "pool:", poolId);
+      console.log("LMS setup email sent to:", email, "pool:", poolId);
     } catch (mailErr: any) {
       console.error("LMS mail error:", mailErr.message);
       return res.status(500).json({ error: "Email failed", detail: mailErr.message });

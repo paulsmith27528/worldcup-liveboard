@@ -48,9 +48,10 @@
     <div class="card">
       <h2>SHARE THIS TO INVITE PEOPLE</h2>
       <div class="joinbox">
-        <input id="joinLink" type="text" readonly onclick="this.select()">
+        <input id="joinLink" type="text" readonly tabindex="-1">
         <button onclick="copyLink()">Copy</button>
       </div>
+      <a id="shareBtn" href="#" style="display:block;text-align:center;text-decoration:none;margin-top:10px;padding:12px;border-radius:10px;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:13px">Share Join Link →</a>
     </div>
 
     <div class="card">
@@ -81,11 +82,18 @@ if(!poolId || !k){
         return;
       }
       var d = res.body;
+      if(d.pool.status === 'pending_setup'){
+        window.location.href = '/lms-setup.html?pool=' + poolId + '&k=' + k;
+        return;
+      }
       document.getElementById('poolName').textContent = d.pool.name;
-      document.getElementById('poolSub').textContent = 'Organised by ' + d.pool.organiser;
+      var subText = 'Organised by ' + d.pool.organiser;
+      if(d.pool.buyIn){ subText += ' · £' + d.pool.buyIn + ' buy-in'; }
+      document.getElementById('poolSub').textContent = subText;
       document.getElementById('playerCount').textContent = d.players.length;
       document.getElementById('gwNum').textContent = 'GW' + d.pool.currentGameweek;
       document.getElementById('joinLink').value = joinUrl;
+      document.getElementById('shareBtn').href = '/lms-share.html?pool=' + poolId;
 
       var list = document.getElementById('playerList');
       if(d.players.length === 0){

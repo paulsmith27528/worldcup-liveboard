@@ -8,32 +8,20 @@ const BASE_URL = 'https://www.worldcupliveboard.com';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') return res.status(405).end();
 
-  const { poolName, organiser, email } = req.query;
-  if (!poolName || typeof poolName !== 'string' || !organiser || typeof organiser !== 'string') {
-    return res.status(400).json({ error: 'Missing poolName or organiser' });
-  }
-
   try {
-    const sessionParams: Stripe.Checkout.SessionCreateParams = {
+    const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items: [{
         price: 'price_1Trj6f3g62IhPcY7V2jgis7d',
         quantity: 1,
       }],
       success_url: `${BASE_URL}/lms-success.html`,
-      cancel_url: `${BASE_URL}/lms-create.html`,
+      cancel_url: `${BASE_URL}/landing.html`,
       metadata: {
         product: 'lms',
-        poolName,
-        organiser,
       },
-    };
+    });
 
-    if (email && typeof email === 'string') {
-      sessionParams.customer_email = email;
-    }
-
-    const session = await stripe.checkout.sessions.create(sessionParams);
     res.redirect(303, session.url!);
   } catch (err: any) {
     console.error('LMS checkout error:', err.message);
