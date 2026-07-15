@@ -65,6 +65,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     alive: true,
     eliminatedWeek: null as number | null,
     hasLife: true,
+    lifeUsedWeek: null as number | null,
     joinedAt: new Date().toISOString(),
   };
 

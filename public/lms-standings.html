@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no, address=no, email=no, date=no, url=no">
+<title>Survival Ladder — Last Man Standing</title>
+<style>
+  :root{
+    --bg:#020810; --gold:#ffd54a; --cyan:#22d3ee; --red:#ef4444; --green:#34d399;
+    --line:rgba(255,255,255,.08); --dim:#5b6b85;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:#fff;font-family:Arial,sans-serif;min-height:100vh}
+  .wrap{max-width:720px;margin:0 auto;padding:28px 16px 80px}
+  .eyebrow{color:var(--red);font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:6px;text-align:center}
+  h1{font-size:24px;font-weight:900;margin:0 0 4px;text-align:center}
+  .sub{color:var(--dim);font-size:13px;margin-bottom:24px;text-align:center}
+  .loading{text-align:center;color:var(--dim);font-size:13px;padding:60px 20px}
+
+  .ladder{position:relative;padding:6px 0}
+  .rung{display:flex;align-items:center;gap:14px;margin-bottom:6px;min-height:60px;border-top:1px dashed var(--line);padding-top:12px}
+  .rung:first-child{border-top:none}
+  .rung-label{width:60px;flex-shrink:0;font-size:9px;color:var(--dim);font-weight:800;letter-spacing:.5px}
+  .rung-label .gw{color:#fff;font-size:12px;display:block;margin-bottom:2px}
+  .rung-track{flex:1;display:flex;gap:8px;flex-wrap:wrap;align-items:center;min-height:40px}
+  .avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#04150e;position:relative;flex-shrink:0;border:2px solid rgba(255,255,255,.15)}
+  .avatar.you{border-color:var(--gold);box-shadow:0 0 12px rgba(255,213,74,.4)}
+  .avatar .shield{position:absolute;bottom:-4px;right:-4px;background:var(--gold);border-radius:50%;width:15px;height:15px;display:flex;align-items:center;justify-content:center;font-size:8px;border:2px solid var(--bg)}
+  .fallen-row{border-top:1px solid rgba(239,68,68,.2);margin-top:8px;padding-top:12px}
+  .fallen-row .rung-label{color:var(--red)}
+  .avatar.dead{background:rgba(255,255,255,.05) !important;opacity:.5;filter:grayscale(1)}
+  .avatar.dead::after{content:'☠';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;background:rgba(2,8,20,.5);border-radius:50%}
+  .storm-band{background:repeating-linear-gradient(45deg,rgba(255,213,74,.06),rgba(255,213,74,.06) 10px,rgba(255,213,74,.02) 10px,rgba(255,213,74,.02) 20px);border-radius:10px;padding:9px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+  .storm-band .txt{font-size:10px;color:var(--gold);font-weight:700}
+  .peak{text-align:center;margin-bottom:16px;padding:18px;background:linear-gradient(150deg,rgba(255,213,74,.1),transparent);border-radius:16px}
+  .peak .crown{font-size:32px;margin-bottom:6px}
+  .peak .txt{font-size:12px;color:var(--dim)}
+  .peak.winner .txt{color:var(--gold);font-weight:800;font-size:14px}
+  .note{color:var(--dim);font-size:11px;text-align:center;margin-top:20px;line-height:1.6}
+  .empty{text-align:center;color:var(--dim);font-size:13px;padding:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">☠ LAST MAN STANDING</div>
+  <h1 id="poolTitle">Loading…</h1>
+  <p class="sub" id="poolSub"></p>
+  <div id="content"><div class="loading">Loading ladder…</div></div>
+</div>
+
+<script>
+var params = new URLSearchParams(window.location.search);
+var poolId = params.get('pool');
+var token = params.get('t');
+
+function esc(s){ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function initials(name){
+  var parts = name.trim().split(/\s+/);
+  var a = parts[0] ? parts[0][0] : '';
+  var b = parts.length > 1 ? parts[parts.length - 1][0] : '';
+  return (a + b).toUpperCase();
+}
+
+var palette = ['#22d3ee','#a78bfa','#34d399','#f472b6','#fb923c','#60a5fa','#f87171','#facc15'];
+function colorFor(name){
+  var hash = 0;
+  for(var i = 0; i < name.length; i++){ hash = name.charCodeAt(i) + ((hash << 5) - hash); }
+  return palette[Math.abs(hash) % palette.length];
+}
+
+function avatarHtml(p, rungGw){
+  var isDead = p.eliminatedWeek !== null;
+  var showShield = p.lifeUsedWeek !== null && (rungGw === undefined || p.lifeUsedWeek <= rungGw);
+  var cls = 'avatar' + (p.isYou ? ' you' : '') + (isDead ? ' dead' : '');
+  var style = isDead ? '' : 'background:linear-gradient(135deg,' + colorFor(p.name) + ',' + colorFor(p.name) + 'aa)';
+  var title = isDead ? (esc(p.name) + ' — out GW' + p.eliminatedWeek) : esc(p.name);
+  var shieldHtml = showShield ? '<span class="shield">\uD83D\uDEE1</span>' : '';
+  return '<div class="' + cls + '" style="' + style + '" title="' + title + '">' + esc(initials(p.name)) + shieldHtml + '</div>';
+}
+
+if(!poolId){
+  document.getElementById('content').innerHTML = '<div class="empty">No pool specified.</div>';
+} else {
+  fetch('/api/lms-standings?pool=' + encodeURIComponent(poolId) + (token ? '&t=' + encodeURIComponent(token) : ''))
+    .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
+    .then(function(res){
+      if(res.status !== 200){
+        document.getElementById('content').innerHTML = '<div class="empty">' + esc(res.body.error || 'Something went wrong loading this pool.') + '</div>';
+        return;
+      }
+      render(res.body);
+    })
+    .catch(function(){
+      document.getElementById('content').innerHTML = '<div class="empty">Something went wrong. Try refreshing.</div>';
+    });
+}
+
+function render(d){
+  document.getElementById('poolTitle').textContent = d.pool.name || 'Survival Ladder';
+  var alivePlayers = d.players.filter(function(p){ return p.alive; });
+  var fallenPlayers = d.players.filter(function(p){ return !p.alive; })
+    .sort(function(a,b){ return (b.eliminatedWeek||0) - (a.eliminatedWeek||0); });
+
+  document.getElementById('poolSub').textContent = alivePlayers.length + ' of ' + d.players.length + ' remaining';
+
+  var gw = d.pool.lastGradedGw;
+  var html = '';
+
+  if(alivePlayers.length === 1 && d.players.length > 1){
+    html += '<div class="peak winner"><div class="crown">\uD83D\uDC51</div><div class="txt">' + esc(alivePlayers[0].name) + ' wins the pool!</div></div>';
+  } else {
+    html += '<div class="peak"><div class="crown">\uD83D\uDC51</div><div class="txt">Whoever\'s left standing at the top wins it all</div></div>';
+  }
+
+  html += '<div class="ladder">';
+
+  html += '<div class="rung"><div class="rung-label"><span class="gw">GW' + (gw + 1) + '</span>THIS WEEK</div><div class="rung-track">';
+  alivePlayers.forEach(function(p){ html += avatarHtml(p); });
+  html += '</div></div>';
+
+  for(var g = gw; g >= 1; g--){
+    if(d.pool.wipeoutWeeks.indexOf(g) !== -1){
+      html += '<div class="storm-band"><span style="font-size:15px">\uD83C\uDF00</span><span class="txt">GW' + g + ' — TOTAL WIPEOUT — everyone survived, no lives lost</span></div>';
+      continue;
+    }
+    var stillInAtG = d.players.filter(function(p){ return p.eliminatedWeek === null || p.eliminatedWeek > g; });
+    html += '<div class="rung"><div class="rung-label"><span class="gw">GW' + g + '</span></div><div class="rung-track">';
+    stillInAtG.forEach(function(p){ html += avatarHtml(p, g); });
+    html += '</div></div>';
+  }
+
+  if(fallenPlayers.length > 0){
+    html += '<div class="rung fallen-row"><div class="rung-label">FALLEN</div><div class="rung-track">';
+    fallenPlayers.forEach(function(p){ html += avatarHtml(p); });
+    html += '</div></div>';
+  }
+
+  html += '</div>';
+  html += '<p class="note">Gold ring = you. \uD83D\uDEE1 = life used. Fallen players are shown at the week they were eliminated.</p>';
+
+  document.getElementById('content').innerHTML = html;
+}
+</script>
+</body>
+</html>

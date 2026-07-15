@@ -58,6 +58,11 @@
       <h2>WHO'S JOINED</h2>
       <div id="playerList"></div>
     </div>
+
+    <div class="card" style="display:flex;gap:10px">
+      <a id="ladderLink" href="#" style="flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;background:rgba(255,213,74,.08);border:1px solid rgba(255,213,74,.25);color:#ffd54a;font-weight:800;font-size:12px">\u2620 Survival Ladder</a>
+      <a id="tableLink" href="#" style="flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.25);color:#22d3ee;font-weight:800;font-size:12px">\u26BD Live Table</a>
+    </div>
   </div>
 
   <div class="loading" id="loadingMsg">Checking your link…</div>
@@ -93,6 +98,8 @@ if(!poolId || !k){
       document.getElementById('playerCount').textContent = d.players.length;
       document.getElementById('gwNum').textContent = 'GW' + d.pool.currentGameweek;
       document.getElementById('joinLink').value = joinUrl;
+      document.getElementById('ladderLink').href = '/lms-standings.html?pool=' + poolId;
+      document.getElementById('tableLink').href = '/lms-table.html?pool=' + poolId;
 
       var list = document.getElementById('playerList');
       if(d.players.length === 0){

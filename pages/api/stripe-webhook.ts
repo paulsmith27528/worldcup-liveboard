@@ -339,6 +339,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         currentGameweek: 1,
         lastGradedGw: 0,
         wipeoutRule: "rollback",
+        wipeoutWeeks: [] as number[],
         createdAt: Date.now(),
         status: "pending_setup",
       }), { ex: LMS_TTL });

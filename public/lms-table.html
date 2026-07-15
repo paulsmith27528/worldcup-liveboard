@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no, address=no, email=no, date=no, url=no">
+<title>Live Table — Last Man Standing</title>
+<style>
+  :root{
+    --bg:#020810; --gold:#ffd54a; --cyan:#22d3ee; --red:#ef4444; --green:#34d399; --dim:#5b6b85;
+    --line:rgba(255,255,255,.08);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:#fff;font-family:Arial,sans-serif;min-height:100vh}
+  .wrap{max-width:640px;margin:0 auto;padding:28px 16px 80px}
+  .eyebrow{color:var(--red);font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:6px;text-align:center}
+  h1{font-size:24px;font-weight:900;margin:0 0 4px;text-align:center}
+  .sub{color:var(--dim);font-size:13px;margin-bottom:24px;text-align:center}
+  .loading{text-align:center;color:var(--dim);font-size:13px;padding:60px 20px}
+  .empty{text-align:center;color:var(--dim);font-size:13px;padding:20px}
+
+  .pl-table{width:100%;border-collapse:collapse;font-size:12px}
+  .pl-table th{text-align:left;color:var(--dim);font-weight:800;font-size:9px;letter-spacing:.5px;padding:8px 4px;border-bottom:1px solid var(--line)}
+  .pl-table td{padding:9px 4px;border-bottom:1px solid rgba(255,255,255,.04)}
+  .pos{color:var(--dim);width:20px}
+  .team-cell{display:flex;align-items:center;gap:8px;font-weight:700}
+  .team-cell img{width:20px;height:20px;object-fit:contain;flex-shrink:0}
+  .reserve-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.25);color:var(--cyan);padding:3px 8px;border-radius:20px;font-weight:800;font-size:10px;white-space:nowrap}
+  .reserve-pill.low{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:var(--red)}
+  .note{color:var(--dim);font-size:11px;text-align:center;margin-top:20px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">⚽ LIVE TABLE</div>
+  <h1 id="poolTitle">Loading…</h1>
+  <p class="sub" id="poolSub"></p>
+  <div id="content"><div class="loading">Loading table…</div></div>
+</div>
+
+<script>
+var params = new URLSearchParams(window.location.search);
+var poolId = params.get('pool');
+
+function esc(s){ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+if(!poolId){
+  document.getElementById('content').innerHTML = '<div class="empty">No pool specified.</div>';
+} else {
+  fetch('/api/lms-table?pool=' + encodeURIComponent(poolId))
+    .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
+    .then(function(res){
+      if(res.status !== 200){
+        document.getElementById('content').innerHTML = '<div class="empty">' + esc(res.body.error || 'Something went wrong loading the table.') + '</div>';
+        return;
+      }
+      render(res.body);
+    })
+    .catch(function(){
+      document.getElementById('content').innerHTML = '<div class="empty">Something went wrong. Try refreshing.</div>';
+    });
+}
+
+function render(d){
+  document.getElementById('poolTitle').textContent = d.poolName || 'Live Table';
+  document.getElementById('poolSub').textContent = d.aliveCount + ' players still picking';
+
+  if(!d.table || d.table.length === 0){
+    document.getElementById('content').innerHTML = '<div class="empty">No standings available yet — check back once the season\'s underway.</div>';
+    return;
+  }
+
+  var html = '<table class="pl-table"><tr><th class="pos">#</th><th>Team</th><th>P</th><th>GD</th><th>Pts</th><th>Reserve</th></tr>';
+  d.table.forEach(function(row){
+    var pillClass = row.reserveCount <= 2 ? 'reserve-pill low' : 'reserve-pill';
+    html += '<tr>' +
+      '<td class="pos">' + row.rank + '</td>' +
+      '<td><div class="team-cell"><img src="' + row.logo + '" alt="">' + esc(row.team) + '</div></td>' +
+      '<td>' + row.played + '</td>' +
+      '<td>' + (row.goalDiff > 0 ? '+' : '') + row.goalDiff + '</td>' +
+      '<td>' + row.points + '</td>' +
+      '<td><span class="' + pillClass + '">\uD83C\uDFAF ' + row.reserveCount + ' left</span></td>' +
+      '</tr>';
+  });
+  html += '</table>';
+  html += '<p class="note">"Reserve" shows how many players still in the pool haven\'t used that team yet — useful to know before you spend a strong one.</p>';
+
+  document.getElementById('content').innerHTML = html;
+}
+</script>
+</body>
+</html>

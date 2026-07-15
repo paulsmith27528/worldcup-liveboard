@@ -29,6 +29,7 @@ interface Player {
   alive: boolean;
   eliminatedWeek: number | null;
   hasLife: boolean;
+  lifeUsedWeek: number | null;
 }
 
 // Find the highest gameweek number where every fixture has finished
@@ -187,7 +188,12 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
 
   const wipeout = (losers.length + noPicks.length) === alivePlayers.length;
 
+  const eliminatedNames: string[] = [];
+  const lifeUsedNames: string[] = [];
+
   if (wipeout) {
+    pool.wipeoutWeeks = pool.wipeoutWeeks || [];
+    pool.wipeoutWeeks.push(gw);
     for (const p of alivePlayers) {
       await sendPlayerEmail(p, poolId, pool.name, gw, 'wipeout');
     }
@@ -205,16 +211,30 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
       }
       if (p.hasLife) {
         p.hasLife = false;
+        p.lifeUsedWeek = gw;
+        lifeUsedNames.push(p.name);
         await redis.hset(playersKey, { [p.token]: JSON.stringify(p) });
         await sendPlayerEmail(p, poolId, pool.name, gw, 'life_used');
       } else {
         p.alive = false;
         p.eliminatedWeek = gw;
+        eliminatedNames.push(p.name);
         await redis.hset(playersKey, { [p.token]: JSON.stringify(p) });
         await sendPlayerEmail(p, poolId, pool.name, gw, p.currentPick ? 'eliminated' : 'no_pick');
       }
     }
   }
+
+  const stillAliveCount = alivePlayers.length - eliminatedNames.length;
+  const recapTTL = 60 * 60 * 24 * 300;
+  await redis.set(`lms:pool:${poolId}:recap:${gw}`, JSON.stringify({
+    gw,
+    wipeout,
+    survivedCount: wipeout ? alivePlayers.length : survivors.length,
+    eliminatedNames,
+    lifeUsedNames,
+    stillAliveCount,
+  }), { ex: recapTTL });
 
   pool.lastGradedGw = gw;
   pool.currentGameweek = gw + 1;
