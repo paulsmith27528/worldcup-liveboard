@@ -337,12 +337,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         orgToken,
         buyIn: null,
         currentGameweek: 1,
+        lastGradedGw: 0,
         wipeoutRule: "rollback",
         createdAt: Date.now(),
         status: "pending_setup",
       }), { ex: LMS_TTL });
 
       await redis.set(`lms:orgtoken:${poolId}`, orgToken, { ex: LMS_TTL });
+      await redis.sadd('lms:allpools', poolId);
     } catch (err) {
       console.error("Failed to create LMS pool:", err);
       return res.status(500).json({ error: "Failed to create pool" });
