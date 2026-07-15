@@ -34,6 +34,9 @@
 
   .confirm{width:100%;padding:16px;border-radius:12px;border:none;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:14px;cursor:pointer}
   .confirm:disabled{opacity:.4;cursor:not-allowed}
+  .confirm.confirmed{background:linear-gradient(120deg,#34d399,#10b981);color:#04150e;cursor:default;opacity:1;box-shadow:0 0 20px rgba(52,211,153,.35)}
+  .changeBtn{width:100%;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#94a3b8;font-weight:700;font-size:13px;cursor:pointer;margin-top:10px}
+  .changeBtn:hover{border-color:rgba(255,255,255,.3);color:#fff}
 
   .msg{text-align:center;padding:40px 20px;color:var(--dim);font-size:13px}
   .state-card{background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border-radius:16px;padding:32px 20px;text-align:center}
@@ -52,7 +55,7 @@
   <div id="content"></div>
 </div>
 
-<div class="toast" id="toast">Pick confirmed!</div>
+<div class="toast" id="toast">Confirmation email sent!</div>
 
 <script>
 var params = new URLSearchParams(window.location.search);
@@ -61,6 +64,7 @@ var token = params.get('t');
 var content = document.getElementById('content');
 var currentGwData = null;
 var selectedTeam = null;
+var justConfirmed = false;
 
 function esc(s){ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
@@ -117,6 +121,7 @@ function render(d){
   var alreadyPicked = d.player.currentPickGw === d.gw && d.player.currentPick;
   document.getElementById('subTitle').textContent = 'Gameweek ' + d.gw + (alreadyPicked ? ' — you picked ' + d.player.currentPick : ' — make your pick');
   selectedTeam = alreadyPicked ? d.player.currentPick : null;
+  justConfirmed = !!alreadyPicked;
 
   var deadlinePassed = new Date() >= new Date(d.deadline);
 
@@ -136,6 +141,7 @@ function render(d){
 
   html += '<div class="grid" id="teamGrid"></div>';
   html += '<button class="confirm" id="confirmBtn" disabled>Select a team</button>';
+  html += '<button class="changeBtn" id="changeBtn" style="display:none" onclick="changePick()">Change Your Pick</button>';
   content.innerHTML = html;
 
   var grid = document.getElementById('teamGrid');
@@ -156,6 +162,7 @@ function render(d){
 
 function selectTeam(name){
   selectedTeam = name;
+  justConfirmed = false;
   document.querySelectorAll('.team').forEach(function(el){
     el.classList.remove('selected');
   });
@@ -165,17 +172,32 @@ function selectTeam(name){
   updateConfirmBtn();
 }
 
+function changePick(){
+  justConfirmed = false;
+  updateConfirmBtn();
+}
+
 function updateConfirmBtn(){
   var btn = document.getElementById('confirmBtn');
+  var changeBtn = document.getElementById('changeBtn');
   if(!btn) return;
-  if(selectedTeam){
-    btn.disabled = false;
-    btn.textContent = 'Confirm Pick — ' + selectedTeam;
-  } else {
+
+  var currentPick = currentGwData.player.currentPick;
+  var isConfirmedState = justConfirmed && selectedTeam && selectedTeam === currentPick;
+
+  if(isConfirmedState){
     btn.disabled = true;
-    btn.textContent = 'Select a team';
+    btn.textContent = 'Pick Confirmed';
+    btn.classList.add('confirmed');
+    btn.onclick = null;
+    if(changeBtn) changeBtn.style.display = 'block';
+  } else {
+    btn.disabled = !selectedTeam;
+    btn.textContent = selectedTeam ? 'Confirm Pick — ' + selectedTeam : 'Select a team';
+    btn.classList.remove('confirmed');
+    btn.onclick = submitPick;
+    if(changeBtn) changeBtn.style.display = 'none';
   }
-  btn.onclick = submitPick;
 }
 
 function submitPick(){
@@ -198,6 +220,7 @@ function submitPick(){
     var toast = document.getElementById('toast');
     toast.style.display = 'block';
     setTimeout(function(){ toast.style.display = 'none'; }, 2000);
+    justConfirmed = true;
     load();
   })
   .catch(function(){

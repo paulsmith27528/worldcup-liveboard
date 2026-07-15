@@ -1,10 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Redis } from '@upstash/redis';
+import sgMail from '@sendgrid/mail';
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+
+const BASE_URL = 'https://www.worldcupliveboard.com';
+const FROM_EMAIL = 'noreply@worldcupsweepstake-liveboard.com';
+const FROM_NAME = 'Last Man Standing';
 
 const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
 const PL_LEAGUE = 39;
@@ -122,6 +129,53 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     player.currentPickGw = gwData.gw;
 
     await redis.hset(playersKey, { [t]: JSON.stringify(player) });
+
+    const poolRaw = await redis.get<string>(`lms:pool:${pool}`);
+    const poolData = poolRaw ? (typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any) : null;
+    const poolName = poolData?.name || 'Last Man Standing';
+
+    const pickUrl = `${BASE_URL}/lms-pick.html?pool=${pool}&t=${t}`;
+    const deadlineFormatted = new Date(gwData.deadline).toLocaleString('en-GB', {
+      weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+    });
+
+    try {
+      await sgMail.send({
+        to: player.email,
+        from: { email: FROM_EMAIL, name: FROM_NAME },
+        subject: `\u2705 Pick confirmed — ${team} (Gameweek ${gwData.gw})`,
+        html: `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="format-detection" content="telephone=no, address=no, email=no, date=no, url=no"></head>
+<body style="margin:0;padding:0;background:#020810;font-family:Arial,sans-serif">
+<div style="max-width:520px;margin:0 auto;padding:32px 16px">
+  <div style="background:linear-gradient(150deg,#051226,#020914);border:1px solid rgba(52,211,153,.3);border-radius:18px;padding:32px">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:52px;margin-bottom:12px">&#9989;</div>
+      <h1 style="color:#34d399;font-size:22px;font-weight:900;margin:0 0 6px">Pick Confirmed</h1>
+      <p style="color:#475569;font-size:13px;margin:0">${poolName} &middot; Gameweek ${gwData.gw}</p>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:16px;text-align:center;margin-bottom:20px">
+      <p style="color:#94a3b8;font-size:11px;font-weight:700;letter-spacing:1px;margin:0 0 6px">YOUR PICK</p>
+      <p style="color:#ffd54a;font-size:20px;font-weight:900;margin:0">${team}</p>
+    </div>
+    <p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">Changed your mind? You can update your pick anytime before <strong style="color:#fff">${deadlineFormatted}</strong> &mdash; after that it locks in.</p>
+    <div style="text-align:center">
+      <a href="${pickUrl}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:14px;padding:13px 28px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">Change Your Pick &rarr;</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>`,
+        trackingSettings: {
+          clickTracking: { enable: false, enableText: false },
+          openTracking: { enable: false },
+        },
+      });
+    } catch (mailErr: any) {
+      console.error('Pick confirmation mail error:', mailErr.message);
+      // Don't fail the pick save if the email fails — the pick is already saved
+    }
 
     return res.status(200).json({ ok: true, pick: team, gw: gwData.gw });
   }
