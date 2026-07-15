@@ -51,7 +51,7 @@
         <input id="joinLink" type="text" readonly tabindex="-1">
         <button onclick="copyLink()">Copy</button>
       </div>
-      <a id="shareBtn" href="#" style="display:block;text-align:center;text-decoration:none;margin-top:10px;padding:12px;border-radius:10px;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:13px">Share Join Link →</a>
+      <a id="shareBtn" href="javascript:void(0)" onclick="doShare()" style="display:block;text-align:center;text-decoration:none;margin-top:10px;padding:12px;border-radius:10px;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:13px">Share Join Link →</a>
     </div>
 
     <div class="card">
@@ -93,7 +93,6 @@ if(!poolId || !k){
       document.getElementById('playerCount').textContent = d.players.length;
       document.getElementById('gwNum').textContent = 'GW' + d.pool.currentGameweek;
       document.getElementById('joinLink').value = joinUrl;
-      document.getElementById('shareBtn').href = '/lms-share.html?pool=' + poolId;
 
       var list = document.getElementById('playerList');
       if(d.players.length === 0){
@@ -114,6 +113,18 @@ if(!poolId || !k){
     .catch(function(){
       document.getElementById('loadingMsg').textContent = 'Something went wrong loading your pool. Try refreshing.';
     });
+}
+
+function doShare(){
+  if(navigator.share){
+    navigator.share({
+      title: 'Join my Last Man Standing pool',
+      text: 'One wrong pick and you\'re out — winner takes all. Join my pool:',
+      url: joinUrl
+    }).catch(function(){});
+  } else {
+    copyLink();
+  }
 }
 
 function copyLink(){
