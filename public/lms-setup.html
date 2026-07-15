@@ -22,9 +22,8 @@
   .err{color:#ef4444;font-size:12px;margin-top:10px;text-align:center;display:none}
   .loading{text-align:center;color:#5b6b85;font-size:13px;padding:40px}
 
-  .joinbox{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px;margin:20px 0;display:flex;align-items:center;gap:10px}
-  .joinbox input{flex:1;background:transparent;border:none;outline:none;color:#22d3ee;font-size:12px;pointer-events:none}
-  .copyBtn{flex-shrink:0;padding:8px 12px;border-radius:8px;background:rgba(255,213,74,.15);color:#ffd54a;font-weight:800;font-size:11px;cursor:pointer;border:1px solid rgba(255,213,74,.3)}
+  .linkDisplay{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px;margin:20px 0 12px;color:#22d3ee;font-size:12px;word-break:break-all;line-height:1.5;pointer-events:none}
+  .copyBtn{display:block;margin:0 auto 22px;padding:8px 18px;border-radius:20px;background:transparent;color:#94a3b8;font-weight:700;font-size:11px;cursor:pointer;border:1px solid rgba(255,255,255,.15)}
   .copied{color:#34d399;font-size:12px;text-align:center;display:none;margin-top:-10px;margin-bottom:16px}
   .success .icon{font-size:52px;text-align:center;margin-bottom:12px}
   .success h2{text-align:center;margin:0 0 6px}
@@ -61,10 +60,8 @@
       <p id="successPoolName"></p>
       <p style="margin-bottom:20px">Share this link with everyone you want in the pool:</p>
 
-      <div class="joinbox">
-        <input id="joinLink" type="text" readonly tabindex="-1">
-        <button class="copyBtn" onclick="copyLink()">Copy</button>
-      </div>
+      <div class="linkDisplay" id="joinLink"></div>
+      <button class="copyBtn" onclick="copyLink()">Copy link (backup)</button>
       <div class="copied" id="copiedMsg">Link copied!</div>
 
       <a id="shareBtn" href="#" style="display:block;text-align:center;text-decoration:none;width:100%;padding:16px;border-radius:12px;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:14px;box-sizing:border-box;margin-bottom:12px">Share Join Link →</a>
@@ -144,7 +141,7 @@ function showSuccess(poolName){
   document.getElementById('pageTitle').textContent = 'You\'re All Set';
   document.getElementById('pageSub').textContent = '';
   document.getElementById('successPoolName').textContent = poolName || '';
-  document.getElementById('joinLink').value = joinUrl;
+  document.getElementById('joinLink').textContent = joinUrl;
   document.getElementById('shareBtn').href = '/lms-share.html?pool=' + poolId;
   document.getElementById('hubLink').href = '/lms-organiser.html?pool=' + poolId + '&k=' + k;
   document.getElementById('successState').style.display = 'block';
