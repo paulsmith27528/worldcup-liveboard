@@ -28,6 +28,9 @@
   .player .name{flex:1;font-weight:700;font-size:13px}
   .player .email{color:#5b6b85;font-size:11px}
   .player .badge{font-size:10px;font-weight:800;letter-spacing:.5px;padding:4px 10px;border-radius:20px;background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.3)}
+  .paid-btn{font-size:9px;font-weight:800;letter-spacing:.5px;padding:5px 10px;border-radius:20px;border:none;cursor:pointer;flex-shrink:0}
+  .paid-yes{background:rgba(52,211,153,.15);color:#34d399;border:1px solid rgba(52,211,153,.3)}
+  .paid-no{background:rgba(255,255,255,.06);color:#5b6b85;border:1px solid rgba(255,255,255,.12)}
 
   .empty{text-align:center;color:#5b6b85;font-size:13px;padding:24px}
   .loading{text-align:center;color:#5b6b85;font-size:13px;padding:40px}
@@ -42,6 +45,7 @@
   <div id="content" style="display:none">
     <div class="stat-row">
       <div class="stat"><div class="n" id="playerCount">0</div><div class="l">JOINED</div></div>
+      <div class="stat"><div class="n" id="paidCount">0</div><div class="l">PAID</div></div>
       <div class="stat"><div class="n" id="gwNum">1</div><div class="l">CURRENT GAMEWEEK</div></div>
     </div>
 
@@ -96,6 +100,7 @@ if(!poolId || !k){
       if(d.pool.buyIn){ subText += ' · £' + d.pool.buyIn + ' buy-in'; }
       document.getElementById('poolSub').textContent = subText;
       document.getElementById('playerCount').textContent = d.players.length;
+      document.getElementById('paidCount').textContent = d.players.filter(function(p){ return p.paid; }).length;
       document.getElementById('gwNum').textContent = 'GW' + d.pool.currentGameweek;
       document.getElementById('joinLink').value = joinUrl;
       document.getElementById('ladderLink').href = '/lms-standings.html?pool=' + poolId;
@@ -109,6 +114,7 @@ if(!poolId || !k){
           var row = document.createElement('div');
           row.className = 'player';
           row.innerHTML = '<div class="name">' + p.name + '<div class="email">' + p.email + '</div></div>' +
+            '<button class="paid-btn ' + (p.paid ? 'paid-yes' : 'paid-no') + '" data-token="' + p.token + '" data-paid="' + (p.paid ? '1' : '0') + '" onclick="togglePaid(this)">' + (p.paid ? 'PAID' : 'UNPAID') + '</button>' +
             '<div class="badge">' + (p.alive ? 'ALIVE' : 'OUT') + '</div>';
           list.appendChild(row);
         });
@@ -132,6 +138,33 @@ function doShare(){
   } else {
     copyLink();
   }
+}
+
+function togglePaid(btn){
+  var newPaid = btn.dataset.paid !== '1';
+  btn.disabled = true;
+  fetch('/api/lms-organiser', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ pool: poolId, k: k, playerToken: btn.dataset.token, paid: newPaid })
+  })
+  .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
+  .then(function(res){
+    btn.disabled = false;
+    if(res.status !== 200){
+      alert(res.body.error || 'Something went wrong updating payment status.');
+      return;
+    }
+    btn.dataset.paid = newPaid ? '1' : '0';
+    btn.textContent = newPaid ? 'PAID' : 'UNPAID';
+    btn.className = 'paid-btn ' + (newPaid ? 'paid-yes' : 'paid-no');
+    var paidCountEl = document.getElementById('paidCount');
+    paidCountEl.textContent = parseInt(paidCountEl.textContent, 10) + (newPaid ? 1 : -1);
+  })
+  .catch(function(){
+    btn.disabled = false;
+    alert('Something went wrong. Please try again.');
+  });
 }
 
 function copyLink(){

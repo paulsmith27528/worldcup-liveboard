@@ -21,6 +21,14 @@
   .success{display:none;text-align:center}
   .success .icon{font-size:52px;margin-bottom:12px}
   .loading{text-align:center;color:#5b6b85;font-size:13px}
+
+  .share-box{margin-top:20px;display:none}
+  .share-box .label{text-align:center;color:#5b6b85;font-size:11px;margin-bottom:10px}
+  .linkDisplay{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px;margin-bottom:10px;color:#22d3ee;font-size:12px;word-break:break-all;line-height:1.5;pointer-events:none}
+  .share-btns{display:flex;gap:8px}
+  .copyBtn2{flex:1;padding:10px;border-radius:10px;background:transparent;color:#94a3b8;font-weight:700;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.15)}
+  .shareBtn2{flex:1;padding:10px;border-radius:10px;border:none;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:12px;cursor:pointer}
+  .copied2{color:#34d399;font-size:11px;text-align:center;margin-top:8px;display:none}
 </style>
 </head>
 <body>
@@ -49,11 +57,22 @@
       <p style="color:#94a3b8;font-size:13px;line-height:1.6">Check your email for your personal pick link — that's how you'll make your team selection each gameweek.</p>
     </div>
   </div>
+
+  <div class="share-box" id="shareBox">
+    <p class="label">Know someone else who should be in this pool? Pass it on:</p>
+    <div class="linkDisplay" id="joinLinkDisplay"></div>
+    <div class="share-btns">
+      <button class="copyBtn2" onclick="copyLink()">Copy Link</button>
+      <button class="shareBtn2" onclick="doShare()">Share →</button>
+    </div>
+    <div class="copied2" id="copiedMsg2">Link copied!</div>
+  </div>
 </div>
 
 <script>
 var params = new URLSearchParams(window.location.search);
 var poolId = params.get('pool');
+var joinUrl = window.location.origin + '/lms-join.html?pool=' + poolId;
 
 if(!poolId){
   document.getElementById('loadingState').textContent = 'No pool specified — check your join link.';
@@ -66,13 +85,38 @@ if(!poolId){
         return;
       }
       document.getElementById('poolTitle').textContent = d.name;
-      document.getElementById('poolSub').textContent = 'Organised by ' + d.organiser + ' — join below to get your pick link.';
+      var subText = 'Organised by ' + d.organiser + ' — join below to get your pick link.';
+      if(d.buyIn){ subText = '£' + d.buyIn + ' buy-in per person · ' + subText; }
+      document.getElementById('poolSub').textContent = subText;
       document.getElementById('loadingState').style.display = 'none';
       document.getElementById('f').style.display = 'block';
+
+      document.getElementById('joinLinkDisplay').textContent = joinUrl;
+      document.getElementById('shareBox').style.display = 'block';
     })
     .catch(function(){
       document.getElementById('loadingState').textContent = 'Something went wrong loading this pool. Try refreshing.';
     });
+}
+
+function copyLink(){
+  navigator.clipboard.writeText(joinUrl).then(function(){
+    var msg = document.getElementById('copiedMsg2');
+    msg.style.display = 'block';
+    setTimeout(function(){ msg.style.display = 'none'; }, 2000);
+  });
+}
+
+function doShare(){
+  if(navigator.share){
+    navigator.share({
+      title: 'Join my Last Man Standing pool',
+      text: 'One wrong pick and you\'re out — winner takes all. Join my pool:',
+      url: joinUrl
+    }).catch(function(){});
+  } else {
+    copyLink();
+  }
 }
 
 document.getElementById('f').addEventListener('submit', function(e){

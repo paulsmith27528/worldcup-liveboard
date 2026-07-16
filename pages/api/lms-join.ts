@@ -25,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const poolRaw = await redis.get<string>(`lms:pool:${poolId}`);
     if (!poolRaw) return res.status(404).json({ error: 'Pool not found' });
     const pool = typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any;
-    return res.status(200).json({ name: pool.name, organiser: pool.organiser, status: pool.status });
+    return res.status(200).json({ name: pool.name, organiser: pool.organiser, status: pool.status, buyIn: pool.buyIn });
   }
 
   if (req.method !== 'POST') return res.status(405).end();
@@ -65,6 +65,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     alive: true,
     eliminatedWeek: null as number | null,
     hasLife: true,
+    paid: false,
     lifeUsedWeek: null as number | null,
     joinedAt: new Date().toISOString(),
   };

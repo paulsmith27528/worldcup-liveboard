@@ -7,6 +7,28 @@ const redis = new Redis({
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === 'POST') {
+    const { pool, k, playerToken, paid } = req.body;
+    if (!pool || !k || !playerToken || typeof paid !== 'boolean') {
+      return res.status(400).json({ error: 'Missing pool, k, playerToken, or paid' });
+    }
+
+    const storedToken = await redis.get<string>(`lms:orgtoken:${pool}`);
+    if (!storedToken || storedToken !== k) {
+      return res.status(401).json({ error: 'Invalid organiser link' });
+    }
+
+    const playersKey = `lms:pool:${pool}:players`;
+    const playerRaw = await redis.hget<string>(playersKey, playerToken);
+    if (!playerRaw) return res.status(404).json({ error: 'Player not found' });
+    const player = typeof playerRaw === 'string' ? JSON.parse(playerRaw) : playerRaw as any;
+
+    player.paid = paid;
+    await redis.hset(playersKey, { [playerToken]: JSON.stringify(player) });
+
+    return res.status(200).json({ ok: true });
+  }
+
   if (req.method !== 'GET') return res.status(405).end();
 
   const { pool, k } = req.query;
