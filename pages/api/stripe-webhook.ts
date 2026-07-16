@@ -24,6 +24,7 @@ const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake
   price_1Todzd3g62IhPcY7dq3Fmhcd: { name: "Bundle &mdash; Dashboard + Sweepstake", emoji: "&#9889;", type: "bundle" },
   price_1TpoVC3g62IhPcY79JRQOJV7: { name: "Pro Bracket", emoji: "&#127942;", type: "pro" },
   price_1Trj6f3g62IhPcY7V2jgis7d: { name: "Last Man Standing", emoji: "&#128128;", type: "lms" },
+  price_1TtoGI3g62IhPcY7hIKrcKiX: { name: "Last Man Standing", emoji: "&#128128;", type: "lms" },
 };
 
 const LMS_TTL = 60 * 60 * 24 * 300; // 300 days — covers a full PL season

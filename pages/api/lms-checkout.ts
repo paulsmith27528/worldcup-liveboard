@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items: [{
-        price: 'price_1Trj6f3g62IhPcY7V2jgis7d',
+        price: 'price_1TtoGI3g62IhPcY7hIKrcKiX',
         quantity: 1,
       }],
       success_url: `${BASE_URL}/lms-success.html`,
