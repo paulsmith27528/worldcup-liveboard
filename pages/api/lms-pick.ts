@@ -79,6 +79,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return res.status(200).json({
       poolName: poolData.name,
+      poolStatus: poolData.status,
+      winner: poolData.winner || null,
       player: {
         name: player.name,
         alive: player.alive,
@@ -105,6 +107,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (!player.alive) {
       return res.status(403).json({ error: 'You have already been eliminated from this pool.' });
+    }
+
+    const poolRawCheck = await redis.get<string>(`lms:pool:${pool}`);
+    const poolCheck = poolRawCheck ? (typeof poolRawCheck === 'string' ? JSON.parse(poolRawCheck) : poolRawCheck as any) : null;
+    if (poolCheck?.status === 'finished') {
+      return res.status(403).json({ error: `This pool has already finished — ${poolCheck.winner || 'someone'} won.` });
     }
 
     const gwData = await getCurrentGameweek();

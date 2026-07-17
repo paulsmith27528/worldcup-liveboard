@@ -71,6 +71,8 @@
 
 <script>
 var params = new URLSearchParams(window.location.search);
+function esc(s){ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
 var poolId = params.get('pool');
 var joinUrl = window.location.origin + '/lms-join.html?pool=' + poolId;
 
@@ -89,6 +91,16 @@ if(!poolId){
       if(d.buyIn){ subText = '£' + d.buyIn + ' buy-in per person · ' + subText; }
       document.getElementById('poolSub').textContent = subText;
       document.getElementById('loadingState').style.display = 'none';
+
+      if(d.locked){
+        var msg = d.status === 'finished'
+          ? (d.winner ? esc(d.winner) + ' already won this pool — ask the organiser to start a new one to play again.' : 'This pool has already finished.')
+          : 'This pool has locked — Gameweek 1 has already kicked off, so new players can no longer join.';
+        document.getElementById('loadingState').textContent = msg;
+        document.getElementById('loadingState').style.display = 'block';
+        return;
+      }
+
       document.getElementById('f').style.display = 'block';
 
       document.getElementById('joinLinkDisplay').textContent = joinUrl;

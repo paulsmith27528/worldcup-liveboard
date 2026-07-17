@@ -111,6 +111,15 @@ function render(d){
   document.getElementById('poolTitle').textContent = d.poolName;
   currentGwData = d;
 
+  if(d.poolStatus === 'finished'){
+    document.getElementById('subTitle').textContent = '';
+    var wonIt = d.winner === d.player.name;
+    showStateCard(wonIt ? '\uD83D\uDC51' : '\u2620', wonIt ? 'You won!' : 'Pool finished', wonIt
+      ? 'You\'re the last one standing — congratulations! This pool is now finished.'
+      : (d.winner ? esc(d.winner) + ' won this pool. Thanks for playing!' : 'This pool has finished.'));
+    return;
+  }
+
   if(!d.player.alive){
     document.getElementById('subTitle').textContent = '';
     showStateCard('☠', 'You\'re out', 'You were eliminated in Gameweek ' + d.player.eliminatedWeek + '. Thanks for playing — follow along to see who takes it!');

@@ -25,7 +25,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const poolRaw = await redis.get<string>(`lms:pool:${poolId}`);
     if (!poolRaw) return res.status(404).json({ error: 'Pool not found' });
     const pool = typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any;
-    return res.status(200).json({ name: pool.name, organiser: pool.organiser, status: pool.status, buyIn: pool.buyIn });
+    const locked = pool.status === 'finished'
+      || pool.status === 'pending_setup'
+      || (pool.startGwDeadline && Date.now() >= new Date(pool.startGwDeadline).getTime());
+    return res.status(200).json({ name: pool.name, organiser: pool.organiser, status: pool.status, buyIn: pool.buyIn, locked, winner: pool.winner || null });
   }
 
   if (req.method !== 'POST') return res.status(405).end();
@@ -41,6 +44,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const poolRaw = await redis.get<string>(`lms:pool:${poolId}`);
   if (!poolRaw) return res.status(404).json({ error: 'Pool not found' });
   const pool = typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any;
+
+  if (pool.status === 'finished') {
+    return res.status(403).json({ error: 'This pool has already been won — start a new pool to play again.' });
+  }
+  if (pool.status === 'pending_setup') {
+    return res.status(403).json({ error: 'This pool is still being set up by the organiser.' });
+  }
+
+  if (pool.startGwDeadline && Date.now() >= new Date(pool.startGwDeadline).getTime()) {
+    return res.status(403).json({ error: `This pool has locked — Gameweek ${pool.startGw || ''} has already kicked off, so new players can no longer join.` });
+  }
 
   const playersKey = `lms:pool:${poolId}:players`;
   const existing = await redis.hgetall<Record<string, string>>(playersKey);

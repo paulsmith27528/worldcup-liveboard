@@ -49,6 +49,12 @@
       <div class="stat"><div class="n" id="gwNum">1</div><div class="l">CURRENT GAMEWEEK</div></div>
     </div>
 
+    <div class="card" id="potCard" style="display:none;text-align:center;background:linear-gradient(150deg,rgba(255,213,74,.1),rgba(2,8,20,.99));border-color:rgba(255,213,74,.3)">
+      <div style="font-size:10px;letter-spacing:1px;color:#94a3b8;font-weight:800;margin-bottom:6px">PRIZE POT</div>
+      <div style="font-size:32px;font-weight:900;color:#ffd54a" id="potTotal">£0</div>
+      <div style="font-size:11px;color:#5b6b85;margin-top:4px" id="potNote"></div>
+    </div>
+
     <div class="card">
       <h2>SHARE THIS TO INVITE PEOPLE</h2>
       <div class="joinbox">
@@ -99,6 +105,15 @@ if(!poolId || !k){
       var subText = 'Organised by ' + d.pool.organiser;
       if(d.pool.buyIn){ subText += ' · £' + d.pool.buyIn + ' buy-in'; }
       document.getElementById('poolSub').textContent = subText;
+
+      if(d.pool.buyIn){
+        var paidCount = d.players.filter(function(p){ return p.paid; }).length;
+        var potential = d.pool.buyIn * d.players.length;
+        var collected = d.pool.buyIn * paidCount;
+        document.getElementById('potCard').style.display = 'block';
+        document.getElementById('potTotal').textContent = '£' + potential.toFixed(2).replace(/\.00$/, '');
+        document.getElementById('potNote').textContent = '£' + collected.toFixed(2).replace(/\.00$/, '') + ' collected so far (' + paidCount + ' of ' + d.players.length + ' paid)';
+      }
       document.getElementById('playerCount').textContent = d.players.length;
       document.getElementById('paidCount').textContent = d.players.filter(function(p){ return p.paid; }).length;
       document.getElementById('gwNum').textContent = 'GW' + d.pool.currentGameweek;

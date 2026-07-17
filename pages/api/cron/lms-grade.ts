@@ -103,7 +103,7 @@ function buildEmail(icon: string, color: string, title: string, poolName: string
 </html>`;
 }
 
-async function sendPlayerEmail(player: Player, poolId: string, poolName: string, gw: number, type: 'survived' | 'eliminated' | 'no_pick' | 'wipeout' | 'life_used') {
+async function sendPlayerEmail(player: Player, poolId: string, poolName: string, gw: number, type: 'survived' | 'eliminated' | 'no_pick' | 'wipeout' | 'life_used' | 'you_won' | 'pool_won', winnerName?: string) {
   const hubUrl = `${BASE_URL}/lms-join.html?pool=${poolId}`;
   let html = '';
   let subject = '';
@@ -127,10 +127,18 @@ async function sendPlayerEmail(player: Player, poolId: string, poolName: string,
     subject = `\u2620\ufe0f You're out — no pick made (Gameweek ${gw})`;
     html = buildEmail('&#128128;', '#ef4444', "You're Out",  poolName, gw,
       `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">You didn't make a pick before the deadline this gameweek, and you'd already used your life, so you've been eliminated from the pool. Thanks for playing!</p>`);
-  } else {
+  } else if (type === 'wipeout') {
     subject = `\u267b\ufe0f Gameweek ${gw} wiped out — everyone survives`;
     html = buildEmail('&#9851;', '#ffd54a', "Total Wipeout!",  poolName, gw,
       `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">Every player still standing lost or drew this gameweek — so under the rules, it doesn't count. Nobody's eliminated, nobody's team is used up, and nobody's life is touched. Everyone carries on to the next round!</p>`);
+  } else if (type === 'you_won') {
+    subject = `\uD83D\uDC51 You won the pool! — ${poolName}`;
+    html = buildEmail('&#128081;', '#ffd54a', "You Won!",  poolName, gw,
+      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">You're the last one standing — congratulations! This pool is now finished. If you want to run it back, ask your organiser to set up a new pool.</p>`);
+  } else {
+    subject = `\uD83D\uDC51 ${winnerName} won the pool — ${poolName}`;
+    html = buildEmail('&#128081;', '#ffd54a', "We Have a Winner",  poolName, gw,
+      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px"><strong style="color:#fff">${winnerName}</strong> is the last one standing and wins the pool! Thanks for playing — this pool is now finished. Ask your organiser to set up a new one to play again.</p>`);
   }
 
   try {
@@ -225,7 +233,8 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
     }
   }
 
-  const stillAliveCount = alivePlayers.length - eliminatedNames.length;
+  const finalAlive = alivePlayers.filter(p => p.alive);
+  const stillAliveCount = finalAlive.length;
   const recapTTL = 60 * 60 * 24 * 300;
   await redis.set(`lms:pool:${poolId}:recap:${gw}`, JSON.stringify({
     gw,
@@ -238,6 +247,17 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
 
   pool.lastGradedGw = gw;
   pool.currentGameweek = gw + 1;
+
+  // A pool that started with more than one player and is now down to exactly
+  // one winner is over - lock it so a new pool is needed to play again
+  if (alivePlayers.length > 1 && stillAliveCount === 1) {
+    pool.status = 'finished';
+    pool.winner = finalAlive[0].name;
+    for (const p of players) {
+      await sendPlayerEmail(p, poolId, pool.name, gw, p.token === finalAlive[0].token ? 'you_won' : 'pool_won', pool.winner);
+    }
+  }
+
   await redis.set(`lms:pool:${poolId}`, JSON.stringify(pool));
 }
 

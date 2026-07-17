@@ -6,6 +6,32 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
 
+const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
+const PL_LEAGUE = 39;
+const PL_SEASON = 2026;
+
+// Whatever gameweek is next-upcoming right now becomes this pool's "gameweek 1" -
+// important for pools started mid-season, not just at the true start of the season
+async function getUpcomingGw(): Promise<{ gw: number | null; deadline: string | null }> {
+  if (!API_KEY) return { gw: null, deadline: null };
+  try {
+    const hdrs = { "x-apisports-key": API_KEY };
+    const res = await fetch(`https://v3.football.api-sports.io/fixtures?league=${PL_LEAGUE}&season=${PL_SEASON}&status=NS`, { headers: hdrs });
+    const data = await res.json();
+    const upcoming = (data.response || []).sort((a: any, b: any) =>
+      new Date(a.fixture.date).getTime() - new Date(b.fixture.date).getTime()
+    );
+    if (upcoming.length === 0) return { gw: null, deadline: null };
+    const round = upcoming[0].league.round;
+    const match = round.match(/(\d+)$/);
+    const gw = match ? parseInt(match[1], 10) : null;
+    return { gw, deadline: upcoming[0].fixture.date };
+  } catch (err) {
+    console.error('getUpcomingGw failed:', err);
+    return { gw: null, deadline: null };
+  }
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     const { pool, k } = req.query;
@@ -49,6 +75,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     poolData.organiser = String(organiserName).trim();
     poolData.buyIn = buyIn ? Number(buyIn) : null;
     poolData.status = 'active';
+
+    // Lock in this pool's own "gameweek 1" - whatever's next-upcoming right now,
+    // not necessarily the season's actual gameweek 1 (pools can start mid-season)
+    const upcoming = await getUpcomingGw();
+    poolData.startGw = upcoming.gw;
+    poolData.startGwDeadline = upcoming.deadline;
 
     await redis.set(`lms:pool:${pool}`, JSON.stringify(poolData));
 
