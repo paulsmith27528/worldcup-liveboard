@@ -6,6 +6,29 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
 
+const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
+const PL_LEAGUE = 39;
+const PL_SEASON = 2026;
+
+// Same "next round, first kickoff" lookup used by the pick screen — needed here
+// so this endpoint can hide the in-progress round's picks until that deadline passes,
+// same as everywhere else picks are locked.
+async function getUpcomingRound(): Promise<{ gw: number | null; deadline: string | null }> {
+  if (!API_KEY) return { gw: null, deadline: null };
+  const hdrs = { "x-apisports-key": API_KEY };
+  const upcomingRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=${PL_LEAGUE}&season=${PL_SEASON}&status=NS`, { headers: hdrs });
+  const upcomingData = await upcomingRes.json();
+  const upcoming = (upcomingData.response || []).sort((a: any, b: any) =>
+    new Date(a.fixture.date).getTime() - new Date(b.fixture.date).getTime()
+  );
+  if (upcoming.length === 0) return { gw: null, deadline: null };
+
+  const round = upcoming[0].league.round;
+  const gwMatch = (round || '').match(/(\d+)$/);
+  const gw = gwMatch ? parseInt(gwMatch[1], 10) : null;
+  return { gw, deadline: upcoming[0].fixture.date };
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const { pool, k, playerToken, paid } = req.body;
@@ -47,7 +70,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const poolData = typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any;
 
     const playersRaw = await redis.hgetall<Record<string, string>>(`lms:pool:${pool}:players`);
-    const players = playersRaw ? Object.values(playersRaw).map((raw: any) => typeof raw === 'string' ? JSON.parse(raw) : raw) : [];
+    const rawPlayers = playersRaw ? Object.values(playersRaw).map((raw: any) => typeof raw === 'string' ? JSON.parse(raw) : raw) : [];
+
+    // Picks for the round still in progress must stay hidden here too, same as
+    // everywhere else — an organiser link is not a way to see picks early.
+    const upcoming = poolData.status === 'active' ? await getUpcomingRound() : { gw: null, deadline: null };
+    const deadlinePassed = upcoming.deadline ? new Date() >= new Date(upcoming.deadline) : true;
+    const players = rawPlayers.map((p: any) => {
+      if (!deadlinePassed && p.currentPickGw === upcoming.gw) {
+        const { currentPick, currentPickGw, ...rest } = p;
+        return rest;
+      }
+      return p;
+    });
 
     return res.status(200).json({
       pool: {
