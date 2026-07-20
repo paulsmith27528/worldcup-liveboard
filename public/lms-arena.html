@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no, address=no, email=no, date=no, url=no">
+<title>The Arena — Last Man Standing</title>
+<style>
+  :root{
+    --navy-deep:#081120;
+    --navy:#0E1B33;
+    --navy-elevated:#152341;
+    --navy-line:#25365C;
+    --gold:#D8B24C;
+    --gold-bright:#F3D27A;
+    --text:#EEF1F8;
+    --muted:#7186AC;
+    --eliminated:#26314A;
+    --eliminated-text:#4B5A7A;
+    --out-red:#B4453D;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{
+    background:var(--navy-deep);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  body{display:flex; justify-content:center;}
+  .phone{
+    width:100%; max-width:430px; min-height:100vh;
+    background:
+      radial-gradient(ellipse 600px 300px at 50% -10%, rgba(216,178,76,0.10), transparent 60%),
+      var(--navy-deep);
+    display:flex; flex-direction:column; position:relative; overflow-x:hidden;
+  }
+  .topbar{
+    padding:18px 20px 14px; display:flex; align-items:center; justify-content:space-between;
+    border-bottom:1px solid var(--navy-line);
+  }
+  .brand{ font-size:15px; font-weight:800; letter-spacing:0.04em; color:var(--gold-bright); text-transform:uppercase; }
+  .brand span{ color:var(--muted); font-weight:600; font-size:11px; letter-spacing:0.06em; display:block; margin-top:2px; text-transform:none; }
+  .round-pill{
+    font-size:11px; color:var(--navy-deep); background:var(--gold); padding:6px 12px;
+    border-radius:20px; font-weight:800; letter-spacing:0.03em; white-space:nowrap;
+  }
+  .hero{ padding:22px 20px 8px; text-align:center; }
+  .hero-count{ font-size:56px; font-weight:900; line-height:0.9; color:var(--gold-bright); text-shadow:0 0 40px rgba(243,210,122,0.35); }
+  .hero-label{ font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted); margin-top:6px; font-weight:700; }
+  .hero-sub{ font-size:12px; color:var(--muted); margin-top:10px; }
+  .hero-sub b{ color:var(--text); font-weight:700; }
+
+  .legend{ display:flex; flex-wrap:wrap; gap:14px; padding:10px 20px; font-size:10px; color:var(--muted); border-bottom:1px solid var(--navy-line); }
+  .legend-item{ display:flex; align-items:center; gap:5px; }
+  .dot{ width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+  .dot.alive{ background:var(--navy-elevated); border:1.5px solid var(--gold); }
+  .dot.you{ background:var(--navy-elevated); border:1.5px solid var(--gold-bright); box-shadow:0 0 0 2px var(--gold-bright); }
+  .dot.eliminated{ background:var(--eliminated); opacity:0.6; }
+  .dot.life{ background:var(--navy-elevated); border:1.5px solid var(--gold); position:relative; }
+
+  .jump-btn{
+    margin:12px 20px 0; padding:10px 14px; background:rgba(216,178,76,0.08); border:1px solid rgba(216,178,76,0.25);
+    border-radius:10px; color:var(--gold-bright); font-size:12px; font-weight:700; text-align:center; cursor:pointer;
+  }
+
+  .arena{ flex:1; padding:18px 0 90px; display:flex; flex-direction:column-reverse; gap:10px; position:relative; }
+
+  .rung{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer; scroll-margin-top:24px; }
+  .rung-meta{ display:flex; align-items:center; gap:8px; font-size:10.5px; color:var(--muted); letter-spacing:0.04em; font-weight:600; }
+  .rung-current .rung-meta{ color:var(--gold); }
+
+  .row{ display:flex; justify-content:center; flex-wrap:wrap; gap:6px; max-width:380px; padding:0 12px; }
+
+  .avatar{
+    width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:10.5px; flex-shrink:0; position:relative;
+  }
+  .avatar.alive{ background:linear-gradient(145deg, var(--navy-elevated), var(--navy)); color:var(--gold-bright); border:1.5px solid var(--gold); }
+  .avatar.eliminated{ background:var(--eliminated); color:var(--eliminated-text); border:1.5px solid transparent; opacity:0.6; }
+  .avatar.eliminated::after{
+    content:""; position:absolute; inset:0; border-radius:50%;
+    background:repeating-linear-gradient(135deg, transparent, transparent 3px, rgba(180,69,61,0.35) 3px, rgba(180,69,61,0.35) 4px);
+  }
+  .avatar.you{ box-shadow:0 0 0 2.5px var(--navy-deep), 0 0 0 4px var(--gold-bright); }
+  .avatar.hidden{ background:var(--navy-elevated); border:1.5px dashed var(--navy-line); color:transparent; }
+  .avatar .shield{ position:absolute; bottom:-3px; right:-3px; background:var(--gold); border-radius:50%; width:13px; height:13px; display:flex; align-items:center; justify-content:center; font-size:7px; border:2px solid var(--navy-deep); }
+
+  .rung-current .row{ background:rgba(216,178,76,0.06); border:1px solid rgba(216,178,76,0.25); border-radius:16px; padding:12px; }
+  @media (prefers-reduced-motion: no-preference){
+    .rung-current.just-unlocked .row{ animation:pulse 1.1s ease-out; }
+  }
+  @keyframes pulse{ 0%{ box-shadow:0 0 0 0 rgba(216,178,76,0.35);} 100%{ box-shadow:0 0 0 14px rgba(216,178,76,0);} }
+
+  .wipeout-band{
+    background:repeating-linear-gradient(45deg, rgba(216,178,76,.08), rgba(216,178,76,.08) 10px, rgba(216,178,76,.02) 10px, rgba(216,178,76,.02) 20px);
+    border-radius:10px; padding:10px 16px; font-size:10.5px; color:var(--gold-bright); font-weight:700; text-align:center;
+  }
+
+  .collapse-toggle{
+    padding:10px 16px; border:1px dashed var(--navy-line); border-radius:10px; color:var(--muted);
+    font-size:11px; font-weight:700; text-align:center; letter-spacing:0.03em;
+  }
+
+  .cap{ display:flex; flex-direction:column; align-items:center; gap:6px; padding-bottom:6px; cursor:default; }
+  .cap-icon{ font-size:20px; filter:drop-shadow(0 0 12px rgba(243,210,122,0.6)); }
+  .cap-label{ font-size:9.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); font-weight:700; }
+
+  .sheet-backdrop{ position:fixed; inset:0; background:rgba(2,6,16,0.6); z-index:4; }
+  .sheet{
+    position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px;
+    background:var(--navy-elevated); border-top:1px solid var(--navy-line); border-radius:20px 20px 0 0;
+    padding:16px 20px 28px; box-shadow:0 -20px 50px rgba(0,0,0,0.5); z-index:5; max-height:70vh; overflow-y:auto;
+  }
+  .sheet-handle{ width:36px; height:4px; background:var(--navy-line); border-radius:4px; margin:0 auto 12px; }
+  .sheet-title{ font-size:16px; font-weight:800; color:var(--text); }
+  .sheet-note{ font-size:11px; color:var(--muted); margin:4px 0 14px; }
+  .pop-bar{ display:flex; align-items:center; gap:10px; margin-bottom:9px; }
+  .pop-team{ width:78px; font-size:11.5px; font-weight:600; color:var(--text); flex-shrink:0; }
+  .pop-track{ flex:1; height:8px; background:var(--navy); border-radius:5px; overflow:hidden; }
+  .pop-fill{ height:100%; background:linear-gradient(90deg, var(--gold), var(--gold-bright)); border-radius:5px; }
+  .pop-pct{ font-size:10.5px; color:var(--muted); width:32px; text-align:right; flex-shrink:0; }
+  .locked-note{
+    display:flex; align-items:flex-start; gap:8px; background:rgba(216,178,76,0.08); border:1px solid rgba(216,178,76,0.2);
+    border-radius:10px; padding:10px 12px; font-size:11.5px; color:var(--gold-bright); line-height:1.5;
+  }
+  .cta{
+    margin-top:14px; width:100%; padding:13px; background:var(--gold); color:var(--navy-deep); border:none;
+    border-radius:12px; font-weight:800; font-size:13px;
+  }
+  .loading, .empty{ text-align:center; color:var(--muted); font-size:13px; padding:60px 20px; }
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+  <div class="topbar">
+    <div class="brand">The Arena<span id="poolSub">Premier League &middot; LMS</span></div>
+    <div class="round-pill" id="roundPill">&hellip;</div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-count" id="heroCount">&ndash;</div>
+    <div class="hero-label">Still Standing</div>
+    <div class="hero-sub" id="heroSub"></div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><span class="dot alive"></span> Alive</div>
+    <div class="legend-item"><span class="dot you"></span> You</div>
+    <div class="legend-item"><span class="dot eliminated"></span> Eliminated</div>
+    <div class="legend-item"><span class="dot life"></span> Life used</div>
+  </div>
+
+  <div class="jump-btn" id="jumpBtn" style="display:none">Jump to your rung</div>
+
+  <div id="content"><div class="loading">Loading the arena&hellip;</div></div>
+</div>
+
+<script>
+var params = new URLSearchParams(window.location.search);
+var poolId = params.get('pool');
+var token = params.get('t');
+var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+
+function initials(name){
+  var parts = (name || '').trim().split(/\s+/);
+  var a = parts[0] ? parts[0][0] : '';
+  var b = parts.length > 1 ? parts[parts.length - 1][0] : '';
+  return (a + b).toUpperCase();
+}
+
+function money(n){
+  return '£' + Number(n).toFixed(2).replace(/\.00$/, '');
+}
+
+var arenaData = null;
+var collapsedBelow = null; // gw threshold; rounds below this are hidden until expanded
+
+if(!poolId){
+  document.getElementById('content').innerHTML = '<div class="empty">No pool specified.</div>';
+} else {
+  fetch('/api/lms-arena?pool=' + encodeURIComponent(poolId) + (token ? '&t=' + encodeURIComponent(token) : ''))
+    .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
+    .then(function(res){
+      if(res.status !== 200){
+        document.getElementById('content').innerHTML = '<div class="empty">' + esc(res.body.error || 'Something went wrong loading this pool.') + '</div>';
+        return;
+      }
+      arenaData = res.body;
+      var recentSpan = 5;
+      var lastGraded = arenaData.pool.lastGradedGw;
+      collapsedBelow = Math.max(1, lastGraded - recentSpan + 1);
+      render();
+      scheduleDeadlineFlip();
+    })
+    .catch(function(){
+      document.getElementById('content').innerHTML = '<div class="empty">Something went wrong. Try refreshing.</div>';
+    });
+}
+
+function scheduleDeadlineFlip(){
+  if(!arenaData || !arenaData.current.locked || !arenaData.current.deadline) return;
+  var msUntil = new Date(arenaData.current.deadline).getTime() - Date.now();
+  if(msUntil <= 0 || msUntil > 24 * 60 * 60 * 1000) return; // only bother for same-day deadlines
+  setTimeout(function(){
+    arenaData.current.locked = false;
+    render(true);
+  }, msUntil + 1000);
+}
+
+function you(){
+  return arenaData.players.find(function(p){ return p.isYou; }) || null;
+}
+
+function playersAsOfRound(g){
+  return arenaData.players.filter(function(p){ return p.eliminatedWeek === null || p.eliminatedWeek >= g; });
+}
+
+function avatarHtml(p, g){
+  var isDead = p.eliminatedWeek === g;
+  var cls = 'avatar ' + (isDead ? 'eliminated' : 'alive') + (p.isYou ? ' you' : '');
+  var title = isDead ? (p.name + ' — out GW' + p.eliminatedWeek) : p.name;
+  var shield = (p.lifeUsedWeek === g) ? '<span class="shield">&#128737;</span>' : '';
+  return '<div class="' + cls + '" title="' + esc(title) + '">' + (isDead ? '&times;' : esc(initials(p.name))) + shield + '</div>';
+}
+
+function hiddenAvatarsHtml(count){
+  var html = '';
+  for(var i = 0; i < count; i++){ html += '<div class="avatar hidden"></div>'; }
+  return html;
+}
+
+function render(justUnlocked){
+  var d = arenaData;
+  document.getElementById('poolSub').textContent = (d.pool.name || 'Premier League') + ' · LMS';
+  document.getElementById('heroCount').textContent = d.aliveCount;
+
+  var subParts = ['of <b>' + d.startersCount + '</b> started'];
+  if(d.pot){ subParts.push(money(d.pot.potential) + ' pot'); }
+  document.getElementById('heroSub').innerHTML = subParts.join(' &middot; ');
+
+  var pill = document.getElementById('roundPill');
+  if(d.pool.status === 'finished'){
+    pill.textContent = 'FINISHED';
+  } else if(d.current.gw){
+    pill.textContent = 'ROUND ' + d.current.gw;
+  } else {
+    pill.textContent = '—';
+  }
+
+  var jumpBtn = document.getElementById('jumpBtn');
+  var viewer = you();
+  if(viewer){
+    jumpBtn.style.display = 'block';
+    jumpBtn.onclick = function(){ jumpToYourRung(viewer); };
+  }
+
+  var html = '';
+
+  // Trophy cap (rendered first in DOM = top, since arena uses column-reverse)
+  if(d.pool.winner){
+    html += '<div class="cap"><div class="cap-icon">🏆</div><div class="cap-label">' + esc(d.pool.winner) + ' wins!</div></div>';
+  } else {
+    html += '<div class="cap"><div class="cap-icon">🏆</div><div class="cap-label">Last one standing</div></div>';
+  }
+
+  // Current / in-progress round
+  var pulseClass = (justUnlocked && !reducedMotion) ? ' just-unlocked' : '';
+  html += '<div class="rung rung-current' + pulseClass + '" data-current="1">';
+  html += '<div class="rung-meta"><span>' + (d.current.gw ? 'ROUND ' + d.current.gw : 'AWAITING NEXT ROUND') + '</span>' +
+    (d.current.locked ? '<span>&middot; picks locked</span>' : '<span>&middot; deadline passed</span>') + '</div>';
+  html += '<div class="row">' + hiddenAvatarsHtml(d.aliveCount) + '</div></div>';
+
+  // Past rounds, oldest first (bottom), newest last (top) in DOM order
+  var lastGraded = d.pool.lastGradedGw;
+  var roundByGw = {};
+  d.rounds.forEach(function(r){ roundByGw[r.gw] = r; });
+
+  var hasCollapsed = collapsedBelow > 1;
+  if(hasCollapsed){
+    html += '<div class="rung collapse-toggle" id="collapseToggle" data-gw="collapse">Show earlier rounds (' + (collapsedBelow - 1) + ')</div>';
+  }
+
+  for(var g = collapsedBelow; g <= lastGraded; g++){
+    var r = roundByGw[g];
+    if(!r) continue;
+    if(r.wipeout){
+      html += '<div class="rung" data-gw="' + g + '"><div class="wipeout-band">♻️ ROUND ' + g + ' — TOTAL WIPEOUT — nobody eliminated</div></div>';
+      continue;
+    }
+    var playersHere = playersAsOfRound(g);
+    html += '<div class="rung" data-gw="' + g + '">';
+    html += '<div class="rung-meta"><span>ROUND ' + g + '</span></div>';
+    html += '<div class="row">';
+    playersHere.forEach(function(p){ html += avatarHtml(p, g); });
+    html += '</div></div>';
+  }
+
+  document.getElementById('content').innerHTML = '<div class="arena" id="arenaList">' + html + '</div>';
+
+  document.querySelectorAll('.rung[data-gw]').forEach(function(el){
+    el.addEventListener('click', function(){
+      var gw = this.getAttribute('data-gw');
+      if(gw === 'collapse'){ expandCollapsed(); return; }
+      openSheet(roundByGw[parseInt(gw, 10)]);
+    });
+  });
+  document.querySelector('.rung-current').addEventListener('click', function(){ openCurrentSheet(); });
+}
+
+function expandCollapsed(){
+  collapsedBelow = 1;
+  render();
+}
+
+function jumpToYourRung(viewer){
+  if(collapsedBelow > 1 && viewer.eliminatedWeek !== null && viewer.eliminatedWeek < collapsedBelow){
+    expandCollapsed();
+  }
+  setTimeout(function(){
+    var targetGw = viewer.eliminatedWeek !== null ? viewer.eliminatedWeek : null;
+    var el = targetGw ? document.querySelector('.rung[data-gw="' + targetGw + '"]') : document.querySelector('.rung-current');
+    // Instant, not smooth: this is a functional jump-to-position control, and
+    // smooth scrollIntoView is unreliable in some mobile webviews — landing
+    // reliably in the right place matters more here than the animation.
+    if(el) el.scrollIntoView({ behavior: 'auto', block: 'center' });
+  }, 30);
+}
+
+// ---- Bottom sheet ----
+function ensureSheet(){
+  if(document.getElementById('sheet')) return;
+  var backdrop = document.createElement('div');
+  backdrop.className = 'sheet-backdrop';
+  backdrop.id = 'sheetBackdrop';
+  backdrop.style.display = 'none';
+  backdrop.addEventListener('click', closeSheet);
+
+  var sheet = document.createElement('div');
+  sheet.className = 'sheet';
+  sheet.id = 'sheet';
+  sheet.style.display = 'none';
+  sheet.innerHTML = '<div class="sheet-handle"></div>' +
+    '<div class="sheet-title" id="sheetTitle"></div>' +
+    '<div class="sheet-note" id="sheetNote"></div>' +
+    '<div id="sheetBody"></div>' +
+    '<button class="cta" id="sheetClose">Back to the Arena</button>';
+  document.body.appendChild(backdrop);
+  document.body.appendChild(sheet);
+  document.getElementById('sheetClose').addEventListener('click', closeSheet);
+}
+
+function closeSheet(){
+  var sheet = document.getElementById('sheet');
+  var backdrop = document.getElementById('sheetBackdrop');
+  if(sheet) sheet.style.display = 'none';
+  if(backdrop) backdrop.style.display = 'none';
+}
+
+function openSheetShell(){
+  ensureSheet();
+  document.getElementById('sheet').style.display = 'block';
+  document.getElementById('sheetBackdrop').style.display = 'block';
+}
+
+function openCurrentSheet(){
+  openSheetShell();
+  document.getElementById('sheetTitle').textContent = arenaData.current.gw ? ('Round ' + arenaData.current.gw) : 'Next round';
+  document.getElementById('sheetNote').textContent = '';
+  var msg = arenaData.current.locked
+    ? '🔒 Picks are hidden until this round’s deadline passes — no peeking mid-round, for anyone, including the organiser.'
+    : '⏳ Kickoff’s happened, so picks are locked in — the popularity breakdown appears here once the round is fully graded after full-time.';
+  document.getElementById('sheetBody').innerHTML = '<div class="locked-note">' + msg + '</div>';
+}
+
+function openSheet(r){
+  openSheetShell();
+  document.getElementById('sheetTitle').textContent = 'Round ' + r.gw;
+  var body = document.getElementById('sheetBody');
+
+  if(r.wipeout){
+    document.getElementById('sheetNote').textContent = '';
+    body.innerHTML = '<div class="locked-note">♻️ Everyone still standing lost or drew this round, so under the rules it didn’t count — nobody was eliminated.</div>';
+    return;
+  }
+  if(!r.popularity){
+    document.getElementById('sheetNote').textContent = '';
+    body.innerHTML = '<div class="locked-note">Popularity data isn’t available for this round.</div>';
+    return;
+  }
+
+  document.getElementById('sheetNote').textContent = r.totalPlayers + ' picked this round' + (r.noPick ? ' · ' + r.noPick + ' didn’t pick' : '');
+  var html = '';
+  r.popularity.forEach(function(item){
+    html += '<div class="pop-bar"><div class="pop-team">' + esc(item.team) + '</div>' +
+      '<div class="pop-track"><div class="pop-fill" style="width:' + item.pct + '%"></div></div>' +
+      '<div class="pop-pct">' + item.pct + '%</div></div>';
+  });
+  body.innerHTML = html;
+}
+</script>
+</body>
+</html>
