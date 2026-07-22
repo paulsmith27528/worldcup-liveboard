@@ -21,6 +21,12 @@
   .success{display:none;text-align:center}
   .success .icon{font-size:52px;margin-bottom:12px}
   .loading{text-align:center;color:#5b6b85;font-size:13px}
+  .hint{font-weight:400;color:#5b6b85;text-transform:none;letter-spacing:0}
+  .avatar-picker{display:flex;align-items:center;gap:14px}
+  .avatar-preview{width:56px;height:56px;border-radius:50%;flex-shrink:0;background:rgba(255,255,255,.04);border:1.5px dashed rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:#5b6b85;font-size:20px;cursor:pointer;background-size:cover;background-position:center}
+  .avatar-pick-btn{width:auto;display:inline-block;padding:9px 16px;border-radius:20px;background:transparent;border:1px solid rgba(148,163,184,.3);color:#94a3b8;font-weight:700;font-size:12px;cursor:pointer;margin-top:0}
+  .avatar-pick-btn:hover{border-color:rgba(148,163,184,.55);color:#cbd5e1}
+  .avatar-hint{color:#5b6b85;font-size:11px;margin-top:6px}
 
   .share-box{margin-top:20px;display:none}
   .share-box .label{text-align:center;color:#5b6b85;font-size:11px;margin-bottom:10px}
@@ -46,6 +52,20 @@
 
       <label>YOUR EMAIL</label>
       <input type="email" id="email" placeholder="you@example.com" required>
+
+      <label>DISPLAY NAME <span class="hint">(optional — defaults to your initials)</span></label>
+      <input type="text" id="displayName" placeholder="How you want to appear to others" maxlength="30">
+
+      <label>PHOTO / AVATAR <span class="hint">(optional)</span></label>
+      <div class="avatar-picker">
+        <div class="avatar-preview" id="avatarPreview" onclick="document.getElementById('avatarFile').click()">+</div>
+        <div>
+          <button type="button" class="avatar-pick-btn" onclick="document.getElementById('avatarFile').click()">Choose image</button>
+          <div class="avatar-hint">Any image you like, up to 400KB</div>
+        </div>
+      </div>
+      <input type="file" id="avatarFile" accept="image/*" style="display:none">
+      <p class="err" id="avatarErr" style="display:none"></p>
 
       <button type="submit">Join Pool →</button>
       <p class="err" id="err"></p>
@@ -119,6 +139,32 @@ function copyLink(){
   });
 }
 
+var avatarDataUrl = null;
+document.getElementById('avatarFile').addEventListener('change', function(e){
+  var file = e.target.files[0];
+  var errEl = document.getElementById('avatarErr');
+  errEl.style.display = 'none';
+  if(!file) return;
+  if(file.type.indexOf('image/') !== 0){
+    errEl.textContent = 'Please choose an image file.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if(file.size > 400 * 1024){
+    errEl.textContent = 'That image is too large — please use one under 400KB.';
+    errEl.style.display = 'block';
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(evt){
+    avatarDataUrl = evt.target.result;
+    var preview = document.getElementById('avatarPreview');
+    preview.style.backgroundImage = 'url(' + avatarDataUrl + ')';
+    preview.textContent = '';
+  };
+  reader.readAsDataURL(file);
+});
+
 function doShare(){
   if(navigator.share){
     navigator.share({
@@ -135,6 +181,7 @@ document.getElementById('f').addEventListener('submit', function(e){
   e.preventDefault();
   var name = document.getElementById('name').value.trim();
   var email = document.getElementById('email').value.trim();
+  var displayName = document.getElementById('displayName').value.trim();
   var err = document.getElementById('err');
   err.style.display = 'none';
 
@@ -147,7 +194,7 @@ document.getElementById('f').addEventListener('submit', function(e){
   fetch('/api/lms-join', {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ poolId: poolId, name: name, email: email })
+    body: JSON.stringify({ poolId: poolId, name: name, email: email, displayName: displayName, avatarDataUrl: avatarDataUrl })
   })
   .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
   .then(function(res){

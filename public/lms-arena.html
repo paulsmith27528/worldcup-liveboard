@@ -75,6 +75,7 @@
   .avatar{
     width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center;
     font-weight:700; font-size:10.5px; flex-shrink:0; position:relative;
+    background-size:cover; background-position:center;
   }
   .avatar.alive{ background:linear-gradient(145deg, var(--navy-elevated), var(--navy)); color:var(--gold-bright); border:1.5px solid var(--gold); }
   .avatar.eliminated{ background:var(--eliminated); color:var(--eliminated-text); border:1.5px solid transparent; opacity:0.6; }
@@ -220,10 +221,13 @@ function playersAsOfRound(g){
 
 function avatarHtml(p, g){
   var isDead = p.eliminatedWeek === g;
+  var label = p.displayName || p.name;
   var cls = 'avatar ' + (isDead ? 'eliminated' : 'alive') + (p.isYou ? ' you' : '');
+  var style = (!isDead && p.avatarUrl) ? ' style="background-image:url(' + esc(p.avatarUrl) + ')"' : '';
   var title = isDead ? (p.name + ' — out GW' + p.eliminatedWeek) : p.name;
   var shield = (p.lifeUsedWeek === g) ? '<span class="shield">&#128737;</span>' : '';
-  return '<div class="' + cls + '" title="' + esc(title) + '">' + (isDead ? '&times;' : esc(initials(p.name))) + shield + '</div>';
+  var content = (!isDead && p.avatarUrl) ? '' : (isDead ? '&times;' : esc(initials(label)));
+  return '<div class="' + cls + '"' + style + ' title="' + esc(title) + '">' + content + shield + '</div>';
 }
 
 function hiddenAvatarsHtml(count){

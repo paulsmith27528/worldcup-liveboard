@@ -24,7 +24,7 @@
   .rung-label{width:60px;flex-shrink:0;font-size:9px;color:var(--dim);font-weight:800;letter-spacing:.5px}
   .rung-label .gw{color:#fff;font-size:12px;display:block;margin-bottom:2px}
   .rung-track{flex:1;display:flex;gap:8px;flex-wrap:wrap;align-items:center;min-height:40px}
-  .avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#04150e;position:relative;flex-shrink:0;border:2px solid rgba(255,255,255,.15)}
+  .avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#04150e;position:relative;flex-shrink:0;border:2px solid rgba(255,255,255,.15);background-size:cover;background-position:center}
   .avatar.you{border-color:var(--gold);box-shadow:0 0 12px rgba(255,213,74,.4)}
   .avatar .shield{position:absolute;bottom:-4px;right:-4px;background:var(--gold);border-radius:50%;width:15px;height:15px;display:flex;align-items:center;justify-content:center;font-size:8px;border:2px solid var(--bg)}
   .fallen-row{border-top:1px solid rgba(239,68,68,.2);margin-top:8px;padding-top:12px}
@@ -73,11 +73,18 @@ function colorFor(name){
 function avatarHtml(p, rungGw){
   var isDead = p.eliminatedWeek !== null;
   var showShield = p.lifeUsedWeek !== null && (rungGw === undefined || p.lifeUsedWeek <= rungGw);
+  var label = p.displayName || p.name;
   var cls = 'avatar' + (p.isYou ? ' you' : '') + (isDead ? ' dead' : '');
-  var style = isDead ? '' : 'background:linear-gradient(135deg,' + colorFor(p.name) + ',' + colorFor(p.name) + 'aa)';
+  var style = '';
+  if(!isDead){
+    style = p.avatarUrl
+      ? 'background-image:url(' + esc(p.avatarUrl) + ')'
+      : 'background:linear-gradient(135deg,' + colorFor(label) + ',' + colorFor(label) + 'aa)';
+  }
   var title = isDead ? (esc(p.name) + ' — out GW' + p.eliminatedWeek) : esc(p.name);
   var shieldHtml = showShield ? '<span class="shield">\uD83D\uDEE1</span>' : '';
-  return '<div class="' + cls + '" style="' + style + '" title="' + title + '">' + esc(initials(p.name)) + shieldHtml + '</div>';
+  var content = (!isDead && p.avatarUrl) ? '' : esc(initials(label));
+  return '<div class="' + cls + '" style="' + style + '" title="' + title + '">' + content + shieldHtml + '</div>';
 }
 
 if(!poolId){
