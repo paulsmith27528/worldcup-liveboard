@@ -15,7 +15,7 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
 
-const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake" | "dashboard" | "bundle" | "pro" | "lms" | "lms_pro" }> = {
+const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake" | "dashboard" | "bundle" | "pro" | "lms" | "lms_pro" | "lms_organiser_fee" }> = {
   price_1TeMKT3g62IhPcY7PvqpncJF: { name: "World Cup Sweepstake", emoji: "&#127967;", type: "sweepstake" },
   price_1TodvS3g62IhPcY7Q9ePkimH: { name: "World Cup Sweepstake", emoji: "&#127967;", type: "sweepstake" },
   price_1TeMHw3g62IhPcY7CCZhO3T6: { name: "Live Dashboard", emoji: "&#128250;", type: "dashboard" },
@@ -28,6 +28,9 @@ const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake
   // TODO: replace with the real Stripe price ID once created (one-time, £1) —
   // must match LMS_PRO_PRICE_ID in pages/api/lms-pro-checkout.ts exactly.
   price_REPLACE_WITH_LMS_PRO_PRICE_ID: { name: "Last Man Standing — Pro Upgrade", emoji: "&#11088;", type: "lms_pro" },
+  // TODO: replace with the real Stripe price ID once created (one-time, £5) —
+  // must match LMS_ORGANISER_FEE_PRICE_ID in pages/api/lms-organiser-fee-checkout.ts exactly.
+  price_REPLACE_WITH_LMS_ORGANISER_FEE_PRICE_ID: { name: "Last Man Standing — Organiser Upgrade", emoji: "&#128101;", type: "lms_organiser_fee" },
 };
 
 const LMS_TTL = 60 * 60 * 24 * 300; // 300 days — covers a full PL season
@@ -435,6 +438,58 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json({ received: true });
   }
   // ── END LMS PRO UPGRADE FLOW ──────────────────────────────────────────────
+
+  // ── LMS ORGANISER FEE FLOW (per-pool, £5, once past 10 players) ─────────
+  if (product.type === "lms_organiser_fee") {
+    const poolId = session.metadata?.pool;
+    if (!poolId) {
+      console.error("LMS organiser fee payment received but missing pool in metadata:", session.id);
+      return res.status(200).json({ received: true });
+    }
+
+    const poolRaw = await redis.get<string>(`lms:pool:${poolId}`);
+    if (!poolRaw) {
+      console.error("LMS organiser fee payment received but pool not found:", poolId);
+      return res.status(200).json({ received: true });
+    }
+
+    const poolData = typeof poolRaw === "string" ? JSON.parse(poolRaw) : poolRaw as any;
+    poolData.organiserFeePaid = true;
+    await redis.set(`lms:pool:${poolId}`, JSON.stringify(poolData));
+
+    try {
+      await sgMail.send({
+        from: { name: "Last Man Standing", email: "noreply@worldcupsweepstake-liveboard.com" },
+        to: email,
+        subject: `✅ You're upgraded — ${poolData.name || "your pool"} can keep growing`,
+        html: `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#020810;font-family:Arial,sans-serif">
+<div style="max-width:520px;margin:0 auto;padding:32px 16px">
+  <div style="background:linear-gradient(150deg,#051226,#020914);border:1px solid rgba(52,211,153,.3);border-radius:18px;padding:32px">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:52px;margin-bottom:12px">&#9989;</div>
+      <h1 style="color:#34d399;font-size:22px;font-weight:900;margin:0 0 6px">You're Upgraded!</h1>
+      <p style="color:#475569;font-size:13px;margin:0">${poolData.name || ""}</p>
+    </div>
+    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">Thanks — your pool can now accept as many players as it needs, no limit. Everyone who already joined is unaffected either way.</p>
+  </div>
+</div>
+</body>
+</html>`,
+        trackingSettings: {
+          clickTracking: { enable: false, enableText: false },
+          openTracking: { enable: false },
+        },
+      });
+    } catch (mailErr: any) {
+      console.error("LMS organiser fee mail error:", mailErr.message);
+    }
+
+    return res.status(200).json({ received: true });
+  }
+  // ── END LMS ORGANISER FEE FLOW ────────────────────────────────────────────
 
   // Existing flow: dashboard / sweepstake / bundle
   const dashToken = (product.type === "dashboard" || product.type === "bundle") ? generateToken() : null;

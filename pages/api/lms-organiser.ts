@@ -93,6 +93,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         currentGameweek: poolData.currentGameweek,
         status: poolData.status,
         createdAt: poolData.createdAt,
+        organiserFeeNotified: poolData.organiserFeeNotified || false,
+        organiserFeePaid: poolData.organiserFeePaid || false,
       },
       players,
     });
