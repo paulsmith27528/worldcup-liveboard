@@ -58,6 +58,8 @@
     <a id="ladderLink" href="#" style="flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;background:rgba(255,213,74,.08);border:1px solid rgba(255,213,74,.25);color:#ffd54a;font-weight:800;font-size:12px">☠ Ladder</a>
     <a id="tableLink" href="#" style="flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.25);color:#22d3ee;font-weight:800;font-size:12px">⚽ Live Table</a>
   </div>
+
+  <div id="proBanner" style="display:none;margin-top:12px"></div>
 </div>
 
 <div class="toast" id="toast">Confirmation email sent!</div>
@@ -110,6 +112,15 @@ function load(){
 function render(d){
   document.getElementById('poolTitle').textContent = d.poolName;
   currentGwData = d;
+
+  var proBanner = document.getElementById('proBanner');
+  if(d.player.proPaid){
+    proBanner.style.display = 'block';
+    proBanner.innerHTML = '<div style="text-align:center;padding:10px;border-radius:10px;background:rgba(255,213,74,.06);border:1px solid rgba(255,213,74,.2);color:#ffd54a;font-weight:800;font-size:12px">⭐ You\'re Pro</div>';
+  } else {
+    proBanner.style.display = 'block';
+    proBanner.innerHTML = '<a href="/api/lms-pro-checkout?pool=' + encodeURIComponent(poolId) + '&t=' + encodeURIComponent(token) + '" style="display:block;text-align:center;text-decoration:none;padding:12px;border-radius:10px;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:12px">⭐ Go Pro — £1 · Unlock the Arena</a>';
+  }
 
   if(d.poolStatus === 'finished'){
     document.getElementById('subTitle').textContent = '';

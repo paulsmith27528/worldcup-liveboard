@@ -130,6 +130,15 @@
     border-radius:12px; font-weight:800; font-size:13px;
   }
   .loading, .empty{ text-align:center; color:var(--muted); font-size:13px; padding:60px 20px; }
+  .pro-gate{ text-align:center; padding:40px 24px; }
+  .pro-gate .icon{ font-size:40px; margin-bottom:14px; }
+  .pro-gate h2{ font-size:18px; margin:0 0 8px; color:var(--text); }
+  .pro-gate p{ color:var(--muted); font-size:13px; line-height:1.6; margin:0 0 22px; }
+  .pro-gate .ghost-btn{
+    display:block; width:100%; padding:13px; margin-top:10px; border-radius:12px;
+    background:transparent; border:1px solid rgba(148,163,184,.3); color:var(--muted);
+    font-weight:700; font-size:13px; text-decoration:none; cursor:pointer;
+  }
 </style>
 </head>
 <body>
@@ -176,6 +185,17 @@ function money(n){
   return '£' + Number(n).toFixed(2).replace(/\.00$/, '');
 }
 
+function renderProGate(upgradeUrl, fallbackUrl){
+  var html = '<div class="pro-gate">' +
+    '<div class="icon">⭐</div>' +
+    '<h2>The Arena is a Pro feature</h2>' +
+    '<p>Upgrade for £1 to unlock the visual standings for yourself — or carry on with the free plain-text ladder instead.</p>' +
+    (upgradeUrl ? '<a class="cta" style="display:block;text-decoration:none;" href="' + esc(upgradeUrl) + '">Go Pro — £1</a>' : '') +
+    '<a class="ghost-btn" href="' + esc(fallbackUrl) + '">Continue to free ladder →</a>' +
+    '</div>';
+  document.getElementById('content').innerHTML = html;
+}
+
 var arenaData = null;
 var collapsedBelow = null; // gw threshold; rounds below this are hidden until expanded
 
@@ -186,6 +206,10 @@ if(!poolId){
     .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
     .then(function(res){
       if(res.status !== 200){
+        if(res.body.error === 'pro_required'){
+          renderProGate(res.body.upgradeUrl, res.body.fallbackUrl);
+          return;
+        }
         document.getElementById('content').innerHTML = '<div class="empty">' + esc(res.body.error || 'Something went wrong loading this pool.') + '</div>';
         return;
       }

@@ -96,6 +96,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     eliminatedWeek: null as number | null,
     hasLife: true,
     paid: false,
+    proPaid: false,
     lifeUsedWeek: null as number | null,
     joinedAt: new Date().toISOString(),
   };
