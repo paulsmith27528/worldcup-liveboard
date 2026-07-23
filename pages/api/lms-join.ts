@@ -33,12 +33,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method !== 'POST') return res.status(405).end();
 
-  const { poolId, name, email } = req.body;
+  const { poolId, name, email, displayName, avatarDataUrl } = req.body;
   if (!poolId || !name || !email) {
     return res.status(400).json({ error: 'Missing poolId, name, or email' });
   }
   if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
     return res.status(400).json({ error: 'Invalid email address' });
+  }
+  if (displayName && typeof displayName !== 'string') {
+    return res.status(400).json({ error: 'Invalid display name' });
+  }
+  if (displayName && displayName.trim().length > 30) {
+    return res.status(400).json({ error: 'Display name must be 30 characters or fewer' });
+  }
+  if (avatarDataUrl) {
+    if (typeof avatarDataUrl !== 'string' || !avatarDataUrl.startsWith('data:image/')) {
+      return res.status(400).json({ error: 'Avatar must be an image file' });
+    }
+    if (avatarDataUrl.length > 600000) {
+      return res.status(400).json({ error: 'Avatar image too large. Please use a file under 400KB.' });
+    }
   }
 
   const poolRaw = await redis.get<string>(`lms:pool:${poolId}`);
@@ -72,6 +86,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     id: Date.now(),
     name: name.trim(),
     email: email.trim().toLowerCase(),
+    displayName: displayName && displayName.trim() ? displayName.trim() : null,
+    avatarUrl: avatarDataUrl || null,
     token,
     usedTeams: [] as string[],
     currentPick: null as string | null,

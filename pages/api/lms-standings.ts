@@ -33,6 +33,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     },
     players: players.map((p: any) => ({
       name: p.name,
+      displayName: p.displayName || null,
+      avatarUrl: p.avatarUrl || null,
       alive: p.alive,
       eliminatedWeek: p.eliminatedWeek,
       lifeUsedWeek: p.lifeUsedWeek,
