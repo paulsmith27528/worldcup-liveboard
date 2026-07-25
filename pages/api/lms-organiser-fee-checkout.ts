@@ -8,7 +8,7 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
 
-const BASE_URL = 'https://www.worldcupliveboard.com';
+const BASE_URL = process.env.BASE_URL!;
 
 // TODO: replace with the real Stripe price ID once created (one-time, £5) —
 // see PRICE_MAP in stripe-webhook.ts, which must use the exact same ID.
