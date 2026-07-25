@@ -9,7 +9,7 @@ const redis = new Redis({
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
-const BASE_URL = 'https://www.worldcupliveboard.com';
+const BASE_URL = process.env.BASE_URL!;
 const FROM_EMAIL = 'noreply@worldcupsweepstake-liveboard.com';
 const FROM_NAME = 'Last Man Standing';
 const LMS_TTL = 60 * 60 * 24 * 300; // 300 days — covers a full PL season

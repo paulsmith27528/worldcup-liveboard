@@ -12,7 +12,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
 const PL_LEAGUE = 39;
 const PL_SEASON = 2026;
-const BASE_URL = 'https://www.worldcupliveboard.com';
+const BASE_URL = process.env.BASE_URL!;
 const FROM_EMAIL = 'noreply@worldcupsweepstake-liveboard.com';
 const FROM_NAME = 'Last Man Standing';
 
