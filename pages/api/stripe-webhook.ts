@@ -32,7 +32,7 @@ const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake
   // Same £1/£5 amounts as the Premier League ones, just separate Stripe
   // prices so each competition's revenue is reported independently.
   price_1TxZGA3g62IhPcY7OV2OZxSp: { name: "Last Man Standing (Championship) — Pro Upgrade", emoji: "&#11088;", type: "lms_pro" },
-  price_REPLACE_WITH_CHAMPIONSHIP_ORGANISER_FEE_PRICE_ID: { name: "Last Man Standing (Championship) — Organiser Upgrade", emoji: "&#128101;", type: "lms_organiser_fee" },
+  price_1TxZHh3g62IhPcY7CKUJMBDC: { name: "Last Man Standing (Championship) — Organiser Upgrade", emoji: "&#128101;", type: "lms_organiser_fee" },
   price_REPLACE_WITH_UCL_PRO_PRICE_ID: { name: "Last Man Standing (Champions League) — Pro Upgrade", emoji: "&#11088;", type: "lms_pro" },
   price_REPLACE_WITH_UCL_ORGANISER_FEE_PRICE_ID: { name: "Last Man Standing (Champions League) — Organiser Upgrade", emoji: "&#128101;", type: "lms_organiser_fee" },
 };

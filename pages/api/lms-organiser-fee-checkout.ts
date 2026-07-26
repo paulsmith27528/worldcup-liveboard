@@ -17,7 +17,7 @@ const BASE_URL = process.env.BASE_URL!;
 // match PRICE_MAP in stripe-webhook.ts exactly.
 const LMS_ORGANISER_FEE_PRICE_ID: Record<string, string> = {
   PL: 'price_1TxODB3g62IhPcY7FUPj1XzO',
-  CHAMPIONSHIP: 'price_REPLACE_WITH_CHAMPIONSHIP_ORGANISER_FEE_PRICE_ID',
+  CHAMPIONSHIP: 'price_1TxZHh3g62IhPcY7CKUJMBDC',
   UCL: 'price_REPLACE_WITH_UCL_ORGANISER_FEE_PRICE_ID',
 };
 
