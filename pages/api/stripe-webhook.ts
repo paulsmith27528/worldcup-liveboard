@@ -25,12 +25,8 @@ const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake
   price_1TpoVC3g62IhPcY79JRQOJV7: { name: "Pro Bracket", emoji: "&#127942;", type: "pro" },
   price_1Trj6f3g62IhPcY7V2jgis7d: { name: "Last Man Standing", emoji: "&#128128;", type: "lms" },
   price_1TtoGI3g62IhPcY7hIKrcKiX: { name: "Last Man Standing", emoji: "&#128128;", type: "lms" },
-  // TODO: replace with the real Stripe price ID once created (one-time, £1) —
-  // must match LMS_PRO_PRICE_ID in pages/api/lms-pro-checkout.ts exactly.
-  price_REPLACE_WITH_LMS_PRO_PRICE_ID: { name: "Last Man Standing — Pro Upgrade", emoji: "&#11088;", type: "lms_pro" },
-  // TODO: replace with the real Stripe price ID once created (one-time, £5) —
-  // must match LMS_ORGANISER_FEE_PRICE_ID in pages/api/lms-organiser-fee-checkout.ts exactly.
-  price_REPLACE_WITH_LMS_ORGANISER_FEE_PRICE_ID: { name: "Last Man Standing — Organiser Upgrade", emoji: "&#128101;", type: "lms_organiser_fee" },
+  price_1TxOB73g62IhPcY7W8hVpZUJ: { name: "Last Man Standing — Pro Upgrade", emoji: "&#11088;", type: "lms_pro" },
+  price_1TxODB3g62IhPcY7FUPj1XzO: { name: "Last Man Standing — Organiser Upgrade", emoji: "&#128101;", type: "lms_organiser_fee" },
 };
 
 const LMS_TTL = 60 * 60 * 24 * 300; // 300 days — covers a full PL season

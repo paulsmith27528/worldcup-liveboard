@@ -12,7 +12,7 @@ const BASE_URL = process.env.BASE_URL!;
 
 // TODO: replace with the real Stripe price ID once created (one-time, £5) —
 // see PRICE_MAP in stripe-webhook.ts, which must use the exact same ID.
-const LMS_ORGANISER_FEE_PRICE_ID = 'price_REPLACE_WITH_LMS_ORGANISER_FEE_PRICE_ID';
+const LMS_ORGANISER_FEE_PRICE_ID = 'price_1TxODB3g62IhPcY7FUPj1XzO';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') return res.status(405).end();
