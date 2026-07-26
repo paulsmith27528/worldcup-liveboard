@@ -57,7 +57,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === 'POST') {
-    const { pool, k, organiserName, roundName, buyIn } = req.body;
+    const { pool, k, organiserName, organiserEmail, roundName, buyIn } = req.body;
     if (!pool || !k || !organiserName || !roundName) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
@@ -71,8 +71,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!poolRaw) return res.status(404).json({ error: 'Pool not found' });
     const poolData = typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any;
 
+    // Free pools never went through Stripe, so this is the first place we
+    // learn the organiser's email — pools created via the old paid flow
+    // already have one, but let a re-submission update it either way.
+    if (!poolData.organiserEmail && !organiserEmail) {
+      return res.status(400).json({ error: 'Missing organiser email' });
+    }
+    if (organiserEmail && !/^[^@]+@[^@]+\.[^@]+$/.test(organiserEmail)) {
+      return res.status(400).json({ error: 'Invalid email address' });
+    }
+
     poolData.name = String(roundName).trim();
     poolData.organiser = String(organiserName).trim();
+    if (organiserEmail) poolData.organiserEmail = String(organiserEmail).trim().toLowerCase();
     poolData.buyIn = buyIn ? Number(buyIn) : null;
     poolData.status = 'active';
 

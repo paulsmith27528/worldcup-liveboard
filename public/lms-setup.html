@@ -34,7 +34,7 @@
 <div class="wrap">
   <div class="eyebrow">☠ LAST MAN STANDING</div>
   <h1 id="pageTitle">Set Up Your Pool</h1>
-  <p class="sub" id="pageSub">Payment received — just a couple of details and you're ready to share.</p>
+  <p class="sub" id="pageSub">Free to set up — just a couple of details and you're ready to share.</p>
 
   <div class="card">
     <div id="loadingState" class="loading">Checking your link…</div>
@@ -45,6 +45,10 @@
 
       <label>YOUR NAME</label>
       <input type="text" id="organiserName" placeholder="Your name" required>
+
+      <label>YOUR EMAIL</label>
+      <input type="email" id="organiserEmail" placeholder="you@example.com" required>
+      <p class="hint">So we can reach you about your pool — e.g. if it grows past 10 players.</p>
 
       <label>BUY-IN PER PERSON (£)</label>
       <input type="number" id="buyIn" placeholder="e.g. 10" min="0" step="0.01">
@@ -106,12 +110,13 @@ document.getElementById('f').addEventListener('submit', function(e){
   e.preventDefault();
   var roundName = document.getElementById('roundName').value.trim();
   var organiserName = document.getElementById('organiserName').value.trim();
+  var organiserEmail = document.getElementById('organiserEmail').value.trim();
   var buyIn = document.getElementById('buyIn').value;
   var err = document.getElementById('err');
   err.style.display = 'none';
 
-  if(!roundName || !organiserName){
-    err.textContent = 'Please fill in the round name and your name.';
+  if(!roundName || !organiserName || !/^[^@]+@[^@]+\.[^@]+$/.test(organiserEmail)){
+    err.textContent = 'Please fill in the round name, your name, and a valid email address.';
     err.style.display = 'block';
     return;
   }
@@ -119,7 +124,7 @@ document.getElementById('f').addEventListener('submit', function(e){
   fetch('/api/lms-setup', {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ pool: poolId, k: k, roundName: roundName, organiserName: organiserName, buyIn: buyIn })
+    body: JSON.stringify({ pool: poolId, k: k, roundName: roundName, organiserName: organiserName, organiserEmail: organiserEmail, buyIn: buyIn })
   })
   .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
   .then(function(res){
