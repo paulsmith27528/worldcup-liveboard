@@ -44,6 +44,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       : [];
 
     const you = (t && typeof t === 'string') ? t : null;
+
+    // The Arena is a Pro-only feature — anyone viewing it must be a player
+    // in this pool who has personally paid for Pro, not just anyone with
+    // the link (and not the organiser view, which carries no player token).
+    const viewer = you ? players.find((p: any) => p.token === you) : null;
+    if (!viewer || !viewer.proPaid) {
+      return res.status(403).json({
+        error: 'pro_required',
+        upgradeUrl: you ? `/api/lms-pro-checkout?pool=${pool}&t=${you}` : null,
+        fallbackUrl: you ? `/lms-standings.html?pool=${pool}&t=${you}` : `/lms-standings.html?pool=${pool}`,
+      });
+    }
+
     const lastGradedGw: number = poolData.lastGradedGw || 0;
     const wipeoutWeeks: number[] = poolData.wipeoutWeeks || [];
     const aliveCount = players.filter((p: any) => p.alive).length;

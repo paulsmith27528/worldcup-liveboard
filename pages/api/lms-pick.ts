@@ -88,6 +88,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         currentPick: player.currentPick,
         currentPickGw: player.currentPickGw,
         eliminatedWeek: player.eliminatedWeek,
+        proPaid: player.proPaid || false,
       },
       gw: gwData.gw,
       fixtures: gwData.fixtures,

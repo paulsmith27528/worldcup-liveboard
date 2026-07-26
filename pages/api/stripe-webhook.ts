@@ -15,7 +15,7 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
 
-const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake" | "dashboard" | "bundle" | "pro" | "lms" }> = {
+const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake" | "dashboard" | "bundle" | "pro" | "lms" | "lms_pro" | "lms_organiser_fee" }> = {
   price_1TeMKT3g62IhPcY7PvqpncJF: { name: "World Cup Sweepstake", emoji: "&#127967;", type: "sweepstake" },
   price_1TodvS3g62IhPcY7Q9ePkimH: { name: "World Cup Sweepstake", emoji: "&#127967;", type: "sweepstake" },
   price_1TeMHw3g62IhPcY7CCZhO3T6: { name: "Live Dashboard", emoji: "&#128250;", type: "dashboard" },
@@ -25,6 +25,8 @@ const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake
   price_1TpoVC3g62IhPcY79JRQOJV7: { name: "Pro Bracket", emoji: "&#127942;", type: "pro" },
   price_1Trj6f3g62IhPcY7V2jgis7d: { name: "Last Man Standing", emoji: "&#128128;", type: "lms" },
   price_1TtoGI3g62IhPcY7hIKrcKiX: { name: "Last Man Standing", emoji: "&#128128;", type: "lms" },
+  price_1TxOB73g62IhPcY7W8hVpZUJ: { name: "Last Man Standing — Pro Upgrade", emoji: "&#11088;", type: "lms_pro" },
+  price_1TxODB3g62IhPcY7FUPj1XzO: { name: "Last Man Standing — Organiser Upgrade", emoji: "&#128101;", type: "lms_organiser_fee" },
 };
 
 const LMS_TTL = 60 * 60 * 24 * 300; // 300 days — covers a full PL season
@@ -374,6 +376,116 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json({ received: true });
   }
   // ── END LAST MAN STANDING FLOW ───────────────────────────────────────────
+
+  // ── LMS PRO UPGRADE FLOW (per-player, £1) ────────────────────────────────
+  if (product.type === "lms_pro") {
+    const poolId = session.metadata?.pool;
+    const playerToken = session.metadata?.playerToken;
+
+    if (!poolId || !playerToken) {
+      console.error("LMS Pro payment received but missing pool/playerToken in metadata:", session.id);
+      return res.status(200).json({ received: true });
+    }
+
+    const playersKey = `lms:pool:${poolId}:players`;
+    const playerRaw = await redis.hget<string>(playersKey, playerToken);
+    if (!playerRaw) {
+      console.error("LMS Pro payment received but player not found:", poolId, playerToken);
+      return res.status(200).json({ received: true });
+    }
+
+    const player = typeof playerRaw === "string" ? JSON.parse(playerRaw) : playerRaw as any;
+    player.proPaid = true;
+    await redis.hset(playersKey, { [playerToken]: JSON.stringify(player) });
+
+    try {
+      await sgMail.send({
+        from: { name: "Last Man Standing", email: "noreply@worldcupsweepstake-liveboard.com" },
+        to: email,
+        subject: `⭐ You're Pro — Last Man Standing`,
+        html: `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#020810;font-family:Arial,sans-serif">
+<div style="max-width:520px;margin:0 auto;padding:32px 16px">
+  <div style="background:linear-gradient(150deg,#051226,#020914);border:1px solid rgba(255,213,74,.3);border-radius:18px;padding:32px">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:52px;margin-bottom:12px">&#11088;</div>
+      <h1 style="color:#ffd54a;font-size:22px;font-weight:900;margin:0 0 6px">You're Pro!</h1>
+      <p style="color:#475569;font-size:13px;margin:0">Last Man Standing</p>
+    </div>
+    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">Thanks for upgrading — Pro features for this pool are unlocked on your account, starting with the Arena visual standings.</p>
+    <div style="text-align:center">
+      <a href="${BASE_URL}/lms-pick.html?pool=${poolId}&t=${playerToken}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">Back to Your Pool &rarr;</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>`,
+        trackingSettings: {
+          clickTracking: { enable: false, enableText: false },
+          openTracking: { enable: false },
+        },
+      });
+    } catch (mailErr: any) {
+      console.error("LMS Pro mail error:", mailErr.message);
+    }
+
+    return res.status(200).json({ received: true });
+  }
+  // ── END LMS PRO UPGRADE FLOW ──────────────────────────────────────────────
+
+  // ── LMS ORGANISER FEE FLOW (per-pool, £5, once past 10 players) ─────────
+  if (product.type === "lms_organiser_fee") {
+    const poolId = session.metadata?.pool;
+    if (!poolId) {
+      console.error("LMS organiser fee payment received but missing pool in metadata:", session.id);
+      return res.status(200).json({ received: true });
+    }
+
+    const poolRaw = await redis.get<string>(`lms:pool:${poolId}`);
+    if (!poolRaw) {
+      console.error("LMS organiser fee payment received but pool not found:", poolId);
+      return res.status(200).json({ received: true });
+    }
+
+    const poolData = typeof poolRaw === "string" ? JSON.parse(poolRaw) : poolRaw as any;
+    poolData.organiserFeePaid = true;
+    await redis.set(`lms:pool:${poolId}`, JSON.stringify(poolData));
+
+    try {
+      await sgMail.send({
+        from: { name: "Last Man Standing", email: "noreply@worldcupsweepstake-liveboard.com" },
+        to: email,
+        subject: `✅ You're upgraded — ${poolData.name || "your pool"} can keep growing`,
+        html: `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#020810;font-family:Arial,sans-serif">
+<div style="max-width:520px;margin:0 auto;padding:32px 16px">
+  <div style="background:linear-gradient(150deg,#051226,#020914);border:1px solid rgba(52,211,153,.3);border-radius:18px;padding:32px">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:52px;margin-bottom:12px">&#9989;</div>
+      <h1 style="color:#34d399;font-size:22px;font-weight:900;margin:0 0 6px">You're Upgraded!</h1>
+      <p style="color:#475569;font-size:13px;margin:0">${poolData.name || ""}</p>
+    </div>
+    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">Thanks — your pool can now accept as many players as it needs, no limit. Everyone who already joined is unaffected either way.</p>
+  </div>
+</div>
+</body>
+</html>`,
+        trackingSettings: {
+          clickTracking: { enable: false, enableText: false },
+          openTracking: { enable: false },
+        },
+      });
+    } catch (mailErr: any) {
+      console.error("LMS organiser fee mail error:", mailErr.message);
+    }
+
+    return res.status(200).json({ received: true });
+  }
+  // ── END LMS ORGANISER FEE FLOW ────────────────────────────────────────────
 
   // Existing flow: dashboard / sweepstake / bundle
   const dashToken = (product.type === "dashboard" || product.type === "bundle") ? generateToken() : null;

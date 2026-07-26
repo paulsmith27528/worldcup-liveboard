@@ -81,6 +81,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   }
 
+  // Free up to 10 players. The 11th is still free but triggers a heads-up to
+  // the organiser; the 12th+ is blocked until the organiser upgrades — but
+  // whoever's already in stays completely unaffected either way.
+  const existingCount = existing ? Object.keys(existing).length : 0;
+  if (existingCount >= 11 && !pool.organiserFeePaid) {
+    return res.status(403).json({ error: 'This pool is full for now — ask the organiser to upgrade before more players can join.' });
+  }
+
   const token = genToken();
   const player = {
     id: Date.now(),
@@ -96,6 +104,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     eliminatedWeek: null as number | null,
     hasLife: true,
     paid: false,
+    proPaid: false,
     lifeUsedWeek: null as number | null,
     joinedAt: new Date().toISOString(),
   };
@@ -103,6 +112,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Field is keyed by token so a pick submission can look itself up and update in place
   await redis.hset(playersKey, { [token]: JSON.stringify(player) });
   await redis.expire(playersKey, LMS_TTL);
+
+  // The 11th player is still free, but this is the moment to give the
+  // organiser a heads-up before the 12th+ actually gets blocked — only
+  // ever sent once per pool.
+  if (existingCount === 10 && !pool.organiserFeeNotified && pool.organiserEmail) {
+    pool.organiserFeeNotified = true;
+    await redis.set(`lms:pool:${poolId}`, JSON.stringify(pool));
+    try {
+      await sgMail.send({
+        to: pool.organiserEmail,
+        from: { email: FROM_EMAIL, name: FROM_NAME },
+        subject: `👀 Your pool just hit 11 players — ${pool.name}`,
+        html: `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#020810;font-family:Arial,sans-serif">
+<div style="max-width:520px;margin:0 auto;padding:32px 16px">
+  <div style="background:linear-gradient(150deg,#051226,#020914);border:1px solid rgba(255,213,74,.3);border-radius:18px;padding:32px">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:52px;margin-bottom:12px">&#128064;</div>
+      <h1 style="color:#ffd54a;font-size:22px;font-weight:900;margin:0 0 6px">You're at 11 players!</h1>
+      <p style="color:#475569;font-size:13px;margin:0">${pool.name}</p>
+    </div>
+    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">Your pool is growing nicely. If it goes any further than 11, you'll need to upgrade for a one-off £5 to keep accepting new players — everyone already in stays exactly as they are either way, this only affects new joins.</p>
+    <div style="text-align:center">
+      <a href="${BASE_URL}/lms-organiser.html?pool=${poolId}&k=${pool.orgToken}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">Go To Your Organiser Hub &rarr;</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>`,
+        trackingSettings: {
+          clickTracking: { enable: false, enableText: false },
+          openTracking: { enable: false },
+        },
+      });
+    } catch (mailErr: any) {
+      console.error('LMS 11-player notification mail error:', mailErr.message);
+    }
+  }
 
   const pickUrl = `${BASE_URL}/lms-pick.html?pool=${poolId}&t=${token}`;
 
