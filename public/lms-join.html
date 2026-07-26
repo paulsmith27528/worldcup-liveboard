@@ -45,7 +45,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="eyebrow">☠ LAST MAN STANDING</div>
+  <div class="eyebrow" id="eyebrow">☠ LAST MAN STANDING</div>
   <h1 id="poolTitle">Join the Pool</h1>
   <p class="sub" id="poolSub">Loading pool details…</p>
 
@@ -119,6 +119,7 @@ if(!poolId){
         return;
       }
       document.getElementById('poolTitle').textContent = d.name;
+      document.getElementById('eyebrow').textContent = '☠ LAST MAN STANDING · ' + (d.leagueName || 'Premier League').toUpperCase();
       var subText = 'Organised by ' + d.organiser + ' — join below to get your pick link.';
       if(d.buyIn){ subText = '£' + d.buyIn + ' buy-in per person · ' + subText; }
       document.getElementById('poolSub').textContent = subText;

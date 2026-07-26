@@ -32,7 +32,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="eyebrow">☠ LAST MAN STANDING</div>
+  <div class="eyebrow" id="eyebrow">☠ LAST MAN STANDING</div>
   <h1 id="pageTitle">Set Up Your Pool</h1>
   <p class="sub" id="pageSub">Free to set up — just a couple of details and you're ready to share.</p>
 
@@ -95,6 +95,7 @@ if(!poolId || !k){
         return;
       }
       document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('eyebrow').textContent = '☠ LAST MAN STANDING · ' + (res.body.leagueName || 'Premier League').toUpperCase();
       if(res.body.status === 'active'){
         showSuccess(res.body.name);
       } else {

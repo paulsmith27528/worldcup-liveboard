@@ -14,6 +14,17 @@ const FROM_EMAIL = 'noreply@worldcupsweepstake-liveboard.com';
 const FROM_NAME = 'Last Man Standing';
 const LMS_TTL = 60 * 60 * 24 * 300; // 300 days — covers a full PL season
 
+// Same league names used everywhere else in LMS — this file never talks to
+// API-Football directly, so it only needs the display name, not the id/season.
+const LEAGUE_NAMES: Record<string, string> = {
+  PL: 'Premier League',
+  CHAMPIONSHIP: 'Championship',
+  UCL: 'Champions League',
+};
+function leagueNameFor(league: string | null | undefined) {
+  return LEAGUE_NAMES[league || 'PL'] || LEAGUE_NAMES.PL;
+}
+
 function genToken(): string {
   return Math.random().toString(36).substring(2, 12);
 }
@@ -28,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const locked = pool.status === 'finished'
       || pool.status === 'pending_setup'
       || (pool.startGwDeadline && Date.now() >= new Date(pool.startGwDeadline).getTime());
-    return res.status(200).json({ name: pool.name, organiser: pool.organiser, status: pool.status, buyIn: pool.buyIn, locked, winner: pool.winner || null });
+    return res.status(200).json({ name: pool.name, organiser: pool.organiser, status: pool.status, buyIn: pool.buyIn, locked, winner: pool.winner || null, leagueName: leagueNameFor(pool.league) });
   }
 
   if (req.method !== 'POST') return res.status(405).end();

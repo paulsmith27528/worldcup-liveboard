@@ -10,8 +10,24 @@ const redis = new Redis({
 sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
 const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
-const PL_LEAGUE = 39;
-const PL_SEASON = 2026;
+
+// Every LMS product (Premier League, Championship, Champions League, ...) is
+// the same game running against a different competition. roundPrefix matters
+// because we construct round names ourselves here (e.g. "Regular Season - 5")
+// to ask API-Football for a specific gameweek's results — cup competitions
+// like the Champions League name rounds differently ("League Stage - 5")
+// during their league phase, and switch to named knockout rounds
+// ("Quarter-finals") after that, which this doesn't attempt to handle.
+// Defaults to PL for pools created before this existed.
+const LEAGUE_CONFIG: Record<string, { id: number; season: number; name: string; roundPrefix: string }> = {
+  PL: { id: 39, season: 2026, name: 'Premier League', roundPrefix: 'Regular Season' },
+  CHAMPIONSHIP: { id: 40, season: 2026, name: 'Championship', roundPrefix: 'Regular Season' },
+  UCL: { id: 2, season: 2026, name: 'Champions League', roundPrefix: 'League Stage' },
+};
+function leagueConfigFor(league: string | null | undefined) {
+  return LEAGUE_CONFIG[league || 'PL'] || LEAGUE_CONFIG.PL;
+}
+
 const BASE_URL = process.env.BASE_URL!;
 const FROM_EMAIL = 'noreply@worldcupsweepstake-liveboard.com';
 const FROM_NAME = 'Last Man Standing';
@@ -33,9 +49,9 @@ interface Player {
 }
 
 // Find the highest gameweek number where every fixture has finished
-async function findLatestFinishedGw(): Promise<number> {
+async function findLatestFinishedGw(cfg: { id: number; season: number }): Promise<number> {
   const hdrs = { "x-apisports-key": API_KEY };
-  const res = await fetch(`https://v3.football.api-sports.io/fixtures?league=${PL_LEAGUE}&season=${PL_SEASON}`, { headers: hdrs });
+  const res = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}`, { headers: hdrs });
   const data = await res.json();
   const fixtures = data.response || [];
 
@@ -59,10 +75,10 @@ async function findLatestFinishedGw(): Promise<number> {
 }
 
 // Get win/draw/loss result per team name for a specific gameweek
-async function getGwResults(gw: number): Promise<Record<string, 'W' | 'D' | 'L'>> {
+async function getGwResults(gw: number, cfg: { id: number; season: number; roundPrefix: string }): Promise<Record<string, 'W' | 'D' | 'L'>> {
   const hdrs = { "x-apisports-key": API_KEY };
-  const round = `Regular Season - ${gw}`;
-  const res = await fetch(`https://v3.football.api-sports.io/fixtures?league=${PL_LEAGUE}&season=${PL_SEASON}&round=${encodeURIComponent(round)}`, { headers: hdrs });
+  const round = `${cfg.roundPrefix} - ${gw}`;
+  const res = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}&round=${encodeURIComponent(round)}`, { headers: hdrs });
   const data = await res.json();
 
   const results: Record<string, 'W' | 'D' | 'L'> = {};
@@ -286,13 +302,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!API_KEY) return res.status(500).json({ error: 'API_FOOTBALL_KEY not configured' });
 
   try {
-    const latestFinishedGw = await findLatestFinishedGw();
-    if (latestFinishedGw === 0) {
-      return res.status(200).json({ message: 'No finished gameweeks yet', graded: [] });
-    }
-
     const poolIds = await redis.smembers('lms:allpools');
     const gradedLog: any[] = [];
+
+    // Different leagues finish their gameweeks on different schedules, so this
+    // can no longer be found once globally — cached per league code so pools
+    // sharing a league (e.g. two separate Premier League pools) don't each
+    // trigger their own identical lookup.
+    const latestFinishedByLeague: Record<string, number> = {};
 
     for (const poolId of poolIds) {
       const poolRaw = await redis.get<string>(`lms:pool:${poolId}`);
@@ -300,18 +317,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const pool = typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any;
       if (pool.status !== 'active') continue;
 
+      const league = pool.league || 'PL';
+      const cfg = leagueConfigFor(league);
+      if (!(league in latestFinishedByLeague)) {
+        latestFinishedByLeague[league] = await findLatestFinishedGw(cfg);
+      }
+      const latestFinishedGw = latestFinishedByLeague[league];
+
       let lastGraded = pool.lastGradedGw ?? 0;
 
       while (lastGraded < latestFinishedGw) {
         const gwToGrade = lastGraded + 1;
-        const results = await getGwResults(gwToGrade);
+        const results = await getGwResults(gwToGrade, cfg);
         await gradePool(poolId, gwToGrade, results);
-        gradedLog.push({ poolId, gw: gwToGrade });
+        gradedLog.push({ poolId, league, gw: gwToGrade });
         lastGraded = gwToGrade;
       }
     }
 
-    return res.status(200).json({ latestFinishedGw, graded: gradedLog });
+    return res.status(200).json({ latestFinishedByLeague, graded: gradedLog });
   } catch (err: any) {
     console.error('Grading cron error:', err.message);
     return res.status(500).json({ error: 'Grading failed', detail: err.message });

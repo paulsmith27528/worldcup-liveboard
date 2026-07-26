@@ -48,7 +48,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="eyebrow">☠ LAST MAN STANDING</div>
+  <div class="eyebrow" id="eyebrow">☠ LAST MAN STANDING</div>
   <h1 id="poolTitle">Loading…</h1>
   <p class="sub" id="subTitle"></p>
 
@@ -111,6 +111,7 @@ function load(){
 
 function render(d){
   document.getElementById('poolTitle').textContent = d.poolName;
+  document.getElementById('eyebrow').textContent = '☠ LAST MAN STANDING · ' + (d.leagueName || 'Premier League').toUpperCase();
   currentGwData = d;
 
   var proBanner = document.getElementById('proBanner');

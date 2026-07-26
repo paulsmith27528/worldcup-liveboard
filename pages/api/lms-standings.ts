@@ -6,6 +6,17 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
 
+// Same league names used everywhere else in LMS — this file never talks to
+// API-Football directly, so it only needs the display name, not the id/season.
+const LEAGUE_NAMES: Record<string, string> = {
+  PL: 'Premier League',
+  CHAMPIONSHIP: 'Championship',
+  UCL: 'Champions League',
+};
+function leagueNameFor(league: string | null | undefined) {
+  return LEAGUE_NAMES[league || 'PL'] || LEAGUE_NAMES.PL;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') return res.status(405).end();
 
@@ -26,6 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   return res.status(200).json({
     pool: {
       name: poolData.name,
+      leagueName: leagueNameFor(poolData.league),
       organiser: poolData.organiser,
       lastGradedGw: poolData.lastGradedGw || 0,
       wipeoutWeeks: poolData.wipeoutWeeks || [],

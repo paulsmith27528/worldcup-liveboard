@@ -44,7 +44,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="eyebrow">☠ LAST MAN STANDING · ORGANISER HUB</div>
+  <div class="eyebrow" id="eyebrow">☠ LAST MAN STANDING · ORGANISER HUB</div>
   <h1 id="poolName">Loading…</h1>
   <p class="sub" id="poolSub"></p>
 
@@ -120,6 +120,7 @@ if(!poolId || !k){
         return;
       }
       document.getElementById('poolName').textContent = d.pool.name;
+      document.getElementById('eyebrow').textContent = '☠ LAST MAN STANDING · ' + (d.pool.leagueName || 'Premier League').toUpperCase() + ' · ORGANISER HUB';
       var subText = 'Organised by ' + d.pool.organiser;
       if(d.pool.buyIn){ subText += ' · £' + d.pool.buyIn + ' buy-in'; }
       document.getElementById('poolSub').textContent = subText;
