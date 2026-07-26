@@ -18,7 +18,7 @@ const BASE_URL = process.env.BASE_URL!;
 const LMS_PRO_PRICE_ID: Record<string, string> = {
   PL: 'price_1TxOB73g62IhPcY7W8hVpZUJ',
   CHAMPIONSHIP: 'price_1TxZGA3g62IhPcY7OV2OZxSp',
-  UCL: 'price_REPLACE_WITH_UCL_PRO_PRICE_ID',
+  UCL: 'price_1TxZK13g62IhPcY7Va4dW1xd',
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
