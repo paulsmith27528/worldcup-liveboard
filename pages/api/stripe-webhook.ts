@@ -56,7 +56,7 @@ function buildLmsSetupEmailHtml(setupUrl: string): string {
 </html>`;
 }
 
-const BASE_URL = "https://www.worldcupliveboard.com";
+const BASE_URL = process.env.BASE_URL!;
 const TTL = 60 * 60 * 24 * 30;
 const PRO_TTL = 60 * 60 * 24 * 120; // 120 days — lasts the tournament
 

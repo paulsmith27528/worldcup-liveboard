@@ -9,7 +9,7 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
 
-const BASE_URL = 'https://www.worldcupliveboard.com';
+const BASE_URL = process.env.BASE_URL!;
 const FROM_EMAIL = 'noreply@worldcupsweepstake-liveboard.com';
 const FROM_NAME = 'WC2026 Sweepstake';
 
