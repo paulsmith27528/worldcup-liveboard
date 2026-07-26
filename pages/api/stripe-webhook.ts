@@ -34,7 +34,7 @@ const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake
   price_1TxZGA3g62IhPcY7OV2OZxSp: { name: "Last Man Standing (Championship) — Pro Upgrade", emoji: "&#11088;", type: "lms_pro" },
   price_1TxZHh3g62IhPcY7CKUJMBDC: { name: "Last Man Standing (Championship) — Organiser Upgrade", emoji: "&#128101;", type: "lms_organiser_fee" },
   price_1TxZK13g62IhPcY7Va4dW1xd: { name: "Last Man Standing (Champions League) — Pro Upgrade", emoji: "&#11088;", type: "lms_pro" },
-  price_REPLACE_WITH_UCL_ORGANISER_FEE_PRICE_ID: { name: "Last Man Standing (Champions League) — Organiser Upgrade", emoji: "&#128101;", type: "lms_organiser_fee" },
+  price_1TxZLB3g62IhPcY7VAvHsXrA: { name: "Last Man Standing (Champions League) — Organiser Upgrade", emoji: "&#128101;", type: "lms_organiser_fee" },
 };
 
 const LMS_TTL = 60 * 60 * 24 * 300; // 300 days — covers a full PL season
