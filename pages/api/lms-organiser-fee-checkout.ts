@@ -10,9 +10,16 @@ const redis = new Redis({
 
 const BASE_URL = process.env.BASE_URL!;
 
-// TODO: replace with the real Stripe price ID once created (one-time, £5) —
-// see PRICE_MAP in stripe-webhook.ts, which must use the exact same ID.
-const LMS_ORGANISER_FEE_PRICE_ID = 'price_1TxODB3g62IhPcY7FUPj1XzO';
+// Same £5 fee, but "charged independently" per competition — a separate
+// Stripe price per league, even though the amount is identical, so each
+// product's revenue is reported separately in Stripe.
+// TODO: replace the two placeholders once created (one-time, £5 each) — must
+// match PRICE_MAP in stripe-webhook.ts exactly.
+const LMS_ORGANISER_FEE_PRICE_ID: Record<string, string> = {
+  PL: 'price_1TxODB3g62IhPcY7FUPj1XzO',
+  CHAMPIONSHIP: 'price_REPLACE_WITH_CHAMPIONSHIP_ORGANISER_FEE_PRICE_ID',
+  UCL: 'price_REPLACE_WITH_UCL_ORGANISER_FEE_PRICE_ID',
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') return res.status(405).end();
@@ -35,10 +42,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.redirect(303, `${BASE_URL}/lms-organiser.html?pool=${pool}&k=${k}`);
   }
 
+  const priceId = LMS_ORGANISER_FEE_PRICE_ID[poolData.league || 'PL'] || LMS_ORGANISER_FEE_PRICE_ID.PL;
+
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      line_items: [{ price: LMS_ORGANISER_FEE_PRICE_ID, quantity: 1 }],
+      line_items: [{ price: priceId, quantity: 1 }],
       customer_email: poolData.organiserEmail || undefined,
       success_url: `${BASE_URL}/lms-organiser.html?pool=${pool}&k=${k}`,
       cancel_url: `${BASE_URL}/lms-organiser.html?pool=${pool}&k=${k}`,

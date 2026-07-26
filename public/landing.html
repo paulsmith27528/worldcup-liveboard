@@ -295,7 +295,41 @@ footer a:hover{color:#22d3ee}
         <div class="pf"><span class="pf-check">✓</span> Live "who's still alive" leaderboard</div>
         <div class="pf"><span class="pf-check">✓</span> Winner takes all</div>
       </div>
-      <button onclick="startFreeLmsPool(this)" class="btn-product-gold" style="background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;width:100%;cursor:pointer;border:none;font-family:Arial,sans-serif">☠️ Start My Pool — FREE</button>
+      <button onclick="startFreeLmsPool(this, 'PL')" class="btn-product-gold" style="background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;width:100%;cursor:pointer;border:none;font-family:Arial,sans-serif">☠️ Start My Pool — FREE</button>
+    </div>
+    <div class="product-card" style="background:linear-gradient(150deg,rgba(13,148,136,.12),rgba(5,18,38,.97));border:1px solid rgba(13,148,136,.4);position:relative;overflow:hidden">
+      <div class="product-icon float" style="font-size:52px;margin-bottom:14px;filter:drop-shadow(0 0 12px rgba(45,212,191,.5))">☠️</div>
+      <div class="product-tag" style="background:rgba(13,148,136,.15);color:#2dd4bf;border:1px solid rgba(13,148,136,.35)">Championship</div>
+      <div class="product-title">Last Man Standing</div>
+      <div class="product-desc">One wrong pick and you're out. Pick a Championship team to win each gameweek — but you can only pick each team once all season. Last one standing takes it all.</div>
+      <div class="product-price" style="color:#2dd4bf">FREE</div>
+      <div class="product-price-note">Free to create · £5 only if your pool grows past 10 players</div>
+      <div class="product-features">
+        <div class="pf"><span class="pf-check">✓</span> Self-registration via join link — no chasing</div>
+        <div class="pf"><span class="pf-check">✓</span> One pick per gameweek — locks automatically at kickoff</div>
+        <div class="pf"><span class="pf-check">✓</span> Each team can only be picked once all season</div>
+        <div class="pf"><span class="pf-check">✓</span> Automatic grading — no manual admin</div>
+        <div class="pf"><span class="pf-check">✓</span> Live "who's still alive" leaderboard</div>
+        <div class="pf"><span class="pf-check">✓</span> Winner takes all</div>
+      </div>
+      <button onclick="startFreeLmsPool(this, 'CHAMPIONSHIP')" class="btn-product-gold" style="background:linear-gradient(135deg,#0d9488,#115e59);color:#fff;width:100%;cursor:pointer;border:none;font-family:Arial,sans-serif">☠️ Start My Pool — FREE</button>
+    </div>
+    <div class="product-card" style="background:linear-gradient(150deg,rgba(71,85,105,.16),rgba(5,18,38,.97));border:1px solid rgba(148,163,184,.4);position:relative;overflow:hidden">
+      <div class="product-icon float" style="font-size:52px;margin-bottom:14px;filter:drop-shadow(0 0 12px rgba(148,163,184,.5))">☠️</div>
+      <div class="product-tag" style="background:rgba(71,85,105,.2);color:#cbd5e1;border:1px solid rgba(148,163,184,.35)">Champions League</div>
+      <div class="product-title">Last Man Standing</div>
+      <div class="product-desc">One wrong pick and you're out. Pick a Champions League team to win each round — but you can only pick each team once all season. Last one standing takes it all.</div>
+      <div class="product-price" style="color:#cbd5e1">FREE</div>
+      <div class="product-price-note">Free to create · £5 only if your pool grows past 10 players</div>
+      <div class="product-features">
+        <div class="pf"><span class="pf-check">✓</span> Self-registration via join link — no chasing</div>
+        <div class="pf"><span class="pf-check">✓</span> One pick per round — locks automatically at kickoff</div>
+        <div class="pf"><span class="pf-check">✓</span> Each team can only be picked once all season</div>
+        <div class="pf"><span class="pf-check">✓</span> Automatic grading — no manual admin</div>
+        <div class="pf"><span class="pf-check">✓</span> Live "who's still alive" leaderboard</div>
+        <div class="pf"><span class="pf-check">✓</span> Winner takes all</div>
+      </div>
+      <button onclick="startFreeLmsPool(this, 'UCL')" class="btn-product-gold" style="background:linear-gradient(135deg,#475569,#1e293b);color:#fff;width:100%;cursor:pointer;border:none;font-family:Arial,sans-serif">☠️ Start My Pool — FREE</button>
     </div>
     <div class="product-card" style="background:linear-gradient(150deg,rgba(99,0,199,.12),rgba(5,18,38,.97));border:1px solid rgba(99,0,199,.35);position:relative;overflow:hidden">
       <div class="bundle-badge" style="background:linear-gradient(135deg,#6300c7,#38006b)">COMING SOON</div>
@@ -675,11 +709,15 @@ document.querySelectorAll('.feat,.hiw-step,.product-card,.stat').forEach(functio
 </div>
 
 <script>
-function startFreeLmsPool(btn){
+function startFreeLmsPool(btn, league){
   btn.disabled = true;
   var original = btn.textContent;
   btn.textContent = 'Setting up…';
-  fetch('/api/lms-create', { method: 'POST' })
+  fetch('/api/lms-create', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ league: league || 'PL' })
+  })
     .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
     .then(function(res){
       if(res.status !== 200 || !res.body.setupUrl){
