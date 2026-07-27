@@ -91,6 +91,12 @@
       <a id="ladderLink" href="#" style="flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;background:rgba(255,213,74,.08);border:1px solid rgba(255,213,74,.25);color:#ffd54a;font-weight:800;font-size:12px">&#9760; Survival Ladder</a>
       <a id="tableLink" href="#" style="flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.25);color:#22d3ee;font-weight:800;font-size:12px">&#9917; Live Table</a>
     </div>
+
+    <div class="card" id="deleteCard" style="display:none;text-align:center;border-color:rgba(148,163,184,.2)">
+      <h2>DANGER ZONE</h2>
+      <p style="color:#5b6b85;font-size:11.5px;margin:0 0 12px" id="deleteNote"></p>
+      <button id="deleteBtn" onclick="deletePool()" style="width:100%;padding:12px;border-radius:10px;background:transparent;border:1px solid rgba(239,68,68,.4);color:#ef4444;font-weight:800;font-size:12px;cursor:pointer">Delete This Pool</button>
+    </div>
   </div>
 
   <div class="loading" id="loadingMsg">Checking your link…</div>
@@ -157,6 +163,13 @@ if(!poolId || !k){
         });
       }
 
+      if(d.players.length === 0 || d.pool.status === 'finished'){
+        document.getElementById('deleteCard').style.display = 'block';
+        document.getElementById('deleteNote').textContent = d.pool.status === 'finished'
+          ? 'This pool has finished — you can delete it to clean up.'
+          : 'No one has joined yet, so this is safe to delete.';
+      }
+
       document.getElementById('loadingMsg').style.display = 'none';
       document.getElementById('content').style.display = 'block';
     })
@@ -217,6 +230,33 @@ function togglePaid(btn){
   })
   .catch(function(){
     btn.disabled = false;
+    alert('Something went wrong. Please try again.');
+  });
+}
+
+function deletePool(){
+  if(!confirm('Are you sure you want to delete this pool? This can\'t be undone.')) return;
+  var btn = document.getElementById('deleteBtn');
+  btn.disabled = true;
+  btn.textContent = 'Deleting…';
+  fetch('/api/lms-delete-pool', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ pool: poolId, k: k })
+  })
+  .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
+  .then(function(res){
+    if(res.status !== 200){
+      btn.disabled = false;
+      btn.textContent = 'Delete This Pool';
+      alert(res.body.error || 'Something went wrong deleting this pool.');
+      return;
+    }
+    window.location.href = '/landing.html';
+  })
+  .catch(function(){
+    btn.disabled = false;
+    btn.textContent = 'Delete This Pool';
     alert('Something went wrong. Please try again.');
   });
 }
