@@ -7,8 +7,17 @@ const redis = new Redis({
 });
 
 const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
-const PL_LEAGUE = 39;
-const PL_SEASON = 2026;
+
+// Same league config as every other LMS endpoint — defaults to PL for pools
+// created before this existed, since they were always Premier League pools.
+const LEAGUE_CONFIG: Record<string, { id: number; season: number; name: string }> = {
+  PL: { id: 39, season: 2026, name: 'Premier League' },
+  CHAMPIONSHIP: { id: 40, season: 2026, name: 'Championship' },
+  UCL: { id: 2, season: 2026, name: 'Champions League' },
+};
+function leagueConfigFor(league: string | null | undefined) {
+  return LEAGUE_CONFIG[league || 'PL'] || LEAGUE_CONFIG.PL;
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') return res.status(405).end();
@@ -28,8 +37,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const alivePlayers = players.filter((p: any) => p.alive);
 
   try {
+    const cfg = leagueConfigFor(poolData.league);
     const hdrs = { "x-apisports-key": API_KEY };
-    const standingsRes = await fetch(`https://v3.football.api-sports.io/standings?league=${PL_LEAGUE}&season=${PL_SEASON}`, { headers: hdrs });
+    const standingsRes = await fetch(`https://v3.football.api-sports.io/standings?league=${cfg.id}&season=${cfg.season}`, { headers: hdrs });
     const standingsData = await standingsRes.json();
     const table = standingsData.response?.[0]?.league?.standings?.[0] || [];
 

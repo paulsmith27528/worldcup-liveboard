@@ -25,8 +25,16 @@ const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake
   price_1TpoVC3g62IhPcY79JRQOJV7: { name: "Pro Bracket", emoji: "&#127942;", type: "pro" },
   price_1Trj6f3g62IhPcY7V2jgis7d: { name: "Last Man Standing", emoji: "&#128128;", type: "lms" },
   price_1TtoGI3g62IhPcY7hIKrcKiX: { name: "Last Man Standing", emoji: "&#128128;", type: "lms" },
-  price_1TxOB73g62IhPcY7W8hVpZUJ: { name: "Last Man Standing — Pro Upgrade", emoji: "&#11088;", type: "lms_pro" },
-  price_1TxODB3g62IhPcY7FUPj1XzO: { name: "Last Man Standing — Organiser Upgrade", emoji: "&#128101;", type: "lms_organiser_fee" },
+  price_1TxOB73g62IhPcY7W8hVpZUJ: { name: "Last Man Standing (Premier League) — Pro Upgrade", emoji: "&#11088;", type: "lms_pro" },
+  price_1TxODB3g62IhPcY7FUPj1XzO: { name: "Last Man Standing (Premier League) — Organiser Upgrade", emoji: "&#128101;", type: "lms_organiser_fee" },
+  // TODO: replace these four once created in Stripe — must match the price
+  // IDs in lms-pro-checkout.ts / lms-organiser-fee-checkout.ts exactly.
+  // Same £1/£5 amounts as the Premier League ones, just separate Stripe
+  // prices so each competition's revenue is reported independently.
+  price_1TxZGA3g62IhPcY7OV2OZxSp: { name: "Last Man Standing (Championship) — Pro Upgrade", emoji: "&#11088;", type: "lms_pro" },
+  price_1TxZHh3g62IhPcY7CKUJMBDC: { name: "Last Man Standing (Championship) — Organiser Upgrade", emoji: "&#128101;", type: "lms_organiser_fee" },
+  price_1TxZK13g62IhPcY7Va4dW1xd: { name: "Last Man Standing (Champions League) — Pro Upgrade", emoji: "&#11088;", type: "lms_pro" },
+  price_1TxZLB3g62IhPcY7VAvHsXrA: { name: "Last Man Standing (Champions League) — Organiser Upgrade", emoji: "&#128101;", type: "lms_organiser_fee" },
 };
 
 const LMS_TTL = 60 * 60 * 24 * 300; // 300 days — covers a full PL season

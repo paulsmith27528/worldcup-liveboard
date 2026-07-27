@@ -13,16 +13,25 @@ const FROM_EMAIL = 'noreply@worldcupsweepstake-liveboard.com';
 const FROM_NAME = 'Last Man Standing';
 
 const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
-const PL_LEAGUE = 39;
-const PL_SEASON = 2026;
+
+// Same league config as every other LMS endpoint — defaults to PL for pools
+// created before this existed, since they were always Premier League pools.
+const LEAGUE_CONFIG: Record<string, { id: number; season: number; name: string }> = {
+  PL: { id: 39, season: 2026, name: 'Premier League' },
+  CHAMPIONSHIP: { id: 40, season: 2026, name: 'Championship' },
+  UCL: { id: 2, season: 2026, name: 'Champions League' },
+};
+function leagueConfigFor(league: string | null | undefined) {
+  return LEAGUE_CONFIG[league || 'PL'] || LEAGUE_CONFIG.PL;
+}
 
 // Whatever gameweek is next-upcoming right now becomes this pool's "gameweek 1" -
 // important for pools started mid-season, not just at the true start of the season
-async function getUpcomingGw(): Promise<{ gw: number | null; deadline: string | null }> {
+async function getUpcomingGw(cfg: { id: number; season: number }): Promise<{ gw: number | null; deadline: string | null }> {
   if (!API_KEY) return { gw: null, deadline: null };
   try {
     const hdrs = { "x-apisports-key": API_KEY };
-    const res = await fetch(`https://v3.football.api-sports.io/fixtures?league=${PL_LEAGUE}&season=${PL_SEASON}&status=NS`, { headers: hdrs });
+    const res = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}&status=NS`, { headers: hdrs });
     const data = await res.json();
     const upcoming = (data.response || []).sort((a: any, b: any) =>
       new Date(a.fixture.date).getTime() - new Date(b.fixture.date).getTime()
@@ -59,6 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       name: poolData.name,
       organiser: poolData.organiser,
       buyIn: poolData.buyIn,
+      leagueName: leagueConfigFor(poolData.league).name,
     });
   }
 
@@ -95,7 +105,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Lock in this pool's own "gameweek 1" - whatever's next-upcoming right now,
     // not necessarily the season's actual gameweek 1 (pools can start mid-season)
-    const upcoming = await getUpcomingGw();
+    const upcoming = await getUpcomingGw(leagueConfigFor(poolData.league));
     poolData.startGw = upcoming.gw;
     poolData.startGwDeadline = upcoming.deadline;
 

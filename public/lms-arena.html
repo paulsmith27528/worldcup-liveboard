@@ -262,7 +262,7 @@ function hiddenAvatarsHtml(count){
 
 function render(justUnlocked){
   var d = arenaData;
-  document.getElementById('poolSub').textContent = (d.pool.name || 'Premier League') + ' · LMS';
+  document.getElementById('poolSub').textContent = (d.pool.name || 'Last Man Standing') + ' · ' + (d.pool.leagueName || 'Premier League') + ' LMS';
   document.getElementById('heroCount').textContent = d.aliveCount;
 
   var subParts = ['of <b>' + d.startersCount + '</b> started'];

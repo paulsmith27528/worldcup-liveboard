@@ -7,16 +7,25 @@ const redis = new Redis({
 });
 
 const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
-const PL_LEAGUE = 39;
-const PL_SEASON = 2026;
+
+// Same league config as every other LMS endpoint — defaults to PL for pools
+// created before this existed, since they were always Premier League pools.
+const LEAGUE_CONFIG: Record<string, { id: number; season: number; name: string }> = {
+  PL: { id: 39, season: 2026, name: 'Premier League' },
+  CHAMPIONSHIP: { id: 40, season: 2026, name: 'Championship' },
+  UCL: { id: 2, season: 2026, name: 'Champions League' },
+};
+function leagueConfigFor(league: string | null | undefined) {
+  return LEAGUE_CONFIG[league || 'PL'] || LEAGUE_CONFIG.PL;
+}
 
 // Same "next round, first kickoff" lookup used by the pick screen — needed here
 // so this endpoint can hide the in-progress round's picks until that deadline passes,
 // same as everywhere else picks are locked.
-async function getUpcomingRound(): Promise<{ gw: number | null; deadline: string | null }> {
+async function getUpcomingRound(cfg: { id: number; season: number }): Promise<{ gw: number | null; deadline: string | null }> {
   if (!API_KEY) return { gw: null, deadline: null };
   const hdrs = { "x-apisports-key": API_KEY };
-  const upcomingRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=${PL_LEAGUE}&season=${PL_SEASON}&status=NS`, { headers: hdrs });
+  const upcomingRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}&status=NS`, { headers: hdrs });
   const upcomingData = await upcomingRes.json();
   const upcoming = (upcomingData.response || []).sort((a: any, b: any) =>
     new Date(a.fixture.date).getTime() - new Date(b.fixture.date).getTime()
@@ -74,7 +83,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Picks for the round still in progress must stay hidden here too, same as
     // everywhere else — an organiser link is not a way to see picks early.
-    const upcoming = poolData.status === 'active' ? await getUpcomingRound() : { gw: null, deadline: null };
+    const upcoming = poolData.status === 'active' ? await getUpcomingRound(leagueConfigFor(poolData.league)) : { gw: null, deadline: null };
     const deadlinePassed = upcoming.deadline ? new Date() >= new Date(upcoming.deadline) : true;
     const players = rawPlayers.map((p: any) => {
       if (!deadlinePassed && p.currentPickGw === upcoming.gw) {
@@ -88,6 +97,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       pool: {
         id: poolData.id,
         name: poolData.name,
+        leagueName: leagueConfigFor(poolData.league).name,
         organiser: poolData.organiser,
         buyIn: poolData.buyIn,
         currentGameweek: poolData.currentGameweek,

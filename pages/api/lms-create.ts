@@ -9,6 +9,10 @@ const redis = new Redis({
 
 const LMS_TTL = 60 * 60 * 24 * 300; // 300 days — covers a full PL season
 
+// Which competitions this button can create a pool for — each is its own
+// separate product on the landing page, run and charged independently.
+const VALID_LEAGUES = ['PL', 'CHAMPIONSHIP', 'UCL'];
+
 function genPoolId(): string {
   return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
@@ -22,12 +26,16 @@ function generateOrgToken(): string {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).end();
 
+  const requestedLeague = typeof req.body?.league === 'string' ? req.body.league.toUpperCase() : 'PL';
+  const league = VALID_LEAGUES.includes(requestedLeague) ? requestedLeague : 'PL';
+
   const poolId = genPoolId();
   const orgToken = generateOrgToken();
 
   try {
     await redis.set(`lms:pool:${poolId}`, JSON.stringify({
       id: poolId,
+      league,
       name: null,
       organiser: null,
       organiserEmail: null,

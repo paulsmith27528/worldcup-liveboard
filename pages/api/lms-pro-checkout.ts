@@ -10,9 +10,16 @@ const redis = new Redis({
 
 const BASE_URL = process.env.BASE_URL!;
 
-// TODO: replace with the real Stripe price ID once created (one-time, £1) —
-// see PRICE_MAP in stripe-webhook.ts, which must use the exact same ID.
-const LMS_PRO_PRICE_ID = 'price_1TxOB73g62IhPcY7W8hVpZUJ';
+// Same £1 upgrade, but "charged independently" per competition — a separate
+// Stripe price per league, even though the amount is identical, so each
+// product's revenue is reported separately in Stripe.
+// TODO: replace the two placeholders once created (one-time, £1 each) — must
+// match PRICE_MAP in stripe-webhook.ts exactly.
+const LMS_PRO_PRICE_ID: Record<string, string> = {
+  PL: 'price_1TxOB73g62IhPcY7W8hVpZUJ',
+  CHAMPIONSHIP: 'price_1TxZGA3g62IhPcY7OV2OZxSp',
+  UCL: 'price_1TxZK13g62IhPcY7Va4dW1xd',
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') return res.status(405).end();
@@ -30,10 +37,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.redirect(303, `${BASE_URL}/lms-pick.html?pool=${pool}&t=${t}`);
   }
 
+  const poolRaw = await redis.get<string>(`lms:pool:${pool}`);
+  const poolData = poolRaw ? (typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any) : null;
+  const priceId = LMS_PRO_PRICE_ID[poolData?.league || 'PL'] || LMS_PRO_PRICE_ID.PL;
+
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      line_items: [{ price: LMS_PRO_PRICE_ID, quantity: 1 }],
+      line_items: [{ price: priceId, quantity: 1 }],
       customer_email: player.email,
       success_url: `${BASE_URL}/lms-pick.html?pool=${pool}&t=${t}&pro=1`,
       cancel_url: `${BASE_URL}/lms-pick.html?pool=${pool}&t=${t}`,

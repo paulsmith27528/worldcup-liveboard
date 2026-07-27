@@ -43,7 +43,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="eyebrow">☠ LAST MAN STANDING</div>
+  <div class="eyebrow" id="eyebrow">☠ LAST MAN STANDING</div>
   <h1 id="poolTitle">Loading…</h1>
   <p class="sub" id="poolSub"></p>
   <div id="content"><div class="loading">Loading ladder…</div></div>
@@ -106,6 +106,7 @@ if(!poolId){
 
 function render(d){
   document.getElementById('poolTitle').textContent = d.pool.name || 'Survival Ladder';
+  document.getElementById('eyebrow').textContent = '☠ LAST MAN STANDING · ' + (d.pool.leagueName || 'Premier League').toUpperCase();
   var alivePlayers = d.players.filter(function(p){ return p.alive; });
   var fallenPlayers = d.players.filter(function(p){ return !p.alive; })
     .sort(function(a,b){ return (b.eliminatedWeek||0) - (a.eliminatedWeek||0); });

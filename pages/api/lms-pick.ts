@@ -14,13 +14,24 @@ const FROM_EMAIL = 'noreply@worldcupsweepstake-liveboard.com';
 const FROM_NAME = 'Last Man Standing';
 
 const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
-const PL_LEAGUE = 39;
-const PL_SEASON = 2026;
 
-async function getCurrentGameweek() {
+// Every LMS product (Premier League, Championship, Champions League, ...)
+// is the same game running against a different competition — this is the
+// one thing that changes per pool. Defaults to PL for pools created before
+// this existed, since they were always Premier League pools.
+const LEAGUE_CONFIG: Record<string, { id: number; season: number; name: string }> = {
+  PL: { id: 39, season: 2026, name: 'Premier League' },
+  CHAMPIONSHIP: { id: 40, season: 2026, name: 'Championship' },
+  UCL: { id: 2, season: 2026, name: 'Champions League' },
+};
+function leagueConfigFor(league: string | null | undefined) {
+  return LEAGUE_CONFIG[league || 'PL'] || LEAGUE_CONFIG.PL;
+}
+
+async function getCurrentGameweek(cfg: { id: number; season: number }) {
   const hdrs = { "x-apisports-key": API_KEY };
 
-  const teamsRes = await fetch(`https://v3.football.api-sports.io/teams?league=${PL_LEAGUE}&season=${PL_SEASON}`, { headers: hdrs });
+  const teamsRes = await fetch(`https://v3.football.api-sports.io/teams?league=${cfg.id}&season=${cfg.season}`, { headers: hdrs });
   const teamsData = await teamsRes.json();
   const teams = (teamsData.response || []).map((t: any) => ({
     id: t.team.id,
@@ -29,7 +40,7 @@ async function getCurrentGameweek() {
     logo: t.team.logo,
   }));
 
-  const upcomingRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=${PL_LEAGUE}&season=${PL_SEASON}&status=NS`, { headers: hdrs });
+  const upcomingRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}&status=NS`, { headers: hdrs });
   const upcomingData = await upcomingRes.json();
   const upcoming = (upcomingData.response || []).sort((a: any, b: any) =>
     new Date(a.fixture.date).getTime() - new Date(b.fixture.date).getTime()
@@ -41,7 +52,7 @@ async function getCurrentGameweek() {
   const gwMatch = round.match(/(\d+)$/);
   const gwNumber = gwMatch ? parseInt(gwMatch[1], 10) : null;
 
-  const roundRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=${PL_LEAGUE}&season=${PL_SEASON}&round=${encodeURIComponent(round)}`, { headers: hdrs });
+  const roundRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}&round=${encodeURIComponent(round)}`, { headers: hdrs });
   const roundData = await roundRes.json();
 
   const fixtures = (roundData.response || []).map((f: any) => ({
@@ -75,10 +86,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!poolRaw) return res.status(404).json({ error: 'Pool not found' });
     const poolData = typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any;
 
-    const gwData = await getCurrentGameweek();
+    const gwData = await getCurrentGameweek(leagueConfigFor(poolData.league));
 
     return res.status(200).json({
       poolName: poolData.name,
+      leagueName: leagueConfigFor(poolData.league).name,
       poolStatus: poolData.status,
       winner: poolData.winner || null,
       player: {
@@ -116,7 +128,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(403).json({ error: `This pool has already finished — ${poolCheck.winner || 'someone'} won.` });
     }
 
-    const gwData = await getCurrentGameweek();
+    const gwData = await getCurrentGameweek(leagueConfigFor(poolCheck?.league));
     if (!gwData.gw || !gwData.deadline) {
       return res.status(400).json({ error: 'No upcoming gameweek available to pick for.' });
     }
