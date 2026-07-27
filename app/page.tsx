@@ -222,7 +222,7 @@ export default function HomePage() {
       </section>
 
       <footer className="relative z-10 border-t border-white/10 py-8 text-center text-sm text-slate-600">
-        <p>worldcupsweepstake-liveboard.com · World Cup LiveBoard 2026</p>
+        <p>worldcupsweepstake-liveboard.com · myofficesweepstake.com</p>
         <p className="mt-1">Secure payments via Stripe · Questions? hello@worldcupsweepstake-liveboard.com</p>
       </footer>
 

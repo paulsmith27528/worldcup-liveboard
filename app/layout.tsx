@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "World Cup LiveBoard 2026",
+  title: "myofficesweepstake.com",
   description: "Turn your TV into a live World Cup command centre.",
 };
 
