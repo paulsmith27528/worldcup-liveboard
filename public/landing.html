@@ -235,24 +235,10 @@ footer a:hover{color:#22d3ee}
 </video>
 <div class="hero-overlay"></div>
 <section class="hero">
-  <div class="hero-eyebrow"><span class="blink"></span> ⚽ WORLD CUP IS LIVE NOW</div>
-  <h1>officesweepstake.com</h1>
+  <h1>myofficesweepstake.com</h1>
   <p class="hero-sub48" style="font-family:'Caveat',cursive;font-size:clamp(1.6rem,5vw,2.6rem);font-weight:600;color:#fff;letter-spacing:0.01em;text-shadow:0 2px 8px rgba(0,0,0,0.5);margin-bottom:0.5rem">Don't be the one that didn't do the office sweepstake.</p>
   <p class="hero-hook">No paper. No WhatsApp chaos. No arguments.</p>
   <p class="hero-tagline">Create a private live board for your office, family or friends — and follow every nation through the tournament.</p>
-  <div class="countdown">
-    <div class="cd-label">⏱ Tournament kicks off in</div>
-    <div class="cd-units">
-      <div class="cu"><div class="cu-num" id="cd-d">--</div><div class="cu-lbl">Days</div></div>
-      <div class="cu-sep">:</div>
-      <div class="cu"><div class="cu-num" id="cd-h">--</div><div class="cu-lbl">Hours</div></div>
-      <div class="cu-sep">:</div>
-      <div class="cu"><div class="cu-num" id="cd-m">--</div><div class="cu-lbl">Mins</div></div>
-      <div class="cu-sep">:</div>
-      <div class="cu"><div class="cu-num" id="cd-s">--</div><div class="cu-lbl">Secs</div></div>
-    </div>
-  </div>
-  
 </section>
 </div>
 <section class="products" id="products">
@@ -634,17 +620,6 @@ footer a:hover{color:#22d3ee}
   <div style="color:#1e293b">Powered by API-Football · Stripe Payments</div>
 </footer>
 <script>
-var kickoff=new Date('2026-06-11T21:00:00Z').getTime();
-function tick(){
-  var diff=kickoff-Date.now();
-  if(diff<=0){document.querySelector('.countdown').innerHTML='<div style="font-size:20px;font-weight:900;color:#22c55e;letter-spacing:3px">⚽ THE WORLD CUP HAS STARTED!</div>';return;}
-  var pad=function(n){return n<10?'0'+n:''+n};
-  document.getElementById('cd-d').textContent=pad(Math.floor(diff/86400000));
-  document.getElementById('cd-h').textContent=pad(Math.floor((diff%86400000)/3600000));
-  document.getElementById('cd-m').textContent=pad(Math.floor((diff%3600000)/60000));
-  document.getElementById('cd-s').textContent=pad(Math.floor((diff%60000)/1000));
-}
-tick();setInterval(tick,1000);
 var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.style.opacity='1';e.target.style.animation='fadeUp .6s ease forwards';}});},{threshold:.1});
 document.querySelectorAll('.feat,.hiw-step,.product-card,.stat').forEach(function(el){el.style.opacity='0';obs.observe(el);});
 
