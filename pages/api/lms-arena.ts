@@ -115,7 +115,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         avatarUrl: p.avatarUrl || null,
         alive: p.alive,
         eliminatedWeek: p.eliminatedWeek,
-        lifeUsedWeek: p.lifeUsedWeek,
+        jokerUsedWeek: p.jokerUsedWeek,
         isYou: you ? p.token === you : false,
       })),
       startersCount: players.length,

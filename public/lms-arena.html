@@ -158,7 +158,7 @@
     <div class="legend-item"><span class="dot alive"></span> Alive</div>
     <div class="legend-item"><span class="dot you"></span> You</div>
     <div class="legend-item"><span class="dot eliminated"></span> Eliminated</div>
-    <div class="legend-item"><span class="dot life"></span> Life used</div>
+    <div class="legend-item"><span class="dot life"></span> Joker used</div>
   </div>
 
   <div class="jump-btn" id="jumpBtn" style="display:none">Jump to your rung</div>
@@ -249,7 +249,7 @@ function avatarHtml(p, g){
   var cls = 'avatar ' + (isDead ? 'eliminated' : 'alive') + (p.isYou ? ' you' : '');
   var style = (!isDead && p.avatarUrl) ? ' style="background-image:url(' + esc(p.avatarUrl) + ')"' : '';
   var title = isDead ? (p.name + ' — out GW' + p.eliminatedWeek) : p.name;
-  var shield = (p.lifeUsedWeek === g) ? '<span class="shield">&#128737;</span>' : '';
+  var shield = (p.jokerUsedWeek === g) ? '<span class="shield">&#128737;</span>' : '';
   var content = (!isDead && p.avatarUrl) ? '' : (isDead ? '&times;' : esc(initials(label)));
   return '<div class="' + cls + '"' + style + ' title="' + esc(title) + '">' + content + shield + '</div>';
 }

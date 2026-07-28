@@ -99,8 +99,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         usedTeams: player.usedTeams,
         currentPick: player.currentPick,
         currentPickGw: player.currentPickGw,
+        currentPickJoker: player.currentPickJoker || false,
         eliminatedWeek: player.eliminatedWeek,
         proPaid: player.proPaid || false,
+        hasJoker: player.hasJoker !== false,
+        jokerUsedWeek: player.jokerUsedWeek ?? null,
       },
       gw: gwData.gw,
       fixtures: gwData.fixtures,
@@ -110,7 +113,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === 'POST') {
-    const { pool, t, team } = req.body;
+    const { pool, t, team, useJoker } = req.body;
     if (!pool || !t || !team) return res.status(400).json({ error: 'Missing pool, t, or team' });
 
     const playersKey = `lms:pool:${pool}:players`;
@@ -146,8 +149,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'That team is not recognised.' });
     }
 
+    // Playing the joker is a choice made alongside the pick, same as the pick
+    // itself it can be changed right up until the deadline. Whatever it's set
+    // to when the deadline passes is what grading acts on.
+    if (useJoker && player.hasJoker === false) {
+      return res.status(400).json({ error: "You've already used your joker." });
+    }
+
     player.currentPick = team;
     player.currentPickGw = gwData.gw;
+    player.currentPickJoker = !!useJoker;
 
     await redis.hset(playersKey, { [t]: JSON.stringify(player) });
 
@@ -179,8 +190,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:16px;text-align:center;margin-bottom:20px">
       <p style="color:#94a3b8;font-size:11px;font-weight:700;letter-spacing:1px;margin:0 0 6px">YOUR PICK</p>
       <p style="color:#ffd54a;font-size:20px;font-weight:900;margin:0">${team}</p>
+      ${useJoker ? `<p style="color:#94a3b8;font-size:11px;margin:8px 0 0">&#128737;&#65039; Joker played on this pick</p>` : ''}
     </div>
-    <p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">Changed your mind? You can update your pick anytime before <strong style="color:#fff">${deadlineFormatted}</strong> &mdash; after that it locks in.</p>
+    <p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">Changed your mind${useJoker ? ' about your pick or your joker' : ''}? You can update anytime before <strong style="color:#fff">${deadlineFormatted}</strong> &mdash; after that it locks in${useJoker ? ', joker and all' : ''}.</p>
     <div style="text-align:center">
       <a href="${pickUrl}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:14px;padding:13px 28px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">Change Your Pick &rarr;</a>
     </div>

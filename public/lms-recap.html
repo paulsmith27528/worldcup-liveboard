@@ -84,7 +84,7 @@ function render(d){
     statsHtml += '<div class="recap-stat"><div class="n" style="color:var(--red)">0</div><div class="l">OUT</div></div>';
   } else {
     statsHtml += '<div class="recap-stat"><div class="n" style="color:var(--green)">' + r.survivedCount + '</div><div class="l">SURVIVED</div></div>';
-    statsHtml += '<div class="recap-stat"><div class="n" style="color:var(--gold)">' + r.lifeUsedNames.length + '</div><div class="l">USED LIFE</div></div>';
+    statsHtml += '<div class="recap-stat"><div class="n" style="color:var(--gold)">' + r.jokerUsedNames.length + '</div><div class="l">USED JOKER</div></div>';
     statsHtml += '<div class="recap-stat"><div class="n" style="color:var(--red)">' + r.eliminatedNames.length + '</div><div class="l">OUT</div></div>';
   }
   document.getElementById('cardStats').innerHTML = statsHtml;
@@ -97,10 +97,10 @@ function render(d){
     if(r.eliminatedNames.length > 0){
       listHtml += '<div class="row"><span>Out this week</span><span>' + esc(r.eliminatedNames.join(', ')) + '</span></div>';
     }
-    if(r.lifeUsedNames.length > 0){
-      listHtml += '<div class="row"><span>Used their life</span><span>' + esc(r.lifeUsedNames.join(', ')) + '</span></div>';
+    if(r.jokerUsedNames.length > 0){
+      listHtml += '<div class="row"><span>Used their joker</span><span>' + esc(r.jokerUsedNames.join(', ')) + '</span></div>';
     }
-    if(r.eliminatedNames.length === 0 && r.lifeUsedNames.length === 0){
+    if(r.eliminatedNames.length === 0 && r.jokerUsedNames.length === 0){
       listHtml += '<div class="row"><span>Clean sweep — everyone picked a winner</span><span>\uD83D\uDD25</span></div>';
     }
   }
