@@ -12,7 +12,6 @@ export async function GET() {
         style={{
           width: '1200px',
           height: '630px',
-          position: 'relative',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -90,8 +89,6 @@ export async function GET() {
 
         <div
           style={{
-            position: 'absolute',
-            bottom: '44px',
             display: 'flex',
             alignItems: 'center',
             gap: '12px',
