@@ -163,19 +163,50 @@ document.getElementById('avatarFile').addEventListener('change', function(e){
     errEl.style.display = 'block';
     return;
   }
-  if(file.size > 400 * 1024){
-    errEl.textContent = 'That image is too large — please use one under 400KB.';
-    errEl.style.display = 'block';
-    return;
-  }
-  var reader = new FileReader();
-  reader.onload = function(evt){
-    avatarDataUrl = evt.target.result;
+
+  // Server caps the encoded string at 600000 chars (~400KB image) — resize and
+  // compress client-side first so a normal 2-5MB phone photo doesn't get rejected.
+  var MAX_LEN = 600000;
+  var objectUrl = URL.createObjectURL(file);
+  var img = new Image();
+  img.onload = function(){
+    URL.revokeObjectURL(objectUrl);
+
+    var size = 200;
+    var canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    var ctx = canvas.getContext('2d');
+
+    // Center-crop to a square first so non-square photos aren't squashed into the circle
+    var srcSize = Math.min(img.width, img.height);
+    var srcX = (img.width - srcSize) / 2;
+    var srcY = (img.height - srcSize) / 2;
+    ctx.drawImage(img, srcX, srcY, srcSize, srcSize, 0, 0, size, size);
+
+    var qualities = [0.7, 0.5, 0.3];
+    var dataUrl = canvas.toDataURL('image/jpeg', qualities[0]);
+    for(var i = 1; i < qualities.length && dataUrl.length > MAX_LEN; i++){
+      dataUrl = canvas.toDataURL('image/jpeg', qualities[i]);
+    }
+
+    if(dataUrl.length > MAX_LEN){
+      errEl.textContent = 'That image is too large — please use one under 400KB.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    avatarDataUrl = dataUrl;
     var preview = document.getElementById('avatarPreview');
     preview.style.backgroundImage = 'url(' + avatarDataUrl + ')';
     preview.textContent = '';
   };
-  reader.readAsDataURL(file);
+  img.onerror = function(){
+    URL.revokeObjectURL(objectUrl);
+    errEl.textContent = 'Could not read that image — please try another.';
+    errEl.style.display = 'block';
+  };
+  img.src = objectUrl;
 });
 
 function doShare(){
