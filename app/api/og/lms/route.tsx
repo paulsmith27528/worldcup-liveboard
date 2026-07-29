@@ -22,6 +22,8 @@ export async function GET() {
         <div
           style={{
             display: 'flex',
+            alignItems: 'center',
+            gap: '14px',
             color: '#ef4444',
             fontSize: '28px',
             fontWeight: 800,
@@ -29,7 +31,8 @@ export async function GET() {
             marginBottom: '36px',
           }}
         >
-          LAST MAN STANDING
+          <span style={{ fontSize: '40px' }}>☠️</span>
+          <span>LAST MAN STANDING</span>
         </div>
 
         <div
