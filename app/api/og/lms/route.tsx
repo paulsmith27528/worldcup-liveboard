@@ -101,7 +101,6 @@ export async function GET() {
             letterSpacing: '1px',
           }}
         >
-          <span>🏆</span>
           <span>myofficesweepstake.com</span>
         </div>
       </div>
