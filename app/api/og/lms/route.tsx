@@ -12,6 +12,7 @@ export async function GET() {
         style={{
           width: '1200px',
           height: '630px',
+          position: 'relative',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -79,6 +80,9 @@ export async function GET() {
                 borderRadius: '50%',
                 display: 'flex',
                 backgroundColor: isOut ? 'rgba(148,163,184,0.25)' : '#F3D27A',
+                backgroundImage: isOut
+                  ? undefined
+                  : 'linear-gradient(135deg, #F3D27A, #C9A24B)',
               }}
             />
           ))}
@@ -86,14 +90,19 @@ export async function GET() {
 
         <div
           style={{
+            position: 'absolute',
+            bottom: '44px',
             display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
             color: '#5b6b85',
             fontSize: '26px',
             fontWeight: 700,
             letterSpacing: '1px',
           }}
         >
-          myofficesweepstake.com
+          <span>🏆</span>
+          <span>myofficesweepstake.com</span>
         </div>
       </div>
     ),
