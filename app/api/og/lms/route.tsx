@@ -41,7 +41,9 @@ export async function GET() {
             fontWeight: 900,
             lineHeight: 1.05,
             textAlign: 'center',
-            color: '#F3D27A',
+            backgroundImage: 'linear-gradient(135deg, #F3D27A, #C9A24B)',
+            backgroundClip: 'text',
+            color: 'transparent',
             marginBottom: '28px',
           }}
         >
