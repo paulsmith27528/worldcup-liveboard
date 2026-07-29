@@ -17,6 +17,8 @@ export async function GET() {
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: '#0A1122',
+          backgroundImage:
+            'radial-gradient(circle at 50% 0%, rgba(243,210,122,0.20), rgba(243,210,122,0) 60%)',
         }}
       >
         <div
