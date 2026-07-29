@@ -42,10 +42,11 @@ interface Player {
   usedTeams: string[];
   currentPick: string | null;
   currentPickGw: number | null;
+  currentPickJoker: boolean;
   alive: boolean;
   eliminatedWeek: number | null;
-  hasLife: boolean;
-  lifeUsedWeek: number | null;
+  hasJoker: boolean;
+  jokerUsedWeek: number | null;
 }
 
 // Find the highest gameweek number where every fixture has finished
@@ -119,7 +120,7 @@ function buildEmail(icon: string, color: string, title: string, poolName: string
 </html>`;
 }
 
-async function sendPlayerEmail(player: Player, poolId: string, poolName: string, gw: number, type: 'survived' | 'eliminated' | 'no_pick' | 'wipeout' | 'life_used' | 'you_won' | 'pool_won', winnerName?: string) {
+async function sendPlayerEmail(player: Player, poolId: string, poolName: string, gw: number, type: 'survived' | 'survived_joker_used' | 'eliminated' | 'no_pick' | 'wipeout' | 'joker_used' | 'you_won' | 'pool_won', winnerName?: string) {
   const hubUrl = `${BASE_URL}/lms-join.html?pool=${poolId}`;
   let html = '';
   let subject = '';
@@ -128,25 +129,35 @@ async function sendPlayerEmail(player: Player, poolId: string, poolName: string,
     subject = `\u2705 You're through — Gameweek ${gw}`;
     html = buildEmail('&#9989;', '#34d399', "You're Through!",  poolName, gw,
       `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">Nice one — <strong style="color:#fff">${player.currentPick}</strong> won. You're still in the pool for the next round.</p>`);
-  } else if (type === 'life_used') {
-    subject = `\uD83D\uDEE1\uFE0F Life used — you're still in! (Gameweek ${gw})`;
+  } else if (type === 'survived_joker_used') {
+    subject = `✅ You're through — but your joker's gone (Gameweek ${gw})`;
+    html = buildEmail('&#9989;', '#34d399', "You're Through!",  poolName, gw,
+      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px"><strong style="color:#fff">${player.currentPick}</strong> won, so you're still in — but you'd played your joker on this pick, and that's spent the moment you play it, whether you needed it or not. You're out of jokers now, so the next loss or draw is game over. Good luck!</p>`);
+  } else if (type === 'joker_used') {
+    subject = `\uD83D\uDEE1\uFE0F Joker played — you're still in! (Gameweek ${gw})`;
     const reason = player.currentPick
       ? `Your pick, <strong style="color:#fff">${player.currentPick}</strong>, didn't win this week`
       : `You didn't make a pick before the deadline this gameweek`;
-    html = buildEmail('&#128737;&#65039;', '#ffd54a', "Life Used — You're Still In!",  poolName, gw,
-      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">${reason}, so you've used your one life to survive. You're still in the pool — but you're out of lives now, so the next loss is game over. Good luck!</p>`);
+    html = buildEmail('&#128737;&#65039;', '#ffd54a', "Joker Played — You're Still In!",  poolName, gw,
+      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">${reason} — but you'd played your joker on this pick, so you survive instead of being knocked out. You're out of jokers now, so the next loss or draw is game over. Good luck!</p>`);
   } else if (type === 'eliminated') {
     subject = `\u2620\ufe0f You're out — Gameweek ${gw}`;
+    const jokerNote = player.jokerUsedWeek !== null
+      ? `You'd already played your joker back in gameweek ${player.jokerUsedWeek}, so there was no safety net left this time.`
+      : `You had a joker available but didn't play it on this pick, so there was no safety net this time.`;
     html = buildEmail('&#128128;', '#ef4444', "You're Out",  poolName, gw,
-      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">Your pick, <strong style="color:#fff">${player.currentPick}</strong>, didn't win this week. You've already used your life, so you've been eliminated from the pool. Thanks for playing — good luck to whoever's left!</p>`);
+      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">Your pick, <strong style="color:#fff">${player.currentPick}</strong>, didn't win this week. ${jokerNote} You've been eliminated from the pool. Thanks for playing — good luck to whoever's left!</p>`);
   } else if (type === 'no_pick') {
     subject = `\u2620\ufe0f You're out — no pick made (Gameweek ${gw})`;
+    const jokerNote2 = player.jokerUsedWeek !== null
+      ? `You'd already played your joker back in gameweek ${player.jokerUsedWeek}, so there was no safety net left this time.`
+      : `You didn't have your joker played this gameweek, so there was no safety net.`;
     html = buildEmail('&#128128;', '#ef4444', "You're Out",  poolName, gw,
-      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">You didn't make a pick before the deadline this gameweek, and you'd already used your life, so you've been eliminated from the pool. Thanks for playing!</p>`);
+      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">You didn't make a pick before the deadline this gameweek. ${jokerNote2} You've been eliminated from the pool. Thanks for playing!</p>`);
   } else if (type === 'wipeout') {
     subject = `\u267b\ufe0f Gameweek ${gw} wiped out — everyone survives`;
     html = buildEmail('&#9851;', '#ffd54a', "Total Wipeout!",  poolName, gw,
-      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">Every player still standing lost or drew this gameweek — so under the rules, it doesn't count. Nobody's eliminated, nobody's team is used up, and nobody's life is touched. Everyone carries on to the next round!</p>`);
+      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">Every player still standing lost or drew this gameweek — so under the rules, it doesn't count. Nobody's eliminated, nobody's team is used up, and nobody's joker is touched. Everyone carries on to the next round!</p>`);
   } else if (type === 'you_won') {
     subject = `\uD83D\uDC51 You won the pool! — ${poolName}`;
     html = buildEmail('&#128081;', '#ffd54a', "You Won!",  poolName, gw,
@@ -228,7 +239,7 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
   }), { ex: picksTTL });
 
   const eliminatedNames: string[] = [];
-  const lifeUsedNames: string[] = [];
+  const jokerUsedNames: string[] = [];
 
   if (wipeout) {
     pool.wipeoutWeeks = pool.wipeoutWeeks || [];
@@ -239,21 +250,30 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
   } else {
     for (const p of survivors) {
       p.usedTeams.push(p.currentPick as string);
+      // The joker is a pre-match gamble, not automatic insurance — if it was
+      // played on this pick it's spent the moment it's played, win or lose.
+      const jokerWasted = p.currentPickJoker && p.hasJoker;
+      if (jokerWasted) {
+        p.hasJoker = false;
+        p.jokerUsedWeek = gw;
+        jokerUsedNames.push(p.name);
+      }
       await redis.hset(playersKey, { [p.token]: JSON.stringify(p) });
-      await sendPlayerEmail(p, poolId, pool.name, gw, 'survived');
+      await sendPlayerEmail(p, poolId, pool.name, gw, jokerWasted ? 'survived_joker_used' : 'survived');
     }
-    // Losers and no-picks both go through the same life check —
-    // a life protects against elimination either way
+    // Losers and no-picks both check the same thing — only a joker actually
+    // played on this gameweek's pick protects against elimination
     for (const p of [...losers, ...noPicks]) {
       if (p.currentPick) {
         p.usedTeams.push(p.currentPick);
       }
-      if (p.hasLife) {
-        p.hasLife = false;
-        p.lifeUsedWeek = gw;
-        lifeUsedNames.push(p.name);
+      const jokerActive = p.currentPickJoker && p.hasJoker;
+      if (jokerActive) {
+        p.hasJoker = false;
+        p.jokerUsedWeek = gw;
+        jokerUsedNames.push(p.name);
         await redis.hset(playersKey, { [p.token]: JSON.stringify(p) });
-        await sendPlayerEmail(p, poolId, pool.name, gw, 'life_used');
+        await sendPlayerEmail(p, poolId, pool.name, gw, 'joker_used');
       } else {
         p.alive = false;
         p.eliminatedWeek = gw;
@@ -272,7 +292,7 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
     wipeout,
     survivedCount: wipeout ? alivePlayers.length : survivors.length,
     eliminatedNames,
-    lifeUsedNames,
+    jokerUsedNames,
     stillAliveCount,
   }), { ex: recapTTL });
 

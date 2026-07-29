@@ -38,6 +38,12 @@
   .changeBtn{width:100%;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#94a3b8;font-weight:700;font-size:13px;cursor:pointer;margin-top:10px}
   .changeBtn:hover{border-color:rgba(255,255,255,.3);color:#fff}
 
+  .joker-toggle{display:flex;align-items:flex-start;gap:12px;padding:14px;border-radius:12px;background:rgba(255,213,74,.05);border:1px solid rgba(255,213,74,.2);margin-bottom:14px;cursor:pointer}
+  .joker-toggle input{width:20px;height:20px;flex-shrink:0;accent-color:var(--gold);margin-top:1px}
+  .joker-toggle .jt-title{font-weight:800;font-size:13px;color:var(--gold)}
+  .joker-toggle .jt-desc{font-size:11px;color:var(--dim);margin-top:3px;line-height:1.45}
+  .joker-used-note{text-align:center;font-size:11px;color:var(--dim);margin-bottom:14px}
+
   .msg{text-align:center;padding:40px 20px;color:var(--dim);font-size:13px}
   .state-card{background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border-radius:16px;padding:32px 20px;text-align:center}
   .state-card .icon{font-size:52px;margin-bottom:14px}
@@ -71,6 +77,7 @@ var token = params.get('t');
 var content = document.getElementById('content');
 var currentGwData = null;
 var selectedTeam = null;
+var selectedJoker = false;
 var justConfirmed = false;
 
 function esc(s){ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
@@ -147,6 +154,7 @@ function render(d){
   var alreadyPicked = d.player.currentPickGw === d.gw && d.player.currentPick;
   document.getElementById('subTitle').textContent = 'Gameweek ' + d.gw + (alreadyPicked ? ' — you picked ' + d.player.currentPick : ' — make your pick');
   selectedTeam = alreadyPicked ? d.player.currentPick : null;
+  selectedJoker = alreadyPicked && !!d.player.currentPickJoker;
   justConfirmed = !!alreadyPicked;
 
   var deadlinePassed = new Date() >= new Date(d.deadline);
@@ -166,6 +174,15 @@ function render(d){
   }
 
   html += '<div class="grid" id="teamGrid"></div>';
+
+  if(d.player.hasJoker){
+    html += '<label class="joker-toggle" for="jokerCheck"><input type="checkbox" id="jokerCheck"' + (selectedJoker ? ' checked' : '') + ' onchange="selectedJoker = this.checked; updateConfirmBtn();">' +
+      '<span><span class="jt-title">🛡️ Play my joker on this pick</span>' +
+      '<span class="jt-desc">No confidence in this one? Play your joker as insurance — if it loses or draws, you survive instead of being knocked out. It\'s used up the moment you play it, win or lose.</span></span></label>';
+  } else if(d.player.jokerUsedWeek !== null){
+    html += '<div class="joker-used-note">🛡️ Your joker was used in Gameweek ' + d.player.jokerUsedWeek + ' — none left.</div>';
+  }
+
   html += '<button class="confirm" id="confirmBtn" disabled>Select a team</button>';
   html += '<button class="changeBtn" id="changeBtn" style="display:none" onclick="changePick()">Change Your Pick</button>';
   content.innerHTML = html;
@@ -209,17 +226,18 @@ function updateConfirmBtn(){
   if(!btn) return;
 
   var currentPick = currentGwData.player.currentPick;
-  var isConfirmedState = justConfirmed && selectedTeam && selectedTeam === currentPick;
+  var currentPickJoker = !!currentGwData.player.currentPickJoker;
+  var isConfirmedState = justConfirmed && selectedTeam && selectedTeam === currentPick && selectedJoker === currentPickJoker;
 
   if(isConfirmedState){
     btn.disabled = true;
-    btn.textContent = 'Pick Confirmed';
+    btn.textContent = 'Pick Confirmed' + (selectedJoker ? ' 🛡️' : '');
     btn.classList.add('confirmed');
     btn.onclick = null;
     if(changeBtn) changeBtn.style.display = 'block';
   } else {
     btn.disabled = !selectedTeam;
-    btn.textContent = selectedTeam ? 'Confirm Pick — ' + selectedTeam : 'Select a team';
+    btn.textContent = selectedTeam ? 'Confirm Pick — ' + selectedTeam + (selectedJoker ? ' 🛡️' : '') : 'Select a team';
     btn.classList.remove('confirmed');
     btn.onclick = submitPick;
     if(changeBtn) changeBtn.style.display = 'none';
@@ -234,7 +252,7 @@ function submitPick(){
   fetch('/api/lms-pick', {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ pool: poolId, t: token, team: selectedTeam })
+    body: JSON.stringify({ pool: poolId, t: token, team: selectedTeam, useJoker: selectedJoker })
   })
   .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
   .then(function(res){

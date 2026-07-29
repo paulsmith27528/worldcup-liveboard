@@ -72,7 +72,7 @@ function colorFor(name){
 
 function avatarHtml(p, rungGw){
   var isDead = p.eliminatedWeek !== null;
-  var showShield = p.lifeUsedWeek !== null && (rungGw === undefined || p.lifeUsedWeek <= rungGw);
+  var showShield = p.jokerUsedWeek !== null && (rungGw === undefined || p.jokerUsedWeek <= rungGw);
   var label = p.displayName || p.name;
   var cls = 'avatar' + (p.isYou ? ' you' : '') + (isDead ? ' dead' : '');
   var style = '';

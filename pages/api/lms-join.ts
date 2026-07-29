@@ -111,12 +111,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     usedTeams: [] as string[],
     currentPick: null as string | null,
     currentPickGw: null as number | null,
+    currentPickJoker: false,
     alive: true,
     eliminatedWeek: null as number | null,
-    hasLife: true,
+    hasJoker: true,
     paid: false,
     proPaid: false,
-    lifeUsedWeek: null as number | null,
+    jokerUsedWeek: null as number | null,
     joinedAt: new Date().toISOString(),
   };
 
