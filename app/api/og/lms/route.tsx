@@ -17,15 +17,11 @@ export async function GET() {
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: '#0A1122',
-          backgroundImage:
-            'radial-gradient(circle at 50% 0%, rgba(243,210,122,0.20), rgba(243,210,122,0) 60%)',
         }}
       >
         <div
           style={{
             display: 'flex',
-            alignItems: 'center',
-            gap: '14px',
             color: '#ef4444',
             fontSize: '28px',
             fontWeight: 800,
@@ -33,8 +29,7 @@ export async function GET() {
             marginBottom: '36px',
           }}
         >
-          <span style={{ fontSize: '40px' }}>☠️</span>
-          <span>LAST MAN STANDING</span>
+          LAST MAN STANDING
         </div>
 
         <div
@@ -46,14 +41,12 @@ export async function GET() {
             fontWeight: 900,
             lineHeight: 1.05,
             textAlign: 'center',
-            backgroundImage: 'linear-gradient(135deg, #F3D27A, #C9A24B)',
-            backgroundClip: 'text',
-            color: 'transparent',
+            color: '#F3D27A',
             marginBottom: '28px',
           }}
         >
           <span>One wrong pick.</span>
-          <span>You&apos;re out.</span>
+          <span>You are out.</span>
         </div>
 
         <div
@@ -66,7 +59,7 @@ export async function GET() {
             textAlign: 'center',
           }}
         >
-          Free to play · pick a team every week, never repeat one
+          Free to play - pick a team every week, never repeat one
         </div>
 
         <div style={{ display: 'flex', gap: '16px', marginBottom: '56px' }}>
@@ -79,9 +72,6 @@ export async function GET() {
                 borderRadius: '50%',
                 display: 'flex',
                 backgroundColor: isOut ? 'rgba(148,163,184,0.25)' : '#F3D27A',
-                backgroundImage: isOut
-                  ? undefined
-                  : 'linear-gradient(135deg, #F3D27A, #C9A24B)',
               }}
             />
           ))}
@@ -89,28 +79,20 @@ export async function GET() {
 
         <div
           style={{
-            position: 'absolute',
-            bottom: '44px',
             display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
             color: '#5b6b85',
             fontSize: '26px',
             fontWeight: 700,
             letterSpacing: '1px',
           }}
         >
-          <span>🏆</span>
-          <span>myofficesweepstake.com</span>
+          myofficesweepstake.com
         </div>
       </div>
     ),
     {
       width: 1200,
       height: 630,
-      // Short, non-immutable cache while this route is still settling —
-      // an immutable/forever cache-control on a broken response would keep
-      // serving that broken response at the edge even after a fix ships.
       headers: {
         'Cache-Control': 'public, max-age=3600',
       },
