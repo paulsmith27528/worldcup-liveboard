@@ -18,7 +18,7 @@ export async function GET() {
           justifyContent: 'center',
           backgroundColor: '#0A1122',
           backgroundImage:
-            'radial-gradient(ellipse 900px 450px at 50% -15%, rgba(243,210,122,0.20), transparent 60%)',
+            'radial-gradient(circle at 50% 0%, rgba(243,210,122,0.20), rgba(243,210,122,0) 60%)',
         }}
       >
         <div
@@ -108,6 +108,12 @@ export async function GET() {
     {
       width: 1200,
       height: 630,
+      // Short, non-immutable cache while this route is still settling —
+      // an immutable/forever cache-control on a broken response would keep
+      // serving that broken response at the edge even after a fix ships.
+      headers: {
+        'Cache-Control': 'public, max-age=3600',
+      },
     }
   );
 }
