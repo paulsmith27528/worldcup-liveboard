@@ -5,6 +5,14 @@ export const runtime = 'edge';
 // Generic share image for any Last Man Standing pool — no league name, so it
 // works across Premier League, Championship, Champions League, and anything
 // added later without needing a per-league version.
+//
+// Note: the small player-status dots below deliberately use a solid fill
+// colour, not a gradient backgroundImage — a per-dot gradient (applied via
+// a ternary, so some dots got a gradient and others didn't) silently broke
+// this route's rendering on the edge runtime, returning an empty body with
+// a 200 status. Confirmed by isolating every other element individually —
+// gradient text, emoji, the page background gradient, and position:absolute
+// all render fine on their own; only the per-dot gradient combination failed.
 export async function GET() {
   return new ImageResponse(
     (
@@ -12,6 +20,7 @@ export async function GET() {
         style={{
           width: '1200px',
           height: '630px',
+          position: 'relative',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -53,7 +62,7 @@ export async function GET() {
           }}
         >
           <span>One wrong pick.</span>
-          <span>You are out.</span>
+          <span>You&apos;re out.</span>
         </div>
 
         <div
@@ -66,7 +75,7 @@ export async function GET() {
             textAlign: 'center',
           }}
         >
-          Free to play - pick a team every week, never repeat one
+          Free to play · pick a team every week, never repeat one
         </div>
 
         <div style={{ display: 'flex', gap: '16px', marginBottom: '56px' }}>
@@ -79,9 +88,6 @@ export async function GET() {
                 borderRadius: '50%',
                 display: 'flex',
                 backgroundColor: isOut ? 'rgba(148,163,184,0.25)' : '#F3D27A',
-                backgroundImage: isOut
-                  ? undefined
-                  : 'linear-gradient(135deg, #F3D27A, #C9A24B)',
               }}
             />
           ))}
@@ -89,6 +95,8 @@ export async function GET() {
 
         <div
           style={{
+            position: 'absolute',
+            bottom: '44px',
             display: 'flex',
             alignItems: 'center',
             gap: '12px',
@@ -98,6 +106,7 @@ export async function GET() {
             letterSpacing: '1px',
           }}
         >
+          <span>🏆</span>
           <span>myofficesweepstake.com</span>
         </div>
       </div>
