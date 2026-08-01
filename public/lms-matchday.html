@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no, address=no, email=no, date=no, url=no">
+<title>Match Day — Last Man Standing</title>
+<style>
+  :root{
+    --navy-deep:#081120;
+    --navy:#0E1B33;
+    --navy-elevated:#152341;
+    --navy-line:#25365C;
+    --gold:#D8B24C;
+    --gold-bright:#F3D27A;
+    --text:#EEF1F8;
+    --muted:#7186AC;
+    --eliminated:#26314A;
+    --eliminated-text:#4B5A7A;
+    --live-red:#ef4444;
+    --live-green:#34d399;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{
+    background:var(--navy-deep);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  body{display:flex; justify-content:center;}
+  .phone{
+    width:100%; max-width:430px; min-height:100vh;
+    background:
+      radial-gradient(ellipse 600px 300px at 50% -10%, rgba(216,178,76,0.10), transparent 60%),
+      var(--navy-deep);
+    display:flex; flex-direction:column; position:relative; overflow-x:hidden;
+  }
+  .topbar{
+    padding:18px 20px 14px; display:flex; align-items:center; justify-content:space-between;
+    border-bottom:1px solid var(--navy-line);
+  }
+  .brand{ font-size:15px; font-weight:800; letter-spacing:0.04em; color:var(--gold-bright); text-transform:uppercase; }
+  .brand span{ color:var(--muted); font-weight:600; font-size:11px; letter-spacing:0.06em; display:block; margin-top:2px; text-transform:none; }
+  .round-pill{
+    font-size:11px; color:var(--navy-deep); background:var(--gold); padding:6px 12px;
+    border-radius:20px; font-weight:800; letter-spacing:0.03em; white-space:nowrap;
+  }
+  .live-pill{
+    font-size:10.5px; color:#fff; background:var(--live-red); padding:5px 10px;
+    border-radius:20px; font-weight:800; letter-spacing:0.03em; white-space:nowrap;
+    display:flex; align-items:center; gap:5px;
+  }
+  .live-dot{ width:6px; height:6px; border-radius:50%; background:#fff; animation:blink 1.4s ease-in-out infinite; }
+  @keyframes blink{ 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  .content{ flex:1; padding:16px 16px 80px; display:flex; flex-direction:column; gap:14px; }
+
+  .fixture-card{
+    background:var(--navy-elevated); border:1px solid var(--navy-line); border-radius:16px; padding:16px;
+  }
+  .fixture-status{
+    text-align:center; font-size:11px; font-weight:800; letter-spacing:0.06em; color:var(--muted);
+    margin-bottom:12px; text-transform:uppercase;
+  }
+  .fixture-status.live{ color:var(--live-red); }
+  .fixture-status.finished{ color:var(--live-green); }
+
+  .fixture-teams{ display:flex; align-items:flex-start; justify-content:center; gap:14px; }
+  .team-col{ flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; min-width:0; }
+  .team-badge{ width:40px; height:40px; object-fit:contain; }
+  .team-name{ font-size:12px; font-weight:700; text-align:center; color:var(--text); }
+  .team-score{ font-size:26px; font-weight:900; color:var(--gold-bright); }
+  .vs-sep{ font-size:13px; color:var(--muted); font-weight:700; padding-top:44px; flex-shrink:0; }
+
+  .picks-row{ display:flex; flex-wrap:wrap; justify-content:center; gap:5px; max-width:150px; }
+  .pick-avatar{
+    width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:9.5px; flex-shrink:0; background-size:cover; background-position:center;
+    background-color:var(--navy); color:var(--gold-bright); border:1.5px solid var(--gold);
+  }
+  .pick-avatar.out{ opacity:0.45; border-color:transparent; background-color:var(--eliminated); color:var(--eliminated-text); }
+  .picks-empty{ font-size:10.5px; color:var(--eliminated-text); text-align:center; }
+
+  .empty, .loading{ text-align:center; color:var(--muted); font-size:13px; padding:60px 20px; }
+  .pro-gate{ text-align:center; padding:40px 24px; }
+  .pro-gate .icon{ font-size:40px; margin-bottom:14px; }
+  .pro-gate h2{ font-size:18px; margin:0 0 8px; color:var(--text); }
+  .pro-gate p{ color:var(--muted); font-size:13px; line-height:1.6; margin:0 0 22px; }
+  .pro-gate .cta{
+    display:block; width:100%; padding:13px; margin-top:10px; border-radius:12px;
+    background:var(--gold); color:var(--navy-deep); border:none; font-weight:800; font-size:13px; text-decoration:none;
+  }
+  .pro-gate .ghost-btn{
+    display:block; width:100%; padding:13px; margin-top:10px; border-radius:12px;
+    background:transparent; border:1px solid rgba(148,163,184,.3); color:var(--muted);
+    font-weight:700; font-size:13px; text-decoration:none; cursor:pointer;
+  }
+  .pro-gate .find-form{ margin-top:18px; text-align:left; }
+  .pro-gate .find-label{ font-size:11.5px; color:var(--muted); margin-bottom:8px; text-align:center; line-height:1.5; }
+  .pro-gate .find-input{
+    width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--navy-line);
+    background:var(--navy); color:var(--text); font-size:14px; margin-bottom:10px;
+  }
+  .pro-gate .find-input:focus{ outline:none; border-color:var(--gold); }
+  .pro-gate .find-err{ color:var(--live-red); font-size:12px; margin-top:8px; display:none; line-height:1.5; }
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+  <div class="topbar">
+    <div class="brand">Match Day<span id="poolSub">Premier League &middot; LMS</span></div>
+    <div id="statusPill" class="round-pill">&hellip;</div>
+  </div>
+  <div class="content" id="content"><div class="loading">Loading fixtures&hellip;</div></div>
+</div>
+
+<script>
+var params = new URLSearchParams(window.location.search);
+var poolId = params.get('pool');
+var token = params.get('t');
+function esc(s){ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function initials(name){
+  var parts = (name || '').trim().split(/\s+/);
+  var a = parts[0] ? parts[0][0] : '';
+  var b = parts.length > 1 ? parts[parts.length - 1][0] : '';
+  return (a + b).toUpperCase();
+}
+
+function renderProGate(upgradeUrl, fallbackUrl){
+  var findFormHtml = '<div class="find-form">' +
+      '<div class="find-label">We couldn\'t identify you from this link. Enter the email you joined with and we\'ll find your upgrade link:</div>' +
+      '<input type="email" class="find-input" id="findEmail" placeholder="you@example.com">' +
+      '<button class="cta" style="margin-top:0" onclick="findMyLink()" id="findBtn">Find My Link</button>' +
+      '<p class="find-err" id="findErr"></p>' +
+    '</div>';
+  var html = '<div class="pro-gate">' +
+    '<div class="icon">⭐</div>' +
+    '<h2>Match Day is a Pro feature</h2>' +
+    '<p>Upgrade for £1 to unlock live scores and picks for yourself — or carry on with the free plain-text ladder instead.</p>' +
+    (upgradeUrl ? '<a class="cta" href="' + esc(upgradeUrl) + '">Go Pro — £1</a>' : findFormHtml) +
+    '<a class="ghost-btn" href="' + esc(fallbackUrl) + '">Continue to free ladder →</a>' +
+    '</div>';
+  document.getElementById('content').innerHTML = html;
+}
+
+function findMyLink(){
+  var email = document.getElementById('findEmail').value.trim();
+  var errEl = document.getElementById('findErr');
+  var btn = document.getElementById('findBtn');
+  errEl.style.display = 'none';
+  if(!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)){
+    errEl.textContent = 'Please enter a valid email address.';
+    errEl.style.display = 'block';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Looking…';
+  fetch('/api/lms-find-token', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ pool: poolId, email: email })
+  })
+  .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
+  .then(function(res){
+    if(res.status !== 200){
+      btn.disabled = false;
+      btn.textContent = 'Find My Link';
+      errEl.textContent = "We couldn't find that email in this pool — try the personal link from your join confirmation email instead, or ask your organiser to resend it.";
+      errEl.style.display = 'block';
+      return;
+    }
+    window.location.href = '/api/lms-pro-checkout?pool=' + encodeURIComponent(poolId) + '&t=' + encodeURIComponent(res.body.token);
+  })
+  .catch(function(){
+    btn.disabled = false;
+    btn.textContent = 'Find My Link';
+    errEl.textContent = 'Something went wrong. Please try again.';
+    errEl.style.display = 'block';
+  });
+}
+
+var pollTimer = null;
+
+function statusLabel(f){
+  if(f.status === 'NS'){
+    var d = new Date(f.date);
+    return d.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short' }) + ' · ' + d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+  }
+  if(['1H','2H','ET','BT','P','SUSP','INT'].indexOf(f.status) !== -1){
+    return (f.elapsed != null ? f.elapsed + "'" : 'LIVE');
+  }
+  if(f.status === 'HT') return 'Half-time';
+  if(['FT','AET','PEN'].indexOf(f.status) !== -1) return 'Full-time';
+  return f.status;
+}
+function statusClass(f){
+  if(['1H','2H','HT','ET','BT','P','SUSP','INT'].indexOf(f.status) !== -1) return 'live';
+  if(['FT','AET','PEN'].indexOf(f.status) !== -1) return 'finished';
+  return '';
+}
+
+function renderPicksRow(picks){
+  if(!picks || picks.length === 0) return '<div class="picks-empty">Nobody picked this</div>';
+  return '<div class="picks-row">' + picks.map(function(p){
+    var label = p.displayName || initials(p.name);
+    var style = p.avatarUrl ? ' style="background-image:url(' + esc(p.avatarUrl) + ')"' : '';
+    var cls = 'pick-avatar' + (p.alive ? '' : ' out');
+    return '<div class="' + cls + '"' + style + ' title="' + esc(p.name) + '">' + (p.avatarUrl ? '' : esc(p.displayName || initials(p.name))) + '</div>';
+  }).join('') + '</div>';
+}
+
+function render(d){
+  document.getElementById('poolSub').textContent = (d.pool.leagueName || 'Premier League') + ' · LMS';
+  document.getElementById('statusPill').textContent = 'GW ' + d.gw;
+
+  if(!d.fixtures || d.fixtures.length === 0){
+    document.getElementById('content').innerHTML = '<div class="empty">No fixtures found for this gameweek yet.</div>';
+    return;
+  }
+
+  var html = d.fixtures.map(function(f){
+    return '<div class="fixture-card">' +
+      '<div class="fixture-status ' + statusClass(f) + '">' + esc(statusLabel(f)) + '</div>' +
+      '<div class="fixture-teams">' +
+        '<div class="team-col">' +
+          '<img class="team-badge" src="' + esc(f.home.logo) + '" alt="">' +
+          '<div class="team-name">' + esc(f.home.name) + '</div>' +
+          (f.status !== 'NS' ? '<div class="team-score">' + (f.goals.home ?? 0) + '</div>' : '') +
+          renderPicksRow(f.homePicks) +
+        '</div>' +
+        '<div class="vs-sep">' + (f.status === 'NS' ? 'v' : '-') + '</div>' +
+        '<div class="team-col">' +
+          '<img class="team-badge" src="' + esc(f.away.logo) + '" alt="">' +
+          '<div class="team-name">' + esc(f.away.name) + '</div>' +
+          (f.status !== 'NS' ? '<div class="team-score">' + (f.goals.away ?? 0) + '</div>' : '') +
+          renderPicksRow(f.awayPicks) +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  document.getElementById('content').innerHTML = html;
+
+  if(d.anyLive){
+    if(!pollTimer) pollTimer = setTimeout(load, 60000);
+  } else if(pollTimer){
+    clearTimeout(pollTimer);
+    pollTimer = null;
+  }
+}
+
+function load(){
+  pollTimer = null;
+  if(!poolId){
+    document.getElementById('content').innerHTML = '<div class="empty">No pool specified.</div>';
+    return;
+  }
+  fetch('/api/lms-matchday?pool=' + encodeURIComponent(poolId) + (token ? '&t=' + encodeURIComponent(token) : ''))
+    .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
+    .then(function(res){
+      if(res.status !== 200){
+        if(res.body.error === 'pro_required'){
+          renderProGate(res.body.upgradeUrl, res.body.fallbackUrl);
+          return;
+        }
+        document.getElementById('content').innerHTML = '<div class="empty">' + esc(res.body.error || 'Something went wrong loading this pool.') + '</div>';
+        return;
+      }
+      render(res.body);
+    })
+    .catch(function(){
+      document.getElementById('content').innerHTML = '<div class="empty">Something went wrong. Try refreshing the page.</div>';
+    });
+}
+
+load();
+</script>
+</body>
+</html>
