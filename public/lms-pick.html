@@ -62,6 +62,7 @@
 
   <div style="display:flex;gap:10px;margin-top:20px">
     <a id="ladderLink" href="#" style="flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;background:rgba(255,213,74,.08);border:1px solid rgba(255,213,74,.25);color:#ffd54a;font-weight:800;font-size:12px">☠ Ladder</a>
+    <a id="matchdayLink" href="#" style="flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);color:#ef4444;font-weight:800;font-size:12px">⚡ Match Day</a>
     <a id="tableLink" href="#" style="flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.25);color:#22d3ee;font-weight:800;font-size:12px">⚽ Live Table</a>
   </div>
 
@@ -276,6 +277,7 @@ function submitPick(){
 load();
 
 document.getElementById('ladderLink').href = '/lms-arena.html?pool=' + poolId + '&t=' + token;
+document.getElementById('matchdayLink').href = '/lms-matchday.html?pool=' + poolId + '&t=' + token;
 document.getElementById('tableLink').href = '/lms-table.html?pool=' + poolId;
 </script>
 </body>
