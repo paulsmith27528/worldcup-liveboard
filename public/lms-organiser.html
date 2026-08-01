@@ -147,7 +147,7 @@ if(!poolId || !k){
       document.getElementById('paidCount').textContent = d.players.filter(function(p){ return p.paid; }).length;
       document.getElementById('gwNum').textContent = 'GW' + d.pool.currentGameweek;
       document.getElementById('joinLink').value = joinUrl;
-      document.getElementById('ladderLink').href = '/lms-arena.html?pool=' + poolId;
+      document.getElementById('ladderLink').href = '/lms-arena.html?pool=' + poolId + (d.pool.yourPlayerToken ? '&t=' + d.pool.yourPlayerToken : '');
       document.getElementById('tableLink').href = '/lms-table.html?pool=' + poolId;
 
       var list = document.getElementById('playerList');
