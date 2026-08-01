@@ -139,6 +139,14 @@
     background:transparent; border:1px solid rgba(148,163,184,.3); color:var(--muted);
     font-weight:700; font-size:13px; text-decoration:none; cursor:pointer;
   }
+  .pro-gate .find-form{ margin-top:18px; text-align:left; }
+  .pro-gate .find-label{ font-size:11.5px; color:var(--muted); margin-bottom:8px; text-align:center; line-height:1.5; }
+  .pro-gate .find-input{
+    width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--navy-line);
+    background:var(--navy); color:var(--text); font-size:13px; margin-bottom:10px;
+  }
+  .pro-gate .find-input:focus{ outline:none; border-color:var(--gold); }
+  .pro-gate .find-err{ color:var(--out-red); font-size:12px; margin-top:8px; display:none; line-height:1.5; }
 </style>
 </head>
 <body>
@@ -186,14 +194,56 @@ function money(n){
 }
 
 function renderProGate(upgradeUrl, fallbackUrl){
+  var findFormHtml = '<div class="find-form">' +
+      '<div class="find-label">We couldn\'t identify you from this link. Enter the email you joined with and we\'ll find your upgrade link:</div>' +
+      '<input type="email" class="find-input" id="findEmail" placeholder="you@example.com">' +
+      '<button class="cta" style="margin-top:0" onclick="findMyLink()" id="findBtn">Find My Link</button>' +
+      '<p class="find-err" id="findErr"></p>' +
+    '</div>';
   var html = '<div class="pro-gate">' +
     '<div class="icon">⭐</div>' +
     '<h2>The Arena is a Pro feature</h2>' +
     '<p>Upgrade for £1 to unlock the visual standings for yourself — or carry on with the free plain-text ladder instead.</p>' +
-    (upgradeUrl ? '<a class="cta" style="display:block;text-decoration:none;" href="' + esc(upgradeUrl) + '">Go Pro — £1</a>' : '') +
+    (upgradeUrl ? '<a class="cta" style="display:block;text-decoration:none;" href="' + esc(upgradeUrl) + '">Go Pro — £1</a>' : findFormHtml) +
     '<a class="ghost-btn" href="' + esc(fallbackUrl) + '">Continue to free ladder →</a>' +
     '</div>';
   document.getElementById('content').innerHTML = html;
+}
+
+function findMyLink(){
+  var email = document.getElementById('findEmail').value.trim();
+  var errEl = document.getElementById('findErr');
+  var btn = document.getElementById('findBtn');
+  errEl.style.display = 'none';
+  if(!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)){
+    errEl.textContent = 'Please enter a valid email address.';
+    errEl.style.display = 'block';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Looking…';
+  fetch('/api/lms-find-token', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ pool: poolId, email: email })
+  })
+  .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
+  .then(function(res){
+    if(res.status !== 200){
+      btn.disabled = false;
+      btn.textContent = 'Find My Link';
+      errEl.textContent = "We couldn't find that email in this pool — try the personal link from your join confirmation email instead, or ask your organiser to resend it.";
+      errEl.style.display = 'block';
+      return;
+    }
+    window.location.href = '/api/lms-pro-checkout?pool=' + encodeURIComponent(poolId) + '&t=' + encodeURIComponent(res.body.token);
+  })
+  .catch(function(){
+    btn.disabled = false;
+    btn.textContent = 'Find My Link';
+    errEl.textContent = 'Something went wrong. Please try again.';
+    errEl.style.display = 'block';
+  });
 }
 
 var arenaData = null;

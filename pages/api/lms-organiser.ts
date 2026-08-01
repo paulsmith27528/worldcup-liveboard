@@ -93,6 +93,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return p;
     });
 
+    // Organiser identity and player identity are separate tokens with no link
+    // between them — but if the organiser also joined their own pool (common),
+    // their player record almost always shares the same email they set the
+    // pool up with. Matching on that lets pages like the Arena link work for
+    // them without asking them to dig out their personal pick link.
+    const organiserEmail = (poolData.organiserEmail || '').toLowerCase();
+    const ownPlayer = organiserEmail
+      ? rawPlayers.find((p: any) => (p.email || '').toLowerCase() === organiserEmail)
+      : null;
+
     return res.status(200).json({
       pool: {
         id: poolData.id,
@@ -105,6 +115,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         createdAt: poolData.createdAt,
         organiserFeeNotified: poolData.organiserFeeNotified || false,
         organiserFeePaid: poolData.organiserFeePaid || false,
+        yourPlayerToken: ownPlayer ? ownPlayer.token : null,
       },
       players,
     });
