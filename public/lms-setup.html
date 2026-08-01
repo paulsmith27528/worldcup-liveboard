@@ -70,6 +70,7 @@
 
       <a id="shareBtn" href="javascript:void(0)" onclick="doShare()" style="display:block;text-align:center;text-decoration:none;width:100%;padding:16px;border-radius:12px;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:14px;box-sizing:border-box;margin-bottom:12px">Share Join Link →</a>
       <a id="hubLink" href="#" style="display:block;text-align:center;color:#22d3ee;font-size:12px;text-decoration:none">Go to your organiser hub →</a>
+      <p id="emailNote" style="text-align:center;color:#5b6b85;font-size:11.5px;margin-top:14px;line-height:1.6"></p>
     </div>
   </div>
 </div>
@@ -97,7 +98,7 @@ if(!poolId || !k){
       document.getElementById('loadingState').style.display = 'none';
       document.getElementById('eyebrow').textContent = '☠ LAST MAN STANDING · ' + (res.body.leagueName || 'Premier League').toUpperCase();
       if(res.body.status === 'active'){
-        showSuccess(res.body.name);
+        showSuccess(res.body.name, res.body.organiserEmail);
       } else {
         document.getElementById('f').style.display = 'block';
       }
@@ -135,7 +136,7 @@ document.getElementById('f').addEventListener('submit', function(e){
       return;
     }
     document.getElementById('f').style.display = 'none';
-    showSuccess(roundName);
+    showSuccess(roundName, organiserEmail);
   })
   .catch(function(){
     err.textContent = 'Something went wrong. Please try again.';
@@ -143,12 +144,15 @@ document.getElementById('f').addEventListener('submit', function(e){
   });
 });
 
-function showSuccess(poolName){
+function showSuccess(poolName, organiserEmailAddr){
   document.getElementById('pageTitle').textContent = 'You\'re All Set';
   document.getElementById('pageSub').textContent = '';
   document.getElementById('successPoolName').textContent = poolName || '';
   document.getElementById('joinLink').textContent = joinUrl;
   document.getElementById('hubLink').href = '/lms-organiser.html?pool=' + poolId + '&k=' + k;
+  document.getElementById('emailNote').textContent = organiserEmailAddr
+    ? 'We’ve also emailed this organiser link to ' + organiserEmailAddr + ' as a backup.'
+    : 'We’ve also emailed you this organiser link as a backup — check your inbox.';
   document.getElementById('successState').style.display = 'block';
 }
 
