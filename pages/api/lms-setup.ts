@@ -67,6 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       status: poolData.status,
       name: poolData.name,
       organiser: poolData.organiser,
+      organiserEmail: poolData.organiserEmail || null,
       buyIn: poolData.buyIn,
       leagueName: leagueConfigFor(poolData.league).name,
     });
