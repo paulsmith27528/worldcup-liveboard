@@ -19,6 +19,7 @@ const LMS_TTL = 60 * 60 * 24 * 300; // 300 days — covers a full PL season
 const LEAGUE_NAMES: Record<string, string> = {
   PL: 'Premier League',
   CHAMPIONSHIP: 'Championship',
+  SPL: 'Scottish Premiership',
   UCL: 'Champions League',
 };
 function leagueNameFor(league: string | null | undefined) {

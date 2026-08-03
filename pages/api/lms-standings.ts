@@ -11,6 +11,7 @@ const redis = new Redis({
 const LEAGUE_NAMES: Record<string, string> = {
   PL: 'Premier League',
   CHAMPIONSHIP: 'Championship',
+  SPL: 'Scottish Premiership',
   UCL: 'Champions League',
 };
 function leagueNameFor(league: string | null | undefined) {

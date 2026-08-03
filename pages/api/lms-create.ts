@@ -11,7 +11,7 @@ const LMS_TTL = 60 * 60 * 24 * 300; // 300 days — covers a full PL season
 
 // Which competitions this button can create a pool for — each is its own
 // separate product on the landing page, run and charged independently.
-const VALID_LEAGUES = ['PL', 'CHAMPIONSHIP', 'UCL'];
+const VALID_LEAGUES = ['PL', 'CHAMPIONSHIP', 'UCL', 'SPL'];
 
 function genPoolId(): string {
   return Math.random().toString(36).substring(2, 8).toUpperCase();
