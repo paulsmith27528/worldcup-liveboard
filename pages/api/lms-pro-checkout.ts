@@ -13,12 +13,13 @@ const BASE_URL = process.env.BASE_URL!;
 // Same £1 upgrade, but "charged independently" per competition — a separate
 // Stripe price per league, even though the amount is identical, so each
 // product's revenue is reported separately in Stripe.
-// TODO: replace the two placeholders once created (one-time, £1 each) — must
+// TODO: replace the placeholder once created (one-time, £1) — must
 // match PRICE_MAP in stripe-webhook.ts exactly.
 const LMS_PRO_PRICE_ID: Record<string, string> = {
   PL: 'price_1TxOB73g62IhPcY7W8hVpZUJ',
   CHAMPIONSHIP: 'price_1TxZGA3g62IhPcY7OV2OZxSp',
   UCL: 'price_1TxZK13g62IhPcY7Va4dW1xd',
+  SPL: 'price_1U198n3g62IhPcY7MwH59Fj9',
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

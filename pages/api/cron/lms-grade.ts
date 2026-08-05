@@ -22,6 +22,7 @@ const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
 const LEAGUE_CONFIG: Record<string, { id: number; season: number; name: string; roundPrefix: string }> = {
   PL: { id: 39, season: 2026, name: 'Premier League', roundPrefix: 'Regular Season' },
   CHAMPIONSHIP: { id: 40, season: 2026, name: 'Championship', roundPrefix: 'Regular Season' },
+  SPL: { id: 179, season: 2026, name: 'Scottish Premiership', roundPrefix: 'Regular Season' },
   UCL: { id: 2, season: 2026, name: 'Champions League', roundPrefix: 'League Stage' },
 };
 function leagueConfigFor(league: string | null | undefined) {
