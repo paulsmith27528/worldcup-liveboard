@@ -19,7 +19,7 @@ const LMS_ORGANISER_FEE_PRICE_ID: Record<string, string> = {
   PL: 'price_1TxODB3g62IhPcY7FUPj1XzO',
   CHAMPIONSHIP: 'price_1TxZHh3g62IhPcY7CKUJMBDC',
   UCL: 'price_1TxZLB3g62IhPcY7VAvHsXrA',
-  SPL: 'price_REPLACE_WITH_SPL_ORGANISER_FEE_PRICE_ID',
+  SPL: 'price_1U19BR3g62IhPcY7ZjYDdlhJ',
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
