@@ -77,6 +77,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(2,8,16,.9);backdrop-filter
 .product-card.dash{background:linear-gradient(150deg,rgba(34,211,238,.07),rgba(5,18,38,.97));border:1px solid rgba(34,211,238,.3);animation:cyanGlow 4s ease-in-out infinite}
 .product-card.bundle{background:linear-gradient(150deg,rgba(167,139,250,.1),rgba(5,18,38,.97));border:2px solid rgba(167,139,250,.5);position:relative;overflow:hidden}
 .bundle-badge{position:absolute;top:16px;right:16px;background:linear-gradient(135deg,#a78bfa,#7c3aed);color:#fff;font-size:9px;font-weight:900;letter-spacing:1.5px;padding:4px 10px;border-radius:10px;text-transform:uppercase}
+.finished-badge{position:absolute;top:16px;right:16px;background:linear-gradient(135deg,#64748b,#475569);color:#fff;font-size:9px;font-weight:900;letter-spacing:1.5px;padding:4px 10px;border-radius:10px;text-transform:uppercase}
+.btn-product-disabled{display:block;width:100%;text-align:center;background:rgba(255,255,255,.06);color:#64748b;font-weight:900;font-size:13px;padding:13px;border-radius:12px;border:1px solid rgba(255,255,255,.1);cursor:not-allowed}
 .product-icon{font-size:40px;margin-bottom:14px}
 .product-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:2px;padding:3px 10px;border-radius:10px;margin-bottom:12px;text-transform:uppercase}
 .tag-gold{background:rgba(255,213,74,.15);color:#ffd54a;border:1px solid rgba(255,213,74,.25)}
@@ -250,7 +252,8 @@ footer a:hover{color:#22d3ee}
     <button class="carousel-arrow prev" onclick="carouselNav(-1)" aria-label="Previous">‹</button>
     <button class="carousel-arrow next" onclick="carouselNav(1)" aria-label="Next">›</button>
     <div class="products-grid" id="productsGrid">
-    <div class="product-card sweep">
+    <div class="product-card sweep" style="position:relative;overflow:hidden">
+      <div class="finished-badge">Finished</div>
       <div class="product-icon float">🏆</div>
       <div class="product-tag tag-gold">World Cup 2026</div>
       <div class="product-title">WC2026 Sweepstake</div>
@@ -265,7 +268,7 @@ footer a:hover{color:#22d3ee}
         <div class="pf"><span class="pf-check">✓</span> Prize pot tracker · Paid/unpaid management</div>
         <div class="pf"><span class="pf-check">✓</span> Free printable A3 poster included</div>
       </div>
-      <a href="https://buy.stripe.com/4gM7sE8NGcHjcTQ3eV3F605" class="btn-product-gold">🏆 Create My Sweepstake — FREE</a>
+      <button type="button" class="btn-product-disabled" disabled>🏁 Tournament Finished</button>
     </div>
     <div class="product-card" style="background:linear-gradient(150deg,rgba(239,68,68,.1),rgba(5,18,38,.97));border:1px solid rgba(239,68,68,.4);position:relative;overflow:hidden;animation:goldGlow 4s ease-in-out infinite">
       <div class="product-icon float" style="font-size:52px;margin-bottom:14px;filter:drop-shadow(0 0 12px rgba(239,68,68,.5))">☠️</div>
