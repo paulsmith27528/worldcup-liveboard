@@ -16,8 +16,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const raw = await Promise.all(ids.map((id) => redis.get<string>(`site:review:${id}`)));
     const reviews = raw
-      .filter((r): r is string | object => !!r)
-      .map((r) => (typeof r === 'string' ? JSON.parse(r) : r))
+      .filter((r): r is string => !!r)
+      .map((r) => JSON.parse(r))
       .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .map((r: any) => ({ name: r.name, rating: r.rating, text: r.text }));
 
