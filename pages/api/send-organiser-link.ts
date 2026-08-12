@@ -3,7 +3,7 @@ import sgMail from '@sendgrid/mail';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
-const FROM_EMAIL = 'noreply@worldcupsweepstake-liveboard.com';
+const FROM_EMAIL = process.env.NOREPLY_EMAIL!;
 const FROM_NAME  = 'WC2026 Sweepstake';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

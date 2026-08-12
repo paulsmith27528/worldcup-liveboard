@@ -9,7 +9,7 @@ const redis = new Redis({
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
-const FROM_EMAIL = 'noreply@worldcupsweepstake-liveboard.com';
+const FROM_EMAIL = process.env.NOREPLY_EMAIL!;
 const FROM_NAME = 'myofficesweepstake.com';
 const OWNER_EMAIL = 'hello@myofficesweepstake.com';
 

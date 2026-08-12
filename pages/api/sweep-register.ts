@@ -10,7 +10,7 @@ const redis = new Redis({
 sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
 const BASE_URL = process.env.BASE_URL!;
-const FROM_EMAIL = 'noreply@worldcupsweepstake-liveboard.com';
+const FROM_EMAIL = process.env.NOREPLY_EMAIL!;
 const FROM_NAME = 'WC2026 Sweepstake';
 
 const COLOURS = ['#FF6B6B','#4ECDC4','#45B7D1','#96CEB4','#FFEAA7','#DDA0DD','#98D8C8','#F7DC6F','#BB8FCE','#85C1E9','#F0B27A','#82E0AA','#F1948A','#7FB3D3','#F9E79F','#A9CCE3','#A3E4D7','#F8C471','#C39BD3','#76D7C4'];
