@@ -10,7 +10,7 @@ const redis = new Redis({
 });
 
 const BASE_URL = process.env.BASE_URL!;
-const FROM_EMAIL = 'noreply@worldcupsweepstake-liveboard.com';
+const FROM_EMAIL = process.env.NOREPLY_EMAIL!;
 const FROM_NAME = 'WC2026 Sweepstake';
 
 function genId(): string {

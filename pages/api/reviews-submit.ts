@@ -11,7 +11,7 @@ const redis = new Redis({
 sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
 const BASE_URL = process.env.BASE_URL!;
-const FROM_EMAIL = 'noreply@worldcupsweepstake-liveboard.com';
+const FROM_EMAIL = process.env.NOREPLY_EMAIL!;
 const FROM_NAME = 'myofficesweepstake.com';
 const OWNER_EMAIL = 'hello@myofficesweepstake.com';
 const ADMIN_KEY = process.env.ADMIN_KEY || '';
