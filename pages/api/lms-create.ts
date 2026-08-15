@@ -13,12 +13,49 @@ const LMS_TTL = 60 * 60 * 24 * 300; // 300 days — covers a full PL season
 // separate product on the landing page, run and charged independently.
 const VALID_LEAGUES = ['PL', 'CHAMPIONSHIP', 'UCL', 'SPL'];
 
+// id/season only needed here to work out which gameweek a brand-new pool
+// should actually start on — matters for any league added after its season
+// is already underway (e.g. Scottish Premiership), where GW1 has already
+// been played and grading it would wrongly eliminate players who never had
+// a chance to pick for it.
+const LEAGUE_CONFIG: Record<string, { id: number; season: number }> = {
+  PL: { id: 39, season: 2026 },
+  CHAMPIONSHIP: { id: 40, season: 2026 },
+  SPL: { id: 179, season: 2026 },
+  UCL: { id: 2, season: 2026 },
+};
+
+const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
+
 function genPoolId(): string {
   return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
 function generateOrgToken(): string {
   return randomBytes(32).toString('hex');
+}
+
+// Same "earliest upcoming fixture's round" approach lms-pick.ts already uses
+// to find the real current gameweek — reused here so a pool starts on
+// whatever gameweek the league is actually on right now, not always GW1.
+// Falls back to 1 (today's old behaviour) if anything about this lookup
+// fails, so a flaky API call can never block pool creation.
+async function getStartingGw(league: string): Promise<number> {
+  try {
+    const cfg = LEAGUE_CONFIG[league];
+    const hdrs = { "x-apisports-key": API_KEY };
+    const res = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}&status=NS`, { headers: hdrs });
+    const data = await res.json();
+    const upcoming = (data.response || []).sort((a: any, b: any) =>
+      new Date(a.fixture.date).getTime() - new Date(b.fixture.date).getTime()
+    );
+    if (upcoming.length === 0) return 1;
+    const round = upcoming[0].league.round;
+    const match = round.match(/(\d+)$/);
+    return match ? parseInt(match[1], 10) : 1;
+  } catch {
+    return 1;
+  }
 }
 
 // Free, instant pool creation — no payment involved. Mirrors exactly what the
@@ -31,6 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const poolId = genPoolId();
   const orgToken = generateOrgToken();
+  const startingGw = await getStartingGw(league);
 
   try {
     await redis.set(`lms:pool:${poolId}`, JSON.stringify({
@@ -41,8 +79,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       organiserEmail: null,
       orgToken,
       buyIn: null,
-      currentGameweek: 1,
-      lastGradedGw: 0,
+      currentGameweek: startingGw,
+      lastGradedGw: startingGw - 1,
       wipeoutRule: 'rollback',
       wipeoutWeeks: [] as number[],
       createdAt: Date.now(),

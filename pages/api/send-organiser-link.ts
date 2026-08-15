@@ -55,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     </div>
 
     <p style="color:#334155;font-size:11px;text-align:center;margin-top:24px">
-      This email was sent because you set up a sweepstake on worldcupsweepstake-liveboard.com
+      This email was sent because you set up a sweepstake on myofficesweepstake.com
     </p>
   </div>
 </div>
