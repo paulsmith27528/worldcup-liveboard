@@ -30,7 +30,7 @@ function leagueConfigFor(league: string | null | undefined) {
 }
 
 const BASE_URL = process.env.BASE_URL!;
-const FROM_EMAIL = 'noreply@worldcupsweepstake-liveboard.com';
+const FROM_EMAIL = process.env.NOREPLY_EMAIL!;
 const FROM_NAME = 'Last Man Standing';
 
 const FINISHED_STATUSES = ['FT', 'AET', 'PEN'];

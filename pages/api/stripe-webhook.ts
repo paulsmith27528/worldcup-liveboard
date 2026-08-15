@@ -69,6 +69,7 @@ function buildLmsSetupEmailHtml(setupUrl: string): string {
 }
 
 const BASE_URL = process.env.BASE_URL!;
+const FROM_EMAIL = process.env.NOREPLY_EMAIL!;
 const TTL = 60 * 60 * 24 * 30;
 const PRO_TTL = 60 * 60 * 24 * 120; // 120 days — lasts the tournament
 
@@ -124,7 +125,7 @@ ${bodyNote}
 ${primaryBtn}
 ${bundleExtra}
 </div>
-<p style="color:#475569;font-size:12px;text-align:center;margin:0;">Questions? <a href="mailto:hello@worldcupsweepstake-liveboard.com" style="color:#00e5ff;">hello@worldcupsweepstake-liveboard.com</a></p>
+<p style="color:#475569;font-size:12px;text-align:center;margin:0;">Questions? <a href="mailto:hello@myofficesweepstake.com" style="color:#00e5ff;">hello@myofficesweepstake.com</a></p>
 </div>
 </body></html>`;
 }
@@ -224,7 +225,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Still send a generic success email so they're not left hanging
       try {
         await sgMail.send({
-          from: { name: "WC2026 Sweepstake", email: "noreply@worldcupsweepstake-liveboard.com" },
+          from: { name: "WC2026 Sweepstake", email: FROM_EMAIL },
           to: email,
           subject: "Your Pro Bracket — action needed",
           html: `<p style="font-family:Arial,sans-serif;color:#fff;background:#020810;padding:32px">Hi, we received your Pro Bracket payment but couldn't find your sweepstake automatically. Please reply to this email and we'll get you set up straight away. Sorry for the inconvenience!</p>`,
@@ -283,7 +284,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }), { ex: PRO_TTL });
       const proUrl = `${BASE_URL}/dashboard.html?pro=${proToken}`;
       await sgMail.send({
-        from: { name: "WC2026 Sweepstake", email: "noreply@worldcupsweepstake-liveboard.com" },
+        from: { name: "WC2026 Sweepstake", email: FROM_EMAIL },
         to: email,
         subject: `🏆 Your Pro Bracket is ready — ${fallbackEntry.teamFlag || ""} ${fallbackEntry.teamName}`,
         html: buildProEmailHtml(fallbackEntry.name, fallbackEntry.teamName, fallbackEntry.teamFlag || "⚽", bracketData.n || "WC2026 Sweepstake", proUrl),
@@ -311,7 +312,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Send the Pro email
     try {
       await sgMail.send({
-        from: { name: "WC2026 Sweepstake", email: "noreply@worldcupsweepstake-liveboard.com" },
+        from: { name: "WC2026 Sweepstake", email: FROM_EMAIL },
         to: email,
         subject: `🏆 Your Pro Bracket is ready — ${participant.teamFlag || ""} ${participant.teamName}`,
         html: buildProEmailHtml(
@@ -368,7 +369,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
       await sgMail.send({
-        from: { name: "Last Man Standing", email: "noreply@worldcupsweepstake-liveboard.com" },
+        from: { name: "Last Man Standing", email: FROM_EMAIL },
         to: email,
         subject: `\uD83D\uDC80 You're in — set up your Last Man Standing pool`,
         html: buildLmsSetupEmailHtml(setupUrl),
@@ -410,7 +411,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
       await sgMail.send({
-        from: { name: "Last Man Standing", email: "noreply@worldcupsweepstake-liveboard.com" },
+        from: { name: "Last Man Standing", email: FROM_EMAIL },
         to: email,
         subject: `⭐ You're Pro — Last Man Standing`,
         html: `<!DOCTYPE html>
@@ -465,7 +466,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
       await sgMail.send({
-        from: { name: "Last Man Standing", email: "noreply@worldcupsweepstake-liveboard.com" },
+        from: { name: "Last Man Standing", email: FROM_EMAIL },
         to: email,
         subject: `✅ You're upgraded — ${poolData.name || "your pool"} can keep growing`,
         html: `<!DOCTYPE html>
@@ -511,7 +512,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     await sgMail.send({
-      from: { name: "World Cup LiveBoard", email: "noreply@worldcupsweepstake-liveboard.com" },
+      from: { name: "World Cup LiveBoard", email: FROM_EMAIL },
       to: email,
       subject: `Your ${product.name} is ready`,
       html,
