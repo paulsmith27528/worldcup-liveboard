@@ -27,12 +27,15 @@
   .team-cell img{width:20px;height:20px;object-fit:contain;flex-shrink:0}
   .reserve-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.25);color:var(--cyan);padding:3px 8px;border-radius:20px;font-weight:800;font-size:10px;white-space:nowrap}
   .reserve-pill.low{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:var(--red)}
+  .reserve-pill.locked{background:rgba(255,213,74,.1);border-color:rgba(255,213,74,.3);color:var(--gold);text-decoration:none}
   .note{color:var(--dim);font-size:11px;text-align:center;margin-top:20px;line-height:1.6}
+  .nav-row{display:flex;gap:10px;margin-top:24px}
+  .nav-row a{flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;font-weight:800;font-size:12px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="eyebrow">⚽ LIVE TABLE</div>
+  <div class="eyebrow" id="eyebrow">⚽ LIVE TABLE</div>
   <h1 id="poolTitle">Loading…</h1>
   <p class="sub" id="poolSub"></p>
   <div id="content"><div class="loading">Loading table…</div></div>
@@ -41,13 +44,14 @@
 <script>
 var params = new URLSearchParams(window.location.search);
 var poolId = params.get('pool');
+var token = params.get('t');
 
 function esc(s){ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
 if(!poolId){
   document.getElementById('content').innerHTML = '<div class="empty">No pool specified.</div>';
 } else {
-  fetch('/api/lms-table?pool=' + encodeURIComponent(poolId))
+  fetch('/api/lms-table?pool=' + encodeURIComponent(poolId) + (token ? '&t=' + encodeURIComponent(token) : ''))
     .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
     .then(function(res){
       if(res.status !== 200){
@@ -61,9 +65,22 @@ if(!poolId){
     });
 }
 
+function reserveCellHtml(row, upgradeUrl){
+  if(row.reserveCount !== null){
+    var pillClass = row.reserveCount <= 2 ? 'reserve-pill low' : 'reserve-pill';
+    return '<span class="' + pillClass + '">🎯 ' + row.reserveCount + ' left</span>';
+  }
+  return upgradeUrl
+    ? '<a class="reserve-pill locked" href="' + esc(upgradeUrl) + '">⭐ Pro</a>'
+    : '<span class="reserve-pill locked">⭐ Pro</span>';
+}
+
 function render(d){
   document.getElementById('poolTitle').textContent = d.poolName || 'Live Table';
   document.getElementById('poolSub').textContent = d.aliveCount + ' players still picking';
+  if(d.leagueName){
+    document.getElementById('eyebrow').textContent = '⚽ LIVE TABLE · ' + d.leagueName.toUpperCase();
+  }
 
   if(!d.table || d.table.length === 0){
     document.getElementById('content').innerHTML = '<div class="empty">No standings available yet — check back once the season\'s underway.</div>';
@@ -72,18 +89,26 @@ function render(d){
 
   var html = '<table class="pl-table"><tr><th class="pos">#</th><th>Team</th><th>P</th><th>GD</th><th>Pts</th><th>Reserve</th></tr>';
   d.table.forEach(function(row){
-    var pillClass = row.reserveCount <= 2 ? 'reserve-pill low' : 'reserve-pill';
     html += '<tr>' +
       '<td class="pos">' + row.rank + '</td>' +
       '<td><div class="team-cell"><img src="' + row.logo + '" alt="">' + esc(row.team) + '</div></td>' +
       '<td>' + row.played + '</td>' +
       '<td>' + (row.goalDiff > 0 ? '+' : '') + row.goalDiff + '</td>' +
       '<td>' + row.points + '</td>' +
-      '<td><span class="' + pillClass + '">\uD83C\uDFAF ' + row.reserveCount + ' left</span></td>' +
+      '<td>' + reserveCellHtml(row, d.upgradeUrl) + '</td>' +
       '</tr>';
   });
   html += '</table>';
-  html += '<p class="note">"Reserve" shows how many players still in the pool haven\'t used that team yet — useful to know before you spend a strong one.</p>';
+  html += '<p class="note">"Reserve" shows how many players still in the pool haven\'t used that team yet — useful to know before you spend a strong one.' +
+    (d.isPro ? '' : ' Unlock it for £1 with the same Pro upgrade that unlocks the Arena.') + '</p>';
+
+  if(token){
+    html += '<div class="nav-row">' +
+      '<a href="/lms-pick.html?pool=' + poolId + '&t=' + token + '" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:#94a3b8">← Pick</a>' +
+      '<a href="/lms-arena.html?pool=' + poolId + '&t=' + token + '" style="background:rgba(255,213,74,.08);border:1px solid rgba(255,213,74,.25);color:#ffd54a">☠ Ladder</a>' +
+      '<a href="/lms-matchday.html?pool=' + poolId + '&t=' + token + '" style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);color:#ef4444">⚡ Match Day</a>' +
+      '</div>';
+  }
 
   document.getElementById('content').innerHTML = html;
 }

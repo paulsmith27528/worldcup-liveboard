@@ -38,6 +38,8 @@
   .peak .txt{font-size:12px;color:var(--dim)}
   .peak.winner .txt{color:var(--gold);font-weight:800;font-size:14px}
   .note{color:var(--dim);font-size:11px;text-align:center;margin-top:20px;line-height:1.6}
+  .nav-row{display:flex;gap:10px;margin-top:20px}
+  .nav-row a{flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;font-weight:800;font-size:12px}
   .empty{text-align:center;color:var(--dim);font-size:13px;padding:20px}
 </style>
 </head>
@@ -147,6 +149,14 @@ function render(d){
 
   html += '</div>';
   html += '<p class="note">Gold ring = you. \uD83D\uDEE1 = life used. Fallen players are shown at the week they were eliminated.</p>';
+
+  if(token){
+    html += '<div class="nav-row">' +
+      '<a href="/lms-pick.html?pool=' + poolId + '&t=' + token + '" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:#94a3b8">\u2190 Pick</a>' +
+      '<a href="/lms-matchday.html?pool=' + poolId + '&t=' + token + '" style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);color:#ef4444">\u26A1 Match Day</a>' +
+      '<a href="/lms-table.html?pool=' + poolId + '&t=' + token + '" style="background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.25);color:#22d3ee">\u26BD Live Table</a>' +
+      '</div>';
+  }
 
   document.getElementById('content').innerHTML = html;
 }

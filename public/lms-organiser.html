@@ -150,7 +150,7 @@ if(!poolId || !k){
       document.getElementById('joinLink').value = joinUrl;
       document.getElementById('ladderLink').href = '/lms-arena.html?pool=' + poolId + (d.pool.yourPlayerToken ? '&t=' + d.pool.yourPlayerToken : '');
       document.getElementById('matchdayLink').href = '/lms-matchday.html?pool=' + poolId + (d.pool.yourPlayerToken ? '&t=' + d.pool.yourPlayerToken : '');
-      document.getElementById('tableLink').href = '/lms-table.html?pool=' + poolId;
+      document.getElementById('tableLink').href = '/lms-table.html?pool=' + poolId + (d.pool.yourPlayerToken ? '&t=' + d.pool.yourPlayerToken : '');
 
       var list = document.getElementById('playerList');
       if(d.players.length === 0){
