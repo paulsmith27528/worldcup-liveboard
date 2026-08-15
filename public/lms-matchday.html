@@ -55,6 +55,8 @@
   @keyframes blink{ 0%,100%{opacity:1} 50%{opacity:.3} }
 
   .content{ flex:1; padding:16px 16px 80px; display:flex; flex-direction:column; gap:14px; }
+  .nav-row{ display:flex; gap:8px; }
+  .nav-row a{ flex:1; text-align:center; text-decoration:none; padding:12px 8px; border-radius:10px; font-weight:800; font-size:11.5px; }
 
   .fixture-card{
     background:var(--navy-elevated); border:1px solid var(--navy-line); border-radius:16px; padding:16px;
@@ -239,6 +241,14 @@ function render(d){
       '</div>' +
     '</div>';
   }).join('');
+
+  if(token){
+    html += '<div class="nav-row">' +
+      '<a href="/lms-pick.html?pool=' + poolId + '&t=' + token + '" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:var(--muted)">← Pick</a>' +
+      '<a href="/lms-arena.html?pool=' + poolId + '&t=' + token + '" style="background:rgba(216,178,76,.1);border:1px solid rgba(216,178,76,.25);color:var(--gold-bright)">☠ Ladder</a>' +
+      '<a href="/lms-table.html?pool=' + poolId + '&t=' + token + '" style="background:rgba(216,178,76,.1);border:1px solid rgba(216,178,76,.25);color:var(--gold-bright)">⚽ Live Table</a>' +
+      '</div>';
+  }
 
   document.getElementById('content').innerHTML = html;
 

@@ -130,6 +130,8 @@
     border-radius:12px; font-weight:800; font-size:13px;
   }
   .loading, .empty{ text-align:center; color:var(--muted); font-size:13px; padding:60px 20px; }
+  .nav-row{ display:flex; gap:8px; padding:0 16px 20px; }
+  .nav-row a{ flex:1; text-align:center; text-decoration:none; padding:12px 8px; border-radius:10px; font-weight:800; font-size:11.5px; }
   .pro-gate{ text-align:center; padding:40px 24px; }
   .pro-gate .icon{ font-size:40px; margin-bottom:14px; }
   .pro-gate h2{ font-size:18px; margin:0 0 8px; color:var(--text); }
@@ -376,7 +378,15 @@ function render(justUnlocked){
     html += '</div></div>';
   }
 
-  document.getElementById('content').innerHTML = '<div class="arena" id="arenaList">' + html + '</div>';
+  var navHtml = '';
+  if(token){
+    navHtml = '<div class="nav-row">' +
+      '<a href="/lms-pick.html?pool=' + poolId + '&t=' + token + '" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:var(--muted)">← Pick</a>' +
+      '<a href="/lms-matchday.html?pool=' + poolId + '&t=' + token + '" style="background:rgba(180,69,61,.12);border:1px solid rgba(180,69,61,.3);color:#f0a19c">⚡ Match Day</a>' +
+      '<a href="/lms-table.html?pool=' + poolId + '&t=' + token + '" style="background:rgba(216,178,76,.1);border:1px solid rgba(216,178,76,.25);color:var(--gold-bright)">⚽ Live Table</a>' +
+      '</div>';
+  }
+  document.getElementById('content').innerHTML = '<div class="arena" id="arenaList">' + html + '</div>' + navHtml;
 
   document.querySelectorAll('.rung[data-gw]').forEach(function(el){
     el.addEventListener('click', function(){
