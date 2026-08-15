@@ -128,7 +128,7 @@ function render(d){
     proBanner.innerHTML = '<div style="text-align:center;padding:10px;border-radius:10px;background:rgba(255,213,74,.06);border:1px solid rgba(255,213,74,.2);color:#ffd54a;font-weight:800;font-size:12px">⭐ You\'re Pro</div>';
   } else {
     proBanner.style.display = 'block';
-    proBanner.innerHTML = '<a href="/api/lms-pro-checkout?pool=' + encodeURIComponent(poolId) + '&t=' + encodeURIComponent(token) + '" style="display:block;text-align:center;text-decoration:none;padding:12px;border-radius:10px;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:12px">⭐ Go Pro — £1 · Unlock the Arena</a>';
+    proBanner.innerHTML = '<a href="/api/lms-pro-checkout?pool=' + encodeURIComponent(poolId) + '&t=' + encodeURIComponent(token) + '" style="display:block;text-align:center;text-decoration:none;padding:12px;border-radius:10px;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:12px">⭐ Go Pro — £1 · React &amp; see pick popularity</a>';
   }
 
   if(d.poolStatus === 'finished'){

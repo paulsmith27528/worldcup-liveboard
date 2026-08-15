@@ -55,16 +55,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const you = (t && typeof t === 'string') ? t : null;
 
-    // The Arena is a Pro-only feature — anyone viewing it must be a player
-    // in this pool who has personally paid for Pro, not just anyone with
-    // the link (and not the organiser view, which carries no player token).
+    // The visual Arena itself is free to view for everyone — only sending
+    // reactions and the per-round popularity breakdown stay Pro-only.
     const viewer = you ? players.find((p: any) => p.token === you) : null;
-    if (!viewer || !viewer.proPaid) {
-      return res.status(403).json({
-        error: 'pro_required',
-        upgradeUrl: you ? `/api/lms-pro-checkout?pool=${pool}&t=${you}` : null,
-        fallbackUrl: you ? `/lms-standings.html?pool=${pool}&t=${you}` : `/lms-standings.html?pool=${pool}`,
-      });
+    const isPro = !!(viewer && viewer.proPaid);
+    const upgradeUrl = you ? `/api/lms-pro-checkout?pool=${pool}&t=${you}` : null;
+
+    const reactionsRaw = await redis.hgetall<Record<string, string>>(`lms:pool:${pool}:reactions`);
+    const reactions: Record<string, Record<string, number>> = {};
+    if (reactionsRaw) {
+      for (const [field, count] of Object.entries(reactionsRaw)) {
+        const sep = field.indexOf(':');
+        const pid = field.slice(0, sep);
+        const emoji = field.slice(sep + 1);
+        if (!reactions[pid]) reactions[pid] = {};
+        reactions[pid][emoji] = parseInt(count as string, 10);
+      }
     }
 
     const lastGradedGw: number = poolData.lastGradedGw || 0;
@@ -95,7 +101,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const popularity = Object.entries(picksData.counts || {})
         .map(([team, count]) => ({ team, count: count as number, pct: total > 0 ? Math.round((count as number) / total * 100) : 0 }))
         .sort((a, b) => b.count - a.count);
-      rounds.push({ gw: g, wipeout: false, totalPlayers: total, popularity, noPick: picksData.noPick ?? 0 });
+      // Popularity breakdown stays Pro-only even though the ladder itself
+      // is now free — non-Pro viewers get totalPlayers (so the sheet can
+      // still say "X picked this round") but not the per-team split.
+      rounds.push({ gw: g, wipeout: false, totalPlayers: total, popularity: isPro ? popularity : null, noPick: picksData.noPick ?? 0 });
     }
 
     const upcoming = poolData.status === 'active' ? await getUpcomingRound(leagueConfigFor(poolData.league)) : { gw: null, deadline: null };
@@ -111,6 +120,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         lastGradedGw,
       },
       players: players.map((p: any) => ({
+        id: p.id,
         name: p.name,
         displayName: p.displayName || null,
         avatarUrl: p.avatarUrl || null,
@@ -128,6 +138,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         deadline: upcoming.deadline,
         locked,
       },
+      reactions,
+      isPro,
+      upgradeUrl,
     });
   } catch (err: any) {
     console.error('lms-arena error:', err.message);

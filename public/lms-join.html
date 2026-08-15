@@ -104,6 +104,22 @@
     </ol>
   </div>
 
+  <div class="card rules-card" id="reactionsCard" style="margin-top:16px">
+    <h2>⭐ REACT LIKE YOU MEAN IT</h2>
+    <p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 16px;text-align:center">
+      Send emoji reactions on anyone's avatar in the Arena &mdash; the whole pool sees them land. <span class="joker">Sending is a Pro feature (&pound;1)</span>, but everyone can see reactions either way.
+    </p>
+    <ul class="rules-list" style="list-style:none;padding-left:0">
+      <li>&#128128; Send this when their team concedes in the 94th minute. You know the one.</li>
+      <li>&#128293; For when someone's actually good at this. Rare, but it happens.</li>
+      <li>&#128514; Self-explanatory. They picked Sheffield United away.</li>
+      <li>&#129292; It's not okay. You know exactly what it is. This is football.</li>
+      <li>&#128680; VAR check. Someone's about to have their week ruined.</li>
+      <li>&#128584; Can't watch. Classic self-inflicted.</li>
+      <li>&#128169; Your team's shit. Their team's shit. Everyone's shit. Send freely.</li>
+    </ul>
+  </div>
+
   <div class="share-box" id="shareBox">
     <p class="label">Know someone else who should be in this pool? Pass it on:</p>
     <div class="linkDisplay" id="joinLinkDisplay"></div>
@@ -287,6 +303,7 @@ document.getElementById('f').addEventListener('submit', function(e){
     document.getElementById('f').style.display = 'none';
     document.getElementById('success').style.display = 'block';
     document.getElementById('rulesCard').style.display = 'block';
+    document.getElementById('reactionsCard').style.display = 'block';
   })
   .catch(function(){
     err.textContent = 'Something went wrong. Please try again.';
