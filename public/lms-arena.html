@@ -323,10 +323,17 @@ function avatarHtml(p, g){
   return '<div class="' + cls + '" data-player-id="' + esc(String(p.id)) + '"' + style + ' title="' + esc(title) + '">' + content + shield + chipsHtml(p.id) + '</div>';
 }
 
-function hiddenAvatarsHtml(count){
-  var html = '';
-  for(var i = 0; i < count; i++){ html += '<div class="avatar hidden"></div>'; }
-  return html;
+// Current round's avatars are real and clickable — reactions target the
+// player, not their pick, so there's nothing pick-related to leak here.
+// The joker shield is deliberately left off though: whether someone's
+// played their joker on this round's pick is strategy info that should
+// stay hidden until the round is graded, same as the pick itself.
+function currentAvatarHtml(p){
+  var label = p.displayName || p.name;
+  var cls = 'avatar alive' + (p.isYou ? ' you' : '');
+  var style = p.avatarUrl ? ' style="background-image:url(' + esc(p.avatarUrl) + ')"' : '';
+  var content = p.avatarUrl ? '' : esc(initials(label));
+  return '<div class="' + cls + '" data-player-id="' + esc(String(p.id)) + '"' + style + ' title="' + esc(p.name) + '">' + content + chipsHtml(p.id) + '</div>';
 }
 
 function render(justUnlocked){
@@ -368,7 +375,8 @@ function render(justUnlocked){
   html += '<div class="rung rung-current' + pulseClass + '" data-current="1">';
   html += '<div class="rung-meta"><span>' + (d.current.gw ? 'ROUND ' + d.current.gw : 'AWAITING NEXT ROUND') + '</span>' +
     (d.current.locked ? '<span>&middot; picks locked</span>' : '<span>&middot; deadline passed</span>') + '</div>';
-  html += '<div class="row">' + hiddenAvatarsHtml(d.aliveCount) + '</div></div>';
+  var currentPlayers = d.players.filter(function(p){ return p.eliminatedWeek === null; });
+  html += '<div class="row">' + currentPlayers.map(currentAvatarHtml).join('') + '</div></div>';
 
   // Past rounds, oldest first (bottom), newest last (top) in DOM order
   var lastGraded = d.pool.lastGradedGw;
