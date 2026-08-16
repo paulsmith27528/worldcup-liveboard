@@ -87,7 +87,7 @@
     <div class="success" id="success">
       <div class="icon">☠</div>
       <h2 style="margin:0 0 8px">You're in!</h2>
-      <p style="color:#94a3b8;font-size:13px;line-height:1.6">We've emailed your personal pick link — that's how you'll make your team selection each gameweek. Emails occasionally go astray, so here's the same link now as a backup:</p>
+      <p style="color:#94a3b8;font-size:13px;line-height:1.6">Below is your pick link, use this to pick your team each week. We've emailed it to you as well.</p>
       <div id="gwLockNotice" style="display:none;background:rgba(255,213,74,.08);border:1px solid rgba(255,213,74,.25);border-radius:10px;padding:12px 14px;margin:14px 0;text-align:left">
         <p style="color:#ffd54a;font-size:12px;font-weight:700;margin:0 0 4px">&#9203; Heads up</p>
         <p style="color:#94a3b8;font-size:12px;line-height:1.6;margin:0" id="gwLockNoticeText"></p>
@@ -298,7 +298,7 @@ document.getElementById('f').addEventListener('submit', function(e){
     document.getElementById('pickLinkBtn').href = res.body.pickUrl;
     document.getElementById('pickLinkDisplay').textContent = res.body.pickUrl;
     if(res.body.currentGwLocked && res.body.currentGw){
-      document.getElementById('gwLockNoticeText').textContent = 'Gameweek ' + res.body.currentGw + ' is already locked, so it\'s too late to pick for it. You\'ll get your first pick when Gameweek ' + res.body.nextGw + ' opens.';
+      document.getElementById('gwLockNoticeText').textContent = 'The current game week is still locked, we will notify you when the next game week starts.';
       document.getElementById('gwLockNotice').style.display = 'block';
     }
   })
