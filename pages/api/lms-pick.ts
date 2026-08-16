@@ -49,7 +49,24 @@ async function getCurrentGameweek(cfg: { id: number; season: number }) {
 
   if (upcoming.length === 0) return { gw: null, fixtures: [], teams, deadline: null };
 
-  const round = upcoming[0].league.round;
+  // The earliest not-started fixture isn't necessarily pickable — if its round
+  // already had earlier matches kick off (e.g. a round spread over a weekend
+  // with one match held back for Monday night), that round's own deadline has
+  // already passed. Pick the earliest round whose *first* fixture is still in
+  // the future, not just the round containing the earliest unplayed fixture.
+  const now = Date.now();
+  const roundFirstSeen: string[] = [];
+  const roundMinDate: Record<string, string> = {};
+  for (const f of upcoming) {
+    const r = f.league.round;
+    if (!(r in roundMinDate)) {
+      roundMinDate[r] = f.fixture.date;
+      roundFirstSeen.push(r);
+    }
+  }
+  const round = roundFirstSeen.find((r) => new Date(roundMinDate[r]).getTime() > now);
+  if (!round) return { gw: null, fixtures: [], teams, deadline: null };
+
   const gwMatch = round.match(/(\d+)$/);
   const gwNumber = gwMatch ? parseInt(gwMatch[1], 10) : null;
 

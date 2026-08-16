@@ -50,7 +50,25 @@ async function getStartingGw(league: string): Promise<number> {
       new Date(a.fixture.date).getTime() - new Date(b.fixture.date).getTime()
     );
     if (upcoming.length === 0) return 1;
-    const round = upcoming[0].league.round;
+
+    // The earliest not-started fixture's round may already have had earlier
+    // matches kick off (e.g. one game held back for Monday night) — a pool
+    // created mid-round like that would start with a deadline already in the
+    // past, and every player would be wrongly graded as "no pick" the moment
+    // that round finishes. Skip to the earliest round whose first fixture is
+    // still in the future.
+    const now = Date.now();
+    const roundFirstSeen: string[] = [];
+    const roundMinDate: Record<string, string> = {};
+    for (const f of upcoming) {
+      const r = f.league.round;
+      if (!(r in roundMinDate)) {
+        roundMinDate[r] = f.fixture.date;
+        roundFirstSeen.push(r);
+      }
+    }
+    const round = roundFirstSeen.find((r) => new Date(roundMinDate[r]).getTime() > now);
+    if (!round) return 1;
     const match = round.match(/(\d+)$/);
     return match ? parseInt(match[1], 10) : 1;
   } catch {

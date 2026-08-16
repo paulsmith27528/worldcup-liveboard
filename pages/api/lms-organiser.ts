@@ -33,10 +33,26 @@ async function getUpcomingRound(cfg: { id: number; season: number }): Promise<{ 
   );
   if (upcoming.length === 0) return { gw: null, deadline: null };
 
-  const round = upcoming[0].league.round;
+  // Same fix as lms-pick.ts / lms-arena.ts: the earliest not-started fixture's
+  // round may already have had earlier matches kick off, meaning that round's
+  // own deadline already passed. Skip to the earliest round whose first
+  // fixture is still in the future.
+  const now = Date.now();
+  const roundFirstSeen: string[] = [];
+  const roundMinDate: Record<string, string> = {};
+  for (const f of upcoming) {
+    const r = f.league.round;
+    if (!(r in roundMinDate)) {
+      roundMinDate[r] = f.fixture.date;
+      roundFirstSeen.push(r);
+    }
+  }
+  const round = roundFirstSeen.find((r) => new Date(roundMinDate[r]).getTime() > now);
+  if (!round) return { gw: null, deadline: null };
+
   const gwMatch = (round || '').match(/(\d+)$/);
   const gw = gwMatch ? parseInt(gwMatch[1], 10) : null;
-  return { gw, deadline: upcoming[0].fixture.date };
+  return { gw, deadline: roundMinDate[round] };
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
