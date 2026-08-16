@@ -30,7 +30,7 @@ const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
 // Same definition the grading cron uses for "this round is done, ready to
 // grade" — kept identical so a new pool's starting gameweek can never
 // disagree with when the cron considers a round finished.
-const FINISHED_STATUSES = ['FT', 'AET', 'PEN'];
+const FINISHED_STATUSES = ['FT', 'AET', 'PEN', 'AWD', 'WO'];
 
 function genPoolId(): string {
   return Math.random().toString(36).substring(2, 8).toUpperCase();

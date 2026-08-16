@@ -11,7 +11,7 @@ const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
 // Same definition the grading cron uses for "this round is done, ready to
 // grade" — kept identical so "current gameweek" here can never disagree
 // with when the cron considers a round finished.
-const FINISHED_STATUSES = ['FT', 'AET', 'PEN'];
+const FINISHED_STATUSES = ['FT', 'AET', 'PEN', 'AWD', 'WO'];
 
 // Same league config as every other LMS endpoint — defaults to PL for pools
 // created before this existed, since they were always Premier League pools.

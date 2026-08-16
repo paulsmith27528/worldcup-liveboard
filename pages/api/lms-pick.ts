@@ -16,7 +16,7 @@ const FROM_NAME = 'Last Man Standing';
 // Same definition the grading cron uses for "this round is done, ready to
 // grade" — kept identical so "current gameweek to pick for" here can never
 // disagree with when the cron considers a round finished.
-const FINISHED_STATUSES = ['FT', 'AET', 'PEN'];
+const FINISHED_STATUSES = ['FT', 'AET', 'PEN', 'AWD', 'WO'];
 
 const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
 
