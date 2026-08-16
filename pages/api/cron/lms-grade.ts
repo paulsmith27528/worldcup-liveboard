@@ -122,25 +122,26 @@ function buildEmail(icon: string, color: string, title: string, poolName: string
 }
 
 async function sendPlayerEmail(player: Player, poolId: string, poolName: string, gw: number, type: 'survived' | 'survived_joker_used' | 'eliminated' | 'no_pick' | 'wipeout' | 'joker_used' | 'you_won' | 'pool_won', winnerName?: string) {
-  const hubUrl = `${BASE_URL}/lms-join.html?pool=${poolId}`;
+  const pickUrl = `${BASE_URL}/lms-pick.html?pool=${poolId}&t=${player.token}`;
+  const pickBtn = `<div style="text-align:center;margin-top:4px"><a href="${pickUrl}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:14px;padding:13px 28px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">Make Your Next Pick &rarr;</a></div>`;
   let html = '';
   let subject = '';
 
   if (type === 'survived') {
     subject = `\u2705 You're through — Gameweek ${gw}`;
     html = buildEmail('&#9989;', '#34d399', "You're Through!",  poolName, gw,
-      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">Nice one — <strong style="color:#fff">${player.currentPick}</strong> won. You're still in the pool for the next round.</p>`);
+      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">Nice one — <strong style="color:#fff">${player.currentPick}</strong> won. You're still in the pool for the next round. Somewhere out there, someone who picked a team that's already been knocked out is refreshing their phone in quiet despair. Not you. Not this week.</p>${pickBtn}`);
   } else if (type === 'survived_joker_used') {
     subject = `✅ You're through — but your joker's gone (Gameweek ${gw})`;
     html = buildEmail('&#9989;', '#34d399', "You're Through!",  poolName, gw,
-      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px"><strong style="color:#fff">${player.currentPick}</strong> won, so you're still in — but you'd played your joker on this pick, and that's spent the moment you play it, whether you needed it or not. You're out of jokers now, so the next loss or draw is game over. Good luck!</p>`);
+      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px"><strong style="color:#fff">${player.currentPick}</strong> won, so you're still in — but you'd played your joker on this pick, and that's spent the moment you play it, whether you needed it or not. You're out of jokers now, so the next loss or draw is game over. Walk the tightrope wisely.</p>${pickBtn}`);
   } else if (type === 'joker_used') {
     subject = `\uD83D\uDEE1\uFE0F Joker played — you're still in! (Gameweek ${gw})`;
     const reason = player.currentPick
       ? `Your pick, <strong style="color:#fff">${player.currentPick}</strong>, didn't win this week`
       : `You didn't make a pick before the deadline this gameweek`;
     html = buildEmail('&#128737;&#65039;', '#ffd54a', "Joker Played — You're Still In!",  poolName, gw,
-      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">${reason} — but you'd played your joker on this pick, so you survive instead of being knocked out. You're out of jokers now, so the next loss or draw is game over. Good luck!</p>`);
+      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">${reason} — but you'd played your joker on this pick, so you survive instead of being knocked out. That's your one lifeline gone, spent like someone who just used their get-out-of-jail-free card. Because you have. You're out of jokers now, so the next loss or draw is game over. Good luck!</p>${pickBtn}`);
   } else if (type === 'eliminated') {
     subject = `\u2620\ufe0f You're out — Gameweek ${gw}`;
     const jokerNote = player.jokerUsedWeek !== null
@@ -158,7 +159,7 @@ async function sendPlayerEmail(player: Player, poolId: string, poolName: string,
   } else if (type === 'wipeout') {
     subject = `\u267b\ufe0f Gameweek ${gw} wiped out — everyone survives`;
     html = buildEmail('&#9851;', '#ffd54a', "Total Wipeout!",  poolName, gw,
-      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">Every player still standing lost or drew this gameweek — so under the rules, it doesn't count. Nobody's eliminated, nobody's team is used up, and nobody's joker is touched. Everyone carries on to the next round!</p>`);
+      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">Every player still standing lost or drew this gameweek — so under the rules, it doesn't count. Nobody's eliminated, nobody's team is used up, and nobody's joker is touched. A collective bottle job, but everyone gets away with it. Onwards.</p>${pickBtn}`);
   } else if (type === 'you_won') {
     subject = `\uD83D\uDC51 You won the pool! — ${poolName}`;
     html = buildEmail('&#128081;', '#ffd54a', "You Won!",  poolName, gw,
