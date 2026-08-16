@@ -87,7 +87,7 @@
   .avatar.hidden{ background:var(--navy-elevated); border:1.5px dashed var(--navy-line); color:transparent; }
   .avatar .shield{ position:absolute; bottom:-3px; right:-3px; background:var(--gold); border-radius:50%; width:13px; height:13px; display:flex; align-items:center; justify-content:center; font-size:7px; border:2px solid var(--navy-deep); }
   .avatar[data-player-id]{ cursor:pointer; }
-  .chips{ position:absolute; top:-9px; right:-7px; display:flex; gap:2px; pointer-events:none; }
+  .chips{ position:absolute; top:-11px; left:50%; transform:translateX(-50%); display:flex; flex-wrap:wrap; justify-content:center; gap:2px; width:max-content; max-width:88px; pointer-events:none; z-index:2; }
   .chip{ background:var(--navy-deep); border:1px solid var(--navy-line); border-radius:9px; font-size:8.5px; padding:1px 4px; display:flex; align-items:center; gap:1px; color:var(--text); white-space:nowrap; }
 
   .rung-current .row{ background:rgba(216,178,76,0.06); border:1px solid rgba(216,178,76,0.25); border-radius:16px; padding:12px; }
