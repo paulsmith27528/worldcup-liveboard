@@ -41,30 +41,35 @@ async function getCurrentGameweek(cfg: { id: number; season: number }) {
     logo: t.team.logo,
   }));
 
-  const upcomingRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}&status=NS`, { headers: hdrs });
-  const upcomingData = await upcomingRes.json();
-  const upcoming = (upcomingData.response || []).sort((a: any, b: any) =>
+  // Fetch every fixture, not just not-started ones — a round's own deadline
+  // (its first kickoff) still counts even once that fixture has finished and
+  // dropped off an NS-only list, so filtering by status=NS here would hide
+  // exactly the evidence needed to tell "hasn't started" from "in progress".
+  const allRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}`, { headers: hdrs });
+  const allData = await allRes.json();
+  const allFixtures = (allData.response || []).sort((a: any, b: any) =>
     new Date(a.fixture.date).getTime() - new Date(b.fixture.date).getTime()
   );
 
-  if (upcoming.length === 0) return { gw: null, fixtures: [], teams, deadline: null };
+  if (allFixtures.length === 0) return { gw: null, fixtures: [], teams, deadline: null };
 
-  // The earliest not-started fixture isn't necessarily pickable — if its round
-  // already had earlier matches kick off (e.g. a round spread over a weekend
-  // with one match held back for Monday night), that round's own deadline has
-  // already passed. Pick the earliest round whose *first* fixture is still in
-  // the future, not just the round containing the earliest unplayed fixture.
-  const now = Date.now();
-  const roundFirstSeen: string[] = [];
+  // A round is only genuinely "upcoming" if none of its fixtures have kicked
+  // off yet — a round spread across several days with one match held back
+  // (e.g. Monday Night Football) has already had its deadline (first
+  // kickoff) pass even though a later fixture in it still shows NS.
+  const roundOrder: string[] = [];
   const roundMinDate: Record<string, string> = {};
-  for (const f of upcoming) {
+  const roundStarted: Record<string, boolean> = {};
+  for (const f of allFixtures) {
     const r = f.league.round;
     if (!(r in roundMinDate)) {
       roundMinDate[r] = f.fixture.date;
-      roundFirstSeen.push(r);
+      roundStarted[r] = false;
+      roundOrder.push(r);
     }
+    if (f.fixture.status.short !== 'NS') roundStarted[r] = true;
   }
-  const round = roundFirstSeen.find((r) => new Date(roundMinDate[r]).getTime() > now);
+  const round = roundOrder.find((r) => !roundStarted[r]);
   if (!round) return { gw: null, fixtures: [], teams, deadline: null };
 
   const gwMatch = round.match(/(\d+)$/);

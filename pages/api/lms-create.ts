@@ -44,30 +44,33 @@ async function getStartingGw(league: string): Promise<number> {
   try {
     const cfg = LEAGUE_CONFIG[league];
     const hdrs = { "x-apisports-key": API_KEY };
-    const res = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}&status=NS`, { headers: hdrs });
+    // Fetch every fixture, not just not-started ones — an already-finished
+    // fixture still proves its round has started, and filtering by
+    // status=NS would hide exactly that evidence (see lms-pick.ts for the
+    // full story of why this matters).
+    const res = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}`, { headers: hdrs });
     const data = await res.json();
-    const upcoming = (data.response || []).sort((a: any, b: any) =>
+    const allFixtures = (data.response || []).sort((a: any, b: any) =>
       new Date(a.fixture.date).getTime() - new Date(b.fixture.date).getTime()
     );
-    if (upcoming.length === 0) return 1;
+    if (allFixtures.length === 0) return 1;
 
-    // The earliest not-started fixture's round may already have had earlier
-    // matches kick off (e.g. one game held back for Monday night) — a pool
-    // created mid-round like that would start with a deadline already in the
-    // past, and every player would be wrongly graded as "no pick" the moment
-    // that round finishes. Skip to the earliest round whose first fixture is
-    // still in the future.
-    const now = Date.now();
-    const roundFirstSeen: string[] = [];
-    const roundMinDate: Record<string, string> = {};
-    for (const f of upcoming) {
+    // A round only counts as a safe starting point if none of its fixtures
+    // have kicked off yet — a round spread across several days with one
+    // match held back (e.g. Monday Night Football) would otherwise start a
+    // pool with a deadline already in the past, and every player would be
+    // wrongly graded as "no pick" the moment that round finishes.
+    const roundOrder: string[] = [];
+    const roundStarted: Record<string, boolean> = {};
+    for (const f of allFixtures) {
       const r = f.league.round;
-      if (!(r in roundMinDate)) {
-        roundMinDate[r] = f.fixture.date;
-        roundFirstSeen.push(r);
+      if (!(r in roundStarted)) {
+        roundStarted[r] = false;
+        roundOrder.push(r);
       }
+      if (f.fixture.status.short !== 'NS') roundStarted[r] = true;
     }
-    const round = roundFirstSeen.find((r) => new Date(roundMinDate[r]).getTime() > now);
+    const round = roundOrder.find((r) => !roundStarted[r]);
     if (!round) return 1;
     const match = round.match(/(\d+)$/);
     return match ? parseInt(match[1], 10) : 1;
