@@ -8,6 +8,11 @@ const redis = new Redis({
 
 const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
 
+// Same definition the grading cron uses for "this round is done, ready to
+// grade" — kept identical so "current gameweek" here can never disagree
+// with when the cron considers a round finished.
+const FINISHED_STATUSES = ['FT', 'AET', 'PEN'];
+
 // Same league config as every other LMS endpoint — defaults to PL for pools
 // created before this existed, since they were always Premier League pools.
 const LEAGUE_CONFIG: Record<string, { id: number; season: number; name: string }> = {
@@ -24,17 +29,39 @@ function leagueConfigFor(league: string | null | undefined) {
 async function getUpcomingRound(cfg: { id: number; season: number }): Promise<{ gw: number | null; deadline: string | null }> {
   if (!API_KEY) return { gw: null, deadline: null };
   const hdrs = { "x-apisports-key": API_KEY };
-  const upcomingRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}&status=NS`, { headers: hdrs });
-  const upcomingData = await upcomingRes.json();
-  const upcoming = (upcomingData.response || []).sort((a: any, b: any) =>
+  // Fetch every fixture, not just not-started ones — an already-finished
+  // fixture still proves its round has started, and filtering by status=NS
+  // would hide exactly that evidence (see lms-pick.ts for the full story).
+  const allRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}`, { headers: hdrs });
+  const allData = await allRes.json();
+  const allFixtures = (allData.response || []).sort((a: any, b: any) =>
     new Date(a.fixture.date).getTime() - new Date(b.fixture.date).getTime()
   );
-  if (upcoming.length === 0) return { gw: null, deadline: null };
+  if (allFixtures.length === 0) return { gw: null, deadline: null };
 
-  const round = upcoming[0].league.round;
+  // "Current gameweek" is the earliest round, in chronological order, that
+  // hasn't fully finished yet — if it hasn't started, it's open; if it's
+  // started but not finished (e.g. one match held back for Monday Night
+  // Football), it still correctly shows as that same round rather than
+  // jumping ahead to one that merely hasn't started.
+  const roundOrder: string[] = [];
+  const roundMinDate: Record<string, string> = {};
+  const roundFinished: Record<string, boolean> = {};
+  for (const f of allFixtures) {
+    const r = f.league.round;
+    if (!(r in roundMinDate)) {
+      roundMinDate[r] = f.fixture.date;
+      roundFinished[r] = true;
+      roundOrder.push(r);
+    }
+    if (!FINISHED_STATUSES.includes(f.fixture.status.short)) roundFinished[r] = false;
+  }
+  const round = roundOrder.find((r) => !roundFinished[r]);
+  if (!round) return { gw: null, deadline: null };
+
   const gwMatch = (round || '').match(/(\d+)$/);
   const gw = gwMatch ? parseInt(gwMatch[1], 10) : null;
-  return { gw, deadline: upcoming[0].fixture.date };
+  return { gw, deadline: roundMinDate[round] };
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

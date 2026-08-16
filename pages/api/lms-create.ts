@@ -27,6 +27,11 @@ const LEAGUE_CONFIG: Record<string, { id: number; season: number }> = {
 
 const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
 
+// Same definition the grading cron uses for "this round is done, ready to
+// grade" — kept identical so a new pool's starting gameweek can never
+// disagree with when the cron considers a round finished.
+const FINISHED_STATUSES = ['FT', 'AET', 'PEN'];
+
 function genPoolId(): string {
   return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
@@ -44,13 +49,34 @@ async function getStartingGw(league: string): Promise<number> {
   try {
     const cfg = LEAGUE_CONFIG[league];
     const hdrs = { "x-apisports-key": API_KEY };
-    const res = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}&status=NS`, { headers: hdrs });
+    // Fetch every fixture, not just not-started ones — an already-finished
+    // fixture still proves its round has started, and filtering by
+    // status=NS would hide exactly that evidence (see lms-pick.ts for the
+    // full story of why this matters).
+    const res = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}`, { headers: hdrs });
     const data = await res.json();
-    const upcoming = (data.response || []).sort((a: any, b: any) =>
+    const allFixtures = (data.response || []).sort((a: any, b: any) =>
       new Date(a.fixture.date).getTime() - new Date(b.fixture.date).getTime()
     );
-    if (upcoming.length === 0) return 1;
-    const round = upcoming[0].league.round;
+    if (allFixtures.length === 0) return 1;
+
+    // A new pool starts on whichever round, in chronological order, hasn't
+    // fully finished yet — same rule as everywhere else "current gameweek"
+    // is decided. If that round has already started (e.g. one match held
+    // back for Monday Night Football), the pool correctly starts already
+    // locked out of it, same as an existing pool's players would be.
+    const roundOrder: string[] = [];
+    const roundFinished: Record<string, boolean> = {};
+    for (const f of allFixtures) {
+      const r = f.league.round;
+      if (!(r in roundFinished)) {
+        roundFinished[r] = true;
+        roundOrder.push(r);
+      }
+      if (!FINISHED_STATUSES.includes(f.fixture.status.short)) roundFinished[r] = false;
+    }
+    const round = roundOrder.find((r) => !roundFinished[r]);
+    if (!round) return 1;
     const match = round.match(/(\d+)$/);
     return match ? parseInt(match[1], 10) : 1;
   } catch {
