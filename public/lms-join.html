@@ -87,7 +87,11 @@
     <div class="success" id="success">
       <div class="icon">☠</div>
       <h2 style="margin:0 0 8px">You're in!</h2>
-      <p style="color:#94a3b8;font-size:13px;line-height:1.6">Check your email for your personal pick link — that's how you'll make your team selection each gameweek.</p>
+      <p style="color:#94a3b8;font-size:13px;line-height:1.6">We've emailed your personal pick link — that's how you'll make your team selection each gameweek. Emails occasionally go astray, so here's the same link now as a backup:</p>
+      <a id="pickLinkBtn" href="#" style="display:block;margin-top:16px;text-decoration:none;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:14px;padding:14px;border-radius:12px">Make Your First Pick &rarr;</a>
+      <p style="color:#5b6b85;font-size:11px;margin-top:12px">Or copy this link into your browser:</p>
+      <div class="linkDisplay" id="pickLinkDisplay" style="color:#ffd54a"></div>
+      <p style="color:#5b6b85;font-size:11px">Bookmark it — it's yours until the game ends, and it's the only way back in if this email doesn't arrive.</p>
     </div>
   </div>
 
@@ -287,6 +291,8 @@ document.getElementById('f').addEventListener('submit', function(e){
     document.getElementById('f').style.display = 'none';
     document.getElementById('success').style.display = 'block';
     document.getElementById('rulesCard').style.display = 'block';
+    document.getElementById('pickLinkBtn').href = res.body.pickUrl;
+    document.getElementById('pickLinkDisplay').textContent = res.body.pickUrl;
   })
   .catch(function(){
     err.textContent = 'Something went wrong. Please try again.';
