@@ -29,6 +29,7 @@
   .player .email{color:#5b6b85;font-size:11px}
   .player .badge{font-size:10px;font-weight:800;letter-spacing:.5px;padding:4px 10px;border-radius:20px;background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.3)}
   .paid-btn{font-size:9px;font-weight:800;letter-spacing:.5px;padding:5px 10px;border-radius:20px;border:none;cursor:pointer;flex-shrink:0}
+  .link-btn{font-size:9px;font-weight:800;letter-spacing:.5px;padding:5px 10px;border-radius:20px;border:1px solid rgba(34,211,238,.3);background:rgba(34,211,238,.08);color:#22d3ee;cursor:pointer;flex-shrink:0}
   .paid-yes{background:rgba(52,211,153,.15);color:#34d399;border:1px solid rgba(52,211,153,.3)}
   .paid-no{background:rgba(255,255,255,.06);color:#5b6b85;border:1px solid rgba(255,255,255,.12)}
 
@@ -160,6 +161,7 @@ if(!poolId || !k){
           var row = document.createElement('div');
           row.className = 'player';
           row.innerHTML = '<div class="name">' + p.name + '<div class="email">' + p.email + '</div></div>' +
+            '<button class="link-btn" onclick="copyPlayerLink(\'' + p.token + '\')">&#128279; Link</button>' +
             '<button class="paid-btn ' + (p.paid ? 'paid-yes' : 'paid-no') + '" data-token="' + p.token + '" data-paid="' + (p.paid ? '1' : '0') + '" onclick="togglePaid(this)">' + (p.paid ? 'PAID' : 'UNPAID') + '</button>' +
             '<div class="badge">' + (p.alive ? 'ALIVE' : 'OUT') + '</div>';
           list.appendChild(row);
@@ -270,6 +272,18 @@ function copyLink(){
     var old = btn.textContent;
     btn.textContent = 'Copied!';
     setTimeout(function(){ btn.textContent = old; }, 1500);
+  });
+}
+
+// Fallback for when a player's email never lands — organiser can grab their
+// personal pick link directly and send it via WhatsApp, text, whatever.
+function copyPlayerLink(token){
+  var pickUrl = window.location.origin + '/lms-pick.html?pool=' + poolId + '&t=' + token;
+  navigator.clipboard.writeText(pickUrl).then(function(){
+    var btn = event.target;
+    var old = btn.innerHTML;
+    btn.textContent = 'Copied!';
+    setTimeout(function(){ btn.innerHTML = old; }, 1500);
   });
 }
 </script>
