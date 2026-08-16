@@ -13,6 +13,11 @@ const BASE_URL = process.env.BASE_URL!;
 const FROM_EMAIL = process.env.NOREPLY_EMAIL!;
 const FROM_NAME = 'Last Man Standing';
 
+// Same definition the grading cron uses for "this round is done, ready to
+// grade" — kept identical so "current gameweek to pick for" here can never
+// disagree with when the cron considers a round finished.
+const FINISHED_STATUSES = ['FT', 'AET', 'PEN'];
+
 const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
 
 // Every LMS product (Premier League, Championship, Champions League, ...)
@@ -53,32 +58,29 @@ async function getCurrentGameweek(cfg: { id: number; season: number }) {
 
   if (allFixtures.length === 0) return { gw: null, fixtures: [], teams, deadline: null };
 
-  // A round is only genuinely "upcoming" if none of its fixtures have kicked
-  // off yet — a round spread across several days with one match held back
-  // (e.g. Monday Night Football) has already had its deadline (first
-  // kickoff) pass even though a later fixture in it still shows NS.
+  // "Current gameweek" is simply the earliest round, in chronological order,
+  // that hasn't fully finished yet. If it hasn't started at all, it's open
+  // for picking. If it's started but not finished (e.g. one match held back
+  // for Monday Night Football), it correctly still shows as that same round
+  // — locked, since its first kickoff has passed — rather than jumping ahead
+  // to a round that merely hasn't started yet.
   const roundOrder: string[] = [];
-  const roundMinDate: Record<string, string> = {};
-  const roundStarted: Record<string, boolean> = {};
+  const roundFinished: Record<string, boolean> = {};
   for (const f of allFixtures) {
     const r = f.league.round;
-    if (!(r in roundMinDate)) {
-      roundMinDate[r] = f.fixture.date;
-      roundStarted[r] = false;
+    if (!(r in roundFinished)) {
+      roundFinished[r] = true;
       roundOrder.push(r);
     }
-    if (f.fixture.status.short !== 'NS') roundStarted[r] = true;
+    if (!FINISHED_STATUSES.includes(f.fixture.status.short)) roundFinished[r] = false;
   }
-  const round = roundOrder.find((r) => !roundStarted[r]);
+  const round = roundOrder.find((r) => !roundFinished[r]);
   if (!round) return { gw: null, fixtures: [], teams, deadline: null };
 
   const gwMatch = round.match(/(\d+)$/);
   const gwNumber = gwMatch ? parseInt(gwMatch[1], 10) : null;
 
-  const roundRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}&round=${encodeURIComponent(round)}`, { headers: hdrs });
-  const roundData = await roundRes.json();
-
-  const fixtures = (roundData.response || []).map((f: any) => ({
+  const fixtures = allFixtures.filter((f: any) => f.league.round === round).map((f: any) => ({
     id: f.fixture.id,
     date: f.fixture.date,
     venue: f.fixture.venue?.name || "",

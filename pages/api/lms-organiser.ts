@@ -8,6 +8,11 @@ const redis = new Redis({
 
 const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
 
+// Same definition the grading cron uses for "this round is done, ready to
+// grade" — kept identical so "current gameweek" here can never disagree
+// with when the cron considers a round finished.
+const FINISHED_STATUSES = ['FT', 'AET', 'PEN'];
+
 // Same league config as every other LMS endpoint — defaults to PL for pools
 // created before this existed, since they were always Premier League pools.
 const LEAGUE_CONFIG: Record<string, { id: number; season: number; name: string }> = {
@@ -36,23 +41,24 @@ async function getUpcomingRound(cfg: { id: number; season: number }): Promise<{ 
   );
   if (allFixtures.length === 0) return { gw: null, deadline: null };
 
-  // A round only counts as upcoming if none of its fixtures have kicked off
-  // yet — a round spread across several days with one match held back (e.g.
-  // Monday Night Football) has already had its deadline pass even though a
-  // later fixture in it still shows NS.
+  // "Current gameweek" is the earliest round, in chronological order, that
+  // hasn't fully finished yet — if it hasn't started, it's open; if it's
+  // started but not finished (e.g. one match held back for Monday Night
+  // Football), it still correctly shows as that same round rather than
+  // jumping ahead to one that merely hasn't started.
   const roundOrder: string[] = [];
   const roundMinDate: Record<string, string> = {};
-  const roundStarted: Record<string, boolean> = {};
+  const roundFinished: Record<string, boolean> = {};
   for (const f of allFixtures) {
     const r = f.league.round;
     if (!(r in roundMinDate)) {
       roundMinDate[r] = f.fixture.date;
-      roundStarted[r] = false;
+      roundFinished[r] = true;
       roundOrder.push(r);
     }
-    if (f.fixture.status.short !== 'NS') roundStarted[r] = true;
+    if (!FINISHED_STATUSES.includes(f.fixture.status.short)) roundFinished[r] = false;
   }
-  const round = roundOrder.find((r) => !roundStarted[r]);
+  const round = roundOrder.find((r) => !roundFinished[r]);
   if (!round) return { gw: null, deadline: null };
 
   const gwMatch = (round || '').match(/(\d+)$/);

@@ -27,6 +27,11 @@ const LEAGUE_CONFIG: Record<string, { id: number; season: number }> = {
 
 const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
 
+// Same definition the grading cron uses for "this round is done, ready to
+// grade" — kept identical so a new pool's starting gameweek can never
+// disagree with when the cron considers a round finished.
+const FINISHED_STATUSES = ['FT', 'AET', 'PEN'];
+
 function genPoolId(): string {
   return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
@@ -55,22 +60,22 @@ async function getStartingGw(league: string): Promise<number> {
     );
     if (allFixtures.length === 0) return 1;
 
-    // A round only counts as a safe starting point if none of its fixtures
-    // have kicked off yet — a round spread across several days with one
-    // match held back (e.g. Monday Night Football) would otherwise start a
-    // pool with a deadline already in the past, and every player would be
-    // wrongly graded as "no pick" the moment that round finishes.
+    // A new pool starts on whichever round, in chronological order, hasn't
+    // fully finished yet — same rule as everywhere else "current gameweek"
+    // is decided. If that round has already started (e.g. one match held
+    // back for Monday Night Football), the pool correctly starts already
+    // locked out of it, same as an existing pool's players would be.
     const roundOrder: string[] = [];
-    const roundStarted: Record<string, boolean> = {};
+    const roundFinished: Record<string, boolean> = {};
     for (const f of allFixtures) {
       const r = f.league.round;
-      if (!(r in roundStarted)) {
-        roundStarted[r] = false;
+      if (!(r in roundFinished)) {
+        roundFinished[r] = true;
         roundOrder.push(r);
       }
-      if (f.fixture.status.short !== 'NS') roundStarted[r] = true;
+      if (!FINISHED_STATUSES.includes(f.fixture.status.short)) roundFinished[r] = false;
     }
-    const round = roundOrder.find((r) => !roundStarted[r]);
+    const round = roundOrder.find((r) => !roundFinished[r]);
     if (!round) return 1;
     const match = round.match(/(\d+)$/);
     return match ? parseInt(match[1], 10) : 1;
