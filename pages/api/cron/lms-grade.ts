@@ -35,6 +35,13 @@ const FROM_NAME = 'Last Man Standing';
 
 const FINISHED_STATUSES = ['FT', 'AET', 'PEN', 'AWD', 'WO'];
 
+// A fixture in one of these statuses isn't going to produce a result this
+// gameweek — postponed, cancelled, or abandoned with no replay this round.
+// Treated as terminal for grading purposes (same as FINISHED_STATUSES) so
+// one stuck match can't block grading for every other fixture in the round;
+// anyone who picked into it gets a bye instead of a result.
+const BYE_STATUSES = ['PST', 'CANC', 'ABD'];
+
 interface Player {
   id: number;
   name: string;
@@ -69,24 +76,34 @@ async function findLatestFinishedGw(cfg: { id: number; season: number }): Promis
   let latest = 0;
   Object.keys(byRound).forEach((gwStr) => {
     const gw = parseInt(gwStr, 10);
-    const allFinished = byRound[gw].every((f: any) => FINISHED_STATUSES.includes(f.fixture.status.short));
+    const allFinished = byRound[gw].every((f: any) =>
+      FINISHED_STATUSES.includes(f.fixture.status.short) || BYE_STATUSES.includes(f.fixture.status.short)
+    );
     if (allFinished && gw > latest) latest = gw;
   });
 
   return latest;
 }
 
-// Get win/draw/loss result per team name for a specific gameweek
-async function getGwResults(gw: number, cfg: { id: number; season: number; roundPrefix: string }): Promise<Record<string, 'W' | 'D' | 'L'>> {
+// Get win/draw/loss result per team name for a specific gameweek, plus the
+// set of teams whose fixture didn't happen this round (postponed, cancelled,
+// abandoned) — anyone who picked one of those gets a bye instead of a result.
+async function getGwResultsAndByes(gw: number, cfg: { id: number; season: number; roundPrefix: string }): Promise<{ results: Record<string, 'W' | 'D' | 'L'>; byeTeams: Set<string> }> {
   const hdrs = { "x-apisports-key": API_KEY };
   const round = `${cfg.roundPrefix} - ${gw}`;
   const res = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}&round=${encodeURIComponent(round)}`, { headers: hdrs });
   const data = await res.json();
 
   const results: Record<string, 'W' | 'D' | 'L'> = {};
+  const byeTeams = new Set<string>();
   (data.response || []).forEach((f: any) => {
     const home = f.teams.home;
     const away = f.teams.away;
+    if (BYE_STATUSES.includes(f.fixture.status.short)) {
+      byeTeams.add(home.name);
+      byeTeams.add(away.name);
+      return;
+    }
     if (home.winner === true) {
       results[home.name] = 'W';
       results[away.name] = 'L';
@@ -99,7 +116,7 @@ async function getGwResults(gw: number, cfg: { id: number; season: number; round
     }
   });
 
-  return results;
+  return { results, byeTeams };
 }
 
 function buildEmail(icon: string, color: string, title: string, poolName: string, gw: number, bodyHtml: string): string {
@@ -121,7 +138,7 @@ function buildEmail(icon: string, color: string, title: string, poolName: string
 </html>`;
 }
 
-async function sendPlayerEmail(player: Player, poolId: string, poolName: string, gw: number, type: 'survived' | 'survived_joker_used' | 'eliminated' | 'no_pick' | 'wipeout' | 'joker_used' | 'you_won' | 'pool_won', winnerName?: string) {
+async function sendPlayerEmail(player: Player, poolId: string, poolName: string, gw: number, type: 'survived' | 'survived_joker_used' | 'eliminated' | 'no_pick' | 'wipeout' | 'joker_used' | 'you_won' | 'pool_won' | 'bye', winnerName?: string) {
   const pickUrl = `${BASE_URL}/lms-pick.html?pool=${poolId}&t=${player.token}`;
   const pickBtn = `<div style="text-align:center;margin-top:4px"><a href="${pickUrl}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:14px;padding:13px 28px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">Make Your Next Pick &rarr;</a></div>`;
   let html = '';
@@ -156,6 +173,10 @@ async function sendPlayerEmail(player: Player, poolId: string, poolName: string,
       : `You didn't have your joker played this gameweek, so there was no safety net.`;
     html = buildEmail('&#128128;', '#ef4444', "You're Out",  poolName, gw,
       `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">You didn't make a pick before the deadline this gameweek. ${jokerNote2} You've been eliminated from the pool. Thanks for playing!</p>`);
+  } else if (type === 'bye') {
+    subject = `🎫 Free pass — Gameweek ${gw}`;
+    html = buildEmail('🎫', '#ffd54a', 'You Got A Bye!', poolName, gw,
+      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">Your pick, <strong style="color:#fff">${player.currentPick}</strong>, didn't play this gameweek — postponed, cancelled, or moved out of the round. Nobody's punished for a match that never happened: you're straight through to the next round, no harm done, and <strong style="color:#fff">${player.currentPick}</strong> is still yours to pick again another week.</p>${pickBtn}`);
   } else if (type === 'wipeout') {
     subject = `\u267b\ufe0f Gameweek ${gw} wiped out — everyone survives`;
     html = buildEmail('&#9851;', '#ffd54a', "Total Wipeout!",  poolName, gw,
@@ -186,7 +207,7 @@ async function sendPlayerEmail(player: Player, poolId: string, poolName: string,
   }
 }
 
-async function gradePool(poolId: string, gw: number, results: Record<string, 'W' | 'D' | 'L'>) {
+async function gradePool(poolId: string, gw: number, results: Record<string, 'W' | 'D' | 'L'>, byeTeams: Set<string>) {
   const poolRaw = await redis.get<string>(`lms:pool:${poolId}`);
   if (!poolRaw) return;
   const pool = typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any;
@@ -209,10 +230,15 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
   const survivors: Player[] = [];
   const losers: Player[] = [];
   const noPicks: Player[] = [];
+  const byes: Player[] = [];
 
   alivePlayers.forEach(p => {
     if (p.currentPickGw !== gw || !p.currentPick) {
       noPicks.push(p);
+      return;
+    }
+    if (byeTeams.has(p.currentPick)) {
+      byes.push(p);
       return;
     }
     const result = results[p.currentPick];
@@ -223,13 +249,21 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
     }
   });
 
-  const wipeout = (losers.length + noPicks.length) === alivePlayers.length;
+  // Byes aren't wins or losses — a round where every remaining pick got
+  // byed (e.g. the whole round was postponed) isn't a "wipeout" either,
+  // that label is reserved for everyone genuinely losing or not picking.
+  const gradedCount = alivePlayers.length - byes.length;
+  const wipeout = gradedCount > 0 && (losers.length + noPicks.length) === gradedCount;
+
+  for (const p of byes) {
+    await sendPlayerEmail(p, poolId, pool.name, gw, 'bye');
+  }
 
   // Snapshot who picked what this gameweek, permanently — currentPick gets
   // overwritten the moment a player makes their next pick, so this is the
   // only record of round-by-round pick popularity once the season moves on.
   const pickCounts: Record<string, number> = {};
-  [...survivors, ...losers].forEach(p => {
+  [...survivors, ...losers, ...byes].forEach(p => {
     pickCounts[p.currentPick as string] = (pickCounts[p.currentPick as string] || 0) + 1;
   });
   const picksTTL = 60 * 60 * 24 * 300;
@@ -246,7 +280,9 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
   if (wipeout) {
     pool.wipeoutWeeks = pool.wipeoutWeeks || [];
     pool.wipeoutWeeks.push(gw);
-    for (const p of alivePlayers) {
+    // Byes already got their own email above — a wipeout among everyone
+    // else doesn't change anything for them, so they're excluded here.
+    for (const p of [...losers, ...noPicks]) {
       await sendPlayerEmail(p, poolId, pool.name, gw, 'wipeout');
     }
   } else {
@@ -292,9 +328,10 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
   await redis.set(`lms:pool:${poolId}:recap:${gw}`, JSON.stringify({
     gw,
     wipeout,
-    survivedCount: wipeout ? alivePlayers.length : survivors.length,
+    survivedCount: wipeout ? alivePlayers.length : survivors.length + byes.length,
     eliminatedNames,
     jokerUsedNames,
+    byeNames: byes.map(p => p.name),
     stillAliveCount,
   }), { ex: recapTTL });
 
@@ -350,8 +387,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       while (lastGraded < latestFinishedGw) {
         const gwToGrade = lastGraded + 1;
-        const results = await getGwResults(gwToGrade, cfg);
-        await gradePool(poolId, gwToGrade, results);
+        const { results, byeTeams } = await getGwResultsAndByes(gwToGrade, cfg);
+        await gradePool(poolId, gwToGrade, results, byeTeams);
         gradedLog.push({ poolId, league, gw: gwToGrade });
         lastGraded = gwToGrade;
       }
