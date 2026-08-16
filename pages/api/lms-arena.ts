@@ -82,11 +82,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const you = (t && typeof t === 'string') ? t : null;
 
-    // The visual Arena itself is free to view for everyone — only sending
-    // reactions and the per-round popularity breakdown stay Pro-only.
+    // The Arena is a Pro-only feature — anyone viewing it must be a player
+    // in this pool who has personally paid for Pro, not just anyone with
+    // the link (and not the organiser view, which carries no player token).
     const viewer = you ? players.find((p: any) => p.token === you) : null;
-    const isPro = !!(viewer && viewer.proPaid);
-    const upgradeUrl = you ? `/api/lms-pro-checkout?pool=${pool}&t=${you}` : null;
+    if (!viewer || !viewer.proPaid) {
+      return res.status(403).json({
+        error: 'pro_required',
+        upgradeUrl: you ? `/api/lms-pro-checkout?pool=${pool}&t=${you}` : null,
+        fallbackUrl: you ? `/lms-standings.html?pool=${pool}&t=${you}` : `/lms-standings.html?pool=${pool}`,
+      });
+    }
 
     const reactionsRaw = await redis.hgetall<Record<string, string>>(`lms:pool:${pool}:reactions`);
     const reactions: Record<string, Record<string, number>> = {};
@@ -128,10 +134,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const popularity = Object.entries(picksData.counts || {})
         .map(([team, count]) => ({ team, count: count as number, pct: total > 0 ? Math.round((count as number) / total * 100) : 0 }))
         .sort((a, b) => b.count - a.count);
-      // Popularity breakdown stays Pro-only even though the ladder itself
-      // is now free — non-Pro viewers get totalPlayers (so the sheet can
-      // still say "X picked this round") but not the per-team split.
-      rounds.push({ gw: g, wipeout: false, totalPlayers: total, popularity: isPro ? popularity : null, noPick: picksData.noPick ?? 0 });
+      rounds.push({ gw: g, wipeout: false, totalPlayers: total, popularity, noPick: picksData.noPick ?? 0 });
     }
 
     const upcoming = poolData.status === 'active' ? await getUpcomingRound(leagueConfigFor(poolData.league)) : { gw: null, deadline: null };
@@ -166,8 +169,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         locked,
       },
       reactions,
-      isPro,
-      upgradeUrl,
     });
   } catch (err: any) {
     console.error('lms-arena error:', err.message);

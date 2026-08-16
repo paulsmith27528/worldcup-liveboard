@@ -27,10 +27,27 @@
   .team-cell img{width:20px;height:20px;object-fit:contain;flex-shrink:0}
   .reserve-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.25);color:var(--cyan);padding:3px 8px;border-radius:20px;font-weight:800;font-size:10px;white-space:nowrap}
   .reserve-pill.low{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:var(--red)}
-  .reserve-pill.locked{background:rgba(255,213,74,.1);border-color:rgba(255,213,74,.3);color:var(--gold);text-decoration:none}
   .note{color:var(--dim);font-size:11px;text-align:center;margin-top:20px;line-height:1.6}
   .nav-row{display:flex;gap:10px;margin-top:24px}
   .nav-row a{flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;font-weight:800;font-size:12px}
+  .pro-gate{ text-align:center; padding:40px 24px; }
+  .pro-gate .icon{ font-size:40px; margin-bottom:14px; }
+  .pro-gate h2{ font-size:18px; margin:0 0 8px; color:#fff; }
+  .pro-gate p{ color:var(--dim); font-size:13px; line-height:1.6; margin:0 0 22px; }
+  .pro-gate .cta{ display:block; width:100%; padding:13px; margin-top:10px; border-radius:12px; background:var(--gold); color:#1a1200; border:none; font-weight:800; font-size:13px; text-decoration:none; }
+  .pro-gate .ghost-btn{
+    display:block; width:100%; padding:13px; margin-top:10px; border-radius:12px;
+    background:transparent; border:1px solid rgba(148,163,184,.3); color:var(--dim);
+    font-weight:700; font-size:13px; text-decoration:none; cursor:pointer;
+  }
+  .pro-gate .find-form{ margin-top:18px; text-align:left; }
+  .pro-gate .find-label{ font-size:11.5px; color:var(--dim); margin-bottom:8px; text-align:center; line-height:1.5; }
+  .pro-gate .find-input{
+    width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--line);
+    background:rgba(255,255,255,.04); color:#fff; font-size:14px; margin-bottom:10px;
+  }
+  .pro-gate .find-input:focus{ outline:none; border-color:var(--gold); }
+  .pro-gate .find-err{ color:var(--red); font-size:12px; margin-top:8px; display:none; line-height:1.5; }
 </style>
 </head>
 <body>
@@ -48,6 +65,59 @@ var token = params.get('t');
 
 function esc(s){ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
+function renderProGate(upgradeUrl, fallbackUrl){
+  var findFormHtml = '<div class="find-form">' +
+      '<div class="find-label">We couldn\'t identify you from this link. Enter the email you joined with and we\'ll find your upgrade link:</div>' +
+      '<input type="email" class="find-input" id="findEmail" placeholder="you@example.com">' +
+      '<button class="cta" style="margin-top:0" onclick="findMyLink()" id="findBtn">Find My Link</button>' +
+      '<p class="find-err" id="findErr"></p>' +
+    '</div>';
+  var html = '<div class="pro-gate">' +
+    '<div class="icon">⭐</div>' +
+    '<h2>The Live Table is a Pro feature</h2>' +
+    '<p>Upgrade for £1 to unlock the live table, including Reserve counts, for yourself — or carry on with the free plain-text ladder instead.</p>' +
+    (upgradeUrl ? '<a class="cta" href="' + esc(upgradeUrl) + '">Go Pro — £1</a>' : findFormHtml) +
+    '<a class="ghost-btn" href="' + esc(fallbackUrl) + '">Continue to free ladder &rarr;</a>' +
+    '</div>';
+  document.getElementById('content').innerHTML = html;
+}
+
+function findMyLink(){
+  var email = document.getElementById('findEmail').value.trim();
+  var errEl = document.getElementById('findErr');
+  var btn = document.getElementById('findBtn');
+  errEl.style.display = 'none';
+  if(!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)){
+    errEl.textContent = 'Please enter a valid email address.';
+    errEl.style.display = 'block';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Looking…';
+  fetch('/api/lms-find-token', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ pool: poolId, email: email })
+  })
+  .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
+  .then(function(res){
+    if(res.status !== 200){
+      btn.disabled = false;
+      btn.textContent = 'Find My Link';
+      errEl.textContent = "We couldn't find that email in this pool — try the personal link from your join confirmation email instead, or ask your organiser to resend it.";
+      errEl.style.display = 'block';
+      return;
+    }
+    window.location.href = '/api/lms-pro-checkout?pool=' + encodeURIComponent(poolId) + '&t=' + encodeURIComponent(res.body.token);
+  })
+  .catch(function(){
+    btn.disabled = false;
+    btn.textContent = 'Find My Link';
+    errEl.textContent = 'Something went wrong. Please try again.';
+    errEl.style.display = 'block';
+  });
+}
+
 if(!poolId){
   document.getElementById('content').innerHTML = '<div class="empty">No pool specified.</div>';
 } else {
@@ -55,6 +125,10 @@ if(!poolId){
     .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
     .then(function(res){
       if(res.status !== 200){
+        if(res.body.error === 'pro_required'){
+          renderProGate(res.body.upgradeUrl, res.body.fallbackUrl);
+          return;
+        }
         document.getElementById('content').innerHTML = '<div class="empty">' + esc(res.body.error || 'Something went wrong loading the table.') + '</div>';
         return;
       }
@@ -65,14 +139,9 @@ if(!poolId){
     });
 }
 
-function reserveCellHtml(row, upgradeUrl){
-  if(row.reserveCount !== null){
-    var pillClass = row.reserveCount <= 2 ? 'reserve-pill low' : 'reserve-pill';
-    return '<span class="' + pillClass + '">🎯 ' + row.reserveCount + ' left</span>';
-  }
-  return upgradeUrl
-    ? '<a class="reserve-pill locked" href="' + esc(upgradeUrl) + '">⭐ Pro</a>'
-    : '<span class="reserve-pill locked">⭐ Pro</span>';
+function reserveCellHtml(row){
+  var pillClass = row.reserveCount <= 2 ? 'reserve-pill low' : 'reserve-pill';
+  return '<span class="' + pillClass + '">🎯 ' + row.reserveCount + ' left</span>';
 }
 
 function render(d){
@@ -95,12 +164,11 @@ function render(d){
       '<td>' + row.played + '</td>' +
       '<td>' + (row.goalDiff > 0 ? '+' : '') + row.goalDiff + '</td>' +
       '<td>' + row.points + '</td>' +
-      '<td>' + reserveCellHtml(row, d.upgradeUrl) + '</td>' +
+      '<td>' + reserveCellHtml(row) + '</td>' +
       '</tr>';
   });
   html += '</table>';
-  html += '<p class="note">"Reserve" shows how many players still in the pool haven\'t used that team yet — useful to know before you spend a strong one.' +
-    (d.isPro ? '' : ' Unlock it for £1 with the same Pro upgrade that unlocks the Arena.') + '</p>';
+  html += '<p class="note">"Reserve" shows how many players still in the pool haven\'t used that team yet — useful to know before you spend a strong one.</p>';
 
   if(token){
     html += '<div class="nav-row">' +

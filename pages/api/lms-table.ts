@@ -37,12 +37,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     : [];
   const alivePlayers = players.filter((p: any) => p.alive);
 
-  // The table itself stays free for everyone — only the "Reserve" column
-  // (who's still holding which team back) is Pro, since that's the bit of
-  // platform-generated strategic insight rather than just public standings.
+  // The Live Table is a Pro-only feature — anyone viewing it must be a
+  // player in this pool who has personally paid for Pro.
   const viewer = (t && typeof t === 'string') ? players.find((p: any) => p.token === t) : null;
-  const isPro = !!(viewer && viewer.proPaid);
-  const upgradeUrl = (viewer && !isPro) ? `/api/lms-pro-checkout?pool=${pool}&t=${t}` : null;
+  if (!viewer || !viewer.proPaid) {
+    return res.status(403).json({
+      error: 'pro_required',
+      upgradeUrl: t ? `/api/lms-pro-checkout?pool=${pool}&t=${t}` : null,
+      fallbackUrl: t ? `/lms-standings.html?pool=${pool}&t=${t}` : `/lms-standings.html?pool=${pool}`,
+    });
+  }
 
   try {
     const cfg = leagueConfigFor(poolData.league);
@@ -61,7 +65,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         played: row.all.played,
         goalDiff: row.goalsDiff,
         points: row.points,
-        reserveCount: isPro ? reserveCount : null,
+        reserveCount,
       };
     });
 
@@ -70,8 +74,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       leagueName: cfg.name,
       aliveCount: alivePlayers.length,
       table: rows,
-      isPro,
-      upgradeUrl,
     });
   } catch (err: any) {
     console.error('lms-table error:', err.message);
