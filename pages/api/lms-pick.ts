@@ -56,7 +56,7 @@ async function getCurrentGameweek(cfg: { id: number; season: number }) {
     new Date(a.fixture.date).getTime() - new Date(b.fixture.date).getTime()
   );
 
-  if (allFixtures.length === 0) return { gw: null, fixtures: [], teams, deadline: null };
+  if (allFixtures.length === 0) return { gw: null, fixtures: [], teams, deadline: null, nextGw: null, nextFixtures: [] };
 
   // "Current gameweek" is simply the earliest round, in chronological order,
   // that hasn't fully finished yet. If it hasn't started at all, it's open
@@ -75,7 +75,7 @@ async function getCurrentGameweek(cfg: { id: number; season: number }) {
     if (!FINISHED_STATUSES.includes(f.fixture.status.short)) roundFinished[r] = false;
   }
   const round = roundOrder.find((r) => !roundFinished[r]);
-  if (!round) return { gw: null, fixtures: [], teams, deadline: null };
+  if (!round) return { gw: null, fixtures: [], teams, deadline: null, nextGw: null, nextFixtures: [] };
 
   const gwMatch = round.match(/(\d+)$/);
   const gwNumber = gwMatch ? parseInt(gwMatch[1], 10) : null;
@@ -91,7 +91,24 @@ async function getCurrentGameweek(cfg: { id: number; season: number }) {
 
   const deadline = fixtures.length > 0 ? fixtures[0].date : null;
 
-  return { gw: gwNumber, fixtures, teams, deadline };
+  // The round immediately after "current" in the same chronological list —
+  // a read-only preview, never used for picking or deadlines. Reuses the
+  // fixture list already fetched above instead of a second API call.
+  const nextRound = roundOrder[roundOrder.indexOf(round) + 1];
+  let nextGw: number | null = null;
+  let nextFixtures: any[] = [];
+  if (nextRound) {
+    const nextGwMatch = nextRound.match(/(\d+)$/);
+    nextGw = nextGwMatch ? parseInt(nextGwMatch[1], 10) : null;
+    nextFixtures = allFixtures.filter((f: any) => f.league.round === nextRound).map((f: any) => ({
+      id: f.fixture.id,
+      date: f.fixture.date,
+      home: { id: f.teams.home.id, name: f.teams.home.name },
+      away: { id: f.teams.away.id, name: f.teams.away.name },
+    })).sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  }
+
+  return { gw: gwNumber, fixtures, teams, deadline, nextGw, nextFixtures };
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -134,6 +151,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       fixtures: gwData.fixtures,
       teams: gwData.teams,
       deadline: gwData.deadline,
+      nextGw: gwData.nextGw,
+      nextFixtures: gwData.nextFixtures,
     });
   }
 
