@@ -92,7 +92,7 @@
         <p style="color:#ffd54a;font-size:12px;font-weight:700;margin:0 0 4px">&#9203; Heads up</p>
         <p style="color:#94a3b8;font-size:12px;line-height:1.6;margin:0" id="gwLockNoticeText"></p>
       </div>
-      <a id="pickLinkBtn" href="#" style="display:block;margin-top:16px;text-decoration:none;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:14px;padding:14px;border-radius:12px">Make Your First Pick &rarr;</a>
+      <a id="pickLinkBtn" href="#" style="display:block;margin-top:16px;text-decoration:none;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:14px;padding:14px;border-radius:12px">Make Your Pick &rarr;</a>
       <p style="color:#5b6b85;font-size:11px;margin-top:12px">Or copy this link into your browser:</p>
       <div class="linkDisplay" id="pickLinkDisplay" style="color:#ffd54a"></div>
       <p style="color:#5b6b85;font-size:11px">Bookmark it — it's yours until the game ends, and it's the only way back in if this email doesn't arrive.</p>
@@ -300,6 +300,12 @@ document.getElementById('f').addEventListener('submit', function(e){
     if(res.body.currentGwLocked && res.body.currentGw){
       document.getElementById('gwLockNoticeText').textContent = 'The current game week is still locked, we will notify you when the next game week starts.';
       document.getElementById('gwLockNotice').style.display = 'block';
+      var pickBtn = document.getElementById('pickLinkBtn');
+      pickBtn.textContent = 'Picks Locked — View Pick Screen →';
+      pickBtn.style.background = '#232c3d';
+      pickBtn.style.color = '#7c8aa3';
+      pickBtn.style.pointerEvents = 'none';
+      pickBtn.style.cursor = 'default';
     }
   })
   .catch(function(){
