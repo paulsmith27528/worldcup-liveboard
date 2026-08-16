@@ -12,8 +12,6 @@ const BASE_URL = process.env.BASE_URL!;
 const FROM_EMAIL = process.env.NOREPLY_EMAIL!;
 const FROM_NAME = 'Last Man Standing';
 
-const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
-
 // Same league config as every other LMS endpoint — defaults to PL for pools
 // created before this existed, since they were always Premier League pools.
 const LEAGUE_CONFIG: Record<string, { id: number; season: number; name: string }> = {
@@ -24,28 +22,6 @@ const LEAGUE_CONFIG: Record<string, { id: number; season: number; name: string }
 };
 function leagueConfigFor(league: string | null | undefined) {
   return LEAGUE_CONFIG[league || 'PL'] || LEAGUE_CONFIG.PL;
-}
-
-// Whatever gameweek is next-upcoming right now becomes this pool's "gameweek 1" -
-// important for pools started mid-season, not just at the true start of the season
-async function getUpcomingGw(cfg: { id: number; season: number }): Promise<{ gw: number | null; deadline: string | null }> {
-  if (!API_KEY) return { gw: null, deadline: null };
-  try {
-    const hdrs = { "x-apisports-key": API_KEY };
-    const res = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}&status=NS`, { headers: hdrs });
-    const data = await res.json();
-    const upcoming = (data.response || []).sort((a: any, b: any) =>
-      new Date(a.fixture.date).getTime() - new Date(b.fixture.date).getTime()
-    );
-    if (upcoming.length === 0) return { gw: null, deadline: null };
-    const round = upcoming[0].league.round;
-    const match = round.match(/(\d+)$/);
-    const gw = match ? parseInt(match[1], 10) : null;
-    return { gw, deadline: upcoming[0].fixture.date };
-  } catch (err) {
-    console.error('getUpcomingGw failed:', err);
-    return { gw: null, deadline: null };
-  }
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -104,12 +80,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (organiserEmail) poolData.organiserEmail = String(organiserEmail).trim().toLowerCase();
     poolData.buyIn = buyIn ? Number(buyIn) : null;
     poolData.status = 'active';
-
-    // Lock in this pool's own "gameweek 1" - whatever's next-upcoming right now,
-    // not necessarily the season's actual gameweek 1 (pools can start mid-season)
-    const upcoming = await getUpcomingGw(leagueConfigFor(poolData.league));
-    poolData.startGw = upcoming.gw;
-    poolData.startGwDeadline = upcoming.deadline;
 
     await redis.set(`lms:pool:${pool}`, JSON.stringify(poolData));
 
