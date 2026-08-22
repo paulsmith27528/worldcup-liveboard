@@ -75,8 +75,8 @@
   .avatar{
     width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center;
     font-weight:700; font-size:13px; flex-shrink:0; position:relative;
-    background-size:cover; background-position:center;
   }
+  .avatar-img{ position:absolute; inset:0; width:100%; height:100%; border-radius:50%; object-fit:cover; }
   .avatar.alive{ background:linear-gradient(145deg, var(--navy-elevated), var(--navy)); color:var(--gold-bright); border:1.5px solid var(--gold); }
   .avatar.eliminated{ background:var(--eliminated); color:var(--eliminated-text); border:1.5px solid transparent; opacity:0.6; }
   .avatar.eliminated::after{
@@ -136,7 +136,7 @@
     width:64px; height:64px; border-radius:50%; margin:0 auto 4px; position:relative;
     background:linear-gradient(145deg, var(--navy-elevated), var(--navy));
     border:2px solid var(--gold); display:flex; align-items:center; justify-content:center;
-    font-weight:800; font-size:20px; color:var(--gold-bright); background-size:cover; background-position:center;
+    font-weight:800; font-size:20px; color:var(--gold-bright);
   }
   .react-big-name{ font-size:12px; color:var(--muted); }
   .float-emoji{
@@ -353,15 +353,24 @@ function chipsHtml(pid){
   }).join('');
 }
 
+// Initials render underneath always, as a guaranteed fallback — the photo
+// is an <img> overlay that removes itself on load failure (corrupted data,
+// oversized upload, etc.) rather than a CSS background-image with nothing
+// behind it, which previously left a genuinely blank circle when a photo
+// failed to load instead of falling back to initials.
+function avatarPhotoHtml(avatarUrl){
+  return avatarUrl ? '<img class="avatar-img" src="' + esc(avatarUrl) + '" onerror="this.remove()">' : '';
+}
+
 function avatarHtml(p, g){
   var isDead = p.eliminatedWeek === g;
   var label = p.displayName || p.name;
   var cls = 'avatar ' + (isDead ? 'eliminated' : 'alive') + (p.isYou ? ' you' : '');
-  var style = (!isDead && p.avatarUrl) ? ' style="background-image:url(' + esc(p.avatarUrl) + ')"' : '';
   var title = isDead ? (p.name + ' — out GW' + p.eliminatedWeek) : p.name;
   var shield = (p.jokerUsedWeek === g) ? '<span class="shield">&#128737;</span>' : '';
-  var content = (!isDead && p.avatarUrl) ? '' : (isDead ? '&times;' : esc(initials(label)));
-  return '<div class="' + cls + '" data-player-id="' + esc(String(p.id)) + '"' + style + ' title="' + esc(title) + '">' + content + shield + chipsHtml(p.id) + '</div>';
+  var content = isDead ? '&times;' : esc(initials(label));
+  var photo = isDead ? '' : avatarPhotoHtml(p.avatarUrl);
+  return '<div class="' + cls + '" data-player-id="' + esc(String(p.id)) + '" title="' + esc(title) + '">' + content + photo + shield + chipsHtml(p.id) + '</div>';
 }
 
 // Current round's avatars are real and clickable — reactions target the
@@ -372,9 +381,9 @@ function avatarHtml(p, g){
 function currentAvatarHtml(p){
   var label = p.displayName || p.name;
   var cls = 'avatar alive' + (p.isYou ? ' you' : '');
-  var style = p.avatarUrl ? ' style="background-image:url(' + esc(p.avatarUrl) + ')"' : '';
-  var content = p.avatarUrl ? '' : esc(initials(label));
-  return '<div class="' + cls + '" data-player-id="' + esc(String(p.id)) + '"' + style + ' title="' + esc(p.name) + '">' + content + chipsHtml(p.id) + '</div>';
+  var content = esc(initials(label));
+  var photo = avatarPhotoHtml(p.avatarUrl);
+  return '<div class="' + cls + '" data-player-id="' + esc(String(p.id)) + '" title="' + esc(p.name) + '">' + content + photo + chipsHtml(p.id) + '</div>';
 }
 
 function render(justUnlocked){
@@ -573,11 +582,8 @@ function openReactionSheet(p){
   document.getElementById('sheetTitle').textContent = 'React to ' + label;
   document.getElementById('sheetNote').textContent = '';
 
-  var avatarStyle = p.avatarUrl ? ' style="background-image:url(' + esc(p.avatarUrl) + ')"' : '';
-  var avatarContent = p.avatarUrl ? '' : esc(initials(label));
-
   var html = '<div class="react-big">' +
-    '<div class="react-big-avatar" id="reactBigAvatar"' + avatarStyle + '>' + avatarContent + '</div>' +
+    '<div class="react-big-avatar" id="reactBigAvatar">' + esc(initials(label)) + avatarPhotoHtml(p.avatarUrl) + '</div>' +
     '<div class="react-big-name">' + esc(p.name) + '</div>' +
     '</div>';
 
