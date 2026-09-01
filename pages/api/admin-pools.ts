@@ -38,5 +38,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json({ ok: true, poolId, firstGw });
   }
 
+  if (req.method === 'DELETE') {
+    const { poolId } = req.body || {};
+    if (!poolId || typeof poolId !== 'string') return res.status(400).json({ error: 'Missing poolId' });
+    const poolRaw = await redis.get<string>(`lms:pool:${poolId}`);
+    if (!poolRaw) return res.status(404).json({ error: 'Pool not found' });
+    const pool = typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any;
+
+    const picksKeys: string[] = [];
+    const recapKeys: string[] = [];
+    for (let g = 1; g <= 60; g++) {
+      picksKeys.push(`lms:pool:${poolId}:picks:${g}`);
+      recapKeys.push(`lms:pool:${poolId}:recap:${g}`);
+    }
+    await redis.del(
+      `lms:pool:${poolId}`,
+      `lms:pool:${poolId}:players`,
+      `lms:pool:${poolId}:reactions`,
+      `lms:orgtoken:${poolId}`,
+      ...picksKeys,
+      ...recapKeys,
+    );
+    await redis.srem('lms:allpools', poolId);
+    return res.status(200).json({ ok: true, deleted: poolId, name: pool.name });
+  }
+
   return res.status(405).end();
 }
