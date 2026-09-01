@@ -350,6 +350,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         organiserEmail: email,
         orgToken,
         buyIn: null,
+        firstGw: 1,
         currentGameweek: 1,
         lastGradedGw: 0,
         wipeoutRule: "rollback",

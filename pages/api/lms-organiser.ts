@@ -108,6 +108,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const playersRaw = await redis.hgetall<Record<string, string>>(`lms:pool:${pool}:players`);
     const rawPlayers = playersRaw ? Object.values(playersRaw).map((raw: any) => typeof raw === 'string' ? JSON.parse(raw) : raw) : [];
+    // Redis hash field order isn't guaranteed stable — sort by join order so
+    // the player list doesn't shuffle position on the organiser between loads.
+    rawPlayers.sort((a: any, b: any) => (a.id || 0) - (b.id || 0));
 
     // Picks for the round still in progress must stay hidden here too, same as
     // everywhere else — an organiser link is not a way to see picks early.

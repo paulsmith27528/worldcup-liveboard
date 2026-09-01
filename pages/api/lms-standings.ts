@@ -32,6 +32,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const players = playersRaw
     ? Object.values(playersRaw).map((raw: any) => typeof raw === 'string' ? JSON.parse(raw) : raw)
     : [];
+  // Redis hash field order isn't guaranteed stable — sort by join order so
+  // a player always renders in the same position between requests.
+  players.sort((a: any, b: any) => (a.id || 0) - (b.id || 0));
 
   const you = (t && typeof t === 'string') ? t : null;
 

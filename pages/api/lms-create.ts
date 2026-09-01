@@ -105,6 +105,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       organiserEmail: null,
       orgToken,
       buyIn: null,
+      // Permanent record of the real gameweek this pool actually started
+      // on — currentGameweek/lastGradedGw both move forward as the season
+      // progresses, so this is the only place that fact is preserved.
+      firstGw: startingGw,
       currentGameweek: startingGw,
       lastGradedGw: startingGw - 1,
       wipeoutRule: 'rollback',

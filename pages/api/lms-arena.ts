@@ -79,6 +79,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const players = playersRaw
       ? Object.values(playersRaw).map((raw: any) => typeof raw === 'string' ? JSON.parse(raw) : raw)
       : [];
+    // Redis hash field order isn't guaranteed stable across requests — sort
+    // by join order (id is a timestamp set once at join) so a player always
+    // renders in the same position, instead of visibly shuffling on reload.
+    players.sort((a: any, b: any) => (a.id || 0) - (b.id || 0));
 
     const you = (t && typeof t === 'string') ? t : null;
 
@@ -107,6 +111,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const lastGradedGw: number = poolData.lastGradedGw || 0;
+    // firstGw is the real gameweek this pool actually started on — a pool
+    // created mid-season (e.g. GW6) has no rounds before that, so the loop
+    // below must not start counting from 1. Falls back to 1 for pools
+    // created before this field existed, which were always season-start pools.
+    const firstGw: number = poolData.firstGw || 1;
     const wipeoutWeeks: number[] = poolData.wipeoutWeeks || [];
     const aliveCount = players.filter((p: any) => p.alive).length;
 
@@ -119,7 +128,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } : null;
 
     const rounds = [];
-    for (let g = 1; g <= lastGradedGw; g++) {
+    for (let g = firstGw; g <= lastGradedGw; g++) {
       if (wipeoutWeeks.includes(g)) {
         rounds.push({ gw: g, wipeout: true, totalPlayers: null, popularity: null, noPick: null });
         continue;
@@ -148,6 +157,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         status: poolData.status,
         winner: poolData.winner || null,
         lastGradedGw,
+        firstGw,
       },
       players: players.map((p: any) => ({
         id: p.id,

@@ -223,6 +223,20 @@ function money(n){
   return '£' + Number(n).toFixed(2).replace(/\.00$/, '');
 }
 
+// "ROUND N" was ambiguous — nothing said whether N was the real league
+// gameweek or just this pool's own round count, which matters a lot for a
+// pool that started mid-season. Labelling as "GAMEWEEK N" makes clear it's
+// the real league number (matches the pick screen/standings/emails, which
+// already all say "Gameweek"), and flags this pool's actual first round
+// explicitly rather than letting it look like an ordinary GW1.
+function roundLabel(gw){
+  var base = 'GAMEWEEK ' + gw;
+  if(arenaData.pool.firstGw && gw === arenaData.pool.firstGw){
+    return "POOL'S ROUND 1 &middot; " + base;
+  }
+  return base;
+}
+
 function renderProGate(upgradeUrl, fallbackUrl){
   var findFormHtml = '<div class="find-form">' +
       '<div class="find-label">We couldn\'t identify you from this link. Enter the email you joined with and we\'ll find your upgrade link:</div>' +
@@ -300,7 +314,7 @@ function load(){
       if(firstLoad){
         var recentSpan = 5;
         var lastGraded = arenaData.pool.lastGradedGw;
-        collapsedBelow = Math.max(1, lastGraded - recentSpan + 1);
+        collapsedBelow = Math.max(arenaData.pool.firstGw || 1, lastGraded - recentSpan + 1);
         scheduleDeadlineFlip();
         firstLoad = false;
       }
@@ -368,7 +382,7 @@ function avatarHtml(p, g){
   var cls = 'avatar ' + (isDead ? 'eliminated' : 'alive') + (p.isYou ? ' you' : '');
   var title = isDead ? (p.name + ' — out GW' + p.eliminatedWeek) : p.name;
   var shield = (p.jokerUsedWeek === g) ? '<span class="shield">&#128737;</span>' : '';
-  var content = isDead ? '&times;' : esc(initials(label));
+  var content = isDead ? '💀' : esc(initials(label));
   var photo = isDead ? '' : avatarPhotoHtml(p.avatarUrl);
   return '<div class="' + cls + '" data-player-id="' + esc(String(p.id)) + '" title="' + esc(title) + '">' + content + photo + shield + chipsHtml(p.id) + '</div>';
 }
@@ -399,7 +413,7 @@ function render(justUnlocked){
   if(d.pool.status === 'finished'){
     pill.textContent = 'FINISHED';
   } else if(d.current.gw){
-    pill.textContent = 'ROUND ' + d.current.gw;
+    pill.textContent = 'GW ' + d.current.gw;
   } else {
     pill.textContent = '—';
   }
@@ -423,7 +437,7 @@ function render(justUnlocked){
   // Current / in-progress round
   var pulseClass = (justUnlocked && !reducedMotion) ? ' just-unlocked' : '';
   html += '<div class="rung rung-current' + pulseClass + '" data-current="1">';
-  html += '<div class="rung-meta"><span>' + (d.current.gw ? 'ROUND ' + d.current.gw : 'AWAITING NEXT ROUND') + '</span>' +
+  html += '<div class="rung-meta"><span>' + (d.current.gw ? roundLabel(d.current.gw) : 'AWAITING NEXT GAMEWEEK') + '</span>' +
     (d.current.locked ? '<span>&middot; picks locked</span>' : '<span>&middot; deadline passed</span>') + '</div>';
   var currentPlayers = d.players.filter(function(p){ return p.eliminatedWeek === null; });
   html += '<div class="row">' + currentPlayers.map(currentAvatarHtml).join('') + '</div></div>';
@@ -433,21 +447,22 @@ function render(justUnlocked){
   var roundByGw = {};
   d.rounds.forEach(function(r){ roundByGw[r.gw] = r; });
 
-  var hasCollapsed = collapsedBelow > 1;
+  var firstGw = d.pool.firstGw || 1;
+  var hasCollapsed = collapsedBelow > firstGw;
   if(hasCollapsed){
-    html += '<div class="rung collapse-toggle" id="collapseToggle" data-gw="collapse">Show earlier rounds (' + (collapsedBelow - 1) + ')</div>';
+    html += '<div class="rung collapse-toggle" id="collapseToggle" data-gw="collapse">Show earlier rounds (' + (collapsedBelow - firstGw) + ')</div>';
   }
 
   for(var g = collapsedBelow; g <= lastGraded; g++){
     var r = roundByGw[g];
     if(!r) continue;
     if(r.wipeout){
-      html += '<div class="rung" data-gw="' + g + '"><div class="wipeout-band">♻️ ROUND ' + g + ' — TOTAL WIPEOUT — nobody eliminated</div></div>';
+      html += '<div class="rung" data-gw="' + g + '"><div class="wipeout-band">♻️ ' + roundLabel(g) + ' — TOTAL WIPEOUT — nobody eliminated</div></div>';
       continue;
     }
     var playersHere = playersAsOfRound(g);
     html += '<div class="rung" data-gw="' + g + '">';
-    html += '<div class="rung-meta"><span>ROUND ' + g + '</span></div>';
+    html += '<div class="rung-meta"><span>' + roundLabel(g) + '</span></div>';
     html += '<div class="row">';
     playersHere.forEach(function(p){ html += avatarHtml(p, g); });
     html += '</div></div>';
@@ -483,7 +498,7 @@ function render(justUnlocked){
 }
 
 function expandCollapsed(){
-  collapsedBelow = 1;
+  collapsedBelow = arenaData.pool.firstGw || 1;
   render();
 }
 
@@ -539,7 +554,7 @@ function openSheetShell(){
 
 function openCurrentSheet(){
   openSheetShell();
-  document.getElementById('sheetTitle').textContent = arenaData.current.gw ? ('Round ' + arenaData.current.gw) : 'Next round';
+  document.getElementById('sheetTitle').textContent = arenaData.current.gw ? ('Gameweek ' + arenaData.current.gw) : 'Next gameweek';
   document.getElementById('sheetNote').textContent = '';
   var msg = arenaData.current.locked
     ? '🔒 Picks are hidden until this round’s deadline passes — no peeking mid-round, for anyone, including the organiser.'
@@ -549,7 +564,7 @@ function openCurrentSheet(){
 
 function openSheet(r){
   openSheetShell();
-  document.getElementById('sheetTitle').textContent = 'Round ' + r.gw;
+  document.getElementById('sheetTitle').textContent = 'Gameweek ' + r.gw;
   var body = document.getElementById('sheetBody');
 
   if(r.wipeout){

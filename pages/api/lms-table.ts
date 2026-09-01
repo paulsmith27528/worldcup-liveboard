@@ -35,6 +35,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const players = playersRaw
     ? Object.values(playersRaw).map((raw: any) => typeof raw === 'string' ? JSON.parse(raw) : raw)
     : [];
+  // Redis hash field order isn't guaranteed stable — sort by join order for
+  // consistency with every other page that lists this pool's players.
+  players.sort((a: any, b: any) => (a.id || 0) - (b.id || 0));
   const alivePlayers = players.filter((p: any) => p.alive);
 
   // The Live Table is a Pro-only feature — anyone viewing it must be a
