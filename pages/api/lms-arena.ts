@@ -130,12 +130,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const rounds = [];
     for (let g = firstGw; g <= lastGradedGw; g++) {
       if (wipeoutWeeks.includes(g)) {
-        rounds.push({ gw: g, wipeout: true, totalPlayers: null, popularity: null, noPick: null });
+        rounds.push({ gw: g, wipeout: true, totalPlayers: null, popularity: null, picks: null, noPick: null });
         continue;
       }
       const picksRaw = await redis.get<string>(`lms:pool:${pool}:picks:${g}`);
       if (!picksRaw) {
-        rounds.push({ gw: g, wipeout: false, totalPlayers: null, popularity: null, noPick: null });
+        rounds.push({ gw: g, wipeout: false, totalPlayers: null, popularity: null, picks: null, noPick: null });
         continue;
       }
       const picksData = typeof picksRaw === 'string' ? JSON.parse(picksRaw) : picksRaw as any;
@@ -143,7 +143,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const popularity = Object.entries(picksData.counts || {})
         .map(([team, count]) => ({ team, count: count as number, pct: total > 0 ? Math.round((count as number) / total * 100) : 0 }))
         .sort((a, b) => b.count - a.count);
-      rounds.push({ gw: g, wipeout: false, totalPlayers: total, popularity, noPick: picksData.noPick ?? 0 });
+      // Only present for rounds graded after this field was added — older
+      // snapshots only have the aggregate counts, not who picked what.
+      rounds.push({ gw: g, wipeout: false, totalPlayers: total, popularity, picks: picksData.picks || null, noPick: picksData.noPick ?? 0 });
     }
 
     const upcoming = poolData.status === 'active' ? await getUpcomingRound(leagueConfigFor(poolData.league)) : { gw: null, deadline: null };

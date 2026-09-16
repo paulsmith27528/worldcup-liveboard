@@ -45,6 +45,7 @@ const BYE_STATUSES = ['PST', 'CANC', 'ABD'];
 interface Player {
   id: number;
   name: string;
+  displayName?: string | null;
   email: string;
   token: string;
   usedTeams: string[];
@@ -261,16 +262,20 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
 
   // Snapshot who picked what this gameweek, permanently — currentPick gets
   // overwritten the moment a player makes their next pick, so this is the
-  // only record of round-by-round pick popularity once the season moves on.
+  // only record of round-by-round pick popularity (and who picked what)
+  // once the season moves on.
   const pickCounts: Record<string, number> = {};
+  const pickDetails: { name: string; displayName: string | null; team: string }[] = [];
   [...survivors, ...losers, ...byes].forEach(p => {
     pickCounts[p.currentPick as string] = (pickCounts[p.currentPick as string] || 0) + 1;
+    pickDetails.push({ name: p.name, displayName: p.displayName || null, team: p.currentPick as string });
   });
   const picksTTL = 60 * 60 * 24 * 300;
   await redis.set(`lms:pool:${poolId}:picks:${gw}`, JSON.stringify({
     gw,
     totalPlayers: alivePlayers.length,
     counts: pickCounts,
+    picks: pickDetails,
     noPick: noPicks.length,
   }), { ex: picksTTL });
 

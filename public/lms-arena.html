@@ -123,6 +123,11 @@
   .pop-track{ flex:1; height:8px; background:var(--navy); border-radius:5px; overflow:hidden; }
   .pop-fill{ height:100%; background:linear-gradient(90deg, var(--gold), var(--gold-bright)); border-radius:5px; }
   .pop-pct{ font-size:10.5px; color:var(--muted); width:32px; text-align:right; flex-shrink:0; }
+  .picks-divider{ font-size:10px; letter-spacing:0.06em; color:var(--muted); font-weight:700; text-transform:uppercase; margin:16px 0 8px; padding-top:12px; border-top:1px solid var(--navy-line); }
+  .picks-list{ display:flex; flex-direction:column; gap:6px; }
+  .pick-row{ display:flex; justify-content:space-between; gap:10px; font-size:12px; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .pick-player{ color:var(--text); font-weight:600; }
+  .pick-team{ color:var(--muted); }
   .locked-note{
     display:flex; align-items:flex-start; gap:8px; background:rgba(216,178,76,0.08); border:1px solid rgba(216,178,76,0.2);
     border-radius:10px; padding:10px 12px; font-size:11.5px; color:var(--gold-bright); line-height:1.5;
@@ -232,7 +237,7 @@ function money(n){
 function roundLabel(gw){
   var base = 'GAMEWEEK ' + gw;
   if(arenaData.pool.firstGw && gw === arenaData.pool.firstGw){
-    return "POOL'S ROUND 1 &middot; " + base;
+    return "POOL WEEK 1 &middot; " + base;
   }
   return base;
 }
@@ -427,22 +432,13 @@ function render(justUnlocked){
 
   var html = '';
 
-  // Trophy cap (rendered first in DOM = top, since arena uses column-reverse)
-  if(d.pool.winner){
-    html += '<div class="cap"><div class="cap-icon">🏆</div><div class="cap-label">' + esc(d.pool.winner) + ' wins!</div></div>';
-  } else {
-    html += '<div class="cap"><div class="cap-icon">🏆</div><div class="cap-label">Last one standing</div></div>';
-  }
+  // With column-reverse, whatever's FIRST in the DOM ends up at the BOTTOM
+  // visually, and whatever's LAST ends up at the TOP — so to get oldest
+  // round at the bottom rising up to the trophy at the top, we have to
+  // build the HTML in exactly that order: past rounds first, current round
+  // next, trophy last.
 
-  // Current / in-progress round
-  var pulseClass = (justUnlocked && !reducedMotion) ? ' just-unlocked' : '';
-  html += '<div class="rung rung-current' + pulseClass + '" data-current="1">';
-  html += '<div class="rung-meta"><span>' + (d.current.gw ? roundLabel(d.current.gw) : 'AWAITING NEXT GAMEWEEK') + '</span>' +
-    (d.current.locked ? '<span>&middot; picks locked</span>' : '<span>&middot; deadline passed</span>') + '</div>';
-  var currentPlayers = d.players.filter(function(p){ return p.eliminatedWeek === null; });
-  html += '<div class="row">' + currentPlayers.map(currentAvatarHtml).join('') + '</div></div>';
-
-  // Past rounds, oldest first (bottom), newest last (top) in DOM order
+  // Past rounds, oldest first — becomes the bottom of the ladder.
   var lastGraded = d.pool.lastGradedGw;
   var roundByGw = {};
   d.rounds.forEach(function(r){ roundByGw[r.gw] = r; });
@@ -466,6 +462,22 @@ function render(justUnlocked){
     html += '<div class="row">';
     playersHere.forEach(function(p){ html += avatarHtml(p, g); });
     html += '</div></div>';
+  }
+
+  // Current / in-progress round — sits just below the trophy.
+  var pulseClass = (justUnlocked && !reducedMotion) ? ' just-unlocked' : '';
+  html += '<div class="rung rung-current' + pulseClass + '" data-current="1">';
+  html += '<div class="rung-meta"><span>' + (d.current.gw ? roundLabel(d.current.gw) : 'AWAITING NEXT GAMEWEEK') + '</span>' +
+    (d.current.locked ? '<span>&middot; picks locked</span>' : '<span>&middot; deadline passed</span>') + '</div>';
+  var currentPlayers = d.players.filter(function(p){ return p.eliminatedWeek === null; });
+  html += '<div class="row">' + currentPlayers.map(currentAvatarHtml).join('') + '</div></div>';
+
+  // Trophy cap — appended last, so it lands at the very top as the
+  // aspirational endpoint.
+  if(d.pool.winner){
+    html += '<div class="cap"><div class="cap-icon">🏆</div><div class="cap-label">' + esc(d.pool.winner) + ' wins!</div></div>';
+  } else {
+    html += '<div class="cap"><div class="cap-icon">🏆</div><div class="cap-label">Last one standing</div></div>';
   }
 
   var navHtml = '';
@@ -503,7 +515,7 @@ function expandCollapsed(){
 }
 
 function jumpToYourRung(viewer){
-  if(collapsedBelow > 1 && viewer.eliminatedWeek !== null && viewer.eliminatedWeek < collapsedBelow){
+  if(collapsedBelow > (arenaData.pool.firstGw || 1) && viewer.eliminatedWeek !== null && viewer.eliminatedWeek < collapsedBelow){
     expandCollapsed();
   }
   setTimeout(function(){
@@ -585,6 +597,13 @@ function openSheet(r){
       '<div class="pop-track"><div class="pop-fill" style="width:' + item.pct + '%"></div></div>' +
       '<div class="pop-pct">' + item.pct + '%</div></div>';
   });
+  if(r.picks && r.picks.length){
+    html += '<div class="picks-divider">Who picked what</div><div class="picks-list">';
+    r.picks.forEach(function(p){
+      html += '<div class="pick-row"><span class="pick-player">' + esc(p.displayName || p.name) + '</span><span class="pick-team">' + esc(p.team) + '</span></div>';
+    });
+    html += '</div>';
+  }
   body.innerHTML = html;
 }
 
