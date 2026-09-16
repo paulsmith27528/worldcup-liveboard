@@ -4,68 +4,102 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Your Last Man Standing Pool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
+  :root{
+    --navy-deep:#070C14; --navy:#0B1420; --navy-elevated:#131D30; --navy-line:#1E2C46;
+    --gold:#F2B84B; --gold2:#E2882A; --gold-bright:#F8CE72;
+    --text:#F4F1EA; --muted:#8A96AC; --green:#4ADE80; --red:#FF6B57; --cyan:#5AC8FA;
+  }
   *{box-sizing:border-box}
-  html,body{margin:0;background:#020810;color:#fff;font-family:Arial,sans-serif;min-height:100vh}
-  .wrap{max-width:640px;margin:0 auto;padding:40px 20px 80px}
-  .eyebrow{color:#ef4444;font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:8px}
-  h1{font-size:26px;font-weight:900;margin:0 0 4px}
-  .sub{color:#5b6b85;font-size:13px;margin-bottom:24px}
+  html,body{margin:0;background:var(--navy-deep);color:var(--text);font-family:'Manrope',Arial,sans-serif;min-height:100vh}
+  .lms-display{font-family:'Bebas Neue','Manrope',sans-serif;letter-spacing:.02em}
+  .wrap{max-width:640px;margin:0 auto;padding:40px 20px 80px;position:relative}
+  .wrap::before{content:'';position:fixed;top:0;left:0;right:0;height:340px;background:radial-gradient(120% 50% at 50% -10%, rgba(242,184,75,.14), transparent 55%);pointer-events:none;z-index:0}
+  .eyebrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;position:relative;z-index:1}
+  .eyebrow-left{display:flex;align-items:center;gap:8px}
+  .eyebrow-icon{width:26px;height:26px;border-radius:50%;background:linear-gradient(145deg,var(--navy-elevated),var(--navy));border:1px solid rgba(242,184,75,.4);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .eyebrow-label{font-size:10.5px;font-weight:800;letter-spacing:.16em;color:var(--muted)}
+  .organiser-pill{display:flex;align-items:center;gap:5px;font-size:9.5px;font-weight:800;letter-spacing:.1em;color:var(--gold);background:rgba(242,184,75,.1);border:1px solid rgba(242,184,75,.3);padding:5px 10px;border-radius:20px;white-space:nowrap}
+  h1{font-size:26px;font-weight:800;margin:0 0 4px;letter-spacing:-0.01em;position:relative;z-index:1}
+  .sub{color:var(--muted);font-size:12.5px;font-weight:600;margin-bottom:24px;position:relative;z-index:1}
 
-  .card{background:linear-gradient(150deg,rgba(4,15,34,.97),rgba(2,8,20,.99));border:1px solid rgba(239,68,68,.25);border-radius:16px;padding:20px;margin-bottom:20px}
-  .card h2{font-size:12px;letter-spacing:1px;color:#94a3b8;font-weight:800;margin:0 0 12px}
+  .card{background:linear-gradient(155deg,var(--navy-elevated),var(--navy-deep));border:1px solid var(--navy-line);border-radius:18px;padding:20px;margin-bottom:20px;box-shadow:0 20px 40px -28px rgba(0,0,0,.6);position:relative;z-index:1}
+  .card h2{font-size:10px;letter-spacing:.12em;color:var(--muted);font-weight:800;margin:0 0 12px}
 
-  .joinbox{display:flex;gap:8px;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 14px}
-  .joinbox input{flex:1;font-size:12px;color:#22d3ee;word-break:break-all;background:transparent;border:none;outline:none;font-family:Arial,sans-serif}
-  .joinbox button{flex-shrink:0;padding:8px 14px;border:none;border-radius:8px;background:#ffd54a;color:#1a1200;font-weight:800;font-size:12px;cursor:pointer}
+  .joinbox{display:flex;gap:8px;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 14px}
+  .joinbox input{flex:1;min-width:0;font-size:11px;color:var(--cyan);word-break:break-all;background:transparent;border:none;outline:none;font-family:'Manrope',Arial,sans-serif}
+  .joinbox button{flex-shrink:0;padding:7px 13px;border:none;border-radius:8px;background:var(--gold);color:#0A1220;font-weight:800;font-size:11px;cursor:pointer}
 
-  .stat-row{display:flex;gap:12px;margin-bottom:20px}
-  .stat{flex:1;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;text-align:center}
-  .stat .n{font-size:22px;font-weight:900;color:#ffd54a}
-  .stat .l{font-size:10px;color:#5b6b85;letter-spacing:1px;font-weight:800;margin-top:2px}
+  .btn-primary{display:block;text-align:center;text-decoration:none;padding:13px;border-radius:12px;background:linear-gradient(120deg,var(--gold),var(--gold2));color:#0A1220;font-weight:800;font-size:13px;box-shadow:0 14px 26px -14px rgba(242,184,75,.45);border:none;cursor:pointer;width:100%}
 
-  .player{display:flex;align-items:center;gap:12px;padding:12px 14px;margin-bottom:8px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
-  .player .name{flex:1;min-width:0;font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .player .email{color:#5b6b85;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .player .badge{font-size:10px;font-weight:800;letter-spacing:.5px;padding:4px 10px;border-radius:20px;background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.3)}
-  .paid-btn{font-size:9px;font-weight:800;letter-spacing:.5px;padding:5px 10px;border-radius:20px;border:none;cursor:pointer;flex-shrink:0}
-  .link-btn{font-size:9px;font-weight:800;letter-spacing:.5px;padding:5px 10px;border-radius:20px;border:1px solid rgba(34,211,238,.3);background:rgba(34,211,238,.08);color:#22d3ee;cursor:pointer;flex-shrink:0}
-  .paid-yes{background:rgba(52,211,153,.15);color:#34d399;border:1px solid rgba(52,211,153,.3)}
-  .paid-no{background:rgba(255,255,255,.06);color:#5b6b85;border:1px solid rgba(255,255,255,.12)}
+  .stat-row{display:flex;gap:10px;margin-bottom:20px;position:relative;z-index:1}
+  .stat{flex:1;background:rgba(255,255,255,.03);border:1px solid var(--navy-line);border-radius:14px;padding:14px 6px;text-align:center}
+  .stat .n{font-size:26px;color:var(--gold)}
+  .stat .l{font-size:8.5px;color:var(--muted);letter-spacing:.1em;font-weight:800;margin-top:2px}
 
-  .empty{text-align:center;color:#5b6b85;font-size:13px;padding:24px}
-  .loading{text-align:center;color:#5b6b85;font-size:13px;padding:40px}
+  .player{display:flex;align-items:center;gap:10px;padding:11px 12px;margin-bottom:8px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid var(--navy-line);flex-wrap:wrap}
+  .player-avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;position:relative;background:linear-gradient(145deg,var(--navy-elevated),var(--navy));border:1px solid var(--navy-line);color:var(--gold-bright)}
+  .player-avatar img{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;object-fit:cover}
+  .player .info{flex:1;min-width:90px;overflow:hidden}
+  .player .name{font-weight:700;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .player .email{color:var(--muted);font-size:10px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .player .badge{font-size:9px;font-weight:800;letter-spacing:.5px;padding:5px 9px;border-radius:20px;background:rgba(74,222,128,.12);color:var(--green);border:1px solid rgba(74,222,128,.3);flex-shrink:0}
+  .paid-btn{font-size:9px;font-weight:800;letter-spacing:.5px;padding:5px 9px;border-radius:20px;border:none;cursor:pointer;flex-shrink:0}
+  .link-btn{font-size:9px;font-weight:800;letter-spacing:.5px;padding:5px 9px;border-radius:20px;border:1px solid rgba(90,200,250,.3);background:rgba(90,200,250,.08);color:var(--cyan);cursor:pointer;flex-shrink:0}
+  .paid-yes{background:rgba(74,222,128,.15);color:var(--green);border:1px solid rgba(74,222,128,.3)}
+  .paid-no{background:rgba(255,255,255,.06);color:var(--muted);border:1px solid rgba(255,255,255,.1)}
 
-  .product-share{text-align:center;padding:16px 20px}
-  .product-share .label{color:#5b6b85;font-size:11.5px;margin-bottom:10px}
-  .product-share-btn{display:inline-block;padding:9px 16px;border-radius:20px;background:transparent;border:1px solid rgba(148,163,184,.3);color:#94a3b8;font-weight:700;font-size:11.5px;cursor:pointer}
-  .product-share-btn:hover{border-color:rgba(148,163,184,.55);color:#cbd5e1}
-  .copied3{color:#34d399;font-size:11px;text-align:center;margin-top:8px;display:none}
+  .empty{text-align:center;color:var(--muted);font-size:13px;padding:24px}
+  .loading{text-align:center;color:var(--muted);font-size:13px;padding:40px}
+
+  .product-share{text-align:center;padding:16px 20px;position:relative;z-index:1}
+  .product-share .label{color:var(--muted);font-size:11px;font-weight:600;margin-bottom:10px}
+  .product-share-btn{display:inline-block;padding:9px 16px;border-radius:20px;background:transparent;border:1px solid rgba(255,255,255,.14);color:var(--muted);font-weight:700;font-size:11px;cursor:pointer}
+  .product-share-btn:hover{border-color:rgba(255,255,255,.3);color:var(--text)}
+  .copied3{color:var(--green);font-size:11px;text-align:center;margin-top:8px;display:none}
+
+  .nav-row{display:flex;gap:8px}
+  .nav-row a{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;text-decoration:none;padding:11px 4px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--navy-line);color:var(--muted);font-weight:700;font-size:9.5px;transition:.15s}
+  .nav-row a:hover{border-color:rgba(255,255,255,.2);color:var(--text)}
+  .nav-row a svg{width:16px;height:16px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="eyebrow" id="eyebrow">☠ LAST MAN STANDING · ORGANISER HUB</div>
+  <div class="eyebrow">
+    <div class="eyebrow-left">
+      <div class="eyebrow-icon">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F2B84B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v2M15 3v2M4 9a8 8 0 1 1 16 0c0 3-1.5 4.5-2 7l-.5 3h-11l-.5-3c-.5-2.5-2-4-2-7Z"/><path d="M9 21h6"/></svg>
+      </div>
+      <span class="eyebrow-label" id="eyebrow">LAST MAN STANDING</span>
+    </div>
+    <div class="organiser-pill">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#F2B84B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"/></svg>
+      ORGANISER
+    </div>
+  </div>
   <h1 id="poolName">Loading…</h1>
   <p class="sub" id="poolSub"></p>
 
   <div id="content" style="display:none">
     <div class="stat-row">
-      <div class="stat"><div class="n" id="playerCount">0</div><div class="l">JOINED</div></div>
-      <div class="stat"><div class="n" id="paidCount">0</div><div class="l">PAID</div></div>
-      <div class="stat"><div class="n" id="gwNum">1</div><div class="l">CURRENT GAMEWEEK</div></div>
+      <div class="stat"><div class="n lms-display" id="playerCount">0</div><div class="l">JOINED</div></div>
+      <div class="stat"><div class="n lms-display" id="paidCount">0</div><div class="l">PAID</div></div>
+      <div class="stat"><div class="n lms-display" id="gwNum">1</div><div class="l">CURRENT</div></div>
     </div>
 
-    <div class="card" id="potCard" style="display:none;text-align:center;background:linear-gradient(150deg,rgba(255,213,74,.1),rgba(2,8,20,.99));border-color:rgba(255,213,74,.3)">
-      <div style="font-size:10px;letter-spacing:1px;color:#94a3b8;font-weight:800;margin-bottom:6px">PRIZE POT</div>
-      <div style="font-size:32px;font-weight:900;color:#ffd54a" id="potTotal">£0</div>
-      <div style="font-size:11px;color:#5b6b85;margin-top:4px" id="potNote"></div>
+    <div class="card" id="potCard" style="display:none;text-align:center;background:linear-gradient(155deg,rgba(242,184,75,.1),var(--navy-deep));border-color:rgba(242,184,75,.3)">
+      <div style="font-size:10px;letter-spacing:.12em;color:var(--muted);font-weight:800;margin-bottom:6px">PRIZE POT</div>
+      <div class="lms-display" style="font-size:34px;color:var(--gold)" id="potTotal">£0</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px" id="potNote"></div>
     </div>
 
-    <div class="card" id="feeBanner" style="display:none;text-align:center;background:linear-gradient(150deg,rgba(239,68,68,.1),rgba(2,8,20,.99));border-color:rgba(239,68,68,.35)">
-      <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:6px">Your pool has grown past 11 players</div>
-      <div style="font-size:12px;color:#94a3b8;margin-bottom:14px">Upgrade for a one-off £5 so new players can keep joining — everyone already in stays exactly as they are either way.</div>
-      <a id="feeUpgradeBtn" href="#" style="display:block;text-align:center;text-decoration:none;padding:12px;border-radius:10px;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:13px">Upgrade — £5 →</a>
+    <div class="card" id="feeBanner" style="display:none;text-align:center;background:linear-gradient(155deg,rgba(255,107,87,.1),var(--navy-deep));border-color:rgba(255,107,87,.35)">
+      <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:6px">Your pool has grown past 11 players</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Upgrade for a one-off £5 so new players can keep joining — everyone already in stays exactly as they are either way.</div>
+      <a id="feeUpgradeBtn" href="#" class="btn-primary">Upgrade — £5 →</a>
     </div>
 
     <div class="card">
@@ -74,7 +108,7 @@
         <input id="joinLink" type="text" readonly tabindex="-1">
         <button onclick="copyLink()">Copy</button>
       </div>
-      <a id="shareBtn" href="javascript:void(0)" onclick="doShare()" style="display:block;text-align:center;text-decoration:none;margin-top:10px;padding:12px;border-radius:10px;background:linear-gradient(120deg,#ffd54a,#ffb84a);color:#1a1200;font-weight:900;font-size:13px">Share Join Link →</a>
+      <a id="shareBtn" href="javascript:void(0)" onclick="doShare()" class="btn-primary" style="margin-top:10px">Share Join Link →</a>
     </div>
 
     <div class="product-share">
@@ -88,16 +122,16 @@
       <div id="playerList"></div>
     </div>
 
-    <div class="card" style="display:flex;gap:10px">
-      <a id="ladderLink" href="#" style="flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;background:rgba(255,213,74,.08);border:1px solid rgba(255,213,74,.25);color:#ffd54a;font-weight:800;font-size:12px">&#9760; Arena</a>
-      <a id="matchdayLink" href="#" style="flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);color:#ef4444;font-weight:800;font-size:12px">&#9889; Match Day</a>
-      <a id="tableLink" href="#" style="flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.25);color:#22d3ee;font-weight:800;font-size:12px">&#9917; Live Table</a>
+    <div class="card nav-row">
+      <a id="ladderLink" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg><span>Arena</span></a>
+      <a id="matchdayLink" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>Match Day</span></a>
+      <a id="tableLink" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="4" height="10"/><rect x="10" y="6" width="4" height="14"/><rect x="17" y="3" width="4" height="17"/></svg><span>Live Table</span></a>
     </div>
 
     <div class="card" id="deleteCard" style="display:none;text-align:center;border-color:rgba(148,163,184,.2)">
       <h2>DANGER ZONE</h2>
-      <p style="color:#5b6b85;font-size:11.5px;margin:0 0 12px" id="deleteNote"></p>
-      <button id="deleteBtn" onclick="deletePool()" style="width:100%;padding:12px;border-radius:10px;background:transparent;border:1px solid rgba(239,68,68,.4);color:#ef4444;font-weight:800;font-size:12px;cursor:pointer">Delete This Pool</button>
+      <p style="color:var(--muted);font-size:11.5px;margin:0 0 12px" id="deleteNote"></p>
+      <button id="deleteBtn" onclick="deletePool()" style="width:100%;padding:12px;border-radius:10px;background:transparent;border:1px solid rgba(255,107,87,.4);color:var(--red);font-weight:800;font-size:12px;cursor:pointer">Delete This Pool</button>
     </div>
   </div>
 
@@ -109,6 +143,21 @@ var params = new URLSearchParams(window.location.search);
 var poolId = params.get('pool');
 var k = params.get('k');
 var joinUrl = window.location.origin + '/lms-join.html?pool=' + poolId;
+
+function initials(name){
+  var parts = (name || '').trim().split(/\s+/);
+  var a = parts[0] ? parts[0][0] : '';
+  var b = parts.length > 1 ? parts[parts.length - 1][0] : '';
+  return (a + b).toUpperCase();
+}
+
+// Initials render underneath always, as a guaranteed fallback — the photo
+// is an <img> overlay that removes itself on load failure, same pattern
+// as the Arena's avatars.
+function avatarChipHtml(p){
+  var photo = p.avatarUrl ? '<img src="' + p.avatarUrl + '" onerror="this.remove()">' : '';
+  return '<div class="player-avatar">' + initials(p.name) + photo + '</div>';
+}
 
 if(!poolId || !k){
   document.getElementById('loadingMsg').textContent = 'This organiser link looks incomplete — check the link from your email.';
@@ -128,7 +177,7 @@ if(!poolId || !k){
         return;
       }
       document.getElementById('poolName').textContent = d.pool.name;
-      document.getElementById('eyebrow').textContent = '☠ LAST MAN STANDING · ' + (d.pool.leagueName || 'Premier League').toUpperCase() + ' · ORGANISER HUB';
+      document.getElementById('eyebrow').textContent = 'LAST MAN STANDING · ' + (d.pool.leagueName || 'Premier League').toUpperCase();
       var subText = 'Organised by ' + d.pool.organiser;
       if(d.pool.buyIn){ subText += ' · £' + d.pool.buyIn + ' buy-in'; }
       document.getElementById('poolSub').textContent = subText;
@@ -160,7 +209,8 @@ if(!poolId || !k){
         d.players.forEach(function(p){
           var row = document.createElement('div');
           row.className = 'player';
-          row.innerHTML = '<div class="name">' + p.name + '<div class="email">' + p.email + '</div></div>' +
+          row.innerHTML = avatarChipHtml(p) +
+            '<div class="info"><div class="name">' + p.name + '</div><div class="email">' + p.email + '</div></div>' +
             '<button class="link-btn" onclick="copyPlayerLink(\'' + p.token + '\')">&#128279; Link</button>' +
             '<button class="paid-btn ' + (p.paid ? 'paid-yes' : 'paid-no') + '" data-token="' + p.token + '" data-paid="' + (p.paid ? '1' : '0') + '" onclick="togglePaid(this)">' + (p.paid ? 'PAID' : 'UNPAID') + '</button>' +
             '<div class="badge">' + (p.alive ? 'ALIVE' : 'OUT') + '</div>';

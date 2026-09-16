@@ -5,28 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="format-detection" content="telephone=no, address=no, email=no, date=no, url=no">
 <title>The Arena — Last Man Standing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy-deep:#081120;
-    --navy:#0E1B33;
-    --navy-elevated:#152341;
-    --navy-line:#25365C;
-    --gold:#D8B24C;
-    --gold-bright:#F3D27A;
-    --text:#EEF1F8;
-    --muted:#7186AC;
+    --navy-deep:#070C14;
+    --navy:#0B1420;
+    --navy-elevated:#131D30;
+    --navy-line:#1E2C46;
+    --gold:#F2B84B;
+    --gold-bright:#F8CE72;
+    --text:#F4F1EA;
+    --muted:#8A96AC;
     --eliminated:#26314A;
     --eliminated-text:#4B5A7A;
-    --out-red:#B4453D;
+    --out-red:#FF6B57;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html,body{
     background:var(--navy-deep);
     color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+    font-family:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
     -webkit-font-smoothing:antialiased;
     min-height:100vh;
   }
+  .lms-display{ font-family:'Bebas Neue','Manrope',sans-serif; letter-spacing:0.02em; }
   body{display:flex; justify-content:center;}
   .phone{
     width:100%; max-width:430px; min-height:100vh;
@@ -173,7 +176,9 @@
   }
   .pro-gate .find-form{ margin-top:18px; text-align:left; }
   .nav-row{ display:flex; gap:8px; padding:0 16px 20px; }
-  .nav-row a{ flex:1; text-align:center; text-decoration:none; padding:12px 8px; border-radius:10px; font-weight:800; font-size:11.5px; }
+  .nav-row a{ flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; text-align:center; text-decoration:none; padding:11px 4px; border-radius:12px; font-weight:700; font-size:9.5px; background:rgba(255,255,255,.04); border:1px solid var(--navy-line); color:var(--muted); transition:.15s; }
+  .nav-row a:hover{ border-color:rgba(255,255,255,.2); color:var(--text); }
+  .nav-row a svg{ width:16px; height:16px; }
   .find-form{ margin-top:4px; text-align:left; }
   .find-label{ font-size:11.5px; color:var(--muted); margin-bottom:8px; text-align:center; line-height:1.5; }
   .find-input{
@@ -192,7 +197,7 @@
   </div>
 
   <div class="hero">
-    <div class="hero-count" id="heroCount">&ndash;</div>
+    <div class="hero-count lms-display" id="heroCount">&ndash;</div>
     <div class="hero-label">Still Standing</div>
     <div class="hero-sub" id="heroSub"></div>
   </div>
@@ -483,9 +488,9 @@ function render(justUnlocked){
   var navHtml = '';
   if(token){
     navHtml = '<div class="nav-row">' +
-      '<a href="/lms-pick.html?pool=' + poolId + '&t=' + token + '" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:var(--muted)">← Pick</a>' +
-      '<a href="/lms-matchday.html?pool=' + poolId + '&t=' + token + '" style="background:rgba(180,69,61,.12);border:1px solid rgba(180,69,61,.3);color:#f0a19c">⚡ Match Day</a>' +
-      '<a href="/lms-table.html?pool=' + poolId + '&t=' + token + '" style="background:rgba(216,178,76,.1);border:1px solid rgba(216,178,76,.25);color:var(--gold-bright)">⚽ Live Table</a>' +
+      '<a href="/lms-pick.html?pool=' + poolId + '&t=' + token + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg><span>Pick</span></a>' +
+      '<a href="/lms-matchday.html?pool=' + poolId + '&t=' + token + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>Match Day</span></a>' +
+      '<a href="/lms-table.html?pool=' + poolId + '&t=' + token + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="4" height="10"/><rect x="10" y="6" width="4" height="14"/><rect x="17" y="3" width="4" height="17"/></svg><span>Live Table</span></a>' +
       '</div>';
   }
   document.getElementById('content').innerHTML = '<div class="arena" id="arenaList">' + html + '</div>' + navHtml;
