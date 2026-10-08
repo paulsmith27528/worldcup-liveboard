@@ -142,6 +142,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         organiser: poolData.organiser,
         buyIn: poolData.buyIn,
         currentGameweek: poolData.currentGameweek,
+        lastGradedGw: poolData.lastGradedGw || 0,
         status: poolData.status,
         createdAt: poolData.createdAt,
         organiserFeeNotified: poolData.organiserFeeNotified || false,

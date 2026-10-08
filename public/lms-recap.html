@@ -40,7 +40,8 @@
     <div class="recap-list" id="cardList"></div>
     <div class="recap-foot" id="cardFoot"></div>
   </div>
-  <p class="hint" id="cardHint" style="display:none">Screenshot this card to share in your group chat.</p>
+  <button id="waBtn" style="display:none;width:340px;max-width:100%;margin:16px auto 0;padding:14px;border-radius:12px;background:#25D366;color:#fff;border:none;font-weight:900;font-size:14px;cursor:pointer">Share results on WhatsApp</button>
+  <p class="hint" id="cardHint" style="display:none">Or screenshot this card to share in your group chat.</p>
 </div>
 
 <script>
@@ -108,6 +109,32 @@ function render(d){
   document.getElementById('cardList').innerHTML = listHtml;
 
   document.getElementById('cardFoot').textContent = r.stillAliveCount + ' still standing';
+
+  var waBtn = document.getElementById('waBtn');
+  waBtn.style.display = 'block';
+  waBtn.onclick = function(){
+    window.open('https://wa.me/?text=' + encodeURIComponent(whatsAppText(d)), '_blank');
+  };
+}
+
+// Plain-text version of the card for WhatsApp. Long name lists are
+// shortened to a count so a big pool's message stays readable.
+function nameList(names){
+  return names.length <= 10 ? names.join(', ') : names.length + ' players';
+}
+function whatsAppText(d){
+  var r = d.recap;
+  var lines = ['☠ ' + (d.poolName || 'Last Man Standing') + ': Gameweek ' + d.gw + ' results'];
+  if(r.wipeout){
+    lines.push('♻️ Total wipeout! Everyone lost or drew, so nobody is out this week.');
+  } else {
+    lines.push('✅ ' + r.survivedCount + ' survived · ❌ ' + r.eliminatedNames.length + ' out');
+    if(r.eliminatedNames.length) lines.push('Out: ' + nameList(r.eliminatedNames));
+    if(r.jokerUsedNames.length) lines.push('🛡 Joker used: ' + nameList(r.jokerUsedNames));
+  }
+  lines.push(r.stillAliveCount + ' still standing. Next up: Gameweek ' + (d.gw + 1) + '.');
+  lines.push('Full table: ' + window.location.origin + '/lms-players.html?pool=' + encodeURIComponent(poolId));
+  return lines.join('\n');
 }
 </script>
 </body>
