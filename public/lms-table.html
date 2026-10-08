@@ -146,7 +146,7 @@ function reserveCellHtml(row){
 
 function render(d){
   document.getElementById('poolTitle').textContent = d.poolName || 'Live Table';
-  document.getElementById('poolSub').textContent = d.aliveCount + ' players still picking';
+  document.getElementById('poolSub').textContent = d.aliveCount + (d.aliveCount === 1 ? ' player' : ' players') + ' still standing';
   if(d.leagueName){
     document.getElementById('eyebrow').textContent = '⚽ LIVE TABLE · ' + d.leagueName.toUpperCase();
   }
