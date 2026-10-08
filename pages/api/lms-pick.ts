@@ -135,6 +135,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       leagueName: leagueConfigFor(poolData.league).name,
       poolStatus: poolData.status,
       winner: poolData.winner || null,
+      whatsappGroupUrl: poolData.whatsappGroupUrl || null,
       player: {
         name: player.name,
         alive: player.alive,

@@ -67,6 +67,33 @@ async function getUpcomingRound(cfg: { id: number; season: number }): Promise<{ 
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === 'POST' && req.body?.action === 'setWhatsAppGroup') {
+    const { pool, k } = req.body;
+    const raw = typeof req.body.whatsappGroupUrl === 'string' ? req.body.whatsappGroupUrl.trim() : '';
+    if (!pool || !k) return res.status(400).json({ error: 'Missing pool or k' });
+    // Only real WhatsApp group invite links, so this can never be used to put
+    // some other link in front of every player. Newer WhatsApp versions add
+    // things like "?mode=ac_t" when copying, so only the invite code is kept.
+    // Empty clears it.
+    const match = raw.match(/^(?:https?:\/\/)?chat\.whatsapp\.com\/(?:invite\/)?([A-Za-z0-9]+)\/?(?:\?.*)?$/);
+    if (raw && !match) {
+      return res.status(400).json({ error: "That doesn't look like a WhatsApp group invite link. It should start with https://chat.whatsapp.com/" });
+    }
+    const url = match ? `https://chat.whatsapp.com/${match[1]}` : '';
+
+    const storedToken = await redis.get<string>(`lms:orgtoken:${pool}`);
+    if (!storedToken || storedToken !== k) {
+      return res.status(401).json({ error: 'Invalid organiser link' });
+    }
+    const poolRaw = await redis.get<string>(`lms:pool:${pool}`);
+    if (!poolRaw) return res.status(404).json({ error: 'Pool not found' });
+    const poolData = typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any;
+    poolData.whatsappGroupUrl = url || null;
+    // keepTtl so saving this never changes when the pool expires.
+    await redis.set(`lms:pool:${pool}`, JSON.stringify(poolData), { keepTtl: true });
+    return res.status(200).json({ ok: true, whatsappGroupUrl: poolData.whatsappGroupUrl });
+  }
+
   if (req.method === 'POST') {
     const { pool, k, playerToken, paid } = req.body;
     if (!pool || !k || !playerToken || typeof paid !== 'boolean') {
@@ -143,6 +170,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         buyIn: poolData.buyIn,
         currentGameweek: poolData.currentGameweek,
         lastGradedGw: poolData.lastGradedGw || 0,
+        whatsappGroupUrl: poolData.whatsappGroupUrl || null,
         status: poolData.status,
         createdAt: poolData.createdAt,
         organiserFeeNotified: poolData.organiserFeeNotified || false,

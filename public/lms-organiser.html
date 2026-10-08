@@ -113,6 +113,16 @@
       <a id="recapLink" href="#" style="display:none;text-align:center;margin-top:12px;font-size:12px;font-weight:700;color:#25D366;text-decoration:none">Share last gameweek's results on WhatsApp →</a>
     </div>
 
+    <div class="card">
+      <h2>POOL WHATSAPP GROUP</h2>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px">Create a group in WhatsApp, tap its name, then <b style="color:var(--text)">Invite via link</b> and copy the link. Paste it here and every player will get a one-tap button to join, on their pick page and in their welcome email.</div>
+      <div class="joinbox">
+        <input id="waGroupInput" type="url" placeholder="https://chat.whatsapp.com/..." autocomplete="off">
+        <button onclick="saveWhatsAppGroup()" id="waGroupSave">Save</button>
+      </div>
+      <div id="waGroupMsg" style="display:none;font-size:12px;margin-top:8px"></div>
+    </div>
+
     <div class="product-share">
       <p class="label">Know someone who wants to run their own pool?</p>
       <button class="product-share-btn" onclick="shareProduct()">🚀 Share Last Man Standing →</button>
@@ -202,6 +212,7 @@ if(!poolId || !k){
       document.getElementById('joinLink').value = joinUrl;
       document.getElementById('ladderLink').href = '/lms-arena.html?pool=' + poolId + (d.pool.yourPlayerToken ? '&t=' + d.pool.yourPlayerToken : '');
       document.getElementById('matchdayLink').href = '/lms-matchday.html?pool=' + poolId + (d.pool.yourPlayerToken ? '&t=' + d.pool.yourPlayerToken : '');
+      document.getElementById('waGroupInput').value = d.pool.whatsappGroupUrl || '';
       if(d.pool.lastGradedGw){
         var recapLink = document.getElementById('recapLink');
         recapLink.href = '/lms-recap.html?pool=' + poolId;
@@ -273,6 +284,37 @@ function shareProduct(){
       setTimeout(function(){ msg.style.display = 'none'; }, 2000);
     });
   }
+}
+
+function saveWhatsAppGroup(){
+  var input = document.getElementById('waGroupInput');
+  var btn = document.getElementById('waGroupSave');
+  var msg = document.getElementById('waGroupMsg');
+  btn.disabled = true;
+  fetch('/api/lms-organiser', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ action: 'setWhatsAppGroup', pool: poolId, k: k, whatsappGroupUrl: input.value })
+  })
+  .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
+  .then(function(res){
+    btn.disabled = false;
+    msg.style.display = 'block';
+    if(res.status !== 200){
+      msg.style.color = '#FF6B57';
+      msg.textContent = res.body.error || 'Something went wrong saving the link.';
+      return;
+    }
+    input.value = res.body.whatsappGroupUrl || '';
+    msg.style.color = '#25D366';
+    msg.textContent = res.body.whatsappGroupUrl ? 'Saved. Players will now see a button to join the group.' : 'Removed. Players will no longer see a group button.';
+  })
+  .catch(function(){
+    btn.disabled = false;
+    msg.style.display = 'block';
+    msg.style.color = '#FF6B57';
+    msg.textContent = 'Something went wrong. Please try again.';
+  });
 }
 
 function togglePaid(btn){

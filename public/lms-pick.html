@@ -89,6 +89,8 @@
 
   <div id="content"></div>
 
+  <a id="waGroupBtn" href="#" target="_blank" rel="noopener" style="display:none;display:block;margin-top:12px;text-decoration:none;text-align:center;background:#25D366;color:#fff;font-weight:900;font-size:14px;padding:14px;border-radius:12px;margin-top:20px;position:relative;z-index:1">Join the pool's WhatsApp group</a>
+
   <div class="nav-row">
     <a id="ladderLink" href="#" class="nav-tab">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
@@ -160,6 +162,11 @@ function render(d){
   document.getElementById('poolTitle').textContent = d.poolName;
   document.getElementById('eyebrow').textContent = '☠ LAST MAN STANDING · ' + (d.leagueName || 'Premier League').toUpperCase();
   currentGwData = d;
+  if(d.whatsappGroupUrl){
+    var waGroupBtn = document.getElementById('waGroupBtn');
+    waGroupBtn.href = d.whatsappGroupUrl;
+    waGroupBtn.style.display = 'block';
+  }
 
   var proBanner = document.getElementById('proBanner');
   if(d.player.proPaid){
