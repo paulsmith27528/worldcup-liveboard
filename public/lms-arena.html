@@ -352,6 +352,10 @@ function scheduleDeadlineFlip(){
   }, msUntil + 1000);
 }
 
+function formatDeadline(iso){
+  return new Date(iso).toLocaleString('en-GB', { weekday:'short', hour:'2-digit', minute:'2-digit', timeZone:'Europe/London' });
+}
+
 function you(){
   return arenaData.players.find(function(p){ return p.isYou; }) || null;
 }
@@ -473,7 +477,9 @@ function render(justUnlocked){
   var pulseClass = (justUnlocked && !reducedMotion) ? ' just-unlocked' : '';
   html += '<div class="rung rung-current' + pulseClass + '" data-current="1">';
   html += '<div class="rung-meta"><span>' + (d.current.gw ? roundLabel(d.current.gw) : 'AWAITING NEXT GAMEWEEK') + '</span>' +
-    (d.current.locked ? '<span>&middot; picks locked</span>' : '<span>&middot; deadline passed</span>') + '</div>';
+    // current.locked means picks are still *hidden* (before first kickoff),
+    // so players can still pick — only after kickoff are picks locked in.
+    (d.current.locked ? '<span>&middot; picks open' + (d.current.deadline ? ' until ' + formatDeadline(d.current.deadline) : '') + '</span>' : '<span>&middot; picks locked</span>') + '</div>';
   var currentPlayers = d.players.filter(function(p){ return p.eliminatedWeek === null; });
   html += '<div class="row">' + currentPlayers.map(currentAvatarHtml).join('') + '</div></div>';
 
