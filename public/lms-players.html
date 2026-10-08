@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no, address=no, email=no, date=no, url=no">
+<title>Players — Last Man Standing</title>
+<style>
+  :root{
+    --bg:#020810; --gold:#ffd54a; --red:#ef4444; --green:#34d399;
+    --line:rgba(255,255,255,.08); --dim:#5b6b85; --panel:#07111f;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:#fff;font-family:Arial,sans-serif;min-height:100vh}
+  .wrap{max-width:960px;margin:0 auto;padding:28px 16px 80px}
+  .eyebrow{color:var(--gold);font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:6px;text-align:center}
+  h1{font-size:24px;font-weight:900;margin:0 0 4px;text-align:center}
+  .sub{color:var(--dim);font-size:13px;margin-bottom:20px;text-align:center}
+  .loading,.empty{text-align:center;color:var(--dim);font-size:13px;padding:60px 20px}
+
+  .tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+  .search{flex:1;min-width:180px;padding:11px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:#fff;font-size:14px}
+  .search:focus{outline:none;border-color:var(--gold)}
+  .filters{display:flex;gap:6px}
+  .filters button,.tool-btn{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--dim);font-size:12px;font-weight:800;cursor:pointer}
+  .filters button.on{border-color:var(--gold);color:var(--gold)}
+  .count{color:var(--dim);font-size:12px;margin-bottom:8px}
+
+  .table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  th,td{padding:10px 12px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--line)}
+  th{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);font-weight:800;background:var(--panel);position:sticky;top:0}
+  th.sticky,td.sticky{position:sticky;left:0;background:var(--bg);z-index:1}
+  th.sticky{background:var(--panel);z-index:2}
+  td.num{color:var(--dim);width:1%}
+  tr.you td{background:rgba(255,213,74,.07)}
+  tr.you td.sticky{background:#1a1a10}
+  .name{font-weight:700}
+  .status-in{color:var(--green);font-weight:800}
+  .status-out{color:var(--red);font-weight:800}
+  .pick-lost{color:var(--red)}
+  .pick-none{color:var(--dim)}
+  .joker{font-size:11px;color:var(--gold);margin-left:4px}
+  .note{color:var(--dim);font-size:11px;text-align:center;margin-top:16px;line-height:1.6}
+  .nav-row{display:flex;gap:10px;margin-top:20px}
+  .nav-row a{flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;font-weight:800;font-size:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:#94a3b8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow" id="eyebrow">☠ LAST MAN STANDING</div>
+  <h1 id="poolTitle">Loading…</h1>
+  <p class="sub" id="poolSub"></p>
+  <div id="content"><div class="loading">Loading players…</div></div>
+</div>
+
+<script>
+var params = new URLSearchParams(window.location.search);
+var poolId = params.get('pool');
+var token = params.get('t');
+var data = null;
+var filter = 'all';
+var query = '';
+
+function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+function label(p){ return p.displayName || p.name; }
+
+// Still-in players first, then the most recently knocked out, so the table
+// reads like a league table of who's lasted longest.
+function sortPlayers(list){
+  return list.slice().sort(function(a, b){
+    if(a.alive !== b.alive) return a.alive ? -1 : 1;
+    return (b.eliminatedWeek || 0) - (a.eliminatedWeek || 0);
+  });
+}
+
+function statusText(p){
+  return p.alive ? 'Still in' : 'Out GW' + p.eliminatedWeek;
+}
+
+function pickCell(p, g){
+  var team = p.picks[g];
+  var joker = p.jokerUsedWeek === g ? '<span class="joker" title="Joker played">🛡</span>' : '';
+  if(!team) return '<td class="pick-none">' + (p.eliminatedWeek !== null && g > p.eliminatedWeek ? '' : '—') + joker + '</td>';
+  var lost = p.eliminatedWeek === g;
+  return '<td' + (lost ? ' class="pick-lost"' : '') + '>' + esc(team) + joker + '</td>';
+}
+
+function visiblePlayers(){
+  var q = query.trim().toLowerCase();
+  return sortPlayers(data.players).filter(function(p){
+    if(filter === 'in' && !p.alive) return false;
+    if(filter === 'out' && p.alive) return false;
+    if(q && label(p).toLowerCase().indexOf(q) === -1 && p.name.toLowerCase().indexOf(q) === -1) return false;
+    return true;
+  });
+}
+
+function renderTable(){
+  var weeks = data.weeks.slice().reverse(); // newest gameweek first
+  var rows = visiblePlayers();
+  var head = '<tr><th class="num">#</th><th class="sticky">Player</th><th>Status</th>' +
+    weeks.map(function(g){ return '<th>GW' + g + (data.pool.wipeoutWeeks.indexOf(g) !== -1 ? ' ♻️' : '') + '</th>'; }).join('') + '</tr>';
+  var body = rows.map(function(p, i){
+    return '<tr' + (p.isYou ? ' class="you" id="youRow"' : '') + '>' +
+      '<td class="num">' + (i + 1) + '</td>' +
+      '<td class="sticky"><span class="name">' + esc(label(p)) + '</span>' + (p.isYou ? ' <span class="joker">(you)</span>' : '') + '</td>' +
+      '<td class="' + (p.alive ? 'status-in' : 'status-out') + '">' + statusText(p) + '</td>' +
+      weeks.map(function(g){ return pickCell(p, g); }).join('') +
+      '</tr>';
+  }).join('');
+  document.getElementById('count').textContent = 'Showing ' + rows.length + ' of ' + data.players.length + ' players';
+  document.getElementById('tableBody').innerHTML = rows.length
+    ? '<table><thead>' + head + '</thead><tbody>' + body + '</tbody></table>'
+    : '<div class="empty">No players match.</div>';
+}
+
+function setFilter(f){
+  filter = f;
+  document.querySelectorAll('.filters button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-f') === f); });
+  renderTable();
+}
+
+function csvCell(v){
+  v = v == null ? '' : String(v);
+  return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+}
+
+// The same table as a spreadsheet file, for organisers who want it in Excel.
+function downloadCsv(){
+  var weeks = data.weeks;
+  var lines = [['Player', 'Status'].concat(weeks.map(function(g){ return 'GW' + g; })).map(csvCell).join(',')];
+  sortPlayers(data.players).forEach(function(p){
+    lines.push([label(p), statusText(p)].concat(weeks.map(function(g){
+      return (p.picks[g] || '') + (p.jokerUsedWeek === g ? ' (joker)' : '');
+    })).map(csvCell).join(','));
+  });
+  var blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (data.pool.name || 'players').replace(/[^\w\- ]+/g, '') + ' - players.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+function render(){
+  var d = data;
+  var aliveCount = d.players.filter(function(p){ return p.alive; }).length;
+  document.getElementById('poolTitle').textContent = d.pool.name || 'Players';
+  document.getElementById('eyebrow').textContent = '☠ PLAYERS · ' + (d.pool.leagueName || 'Premier League').toUpperCase();
+  document.getElementById('poolSub').textContent = d.pool.winner
+    ? d.pool.winner + ' won the pool'
+    : aliveCount + ' of ' + d.players.length + ' still standing';
+
+  var hasYou = d.players.some(function(p){ return p.isYou; });
+  var html = '<div class="tools">' +
+    '<input class="search" id="search" type="search" placeholder="Search for a player…" autocomplete="off">' +
+    '<div class="filters">' +
+      '<button data-f="all" class="on">All</button><button data-f="in">Still in</button><button data-f="out">Out</button>' +
+    '</div>' +
+    (hasYou ? '<button class="tool-btn" id="findMe">Find me</button>' : '') +
+    '<button class="tool-btn" id="csvBtn">Download spreadsheet</button>' +
+    '</div>' +
+    '<div class="count" id="count"></div>' +
+    '<div class="table-scroll" id="tableBody"></div>' +
+    '<p class="note">Picks appear once each gameweek has been graded. Red = the pick that knocked them out. 🛡 = joker played. ♻️ = wipeout week, nobody went out.</p>';
+
+  if(token){
+    html += '<div class="nav-row">' +
+      '<a href="/lms-pick.html?pool=' + encodeURIComponent(poolId) + '&t=' + encodeURIComponent(token) + '">← Pick</a>' +
+      '<a href="/lms-standings.html?pool=' + encodeURIComponent(poolId) + '&t=' + encodeURIComponent(token) + '">Ladder</a>' +
+      '<a href="/lms-table.html?pool=' + encodeURIComponent(poolId) + '&t=' + encodeURIComponent(token) + '">⚽ Live Table</a>' +
+      '</div>';
+  }
+  document.getElementById('content').innerHTML = html;
+
+  document.getElementById('search').addEventListener('input', function(){ query = this.value; renderTable(); });
+  document.querySelectorAll('.filters button').forEach(function(b){
+    b.addEventListener('click', function(){ setFilter(this.getAttribute('data-f')); });
+  });
+  document.getElementById('csvBtn').addEventListener('click', downloadCsv);
+  if(hasYou){
+    document.getElementById('findMe').addEventListener('click', function(){
+      query = ''; document.getElementById('search').value = ''; setFilter('all');
+      var row = document.getElementById('youRow');
+      if(row) row.scrollIntoView({ behavior: 'auto', block: 'center' });
+    });
+  }
+  renderTable();
+}
+
+if(!poolId){
+  document.getElementById('content').innerHTML = '<div class="empty">No pool specified.</div>';
+} else {
+  fetch('/api/lms-players?pool=' + encodeURIComponent(poolId) + (token ? '&t=' + encodeURIComponent(token) : ''))
+    .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
+    .then(function(res){
+      if(res.status !== 200){
+        document.getElementById('content').innerHTML = '<div class="empty">' + esc(res.body.error || 'Something went wrong loading this pool.') + '</div>';
+        return;
+      }
+      data = res.body;
+      render();
+    })
+    .catch(function(){
+      document.getElementById('content').innerHTML = '<div class="empty">Something went wrong. Try refreshing.</div>';
+    });
+}
+</script>
+</body>
+</html>
