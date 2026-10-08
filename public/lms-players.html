@@ -164,6 +164,7 @@ function render(){
     '</div>' +
     '<div class="count" id="count"></div>' +
     '<div class="table-scroll" id="tableBody"></div>' +
+    (d.weeks.length ? '<p class="note"><a href="/lms-recap.html?pool=' + encodeURIComponent(poolId) + '" style="color:#25D366;font-weight:800;text-decoration:none">Share last gameweek\'s results on WhatsApp →</a></p>' : '') +
     '<p class="note">Picks appear once each gameweek has been graded. Red = the pick that knocked them out. 🛡 = joker played. ♻️ = wipeout week, nobody went out.</p>';
 
   if(token){

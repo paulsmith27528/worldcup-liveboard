@@ -140,6 +140,7 @@
       <button class="copyBtn2" onclick="copyLink()">Copy Link</button>
       <button class="shareBtn2" onclick="doShare()">Share →</button>
     </div>
+    <button class="shareBtn2" style="width:100%;margin-top:8px;background:#25D366;color:#fff;border:none" onclick="shareOnWhatsApp('One wrong pick and you’re out, winner takes all. Join our Last Man Standing pool: ' + joinUrl)">Share on WhatsApp</button>
     <div class="copied2" id="copiedMsg2">Link copied!</div>
   </div>
 
@@ -257,6 +258,12 @@ document.getElementById('avatarFile').addEventListener('change', function(e){
   };
   img.src = objectUrl;
 });
+
+// Opens WhatsApp (the app on phones, WhatsApp Web on computers) with the
+// message already typed, so it can be sent straight to a group chat.
+function shareOnWhatsApp(text){
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+}
 
 function doShare(){
   if(navigator.share){

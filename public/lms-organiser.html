@@ -109,6 +109,8 @@
         <button onclick="copyLink()">Copy</button>
       </div>
       <a id="shareBtn" href="javascript:void(0)" onclick="doShare()" class="btn-primary" style="margin-top:10px">Share Join Link →</a>
+      <button onclick="shareOnWhatsApp('One wrong pick and you’re out, winner takes all. Join my Last Man Standing pool: ' + joinUrl)" class="btn-primary" style="margin-top:10px;background:#25D366;color:#fff;border:none">Share on WhatsApp</button>
+      <a id="recapLink" href="#" style="display:none;text-align:center;margin-top:12px;font-size:12px;font-weight:700;color:#25D366;text-decoration:none">Share last gameweek's results on WhatsApp →</a>
     </div>
 
     <div class="product-share">
@@ -200,6 +202,11 @@ if(!poolId || !k){
       document.getElementById('joinLink').value = joinUrl;
       document.getElementById('ladderLink').href = '/lms-arena.html?pool=' + poolId + (d.pool.yourPlayerToken ? '&t=' + d.pool.yourPlayerToken : '');
       document.getElementById('matchdayLink').href = '/lms-matchday.html?pool=' + poolId + (d.pool.yourPlayerToken ? '&t=' + d.pool.yourPlayerToken : '');
+      if(d.pool.lastGradedGw){
+        var recapLink = document.getElementById('recapLink');
+        recapLink.href = '/lms-recap.html?pool=' + poolId;
+        recapLink.style.display = 'block';
+      }
       document.getElementById('tableLink').href = '/lms-table.html?pool=' + poolId + (d.pool.yourPlayerToken ? '&t=' + d.pool.yourPlayerToken : '');
 
       var list = document.getElementById('playerList');
@@ -231,6 +238,12 @@ if(!poolId || !k){
     .catch(function(){
       document.getElementById('loadingMsg').textContent = 'Something went wrong loading your pool. Try refreshing.';
     });
+}
+
+// Opens WhatsApp (the app on phones, WhatsApp Web on computers) with the
+// message already typed, so it can be sent straight to a group chat.
+function shareOnWhatsApp(text){
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
 }
 
 function doShare(){
