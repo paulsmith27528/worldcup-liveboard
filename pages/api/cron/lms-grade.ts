@@ -228,6 +228,15 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
     return;
   }
 
+  // Everything this round changes is collected here and saved in one go at
+  // the end, and emails only go out after that. Saving and emailing one
+  // player at a time meant a big pool (hundreds of players) could run out
+  // of time partway through, leaving some players graded and others not —
+  // and the next run would then grade the same gameweek again on top.
+  const changedPlayers: Record<string, string> = {};
+  type EmailType = Parameters<typeof sendPlayerEmail>[4];
+  const emails: { p: Player; type: EmailType; winnerName?: string }[] = [];
+
   const survivors: Player[] = [];
   const losers: Player[] = [];
   const noPicks: Player[] = [];
@@ -257,7 +266,7 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
   const wipeout = gradedCount > 0 && (losers.length + noPicks.length) === gradedCount;
 
   for (const p of byes) {
-    await sendPlayerEmail(p, poolId, pool.name, gw, 'bye');
+    emails.push({ p, type: 'bye' });
   }
 
   // Snapshot who picked what this gameweek, permanently — currentPick gets
@@ -265,10 +274,10 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
   // only record of round-by-round pick popularity (and who picked what)
   // once the season moves on.
   const pickCounts: Record<string, number> = {};
-  const pickDetails: { name: string; displayName: string | null; team: string }[] = [];
+  const pickDetails: { id: number; name: string; displayName: string | null; team: string }[] = [];
   [...survivors, ...losers, ...byes].forEach(p => {
     pickCounts[p.currentPick as string] = (pickCounts[p.currentPick as string] || 0) + 1;
-    pickDetails.push({ name: p.name, displayName: p.displayName || null, team: p.currentPick as string });
+    pickDetails.push({ id: p.id, name: p.name, displayName: p.displayName || null, team: p.currentPick as string });
   });
   const picksTTL = 60 * 60 * 24 * 300;
   await redis.set(`lms:pool:${poolId}:picks:${gw}`, JSON.stringify({
@@ -288,7 +297,7 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
     // Byes already got their own email above — a wipeout among everyone
     // else doesn't change anything for them, so they're excluded here.
     for (const p of [...losers, ...noPicks]) {
-      await sendPlayerEmail(p, poolId, pool.name, gw, 'wipeout');
+      emails.push({ p, type: 'wipeout' });
     }
   } else {
     for (const p of survivors) {
@@ -301,8 +310,8 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
         p.jokerUsedWeek = gw;
         jokerUsedNames.push(p.name);
       }
-      await redis.hset(playersKey, { [p.token]: JSON.stringify(p) });
-      await sendPlayerEmail(p, poolId, pool.name, gw, jokerWasted ? 'survived_joker_used' : 'survived');
+      changedPlayers[p.token] = JSON.stringify(p);
+      emails.push({ p, type: jokerWasted ? 'survived_joker_used' : 'survived' });
     }
     // Losers and no-picks both check the same thing — only a joker actually
     // played on this gameweek's pick protects against elimination
@@ -315,14 +324,14 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
         p.hasJoker = false;
         p.jokerUsedWeek = gw;
         jokerUsedNames.push(p.name);
-        await redis.hset(playersKey, { [p.token]: JSON.stringify(p) });
-        await sendPlayerEmail(p, poolId, pool.name, gw, 'joker_used');
+        changedPlayers[p.token] = JSON.stringify(p);
+        emails.push({ p, type: 'joker_used' });
       } else {
         p.alive = false;
         p.eliminatedWeek = gw;
         eliminatedNames.push(p.name);
-        await redis.hset(playersKey, { [p.token]: JSON.stringify(p) });
-        await sendPlayerEmail(p, poolId, pool.name, gw, p.currentPick ? 'eliminated' : 'no_pick');
+        changedPlayers[p.token] = JSON.stringify(p);
+        emails.push({ p, type: p.currentPick ? 'eliminated' : 'no_pick' });
       }
     }
   }
@@ -330,7 +339,7 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
   const finalAlive = alivePlayers.filter(p => p.alive);
   const stillAliveCount = finalAlive.length;
   const recapTTL = 60 * 60 * 24 * 300;
-  await redis.set(`lms:pool:${poolId}:recap:${gw}`, JSON.stringify({
+  const recap = JSON.stringify({
     gw,
     wipeout,
     survivedCount: wipeout ? alivePlayers.length : survivors.length + byes.length,
@@ -338,7 +347,7 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
     jokerUsedNames,
     byeNames: byes.map(p => p.name),
     stillAliveCount,
-  }), { ex: recapTTL });
+  });
 
   pool.lastGradedGw = gw;
   pool.currentGameweek = gw + 1;
@@ -349,11 +358,30 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
     pool.status = 'finished';
     pool.winner = finalAlive[0].name;
     for (const p of players) {
-      await sendPlayerEmail(p, poolId, pool.name, gw, p.token === finalAlive[0].token ? 'you_won' : 'pool_won', pool.winner);
+      emails.push({ p, type: p.token === finalAlive[0].token ? 'you_won' : 'pool_won', winnerName: pool.winner });
     }
   }
 
-  await redis.set(`lms:pool:${poolId}`, JSON.stringify(pool));
+  // One transaction: every player's new state, the recap and the pool's
+  // "graded up to" marker land together or not at all, so a run that gets
+  // cut off can never leave a gameweek half graded.
+  const tx = redis.multi();
+  if (Object.keys(changedPlayers).length > 0) tx.hset(playersKey, changedPlayers);
+  tx.set(`lms:pool:${poolId}:recap:${gw}`, recap, { ex: recapTTL });
+  tx.set(`lms:pool:${poolId}`, JSON.stringify(pool));
+  await tx.exec();
+
+  await sendEmailsInBatches(emails.map(e => () => sendPlayerEmail(e.p, poolId, pool.name, gw, e.type, e.winnerName)));
+}
+
+// Sends a batch at a time rather than one by one, so a 500-player pool takes
+// seconds rather than minutes. sendPlayerEmail already catches its own
+// failures, so one bad address never stops the rest.
+const EMAIL_BATCH_SIZE = 25;
+async function sendEmailsInBatches(sends: (() => Promise<void>)[]) {
+  for (let i = 0; i < sends.length; i += EMAIL_BATCH_SIZE) {
+    await Promise.all(sends.slice(i, i + EMAIL_BATCH_SIZE).map(send => send()));
+  }
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

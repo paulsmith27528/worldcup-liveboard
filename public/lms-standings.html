@@ -38,6 +38,8 @@
   .peak .txt{font-size:12px;color:var(--dim)}
   .peak.winner .txt{color:var(--gold);font-weight:800;font-size:14px}
   .note{color:var(--dim);font-size:11px;text-align:center;margin-top:20px;line-height:1.6}
+  .rung-count{font-size:13px;font-weight:800;color:#e2e8f0;margin-right:6px}
+  .rung-count span{color:#64748b;font-weight:700}
   .nav-row{display:flex;gap:10px;margin-top:20px}
   .nav-row a{flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;font-weight:800;font-size:12px}
   .empty{text-align:center;color:var(--dim);font-size:13px;padding:20px}
@@ -106,7 +108,20 @@ if(!poolId){
     });
 }
 
+// Above this many players, each rung shows a count (plus your own circle)
+// instead of one circle per person — the Players table lists everyone.
+var BIG_POOL_SIZE = 100;
+
+function trackHtml(list, isBig, label, rungGw){
+  if(!isBig){
+    return list.map(function(p){ return avatarHtml(p, rungGw); }).join('');
+  }
+  var mine = list.find(function(p){ return p.isYou; });
+  return '<span class="rung-count">' + list.length + ' <span>' + label + '</span></span>' + (mine ? avatarHtml(mine, rungGw) : '');
+}
+
 function render(d){
+  var isBig = d.players.length > BIG_POOL_SIZE;
   document.getElementById('poolTitle').textContent = d.pool.name || 'Survival Ladder';
   document.getElementById('eyebrow').textContent = '☠ LAST MAN STANDING · ' + (d.pool.leagueName || 'Premier League').toUpperCase();
   var alivePlayers = d.players.filter(function(p){ return p.alive; });
@@ -127,7 +142,7 @@ function render(d){
   html += '<div class="ladder">';
 
   html += '<div class="rung"><div class="rung-label"><span class="gw">GW' + (gw + 1) + '</span>THIS WEEK</div><div class="rung-track">';
-  alivePlayers.forEach(function(p){ html += avatarHtml(p); });
+  html += trackHtml(alivePlayers, isBig, 'still in');
   html += '</div></div>';
 
   for(var g = gw; g >= 1; g--){
@@ -137,13 +152,13 @@ function render(d){
     }
     var stillInAtG = d.players.filter(function(p){ return p.eliminatedWeek === null || p.eliminatedWeek > g; });
     html += '<div class="rung"><div class="rung-label"><span class="gw">GW' + g + '</span></div><div class="rung-track">';
-    stillInAtG.forEach(function(p){ html += avatarHtml(p, g); });
+    html += trackHtml(stillInAtG, isBig, 'got through', g);
     html += '</div></div>';
   }
 
   if(fallenPlayers.length > 0){
     html += '<div class="rung fallen-row"><div class="rung-label">FALLEN</div><div class="rung-track">';
-    fallenPlayers.forEach(function(p){ html += avatarHtml(p); });
+    html += trackHtml(fallenPlayers, isBig, 'out');
     html += '</div></div>';
   }
 
@@ -157,6 +172,8 @@ function render(d){
       '<a href="/lms-table.html?pool=' + poolId + '&t=' + token + '" style="background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.25);color:#22d3ee">\u26BD Live Table</a>' +
       '</div>';
   }
+
+  html += '<div class="nav-row"><a href="/lms-players.html?pool=' + encodeURIComponent(poolId) + (token ? '&t=' + encodeURIComponent(token) : '') + '" style="background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.25);color:#facc15">\u2630 Full player table</a></div>';
 
   document.getElementById('content').innerHTML = html;
 }
