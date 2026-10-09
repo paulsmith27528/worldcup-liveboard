@@ -29,3 +29,8 @@ export function addUsedTeams(player: { usedTeams: string[] }, teams: string[]) {
   }
   return changed;
 }
+
+// Teams from the player's permanent pick history.
+export function historyTeams(player: { pickHistory?: Record<string, string> }) {
+  return Object.values(player.pickHistory || {});
+}

@@ -83,7 +83,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         eliminatedWeek: p.eliminatedWeek,
         jokerUsedWeek: p.jokerUsedWeek,
         isYou: you ? p.token === you : false,
-        picks: { ...(picksByName[p.name] || {}), ...(picksById[String(p.id)] || {}) },
+        picks: { ...(picksByName[p.name] || {}), ...(picksById[String(p.id)] || {}), ...(p.pickHistory || {}) },
       })),
     });
   } catch (err: any) {

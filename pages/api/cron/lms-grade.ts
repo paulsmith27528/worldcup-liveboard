@@ -57,6 +57,7 @@ interface Player {
   eliminatedWeek: number | null;
   hasJoker: boolean;
   jokerUsedWeek: number | null;
+  pickHistory?: Record<string, string>;
 }
 
 // Find the highest gameweek number where every fixture has finished
@@ -178,7 +179,7 @@ async function sendPlayerEmail(player: Player, poolId: string, poolName: string,
   } else if (type === 'bye') {
     subject = `🎫 Free pass — Gameweek ${gw}`;
     html = buildEmail('🎫', '#ffd54a', 'You Got A Bye!', poolName, gw,
-      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">Your pick, <strong style="color:#fff">${player.currentPick}</strong>, didn't play this gameweek — postponed, cancelled, or moved out of the round. Nobody's punished for a match that never happened: you're straight through to the next round, no harm done, and <strong style="color:#fff">${player.currentPick}</strong> is still yours to pick again another week.</p>${pickBtn}`);
+      `<p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 20px">Your pick, <strong style="color:#fff">${player.currentPick}</strong>, didn't play this gameweek — postponed, cancelled, or moved out of the round. Nobody's punished for a match that never happened: you're straight through to the next round. Just like any other pick, <strong style="color:#fff">${player.currentPick}</strong> now counts as used, so you can't pick them again this season.</p>${pickBtn}`);
   } else if (type === 'wipeout') {
     subject = `\u267b\ufe0f Gameweek ${gw} wiped out — everyone survives`;
     html = buildEmail('&#9851;', '#ffd54a', "Total Wipeout!",  poolName, gw,
@@ -252,6 +253,14 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
       noPicks.push(p);
       return;
     }
+    // Every pick made for this gameweek is recorded here, once, whatever
+    // happens next (win, loss, draw, wipeout, joker, postponed): the pick is
+    // kept permanently on the player and the team is used up, so no outcome
+    // can ever leave a used team pickable again. A postponed match still
+    // counts as using the team, the player just goes through (Paul's rule).
+    p.pickHistory = { ...(p.pickHistory || {}), [String(gw)]: p.currentPick };
+    addUsedTeams(p, [p.currentPick]);
+    changedPlayers[p.token] = JSON.stringify(p);
     if (byeTeams.has(p.currentPick)) {
       byes.push(p);
       return;
@@ -301,16 +310,11 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
     pool.wipeoutWeeks.push(gw);
     // Byes already got their own email above — a wipeout among everyone
     // else doesn't change anything for them, so they're excluded here.
-    // Nobody goes out, but the team they picked is still used up.
     for (const p of [...losers, ...noPicks]) {
-      if (p.currentPick && p.currentPickGw === gw && addUsedTeams(p, [p.currentPick])) {
-        changedPlayers[p.token] = JSON.stringify(p);
-      }
       emails.push({ p, type: 'wipeout' });
     }
   } else {
     for (const p of survivors) {
-      p.usedTeams.push(p.currentPick as string);
       // The joker is a pre-match gamble, not automatic insurance — if it was
       // played on this pick it's spent the moment it's played, win or lose.
       const jokerWasted = p.currentPickJoker && p.hasJoker;
@@ -325,9 +329,6 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
     // Losers and no-picks both check the same thing — only a joker actually
     // played on this gameweek's pick protects against elimination
     for (const p of [...losers, ...noPicks]) {
-      if (p.currentPick) {
-        p.usedTeams.push(p.currentPick);
-      }
       const jokerActive = p.currentPickJoker && p.hasJoker;
       if (jokerActive) {
         p.hasJoker = false;
@@ -374,8 +375,11 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
   // One transaction: every player's new state, the recap and the pool's
   // "graded up to" marker land together or not at all, so a run that gets
   // cut off can never leave a gameweek half graded.
-  for (const p of repairedPlayers) {
-    if (!changedPlayers[p.token]) changedPlayers[p.token] = JSON.stringify(p);
+  // Serialise each touched player's final state here, so nothing changed
+  // after it was first marked can be left out of the save.
+  for (const p of repairedPlayers) changedPlayers[p.token] = '';
+  for (const p of alivePlayers) {
+    if (p.token in changedPlayers) changedPlayers[p.token] = JSON.stringify(p);
   }
   const tx = redis.multi();
   if (Object.keys(changedPlayers).length > 0) tx.hset(playersKey, changedPlayers);
