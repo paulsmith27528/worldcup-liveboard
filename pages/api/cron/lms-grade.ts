@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Redis } from '@upstash/redis';
+import { wipeoutPicks, addUsedTeams } from '../../../lib/lms-used-teams';
 import sgMail from '@sendgrid/mail';
 
 const redis = new Redis({
@@ -221,6 +222,10 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
   const players: Player[] = Object.values(playersRaw).map((raw: any) => typeof raw === 'string' ? JSON.parse(raw) : raw);
   const alivePlayers = players.filter(p => p.alive);
 
+  // Repair teams missed in earlier wipeout weeks (see lib/lms-used-teams).
+  const earlierWipeoutTeams = await wipeoutPicks(redis, poolId, pool);
+  const repairedPlayers = alivePlayers.filter(p => addUsedTeams(p, earlierWipeoutTeams(p)));
+
   if (alivePlayers.length === 0) {
     pool.lastGradedGw = gw;
     pool.currentGameweek = gw + 1;
@@ -296,7 +301,11 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
     pool.wipeoutWeeks.push(gw);
     // Byes already got their own email above — a wipeout among everyone
     // else doesn't change anything for them, so they're excluded here.
+    // Nobody goes out, but the team they picked is still used up.
     for (const p of [...losers, ...noPicks]) {
+      if (p.currentPick && p.currentPickGw === gw && addUsedTeams(p, [p.currentPick])) {
+        changedPlayers[p.token] = JSON.stringify(p);
+      }
       emails.push({ p, type: 'wipeout' });
     }
   } else {
@@ -365,6 +374,9 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
   // One transaction: every player's new state, the recap and the pool's
   // "graded up to" marker land together or not at all, so a run that gets
   // cut off can never leave a gameweek half graded.
+  for (const p of repairedPlayers) {
+    if (!changedPlayers[p.token]) changedPlayers[p.token] = JSON.stringify(p);
+  }
   const tx = redis.multi();
   if (Object.keys(changedPlayers).length > 0) tx.hset(playersKey, changedPlayers);
   tx.set(`lms:pool:${poolId}:recap:${gw}`, recap, { ex: recapTTL });

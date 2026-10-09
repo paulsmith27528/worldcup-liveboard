@@ -60,6 +60,7 @@
     <div id="loadingState" class="loading">Checking pool…</div>
 
     <form id="f" style="display:none">
+      <p style="margin:0 0 14px;font-size:12.5px;color:#94a3b8;text-align:center">Already joined and lost your pick link? <a href="#lostBox" onclick="document.getElementById('lostEmail').focus()" style="color:#ffd54a;font-weight:700">Get it emailed to you</a></p>
       <label>YOUR NAME</label>
       <input type="text" id="name" placeholder="Your name" required>
 
@@ -361,6 +362,15 @@ document.getElementById('f').addEventListener('submit', function(e){
   })
   .then(function(r){ return r.json().then(function(d){ return {status:r.status, body:d}; }); })
   .then(function(res){
+    if(res.status === 409){
+      // Already in the pool: they almost certainly just lost their link, so
+      // email it to them rather than leaving them stuck.
+      document.getElementById('lostEmail').value = email;
+      sendMyLink();
+      err.textContent = "You're already in this pool, so we've emailed your personal pick link to " + email + ". Check your Junk folder too.";
+      err.style.display = 'block';
+      return;
+    }
     if(res.status !== 200){
       err.textContent = res.body.error || 'Something went wrong. Please try again.';
       err.style.display = 'block';
