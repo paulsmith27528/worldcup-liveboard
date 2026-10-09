@@ -174,7 +174,7 @@ function render(d){
     proBanner.innerHTML = '<div class="pro-banner active">⭐ You\'re Pro</div>';
   } else {
     proBanner.style.display = 'block';
-    proBanner.innerHTML = '<a href="/api/lms-pro-checkout?pool=' + encodeURIComponent(poolId) + '&t=' + encodeURIComponent(token) + '" class="pro-banner upsell">⭐ Go Pro — £1 · React &amp; see pick popularity</a>';
+    proBanner.innerHTML = '<a href="/api/lms-pro-checkout?pool=' + encodeURIComponent(poolId) + '&t=' + encodeURIComponent(token) + '" class="pro-banner upsell">⭐ Go Pro — £1 · Live scores &amp; see pick popularity</a>';
   }
 
   document.getElementById('gwTabs').style.display = 'none';

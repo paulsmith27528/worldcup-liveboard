@@ -97,9 +97,10 @@
     </div>
 
     <div class="card" id="feeBanner" style="display:none;text-align:center;background:linear-gradient(155deg,rgba(255,107,87,.1),var(--navy-deep));border-color:rgba(255,107,87,.35)">
-      <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:6px">Your pool has grown past 11 players</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Upgrade for a one-off £5 so new players can keep joining — everyone already in stays exactly as they are either way.</div>
+      <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:6px" id="feeTitle">Your pool has reached 11 players</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px" id="feeText">Upgrade for a one-off £5 so new players can keep joining, up to 100 players. Everyone already in stays exactly as they are either way.</div>
       <a id="feeUpgradeBtn" href="#" class="btn-primary">Upgrade — £5 →</a>
+      <div style="margin-top:10px;font-size:11px;color:var(--muted)" id="feeBigLine">Expecting more than 100? <a id="feeBigBtn" href="#" style="color:var(--gold)">Go straight to no limit for £20</a></div>
     </div>
 
     <div class="card">
@@ -138,6 +139,18 @@
       <a id="ladderLink" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg><span>Arena</span></a>
       <a id="matchdayLink" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>Match Day</span></a>
       <a id="tableLink" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="4" height="10"/><rect x="10" y="6" width="4" height="14"/><rect x="17" y="3" width="4" height="17"/></svg><span>Live Table</span></a>
+    </div>
+
+    <div class="card">
+      <h2>HOW TO RUN YOUR POOL</h2>
+      <ol style="margin:0;padding-left:18px;color:var(--muted);font-size:12.5px;line-height:1.7">
+        <li style="margin-bottom:8px"><strong style="color:var(--text)">Invite people.</strong> Share your pool's join link, or tap the WhatsApp button on your Organiser Hub. Everyone signs themselves up, so there's no chasing.</li>
+        <li style="margin-bottom:8px"><strong style="color:var(--text)">Set up a WhatsApp group (optional).</strong> Create the group in WhatsApp, copy its invite link, and paste it into the Organiser Hub. New players get a button to join the group straight away.</li>
+        <li style="margin-bottom:8px"><strong style="color:var(--text)">Collect the buy-in yourself.</strong> The site doesn't handle money. Collect it however suits you, then tap UNPAID next to each name on your hub to mark them as PAID.</li>
+        <li style="margin-bottom:8px"><strong style="color:var(--text)">Pool size.</strong> Free up to 10 players (the 11th is a bonus). A one-off &pound;5 takes your pool to 100 players, and &pound;20 removes the limit completely. We'll email you before anyone gets turned away, and players already in are never affected.</li>
+        <li style="margin-bottom:8px"><strong style="color:var(--text)">Results are automatic.</strong> Picks are graded after each gameweek and everyone gets an email. Share the weekly results to your group with one tap from the hub.</li>
+        <li style="margin-bottom:8px"><strong style="color:var(--text)">Lost a link?</strong> Anyone (you included) can open the pool's join page, tap <em>Lost your link?</em>, and we'll email their personal link again.</li>
+      </ol>
     </div>
 
     <div class="card" id="deleteCard" style="display:none;text-align:center;border-color:rgba(148,163,184,.2)">
@@ -202,9 +215,22 @@ if(!poolId || !k){
         document.getElementById('potTotal').textContent = '£' + potential.toFixed(2).replace(/\.00$/, '');
         document.getElementById('potNote').textContent = '£' + collected.toFixed(2).replace(/\.00$/, '') + ' collected so far (' + paidCount + ' of ' + d.players.length + ' paid)';
       }
+      var feeUrl = '/api/lms-organiser-fee-checkout?pool=' + encodeURIComponent(poolId) + '&k=' + encodeURIComponent(k);
       if(d.pool.organiserFeeNotified && !d.pool.organiserFeePaid){
+        // Free pool at 11 players: £5 takes it to 100 (or £20 for no limit).
         document.getElementById('feeBanner').style.display = 'block';
-        document.getElementById('feeUpgradeBtn').href = '/api/lms-organiser-fee-checkout?pool=' + poolId + '&k=' + k;
+        document.getElementById('feeUpgradeBtn').href = feeUrl;
+        document.getElementById('feeBigBtn').href = feeUrl + '&tier=big';
+      } else if(d.pool.playerLimit === 100 && (d.pool.organiserBigFeeNotified || d.players.length >= 90)){
+        // £5 pool nearing 100: offer the £20 no-limit upgrade.
+        document.getElementById('feeBanner').style.display = 'block';
+        document.getElementById('feeTitle').textContent = d.players.length >= 100
+          ? 'Your pool is full at 100 players'
+          : 'Your pool is nearly at its 100-player limit';
+        document.getElementById('feeText').textContent = 'Upgrade for a one-off £20 and there\u2019s no limit at all. Everyone already in stays exactly as they are either way.';
+        document.getElementById('feeUpgradeBtn').textContent = 'Upgrade — £20 →';
+        document.getElementById('feeUpgradeBtn').href = feeUrl;
+        document.getElementById('feeBigLine').style.display = 'none';
       }
       document.getElementById('playerCount').textContent = d.players.length;
       document.getElementById('paidCount').textContent = d.players.filter(function(p){ return p.paid; }).length;

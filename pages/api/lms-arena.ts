@@ -98,18 +98,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
-    const reactionsRaw = await redis.hgetall<Record<string, string>>(`lms:pool:${pool}:reactions`);
-    const reactions: Record<string, Record<string, number>> = {};
-    if (reactionsRaw) {
-      for (const [field, count] of Object.entries(reactionsRaw)) {
-        const sep = field.indexOf(':');
-        const pid = field.slice(0, sep);
-        const emoji = field.slice(sep + 1);
-        if (!reactions[pid]) reactions[pid] = {};
-        reactions[pid][emoji] = parseInt(count as string, 10);
-      }
-    }
-
     const lastGradedGw: number = poolData.lastGradedGw || 0;
     // firstGw is the real gameweek this pool actually started on — a pool
     // created mid-season (e.g. GW6) has no rounds before that, so the loop
@@ -180,7 +168,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         deadline: upcoming.deadline,
         locked,
       },
-      reactions,
     });
   } catch (err: any) {
     console.error('lms-arena error:', err.message);
