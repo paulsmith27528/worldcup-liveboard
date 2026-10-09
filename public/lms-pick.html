@@ -259,6 +259,9 @@ function renderCurrentWeek(d){
     html += '<span>' + esc(f.home.name) + ' v ' + esc(f.away.name) + '</span>';
   });
   html += '</div></div>';
+  if(d.clearedPick && !deadlinePassed){
+    html += '<div class="deadline" style="border-color:rgba(255,107,87,.45)"><div class="lbl" style="color:#ff6b57">⚠ PLEASE PICK AGAIN</div><div style="font-size:13px;line-height:1.5;margin-top:6px">You already used ' + esc(d.clearedPick) + ' in an earlier gameweek, so that pick has been removed. Choose a different team before the deadline.</div></div>';
+  }
 
   if(deadlinePassed){
     html += '<div class="state-card"><div class="icon">🔒</div><h2>Picks are locked</h2><p>The first match of Gameweek ' + d.gw + ' has kicked off. ' + (alreadyPicked ? 'Your pick was: ' + esc(d.player.currentPick) : 'You didn\'t make a pick in time — check with your organiser.') + '</p></div>';

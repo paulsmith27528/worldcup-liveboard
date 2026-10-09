@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Redis } from '@upstash/redis';
 import sgMail from '@sendgrid/mail';
+import { wipeoutPicks, addUsedTeams } from '../../lib/lms-used-teams';
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -130,7 +131,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const gwData = await getCurrentGameweek(leagueConfigFor(poolData.league));
 
+    // Repair teams missed in earlier wipeout weeks (see lib/lms-used-teams).
+    // If this week's pick turns out to be one of them and picks are still
+    // open, clear it so the player is asked to choose again.
+    let clearedPick: string | null = null;
+    const missedTeams = (await wipeoutPicks(redis, pool, poolData))(player);
+    if (addUsedTeams(player, missedTeams)) {
+      const deadlinePassed = gwData.deadline ? new Date() >= new Date(gwData.deadline) : true;
+      if (player.currentPick && player.currentPickGw === gwData.gw && !deadlinePassed
+          && player.usedTeams.includes(player.currentPick)) {
+        clearedPick = player.currentPick;
+        player.currentPick = null;
+        player.currentPickGw = null;
+        player.currentPickJoker = false;
+      }
+      await redis.hset(`lms:pool:${pool}:players`, { [t]: JSON.stringify(player) });
+    }
+
     return res.status(200).json({
+      clearedPick,
       poolName: poolData.name,
       leagueName: leagueConfigFor(poolData.league).name,
       poolStatus: poolData.status,
@@ -185,6 +204,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(403).json({ error: 'Picks have locked for this gameweek — the first match has kicked off.' });
     }
 
+    addUsedTeams(player, (await wipeoutPicks(redis, pool, poolCheck || {}))(player));
     if (player.usedTeams.includes(team)) {
       return res.status(409).json({ error: 'You have already picked this team in a previous gameweek.' });
     }
