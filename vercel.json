@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/lms-grade",
       "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/lms-autopick",
+      "schedule": "*/15 * * * *"
     }
   ]
 }
