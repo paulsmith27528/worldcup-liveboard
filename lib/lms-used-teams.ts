@@ -30,11 +30,7 @@ export function addUsedTeams(player: { usedTeams: string[] }, teams: string[]) {
   return changed;
 }
 
-// Teams from the player's permanent pick history, leaving out bye weeks
-// (a postponed match doesn't use the team up).
-export function historyTeams(player: { pickHistory?: Record<string, string>; byeGws?: number[] }) {
-  const byes = player.byeGws || [];
-  return Object.entries(player.pickHistory || {})
-    .filter(([gw]) => !byes.includes(Number(gw)))
-    .map(([, team]) => team);
+// Teams from the player's permanent pick history.
+export function historyTeams(player: { pickHistory?: Record<string, string> }) {
+  return Object.values(player.pickHistory || {});
 }
