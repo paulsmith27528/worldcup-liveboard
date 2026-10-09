@@ -254,7 +254,7 @@ function roundLabel(gw){
 
 function renderProGate(upgradeUrl, fallbackUrl){
   var findFormHtml = '<div class="find-form">' +
-      '<div class="find-label">We couldn\'t identify you from this link. Enter the email you joined with and we\'ll find your upgrade link:</div>' +
+      '<div class="find-label">We couldn\'t identify you from this link. Enter the email you joined with and we\'ll email you your personal link:</div>' +
       '<input type="email" class="find-input" id="findEmail" placeholder="you@example.com">' +
       '<button class="cta" style="margin-top:0" onclick="findMyLink()" id="findBtn">Find My Link</button>' +
       '<p class="find-err" id="findErr"></p>' +
@@ -280,7 +280,7 @@ function findMyLink(){
     return;
   }
   btn.disabled = true;
-  btn.textContent = 'Looking…';
+  btn.textContent = 'Sending…';
   fetch('/api/lms-find-token', {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
@@ -295,7 +295,12 @@ function findMyLink(){
       errEl.style.display = 'block';
       return;
     }
-    window.location.href = '/api/lms-pro-checkout?pool=' + encodeURIComponent(poolId) + '&t=' + encodeURIComponent(res.body.token);
+    // The link is emailed, never shown here, so only the real owner of that
+    // email address can use it.
+    btn.textContent = 'Email sent';
+    errEl.style.color = '#34d399';
+    errEl.textContent = "If that email is in this pool, we've just sent your personal link to it. Open it, then come back here to upgrade.";
+    errEl.style.display = 'block';
   })
   .catch(function(){
     btn.disabled = false;

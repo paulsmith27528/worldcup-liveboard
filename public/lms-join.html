@@ -145,6 +145,15 @@
     <div class="copied2" id="copiedMsg2">Link copied!</div>
   </div>
 
+  <div class="share-box" id="lostBox">
+    <p class="label">Already in this pool, or the organiser, and lost your link? We'll email it to you.</p>
+    <div class="share-btns">
+      <input type="email" id="lostEmail" placeholder="The email you signed up with" style="flex:2;min-width:0;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#fff;font-size:13px">
+      <button class="copyBtn2" id="lostBtn" onclick="sendMyLink()">Email my link</button>
+    </div>
+    <div class="copied2" id="lostMsg"></div>
+  </div>
+
   <div class="product-share">
     <p class="label">Know someone who wants to run their own pool?</p>
     <button class="product-share-btn" onclick="shareProduct()">🚀 Share Last Man Standing →</button>
@@ -175,6 +184,7 @@ if(!poolId){
       if(d.buyIn){ subText = '£' + d.buyIn + ' buy-in per person · ' + subText; }
       document.getElementById('poolSub').textContent = subText;
       document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('lostBox').style.display = 'block';
 
       if(d.locked){
         var msg = d.status === 'finished'
@@ -193,6 +203,41 @@ if(!poolId){
     .catch(function(){
       document.getElementById('loadingState').textContent = 'Something went wrong loading this pool. Try refreshing.';
     });
+}
+
+// Links are only ever emailed, never shown here, so nobody can get into
+// someone else's pick page just by knowing their email address.
+function sendMyLink(){
+  var email = document.getElementById('lostEmail').value.trim();
+  var msg = document.getElementById('lostMsg');
+  var btn = document.getElementById('lostBtn');
+  msg.style.display = 'block';
+  if(!/^[^@]+@[^@]+\.[^@]+$/.test(email)){
+    msg.style.color = '#f87171';
+    msg.textContent = 'Please enter a valid email address.';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  fetch('/api/lms-find-token', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ pool: poolId, email: email })
+  })
+  .then(function(r){
+    btn.disabled = false;
+    btn.textContent = 'Email my link';
+    msg.style.color = r.ok ? '#34d399' : '#f87171';
+    msg.textContent = r.ok
+      ? "If that email is in this pool, your link is on its way. Check your Junk folder too."
+      : 'Something went wrong. Please try again.';
+  })
+  .catch(function(){
+    btn.disabled = false;
+    btn.textContent = 'Email my link';
+    msg.style.color = '#f87171';
+    msg.textContent = 'Something went wrong. Please try again.';
+  });
 }
 
 function copyLink(){
