@@ -222,7 +222,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">Hi <strong style="color:#fff">${player.name}</strong>, you've joined <strong style="color:#fff">${pool.organiser}</strong>'s Last Man Standing pool. One wrong pick and you're out — good luck!</p>
     <div style="text-align:center;margin:24px 0">
       <a href="${pickUrl}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">Make Your First Pick &rarr;</a>
-    </div>
+    </div>${pool.whatsappGroupUrl ? `
+    <div style="text-align:center;margin:0 0 24px">
+      <a href="${pool.whatsappGroupUrl}" style="display:inline-block;background:#25D366;color:#fff;font-weight:900;font-size:14px;padding:12px 28px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">Join the pool's WhatsApp group</a>
+    </div>` : ''}
     <div style="text-align:center;margin-bottom:16px">
       <p style="color:#475569;font-size:12px;margin:0 0 4px">Or copy this link into your browser:</p>
       <span style="color:#ffd54a;font-size:11px;word-break:break-all;font-family:Arial,sans-serif">${pickUrl}</span>
@@ -256,6 +259,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     token,
     pickUrl,
     poolName: pool.name,
+    whatsappGroupUrl: pool.whatsappGroupUrl || null,
     currentGw: lockInfo.gw,
     currentGwLocked: lockInfo.locked,
     nextGw: lockInfo.locked && lockInfo.gw ? lockInfo.gw + 1 : null,
