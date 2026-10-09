@@ -162,6 +162,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         currentPick: player.currentPick,
         currentPickGw: player.currentPickGw,
         currentPickJoker: player.currentPickJoker || false,
+        autoPicked: !!player.autoPicked,
         eliminatedWeek: player.eliminatedWeek,
         proPaid: player.proPaid || false,
         hasJoker: player.hasJoker !== false,
@@ -224,6 +225,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     player.currentPick = team;
     player.currentPickGw = gwData.gw;
     player.currentPickJoker = !!useJoker;
+    player.autoPicked = false;
 
     await redis.hset(playersKey, { [t]: JSON.stringify(player) });
 
