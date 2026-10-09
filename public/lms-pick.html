@@ -264,7 +264,7 @@ function renderCurrentWeek(d){
   }
 
   if(deadlinePassed){
-    html += '<div class="state-card"><div class="icon">🔒</div><h2>Picks are locked</h2><p>The first match of Gameweek ' + d.gw + ' has kicked off. ' + (alreadyPicked ? (d.player.autoPicked ? 'You didn\'t pick in time, so we picked ' + esc(d.player.currentPick) + ' for you: the highest-placed team in the table you hadn\'t used yet.' : 'Your pick was: ' + esc(d.player.currentPick)) : 'You didn\'t make a pick in time — check with your organiser.') + '</p></div>';
+    html += '<div class="state-card"><div class="icon">🔒</div><h2>Picks are locked</h2><p>The first match of Gameweek ' + d.gw + ' has kicked off. ' + (alreadyPicked ? (d.player.autoPicked ? 'You didn\'t pick in time, so we picked ' + esc(d.player.currentPick) + ' for you, at random from the teams you hadn\'t used yet.' : 'Your pick was: ' + esc(d.player.currentPick)) : 'You didn\'t make a pick in time — check with your organiser.') + '</p></div>';
     content.innerHTML = html;
     return;
   }

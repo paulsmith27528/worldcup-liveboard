@@ -68,20 +68,11 @@ async function lockedRound(cfg: { id: number; season: number }): Promise<Round> 
   return { gw: parseInt(m[1], 10), deadline, teams };
 }
 
-// League table order, top first.
-async function tableOrder(cfg: { id: number; season: number }): Promise<string[]> {
-  const res = await fetch(`https://v3.football.api-sports.io/standings?league=${cfg.id}&season=${cfg.season}`, {
-    headers: { 'x-apisports-key': API_KEY },
-  });
-  const data = await res.json();
-  const table = data.response?.[0]?.league?.standings?.[0] || [];
-  return table.map((row: any) => row.team.name);
-}
-
-// The highest-placed team in the table that the player hasn't used and that
-// is actually playing this round.
-export function chooseAutoPick(order: string[], playing: Set<string>, used: string[]): string | null {
-  return order.find(t => playing.has(t) && !used.includes(t)) || null;
+// A random team the player hasn't used that is actually playing this round.
+export function chooseAutoPick(playing: Set<string>, used: string[], rand: () => number = Math.random): string | null {
+  const options = Array.from(playing).filter(t => !used.includes(t));
+  if (options.length === 0) return null;
+  return options[Math.floor(rand() * options.length)];
 }
 
 async function sendAutoPickEmail(player: any, poolId: string, poolName: string, gw: number, team: string) {
@@ -102,7 +93,7 @@ async function sendAutoPickEmail(player: any, poolId: string, poolName: string, 
       <h1 style="color:#ffd54a;font-size:22px;font-weight:900;margin:0 0 6px">We Picked For You</h1>
       <p style="color:#475569;font-size:13px;margin:0">${poolName} &middot; Gameweek ${gw}</p>
     </div>
-    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">You didn't make a pick before kickoff, so we've picked <strong style="color:#fff">${team}</strong> for you: the highest-placed team in the table you hadn't used yet. Fingers crossed. Don't forget next week!</p>
+    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">You didn't make a pick before kickoff, so we've picked <strong style="color:#fff">${team}</strong> for you, at random from the teams you hadn't used yet. Fingers crossed. Don't forget next week!</p>
     <div style="text-align:center">
       <a href="${pickUrl}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:14px;padding:13px 28px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">Open Your Pick Page &rarr;</a>
     </div>
@@ -130,7 +121,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const poolIds = await redis.smembers('lms:allpools');
     const roundByLeague: Record<string, Round> = {};
-    const orderByLeague: Record<string, string[]> = {};
     const log: any[] = [];
 
     for (const poolId of poolIds) {
@@ -148,10 +138,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (round.gw !== (pool.lastGradedGw ?? 0) + 1) continue;
       if (pool.autoPickedGw === round.gw) continue;
 
-      if (!(league in orderByLeague)) orderByLeague[league] = await tableOrder(cfg);
-      const order = orderByLeague[league];
-      if (order.length === 0) continue;
-
       const playersKey = `lms:pool:${poolId}:players`;
       const playersRaw = await redis.hgetall<Record<string, string>>(playersKey);
       const players = playersRaw
@@ -163,7 +149,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       for (const p of players) {
         if (!p.alive) continue;
         if (p.currentPickGw === round.gw && p.currentPick) continue;
-        const team = chooseAutoPick(order, round.teams, p.usedTeams || []);
+        const team = chooseAutoPick(round.teams, p.usedTeams || []);
         if (!team) continue;
         p.currentPick = team;
         p.currentPickGw = round.gw;
