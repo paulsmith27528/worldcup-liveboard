@@ -113,24 +113,26 @@
     </ol>
   </div>
 
-  <div class="card rules-card" id="reactionsCard" style="margin-top:16px">
+  <div class="card rules-card" id="howToCard" style="margin-top:16px">
     <h2>&#129517; HOW TO USE THE APP</h2>
     <ol class="rules-list">
       <li><strong style="color:#fff">Make your pick.</strong> Your personal Pick screen is the link above &mdash; choose one team to win each gameweek. You can't pick the same team twice all season.</li>
       <li><strong style="color:#fff">Picks lock at kickoff.</strong> The moment the first match of the round starts, that gameweek's picks are frozen &mdash; no changes until the next one opens.</li>
       <li><strong style="color:#fff">Check the Survival Ladder.</strong> Free, always &mdash; see who's still standing and who's been knocked out, gameweek by gameweek.</li>
-      <li><strong style="color:#fff">Go Pro for the full experience</strong> &mdash; <span class="joker">one-off &pound;1</span>. Unlocks Match Day's live scores, the Arena's visual ladder with reactions, and the Live Table's Reserve counts:
-        <ul style="list-style:none;padding-left:0;margin-top:10px">
-          <li>&#128128; Send this when their team concedes in the 94th minute. You know the one.</li>
-          <li>&#128293; For when someone's actually good at this. Rare, but it happens.</li>
-          <li>&#128514; Self-explanatory. They picked Sheffield United away.</li>
-          <li>&#129292; It's not okay. You know exactly what it is. This is football.</li>
-          <li>&#128680; VAR check. Someone's about to have their week ruined.</li>
-          <li>&#128584; Can't watch. Classic self-inflicted.</li>
-          <li>&#128169; The nuclear option. Deploy only for picks that have genuinely earned it.</li>
-        </ul>
-      </li>
+      <li><strong style="color:#fff">Go Pro for the full experience</strong> &mdash; <span class="joker">one-off &pound;1</span>. Unlocks Match Day's live scores, the Arena's visual ladder with pick popularity, and the Live Table's Reserve counts.</li>
       <li><strong style="color:#fff">We'll email you.</strong> Pick confirmations, survival results, and a nudge the moment the next gameweek opens.</li>
+    </ol>
+  </div>
+
+  <div class="card rules-card" id="organiserCard" style="margin-top:16px">
+    <h2>&#128203; FOR ORGANISERS</h2>
+    <ol class="rules-list">
+      <li><strong style="color:#fff">Invite people.</strong> Share your pool's join link, or tap the WhatsApp button on your Organiser Hub. Everyone signs themselves up, so there's no chasing.</li>
+      <li><strong style="color:#fff">Set up a WhatsApp group (optional).</strong> Create the group in WhatsApp, copy its invite link, and paste it into the Organiser Hub. New players get a button to join the group straight away.</li>
+      <li><strong style="color:#fff">Collect the buy-in yourself.</strong> The site doesn't handle money. Collect it however suits you, then tap UNPAID next to each name on your hub to mark them as PAID.</li>
+      <li><strong style="color:#fff">Pool size.</strong> Free up to 10 players (the 11th is a bonus). A one-off &pound;5 takes your pool to 100 players, and &pound;20 removes the limit completely. We'll email you before anyone gets turned away, and players already in are never affected.</li>
+      <li><strong style="color:#fff">Results are automatic.</strong> Picks are graded after each gameweek and everyone gets an email. Share the weekly results to your group with one tap from the hub.</li>
+      <li><strong style="color:#fff">Lost a link?</strong> Anyone (you included) can open the pool's join page, tap <em>Lost your link?</em>, and we'll email their personal link again.</li>
     </ol>
   </div>
 
@@ -369,7 +371,8 @@ document.getElementById('f').addEventListener('submit', function(e){
     document.getElementById('f').style.display = 'none';
     document.getElementById('success').style.display = 'block';
     document.getElementById('rulesCard').style.display = 'block';
-    document.getElementById('reactionsCard').style.display = 'block';
+    document.getElementById('howToCard').style.display = 'block';
+    document.getElementById('organiserCard').style.display = 'block';
     document.getElementById('pickLinkBtn').href = res.body.pickUrl;
     if(res.body.whatsappGroupUrl){
       var waGroupBtn = document.getElementById('waGroupBtn');

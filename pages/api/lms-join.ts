@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Redis } from '@upstash/redis';
 import sgMail from '@sendgrid/mail';
+import { poolPlayerLimit, STANDARD_LIMIT, BIG_POOL_WARNING_AT } from '../../lib/lms-limits';
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -133,11 +134,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   }
 
-  // Free up to 10 players. The 11th is still free but triggers a heads-up to
-  // the organiser; the 12th+ is blocked until the organiser upgrades — but
-  // whoever's already in stays completely unaffected either way.
+  // Free up to 11 players, £5 takes the pool to 100, £20 removes the limit
+  // (see lib/lms-limits). Whoever's already in is never affected — only new
+  // joins are blocked once the pool is at its limit.
   const existingCount = existing ? Object.keys(existing).length : 0;
-  if (existingCount >= 11 && !pool.organiserFeePaid) {
+  if (existingCount >= poolPlayerLimit(pool)) {
     return res.status(403).json({ error: 'This pool is full for now — ask the organiser to upgrade before more players can join.' });
   }
 
@@ -188,7 +189,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       <h1 style="color:#ffd54a;font-size:22px;font-weight:900;margin:0 0 6px">You're at 11 players!</h1>
       <p style="color:#475569;font-size:13px;margin:0">${pool.name}</p>
     </div>
-    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">Your pool is growing nicely. If it goes any further than 11, you'll need to upgrade for a one-off £5 to keep accepting new players — everyone already in stays exactly as they are either way, this only affects new joins.</p>
+    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">Your pool is growing nicely. If it goes any further than 11, you'll need to upgrade for a one-off £5 to keep accepting new players (up to 100; bigger pools are a one-off £20) — everyone already in stays exactly as they are either way, this only affects new joins.</p>
     <div style="text-align:center">
       <a href="${BASE_URL}/lms-organiser.html?pool=${poolId}&k=${pool.orgToken}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">Go To Your Organiser Hub &rarr;</a>
     </div>
@@ -203,6 +204,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     } catch (mailErr: any) {
       console.error('LMS 11-player notification mail error:', mailErr.message);
+    }
+  }
+
+  // Same idea for the £5 tier: warn the organiser as the pool nears 100 so
+  // they can move to the £20 no-limit upgrade before anyone gets turned away.
+  if (pool.organiserFeePaid && poolPlayerLimit(pool) === STANDARD_LIMIT
+      && existingCount + 1 === BIG_POOL_WARNING_AT && !pool.organiserBigFeeNotified && pool.organiserEmail) {
+    pool.organiserBigFeeNotified = true;
+    await redis.set(`lms:pool:${poolId}`, JSON.stringify(pool));
+    try {
+      await sgMail.send({
+        to: pool.organiserEmail,
+        from: { email: FROM_EMAIL, name: FROM_NAME },
+        subject: `🔥 Your pool just hit ${BIG_POOL_WARNING_AT} players — ${pool.name}`,
+        html: `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#020810;font-family:Arial,sans-serif">
+<div style="max-width:520px;margin:0 auto;padding:32px 16px">
+  <div style="background:linear-gradient(150deg,#051226,#020914);border:1px solid rgba(255,213,74,.3);border-radius:18px;padding:32px">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:52px;margin-bottom:12px">&#128293;</div>
+      <h1 style="color:#ffd54a;font-size:22px;font-weight:900;margin:0 0 6px">You're at ${BIG_POOL_WARNING_AT} players!</h1>
+      <p style="color:#475569;font-size:13px;margin:0">${pool.name}</p>
+    </div>
+    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">Your pool can take up to ${STANDARD_LIMIT} players. To go beyond that, upgrade for a one-off £20 and there's no limit at all. Everyone already in stays exactly as they are either way.</p>
+    <div style="text-align:center">
+      <a href="${BASE_URL}/lms-organiser.html?pool=${poolId}&k=${pool.orgToken}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">Go To Your Organiser Hub &rarr;</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>`,
+        trackingSettings: {
+          clickTracking: { enable: false, enableText: false },
+          openTracking: { enable: false },
+        },
+      });
+    } catch (mailErr: any) {
+      console.error('LMS big pool notification mail error:', mailErr.message);
     }
   }
 

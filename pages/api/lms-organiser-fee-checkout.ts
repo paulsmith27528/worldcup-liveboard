@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
 import { Redis } from '@upstash/redis';
+import { poolPlayerLimit } from '../../lib/lms-limits';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2023-10-16' });
 const redis = new Redis({
@@ -9,8 +10,9 @@ const redis = new Redis({
 });
 
 const BASE_URL = process.env.BASE_URL!;
+const BIG_POOL_FEE_PENCE = 2000; // £20
 
-// Same £5 fee, but "charged independently" per competition — a separate
+// £5 upgrade (up to 100 players). Same £5 fee, but "charged independently" per competition — a separate
 // Stripe price per league, even though the amount is identical, so each
 // product's revenue is reported separately in Stripe.
 // TODO: replace the placeholder once created (one-time, £5) — must
@@ -39,21 +41,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!poolRaw) return res.status(404).json({ error: 'Pool not found' });
   const poolData = typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any;
 
-  if (poolData.organiserFeePaid) {
-    return res.redirect(303, `${BASE_URL}/lms-organiser.html?pool=${pool}&k=${k}`);
-  }
+  const hubUrl = `${BASE_URL}/lms-organiser.html?pool=${pool}&k=${k}`;
+  // Already at no limit — nothing left to buy.
+  if (poolPlayerLimit(poolData) === Infinity) return res.redirect(303, hubUrl);
 
-  const priceId = LMS_ORGANISER_FEE_PRICE_ID[poolData.league || 'PL'] || LMS_ORGANISER_FEE_PRICE_ID.PL;
+  // £20 no-limit upgrade: for pools that already paid £5, or an organiser who
+  // asks for it up front (?tier=big). Priced inline so no Stripe dashboard
+  // setup is needed; the webhook recognises it by its metadata.
+  const wantsBig = poolData.organiserFeePaid || req.query.tier === 'big';
+  const lineItem: Stripe.Checkout.SessionCreateParams.LineItem = wantsBig
+    ? {
+        price_data: {
+          currency: 'gbp',
+          unit_amount: BIG_POOL_FEE_PENCE,
+          product_data: { name: 'Last Man Standing — Big Pool Upgrade (no player limit)' },
+        },
+        quantity: 1,
+      }
+    : { price: LMS_ORGANISER_FEE_PRICE_ID[poolData.league || 'PL'] || LMS_ORGANISER_FEE_PRICE_ID.PL, quantity: 1 };
 
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      line_items: [{ price: priceId, quantity: 1 }],
+      line_items: [lineItem],
       customer_email: poolData.organiserEmail || undefined,
-      success_url: `${BASE_URL}/lms-organiser.html?pool=${pool}&k=${k}`,
-      cancel_url: `${BASE_URL}/lms-organiser.html?pool=${pool}&k=${k}`,
+      success_url: hubUrl,
+      cancel_url: hubUrl,
       metadata: {
-        product: 'lms_organiser_fee',
+        product: wantsBig ? 'lms_organiser_big_fee' : 'lms_organiser_fee',
         pool,
       },
     });

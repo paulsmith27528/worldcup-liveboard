@@ -15,7 +15,7 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
 
-const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake" | "dashboard" | "bundle" | "pro" | "lms" | "lms_pro" | "lms_organiser_fee" }> = {
+const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake" | "dashboard" | "bundle" | "pro" | "lms" | "lms_pro" | "lms_organiser_fee" | "lms_organiser_big_fee" }> = {
   price_1TeMKT3g62IhPcY7PvqpncJF: { name: "World Cup Sweepstake", emoji: "&#127967;", type: "sweepstake" },
   price_1TodvS3g62IhPcY7Q9ePkimH: { name: "World Cup Sweepstake", emoji: "&#127967;", type: "sweepstake" },
   price_1TeMHw3g62IhPcY7CCZhO3T6: { name: "Live Dashboard", emoji: "&#128250;", type: "dashboard" },
@@ -193,7 +193,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
   const priceId = lineItems.data[0]?.price?.id ?? session.metadata?.price_id ?? "unknown";
-  const product = PRICE_MAP[priceId] ?? { name: "World Cup Access", emoji: "&#9917;", type: "dashboard" };
+  // The £20 big-pool upgrade is priced inline (no fixed price ID), so it's
+  // recognised by its checkout metadata instead of PRICE_MAP.
+  const product: (typeof PRICE_MAP)[string] = PRICE_MAP[priceId]
+    ?? (session.metadata?.product === "lms_organiser_big_fee"
+      ? { name: "Last Man Standing — Big Pool Upgrade", emoji: "&#128101;", type: "lms_organiser_big_fee" }
+      : { name: "World Cup Access", emoji: "&#9917;", type: "dashboard" });
 
   // ── PRO BRACKET FLOW ─────────────────────────────────────────────────────
   if (product.type === "pro") {
@@ -447,8 +452,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
   // ── END LMS PRO UPGRADE FLOW ──────────────────────────────────────────────
 
-  // ── LMS ORGANISER FEE FLOW (per-pool, £5, once past 10 players) ─────────
-  if (product.type === "lms_organiser_fee") {
+  // ── LMS ORGANISER FEE FLOW (per-pool: £5 up to 100 players, £20 no limit) ─
+  if (product.type === "lms_organiser_fee" || product.type === "lms_organiser_big_fee") {
+    const isBig = product.type === "lms_organiser_big_fee";
     const poolId = session.metadata?.pool;
     if (!poolId) {
       console.error("LMS organiser fee payment received but missing pool in metadata:", session.id);
@@ -463,6 +469,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const poolData = typeof poolRaw === "string" ? JSON.parse(poolRaw) : poolRaw as any;
     poolData.organiserFeePaid = true;
+    // Tier 1 = £5 (up to 100 players); a pool without a tier paid under the
+    // old "no limit" £5 and keeps that (see lib/lms-limits).
+    if (isBig) poolData.organiserBigPoolPaid = true;
+    else poolData.organiserFeeTier = 1;
     await redis.set(`lms:pool:${poolId}`, JSON.stringify(poolData));
 
     try {
@@ -481,7 +491,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       <h1 style="color:#34d399;font-size:22px;font-weight:900;margin:0 0 6px">You're Upgraded!</h1>
       <p style="color:#475569;font-size:13px;margin:0">${poolData.name || ""}</p>
     </div>
-    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">Thanks — your pool can now accept as many players as it needs, no limit. Everyone who already joined is unaffected either way.</p>
+    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">${isBig ? "Thanks — your pool can now accept as many players as it needs, no limit." : "Thanks — your pool can now take up to 100 players. If it grows beyond that, a one-off £20 upgrade removes the limit completely."} Everyone who already joined is unaffected either way.</p>
   </div>
 </div>
 </body>

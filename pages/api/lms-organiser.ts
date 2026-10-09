@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Redis } from '@upstash/redis';
+import { poolPlayerLimit } from '../../lib/lms-limits';
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -175,6 +176,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         createdAt: poolData.createdAt,
         organiserFeeNotified: poolData.organiserFeeNotified || false,
         organiserFeePaid: poolData.organiserFeePaid || false,
+        organiserBigFeeNotified: poolData.organiserBigFeeNotified || false,
+        playerLimit: Number.isFinite(poolPlayerLimit(poolData)) ? poolPlayerLimit(poolData) : null,
         yourPlayerToken: ownPlayer ? ownPlayer.token : null,
       },
       players,
