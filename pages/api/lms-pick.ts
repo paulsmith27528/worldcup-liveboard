@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Redis } from '@upstash/redis';
 import sgMail from '@sendgrid/mail';
-import { wipeoutPicks, addUsedTeams } from '../../lib/lms-used-teams';
+import { wipeoutPicks, addUsedTeams, historyTeams } from '../../lib/lms-used-teams';
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -18,6 +18,11 @@ const FROM_NAME = 'Last Man Standing';
 // grade" — kept identical so "current gameweek to pick for" here can never
 // disagree with when the cron considers a round finished.
 const FINISHED_STATUSES = ['FT', 'AET', 'PEN', 'AWD', 'WO'];
+// Postponed, cancelled or abandoned: the grading cron treats these as over
+// (a bye), so they must count as over here too. Otherwise a round with a
+// postponed match stays "current" on this page after it's been graded, and
+// picks get saved against a gameweek that will never be graded again.
+const BYE_STATUSES = ['PST', 'CANC', 'ABD'];
 
 const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
 
@@ -73,7 +78,8 @@ async function getCurrentGameweek(cfg: { id: number; season: number }) {
       roundFinished[r] = true;
       roundOrder.push(r);
     }
-    if (!FINISHED_STATUSES.includes(f.fixture.status.short)) roundFinished[r] = false;
+    const st = f.fixture.status.short;
+    if (!FINISHED_STATUSES.includes(st) && !BYE_STATUSES.includes(st)) roundFinished[r] = false;
   }
   const round = roundOrder.find((r) => !roundFinished[r]);
   if (!round) return { gw: null, fixtures: [], teams, deadline: null, nextGw: null, nextFixtures: [] };
@@ -206,6 +212,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     addUsedTeams(player, (await wipeoutPicks(redis, pool, poolCheck || {}))(player));
+    addUsedTeams(player, historyTeams(player));
     if (player.usedTeams.includes(team)) {
       return res.status(409).json({ error: 'You have already picked this team in a previous gameweek.' });
     }
