@@ -44,6 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       leagueName: leagueNameFor(poolData.league),
       organiser: poolData.organiser,
       lastGradedGw: poolData.lastGradedGw || 0,
+      firstGw: poolData.firstGw || 1,
       wipeoutWeeks: poolData.wipeoutWeeks || [],
       status: poolData.status,
     },

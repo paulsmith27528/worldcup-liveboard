@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Redis } from '@upstash/redis';
+import { leagueConfigFor, upcomingRoundInfo } from '../../lib/lms-rounds';
 import sgMail from '@sendgrid/mail';
 import { poolPlayerLimit, STANDARD_LIMIT, BIG_POOL_WARNING_AT } from '../../lib/lms-limits';
 
@@ -20,62 +21,12 @@ const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
 // Same definition the grading cron uses for "this round is done, ready to
 // grade" — kept identical so "current gameweek" here can never disagree
 // with when the cron considers a round finished.
-const FINISHED_STATUSES = ['FT', 'AET', 'PEN', 'AWD', 'WO'];
 
-// Same league config as every other LMS endpoint — defaults to PL for pools
-// created before this existed, since they were always Premier League pools.
-const LEAGUE_CONFIG: Record<string, { id: number; season: number; name: string }> = {
-  PL: { id: 39, season: 2026, name: 'Premier League' },
-  CHAMPIONSHIP: { id: 40, season: 2026, name: 'Championship' },
-  SPL: { id: 179, season: 2026, name: 'Scottish Premiership' },
-  UCL: { id: 2, season: 2026, name: 'Champions League' },
-};
-function leagueConfigFor(league: string | null | undefined) {
-  return LEAGUE_CONFIG[league || 'PL'] || LEAGUE_CONFIG.PL;
-}
 
 function genToken(): string {
   return Math.random().toString(36).substring(2, 12);
 }
 
-// Told to a player right after they join, purely informational — joining is
-// never blocked by this. Same "earliest round not fully finished" rule used
-// everywhere else, so this can never disagree with what the pick screen shows.
-async function getCurrentGwLockInfo(cfg: { id: number; season: number }): Promise<{ gw: number | null; locked: boolean }> {
-  if (!API_KEY) return { gw: null, locked: false };
-  try {
-    const hdrs = { "x-apisports-key": API_KEY };
-    const res = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}`, { headers: hdrs });
-    const data = await res.json();
-    const allFixtures = (data.response || []).sort((a: any, b: any) =>
-      new Date(a.fixture.date).getTime() - new Date(b.fixture.date).getTime()
-    );
-    if (allFixtures.length === 0) return { gw: null, locked: false };
-
-    const roundOrder: string[] = [];
-    const roundMinDate: Record<string, string> = {};
-    const roundFinished: Record<string, boolean> = {};
-    for (const f of allFixtures) {
-      const r = f.league.round;
-      if (!(r in roundMinDate)) {
-        roundMinDate[r] = f.fixture.date;
-        roundFinished[r] = true;
-        roundOrder.push(r);
-      }
-      if (!FINISHED_STATUSES.includes(f.fixture.status.short)) roundFinished[r] = false;
-    }
-    const round = roundOrder.find((r) => !roundFinished[r]);
-    if (!round) return { gw: null, locked: false };
-
-    const gwMatch = round.match(/(\d+)$/);
-    const gw = gwMatch ? parseInt(gwMatch[1], 10) : null;
-    const locked = new Date() >= new Date(roundMinDate[round]);
-    return { gw, locked };
-  } catch (err) {
-    console.error('getCurrentGwLockInfo failed:', err);
-    return { gw: null, locked: false };
-  }
-}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
@@ -85,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!poolRaw) return res.status(404).json({ error: 'Pool not found' });
     const pool = typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any;
     const locked = pool.status === 'finished' || pool.status === 'pending_setup';
-    return res.status(200).json({ name: pool.name, organiser: pool.organiser, status: pool.status, buyIn: pool.buyIn, locked, winner: pool.winner || null, leagueName: leagueConfigFor(pool.league).name });
+    return res.status(200).json({ name: pool.name, organiser: pool.organiser, status: pool.status, buyIn: pool.buyIn, locked, winner: pool.winner || null, leagueName: leagueConfigFor(pool.league, pool.season).name });
   }
 
   if (req.method !== 'POST') return res.status(405).end();
@@ -293,7 +244,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Don't fail the join if email fails — they're still registered
   }
 
-  const lockInfo = await getCurrentGwLockInfo(leagueConfigFor(pool.league));
+  const lockInfo = await upcomingRoundInfo(redis, leagueConfigFor(pool.league, pool.season));
 
   return res.status(200).json({
     ok: true,
@@ -302,7 +253,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     poolName: pool.name,
     whatsappGroupUrl: pool.whatsappGroupUrl || null,
     currentGw: lockInfo.gw,
-    currentGwLocked: lockInfo.locked,
+    currentGwLocked: lockInfo.locked === true,
     nextGw: lockInfo.locked && lockInfo.gw ? lockInfo.gw + 1 : null,
   });
 }

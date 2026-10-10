@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Redis } from '@upstash/redis';
+import { leagueConfigFor, upcomingRoundInfo } from '../../lib/lms-rounds';
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -7,20 +8,6 @@ const redis = new Redis({
 });
 
 const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
-
-// Same league config as the grading cron — roundPrefix matters here too,
-// since we fetch a specific round by name ("Regular Season - 6"), not just
-// "whatever's next", so live fixtures stay found even once they've kicked
-// off and are no longer status=NS.
-const LEAGUE_CONFIG: Record<string, { id: number; season: number; name: string; roundPrefix: string }> = {
-  PL: { id: 39, season: 2026, name: 'Premier League', roundPrefix: 'Regular Season' },
-  CHAMPIONSHIP: { id: 40, season: 2026, name: 'Championship', roundPrefix: 'Regular Season' },
-  SPL: { id: 179, season: 2026, name: 'Scottish Premiership', roundPrefix: 'Regular Season' },
-  UCL: { id: 2, season: 2026, name: 'Champions League', roundPrefix: 'League Stage' },
-};
-function leagueConfigFor(league: string | null | undefined) {
-  return LEAGUE_CONFIG[league || 'PL'] || LEAGUE_CONFIG.PL;
-}
 
 const LIVE_STATUSES = ['1H', 'HT', '2H', 'ET', 'BT', 'P', 'SUSP', 'INT'];
 const FIXTURES_CACHE_TTL = 30; // seconds — shared across every viewer, not per-request
@@ -80,14 +67,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!viewer || !viewer.proPaid) {
       return res.status(403).json({
         error: 'pro_required',
-        upgradeUrl: you ? `/api/lms-pro-checkout?pool=${pool}&t=${you}` : null,
+        upgradeUrl: you ? `/api/lms-pro-checkout?pool=${encodeURIComponent(pool)}&t=${encodeURIComponent(you)}` : null,
         fallbackUrl: you ? `/lms-standings.html?pool=${pool}&t=${you}` : `/lms-standings.html?pool=${pool}`,
       });
     }
 
-    const cfg = leagueConfigFor(poolData.league);
+    const cfg = leagueConfigFor(poolData.league, poolData.season);
     const gw: number = poolData.currentGameweek || 1;
     const fixtures = await getRoundFixtures(cfg, gw);
+
+    // Picks stay secret until the gameweek's first kickoff, same as
+    // everywhere else. If we can't tell, they stay hidden.
+    const upcoming = await upcomingRoundInfo(redis, cfg);
+    const picksVisible = upcoming.gw !== null && (gw < upcoming.gw || (gw === upcoming.gw && upcoming.locked === true));
+    // A player's pick for this week: their current one, or one kept aside
+    // because they've already picked for the following week.
+    const pickOf = (p: any) => !picksVisible ? null
+      : p.currentPickGw === gw ? p.currentPick : (p.pendingPicks?.[String(gw)]?.team || null);
 
     const anyLive = fixtures.some((f: any) => LIVE_STATUSES.includes(f.status));
     const allFinished = fixtures.length > 0 && fixtures.every((f: any) =>
@@ -97,10 +93,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const fixturesWithPicks = fixtures.map((f: any) => ({
       ...f,
       homePicks: players
-        .filter((p: any) => p.currentPickGw === gw && p.currentPick === f.home.name)
+        .filter((p: any) => pickOf(p) === f.home.name)
         .map((p: any) => ({ name: p.name, displayName: p.displayName || null, avatarUrl: p.avatarUrl || null, alive: p.alive })),
       awayPicks: players
-        .filter((p: any) => p.currentPickGw === gw && p.currentPick === f.away.name)
+        .filter((p: any) => pickOf(p) === f.away.name)
         .map((p: any) => ({ name: p.name, displayName: p.displayName || null, avatarUrl: p.avatarUrl || null, alive: p.alive })),
     }));
 
@@ -110,6 +106,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       fixtures: fixturesWithPicks,
       anyLive,
       allFinished,
+      picksVisible,
     });
   } catch (err: any) {
     console.error('lms-matchday error:', err.message);

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Redis } from '@upstash/redis';
+import { leagueConfigFor, upcomingRoundInfo } from '../../lib/lms-rounds';
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -11,58 +12,7 @@ const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
 // Same definition the grading cron uses for "this round is done, ready to
 // grade" — kept identical so "current gameweek" here can never disagree
 // with when the cron considers a round finished.
-const FINISHED_STATUSES = ['FT', 'AET', 'PEN', 'AWD', 'WO'];
 
-// Same league config as every other LMS endpoint — defaults to PL for pools
-// created before this existed, since they were always Premier League pools.
-const LEAGUE_CONFIG: Record<string, { id: number; season: number; name: string }> = {
-  PL: { id: 39, season: 2026, name: 'Premier League' },
-  CHAMPIONSHIP: { id: 40, season: 2026, name: 'Championship' },
-  SPL: { id: 179, season: 2026, name: 'Scottish Premiership' },
-  UCL: { id: 2, season: 2026, name: 'Champions League' },
-};
-function leagueConfigFor(league: string | null | undefined) {
-  return LEAGUE_CONFIG[league || 'PL'] || LEAGUE_CONFIG.PL;
-}
-
-// Find the gw and deadline (first kickoff) of the next round nobody has picked yet.
-async function getUpcomingRound(cfg: { id: number; season: number }): Promise<{ gw: number | null; deadline: string | null }> {
-  if (!API_KEY) return { gw: null, deadline: null };
-  const hdrs = { "x-apisports-key": API_KEY };
-  // Fetch every fixture, not just not-started ones — an already-finished
-  // fixture still proves its round has started, and filtering by status=NS
-  // would hide exactly that evidence (see lms-pick.ts for the full story).
-  const allRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=${cfg.id}&season=${cfg.season}`, { headers: hdrs });
-  const allData = await allRes.json();
-  const allFixtures = (allData.response || []).sort((a: any, b: any) =>
-    new Date(a.fixture.date).getTime() - new Date(b.fixture.date).getTime()
-  );
-  if (allFixtures.length === 0) return { gw: null, deadline: null };
-
-  // "Current gameweek" is the earliest round, in chronological order, that
-  // hasn't fully finished yet — if it hasn't started, it's open; if it's
-  // started but not finished (e.g. one match held back for Monday Night
-  // Football), it still correctly shows as that same round rather than
-  // jumping ahead to one that merely hasn't started.
-  const roundOrder: string[] = [];
-  const roundMinDate: Record<string, string> = {};
-  const roundFinished: Record<string, boolean> = {};
-  for (const f of allFixtures) {
-    const r = f.league.round;
-    if (!(r in roundMinDate)) {
-      roundMinDate[r] = f.fixture.date;
-      roundFinished[r] = true;
-      roundOrder.push(r);
-    }
-    if (!FINISHED_STATUSES.includes(f.fixture.status.short)) roundFinished[r] = false;
-  }
-  const round = roundOrder.find((r) => !roundFinished[r]);
-  if (!round) return { gw: null, deadline: null };
-
-  const gwMatch = (round || '').match(/(\d+)$/);
-  const gw = gwMatch ? parseInt(gwMatch[1], 10) : null;
-  return { gw, deadline: roundMinDate[round] };
-}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') return res.status(405).end();
@@ -117,32 +67,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const rounds = [];
     for (let g = firstGw; g <= lastGradedGw; g++) {
-      if (wipeoutWeeks.includes(g)) {
-        rounds.push({ gw: g, wipeout: true, totalPlayers: null, popularity: null, picks: null, noPick: null });
-        continue;
-      }
+      const wipeout = wipeoutWeeks.includes(g);
       const picksRaw = await redis.get<string>(`lms:pool:${pool}:picks:${g}`);
       if (!picksRaw) {
-        rounds.push({ gw: g, wipeout: false, totalPlayers: null, popularity: null, picks: null, noPick: null });
+        rounds.push({ gw: g, wipeout, totalPlayers: null, pickedCount: null, popularity: null, picks: null, noPick: null });
         continue;
       }
       const picksData = typeof picksRaw === 'string' ? JSON.parse(picksRaw) : picksRaw as any;
       const total = picksData.totalPlayers || 0;
+      // Percentages are of the players who actually picked.
+      const picked = Math.max(0, total - (picksData.noPick || 0));
       const popularity = Object.entries(picksData.counts || {})
-        .map(([team, count]) => ({ team, count: count as number, pct: total > 0 ? Math.round((count as number) / total * 100) : 0 }))
+        .map(([team, count]) => ({ team, count: count as number, pct: picked > 0 ? Math.round((count as number) / picked * 100) : 0 }))
         .sort((a, b) => b.count - a.count);
       // Only present for rounds graded after this field was added — older
       // snapshots only have the aggregate counts, not who picked what.
-      rounds.push({ gw: g, wipeout: false, totalPlayers: total, popularity, picks: picksData.picks || null, noPick: picksData.noPick ?? 0 });
+      rounds.push({ gw: g, wipeout, totalPlayers: total, pickedCount: picked, popularity, picks: picksData.picks || null, noPick: picksData.noPick ?? 0 });
     }
 
-    const upcoming = poolData.status === 'active' ? await getUpcomingRound(leagueConfigFor(poolData.league)) : { gw: null, deadline: null };
-    const locked = upcoming.deadline ? new Date() < new Date(upcoming.deadline) : true;
+    const upcoming = poolData.status === 'active' ? await upcomingRoundInfo(redis, leagueConfigFor(poolData.league, poolData.season)) : { gw: null, deadline: null, locked: true };
+    // true while this week's picks are still open (and so still secret)
+    const locked = upcoming.locked !== true;
 
     return res.status(200).json({
       pool: {
         name: poolData.name,
-        leagueName: leagueConfigFor(poolData.league).name,
+        leagueName: leagueConfigFor(poolData.league, poolData.season).name,
         organiser: poolData.organiser,
         status: poolData.status,
         winner: poolData.winner || null,
