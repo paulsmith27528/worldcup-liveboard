@@ -199,7 +199,7 @@ var poolId = params.get('pool');
 var token = params.get('t');
 var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML.replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
 function initials(name){
   var parts = (name || '').trim().split(/\s+/);
@@ -574,19 +574,16 @@ function openSheet(r){
   document.getElementById('sheetTitle').textContent = 'Gameweek ' + r.gw;
   var body = document.getElementById('sheetBody');
 
-  if(r.wipeout){
+  var wipeoutNote = r.wipeout ? '<div class="locked-note">♻️ Everyone still standing lost or drew this round, so under the rules it didn’t count — nobody was eliminated.</div>' : '';
+  if(!r.popularity || !r.popularity.length){
     document.getElementById('sheetNote').textContent = '';
-    body.innerHTML = '<div class="locked-note">♻️ Everyone still standing lost or drew this round, so under the rules it didn’t count — nobody was eliminated.</div>';
-    return;
-  }
-  if(!r.popularity){
-    document.getElementById('sheetNote').textContent = '';
-    body.innerHTML = '<div class="locked-note">Popularity data isn’t available for this round.</div>';
+    body.innerHTML = wipeoutNote || '<div class="locked-note">Popularity data isn’t available for this round.</div>';
     return;
   }
 
-  document.getElementById('sheetNote').textContent = r.totalPlayers + ' picked this round' + (r.noPick ? ' · ' + r.noPick + ' didn’t pick' : '');
-  var html = '';
+  var picked = r.pickedCount != null ? r.pickedCount : r.totalPlayers;
+  document.getElementById('sheetNote').textContent = picked + ' picked this round' + (r.noPick ? ' · ' + r.noPick + ' didn’t pick' : '');
+  var html = wipeoutNote;
   r.popularity.forEach(function(item){
     html += '<div class="pop-bar"><div class="pop-team">' + esc(item.team) + '</div>' +
       '<div class="pop-track"><div class="pop-fill" style="width:' + item.pct + '%"></div></div>' +

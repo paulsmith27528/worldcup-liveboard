@@ -548,7 +548,7 @@ function togglePinField(cb){
   if(!cb.checked)document.getElementById('cfg-pin').value='';
 }
 function genToken(){return Math.random().toString(36).substring(2,12);}
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function toast(msg,dur=2500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
 
 // ══════════════════════════════════════════════════

@@ -16,8 +16,9 @@ const LEAGUE_CONFIG: Record<string, { id: number; season: number; name: string }
   SPL: { id: 179, season: 2026, name: 'Scottish Premiership' },
   UCL: { id: 2, season: 2026, name: 'Champions League' },
 };
-function leagueConfigFor(league: string | null | undefined) {
-  return LEAGUE_CONFIG[league || 'PL'] || LEAGUE_CONFIG.PL;
+function leagueConfigFor(league: string | null | undefined, season?: number | null) {
+  const cfg = LEAGUE_CONFIG[league || 'PL'] || LEAGUE_CONFIG.PL;
+  return season ? { ...cfg, season } : cfg;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -52,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const cfg = leagueConfigFor(poolData.league);
+    const cfg = leagueConfigFor(poolData.league, poolData.season);
     const hdrs = { "x-apisports-key": API_KEY };
     const standingsRes = await fetch(`https://v3.football.api-sports.io/standings?league=${cfg.id}&season=${cfg.season}`, { headers: hdrs });
     const standingsData = await standingsRes.json();
@@ -60,7 +61,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const rows = table.map((row: any) => {
       const teamName = row.team.name;
-      const reserveCount = alivePlayers.filter((p: any) => !p.usedTeams.includes(teamName)).length;
+      const reserveCount = alivePlayers.filter((p: any) => !(p.usedTeams || []).includes(teamName)).length;
       return {
         rank: row.rank,
         team: teamName,

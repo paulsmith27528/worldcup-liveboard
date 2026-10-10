@@ -49,7 +49,7 @@ var params = new URLSearchParams(window.location.search);
 var poolId = params.get('pool');
 var gwParam = params.get('gw');
 
-function esc(s){ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function esc(s){ var d = document.createElement('div'); d.textContent = s; return d.innerHTML.replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
 if(!poolId){
   document.getElementById('loadingMsg').textContent = 'No pool specified.';
@@ -105,7 +105,9 @@ function render(d){
       listHtml += '<div class="row"><span>Clean sweep — everyone picked a winner</span><span>\uD83D\uDD25</span></div>';
     }
   }
-  listHtml += '<div class="row"><span>' + r.stillAliveCount + ' players remain</span><span>Next: GW' + (d.gw + 1) + '</span></div>';
+  listHtml += r.stillAliveCount === 1
+    ? '<div class="row"><span>We have a winner</span><span>\uD83D\uDC51</span></div>'
+    : '<div class="row"><span>' + r.stillAliveCount + ' players remain</span><span>Next: GW' + (d.gw + 1) + '</span></div>';
   document.getElementById('cardList').innerHTML = listHtml;
 
   document.getElementById('cardFoot').textContent = r.stillAliveCount + ' still standing';

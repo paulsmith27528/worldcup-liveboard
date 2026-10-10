@@ -37,9 +37,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const keysToDelete = [
     `lms:pool:${pool}`,
     `lms:pool:${pool}:players`,
+    `lms:pool:${pool}:reactions`,
     `lms:orgtoken:${pool}`,
   ];
-  const lastGw = poolData.currentGameweek || 1;
+  // Same 60-week sweep admin-pools.ts does, in case currentGameweek is behind
+  // a snapshot that was written for a later week.
+  const lastGw = Math.max(poolData.currentGameweek || 1, 60);
   for (let gw = 1; gw <= lastGw; gw++) {
     keysToDelete.push(`lms:pool:${pool}:picks:${gw}`);
     keysToDelete.push(`lms:pool:${pool}:recap:${gw}`);

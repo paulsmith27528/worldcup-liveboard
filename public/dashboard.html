@@ -649,7 +649,7 @@ body.day-mode .stat-2col .stat-box:nth-child(8n+8){border-top:7px solid #1e90ff 
     });
 
   function escHtml(s){
-    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   }
 })();
 </script>

@@ -825,7 +825,7 @@ document.getElementById('waitlist-modal').addEventListener('click', function(e) 
   if (e.target === this) closeWaitlist();
 });
 
-function esc2(s){ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function esc2(s){ var d = document.createElement('div'); d.textContent = s; return d.innerHTML.replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
 // ── FEEDBACK ──────────────────────────────────────────────────────────────
 function openFeedback(){

@@ -62,7 +62,7 @@ var data = null;
 var filter = 'all';
 var query = '';
 
-function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML.replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 function label(p){ return p.displayName || p.name; }
 
 // Still-in players first, then the most recently knocked out, so the table

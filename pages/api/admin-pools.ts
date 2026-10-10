@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Redis } from '@upstash/redis';
+import { updatePool, updatePlayer } from '../../lib/lms-store';
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -22,21 +23,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!poolId || typeof poolId !== 'string') return res.status(400).json({ error: 'Missing poolId' });
 
     if (poolPatch) {
-      const poolRaw = await redis.get<string>(`lms:pool:${poolId}`);
-      if (!poolRaw) return res.status(404).json({ error: 'Pool not found' });
-      const pool = typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any;
-      Object.assign(pool, poolPatch);
-      await redis.set(`lms:pool:${poolId}`, JSON.stringify(pool));
+      const pool = await updatePool(poolId, p => { Object.assign(p, poolPatch); });
+      if (!pool) return res.status(404).json({ error: 'Pool not found' });
     }
 
     if (Array.isArray(playerPatches)) {
       const playersKey = `lms:pool:${poolId}:players`;
       for (const patch of playerPatches) {
-        const raw = await redis.hget<string>(playersKey, patch.token);
-        if (!raw) continue;
-        const player = typeof raw === 'string' ? JSON.parse(raw) : raw as any;
-        Object.assign(player, patch);
-        await redis.hset(playersKey, { [patch.token]: JSON.stringify(player) });
+        await updatePlayer(poolId, patch.token, p => { Object.assign(p, patch); });
       }
     }
 

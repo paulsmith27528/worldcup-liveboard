@@ -169,6 +169,8 @@ var poolId = params.get('pool');
 var k = params.get('k');
 var joinUrl = window.location.origin + '/lms-join.html?pool=' + poolId;
 
+function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML.replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
 function initials(name){
   var parts = (name || '').trim().split(/\s+/);
   var a = parts[0] ? parts[0][0] : '';
@@ -180,8 +182,8 @@ function initials(name){
 // is an <img> overlay that removes itself on load failure, same pattern
 // as the Arena's avatars.
 function avatarChipHtml(p){
-  var photo = p.avatarUrl ? '<img src="' + p.avatarUrl + '" onerror="this.remove()">' : '';
-  return '<div class="player-avatar">' + initials(p.name) + photo + '</div>';
+  var photo = p.avatarUrl ? '<img src="' + esc(p.avatarUrl) + '" onerror="this.remove()">' : '';
+  return '<div class="player-avatar">' + esc(initials(p.name)) + photo + '</div>';
 }
 
 if(!poolId || !k){
@@ -254,9 +256,9 @@ if(!poolId || !k){
           var row = document.createElement('div');
           row.className = 'player';
           row.innerHTML = avatarChipHtml(p) +
-            '<div class="info"><div class="name">' + p.name + '</div><div class="email">' + p.email + '</div></div>' +
+            '<div class="info"><div class="name">' + esc(p.name) + '</div><div class="email">' + esc(p.email) + '</div></div>' +
             '<button class="link-btn" onclick="copyPlayerLink(\'' + p.token + '\')">&#128279; Link</button>' +
-            '<button class="paid-btn ' + (p.paid ? 'paid-yes' : 'paid-no') + '" data-token="' + p.token + '" data-paid="' + (p.paid ? '1' : '0') + '" onclick="togglePaid(this)">' + (p.paid ? 'PAID' : 'UNPAID') + '</button>' +
+            '<button class="paid-btn ' + (p.paid ? 'paid-yes' : 'paid-no') + '" data-token="' + esc(p.token) + '" data-paid="' + (p.paid ? '1' : '0') + '" onclick="togglePaid(this)">' + (p.paid ? 'PAID' : 'UNPAID') + '</button>' +
             '<div class="badge">' + (p.alive ? 'ALIVE' : 'OUT') + '</div>';
           list.appendChild(row);
         });
