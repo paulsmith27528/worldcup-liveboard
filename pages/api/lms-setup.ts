@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Redis } from '@upstash/redis';
 import sgMail from '@sendgrid/mail';
+import { escapeHtml } from '../../lib/escape-html';
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -23,6 +24,19 @@ const LEAGUE_CONFIG: Record<string, { id: number; season: number; name: string }
 function leagueConfigFor(league: string | null | undefined) {
   return LEAGUE_CONFIG[league || 'PL'] || LEAGUE_CONFIG.PL;
 }
+
+const MAX_POOL_NAME = 60;
+const MAX_PERSON_NAME = 40;
+const MAX_EMAIL = 254;
+
+// Only overwrites the pool while it's still pending_setup.
+const ACTIVATE_SCRIPT = `
+local raw = redis.call('GET', KEYS[1])
+if not raw then return 0 end
+if cjson.decode(raw).status ~= 'pending_setup' then return 0 end
+redis.call('SET', KEYS[1], ARGV[1], 'KEEPTTL')
+return 1
+`;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
@@ -51,9 +65,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === 'POST') {
-    const { pool, k, organiserName, organiserEmail, roundName, buyIn } = req.body;
+    const { pool, k, organiserName, organiserEmail, roundName, buyIn } = req.body || {};
     if (!pool || !k || !organiserName || !roundName) {
       return res.status(400).json({ error: 'Missing required fields' });
+    }
+    if (typeof pool !== 'string' || typeof k !== 'string') {
+      return res.status(400).json({ error: 'Invalid organiser link' });
+    }
+    if (typeof roundName !== 'string' || roundName.trim().length < 1 || roundName.trim().length > MAX_POOL_NAME) {
+      return res.status(400).json({ error: `Round name must be 1-${MAX_POOL_NAME} characters` });
+    }
+    if (typeof organiserName !== 'string' || organiserName.trim().length < 1 || organiserName.trim().length > MAX_PERSON_NAME) {
+      return res.status(400).json({ error: `Your name must be 1-${MAX_PERSON_NAME} characters` });
+    }
+    if (organiserEmail != null && organiserEmail !== '' && (typeof organiserEmail !== 'string' || organiserEmail.trim().length > MAX_EMAIL)) {
+      return res.status(400).json({ error: 'Invalid email address' });
+    }
+    // Optional; the form sends '' when left blank.
+    const buyInNum = buyIn === undefined || buyIn === null || buyIn === '' ? null : Number(buyIn);
+    if (buyInNum !== null && ((typeof buyIn !== 'string' && typeof buyIn !== 'number') || !Number.isFinite(buyInNum) || buyInNum < 0)) {
+      return res.status(400).json({ error: 'Buy-in must be a number of £0 or more' });
     }
 
     const storedToken = await redis.get<string>(`lms:orgtoken:${pool}`);
@@ -65,9 +96,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!poolRaw) return res.status(404).json({ error: 'Pool not found' });
     const poolData = typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any;
 
+    // Setup is a one-off pending_setup -> active move; once live, the name,
+    // organiser and buy-in players signed up under can't be swapped out.
+    if (poolData.status !== 'pending_setup') {
+      return res.status(409).json({ error: 'This pool has already been set up.' });
+    }
+
     // Free pools never went through Stripe, so this is the first place we
     // learn the organiser's email — pools created via the old paid flow
-    // already have one, but let a re-submission update it either way.
+    // already have one.
     if (!poolData.organiserEmail && !organiserEmail) {
       return res.status(400).json({ error: 'Missing organiser email' });
     }
@@ -75,13 +112,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Invalid email address' });
     }
 
-    poolData.name = String(roundName).trim();
-    poolData.organiser = String(organiserName).trim();
-    if (organiserEmail) poolData.organiserEmail = String(organiserEmail).trim().toLowerCase();
-    poolData.buyIn = buyIn ? Number(buyIn) : null;
+    poolData.name = roundName.trim();
+    poolData.organiser = organiserName.trim();
+    if (organiserEmail) poolData.organiserEmail = organiserEmail.trim().toLowerCase();
+    poolData.buyIn = buyInNum ? buyInNum : null;
     poolData.status = 'active';
 
-    await redis.set(`lms:pool:${pool}`, JSON.stringify(poolData));
+    // Status re-checked and written in one step, so two submissions racing
+    // each other can't both get through; KEEPTTL so the pool's expiry never moves.
+    const saved = await redis.eval(ACTIVATE_SCRIPT, [`lms:pool:${pool}`], [JSON.stringify(poolData)]);
+    if (Number(saved) !== 1) {
+      return res.status(409).json({ error: 'This pool has already been set up.' });
+    }
 
     // Organiser access is a bare link, not a login — if they lose the tab
     // without this email, the pool is unreachable forever. Fires exactly once,
@@ -101,15 +143,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     <div style="text-align:center;margin-bottom:24px">
       <div style="font-size:52px;margin-bottom:12px">&#128081;</div>
       <h1 style="color:#ffd54a;font-size:22px;font-weight:900;margin:0 0 6px">You're the organiser!</h1>
-      <p style="color:#475569;font-size:13px;margin:0">${poolData.name}</p>
+      <p style="color:#475569;font-size:13px;margin:0">${escapeHtml(poolData.name)}</p>
     </div>
     <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">Your pool is live. This link is the only way back into your organiser hub — invite players, watch picks come in, and manage the pool from here.</p>
     <div style="text-align:center;margin:24px 0">
-      <a href="${orgHubUrl}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">Go To Your Organiser Hub &rarr;</a>
+      <a href="${escapeHtml(orgHubUrl)}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">Go To Your Organiser Hub &rarr;</a>
     </div>
     <div style="text-align:center;margin-bottom:16px">
       <p style="color:#475569;font-size:12px;margin:0 0 4px">Or copy this link into your browser:</p>
-      <span style="color:#ffd54a;font-size:11px;word-break:break-all;font-family:Arial,sans-serif">${orgHubUrl}</span>
+      <span style="color:#ffd54a;font-size:11px;word-break:break-all;font-family:Arial,sans-serif">${escapeHtml(orgHubUrl)}</span>
     </div>
     <p style="color:#334155;font-size:11px;text-align:center;margin:0">Bookmark this link — there's no password to get it back. &#127942;</p>
   </div>
