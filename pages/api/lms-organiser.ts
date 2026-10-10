@@ -146,7 +146,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const deadlinePassed = upcoming.deadline ? new Date() >= new Date(upcoming.deadline) : true;
     const players = rawPlayers.map((p: any) => {
       if (!deadlinePassed && p.currentPickGw === upcoming.gw) {
-        const { currentPick, currentPickGw, ...rest } = p;
+        // The joker flag gives the pick away just as much, so it goes too.
+        const { currentPick, currentPickGw, currentPickJoker, ...rest } = p;
         return rest;
       }
       return p;
