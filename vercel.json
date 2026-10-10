@@ -2,11 +2,16 @@
   "crons": [
     {
       "path": "/api/cron/lms-grade",
-      "schedule": "0 */6 * * *"
+      "schedule": "5 * * * *"
     },
     {
       "path": "/api/cron/lms-autopick",
       "schedule": "*/15 * * * *"
     }
-  ]
+  ],
+  "functions": {
+    "pages/api/cron/*.ts": {
+      "maxDuration": 60
+    }
+  }
 }
