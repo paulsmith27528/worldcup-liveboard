@@ -62,10 +62,10 @@
     <form id="f" style="display:none">
       <p style="margin:0 0 14px;font-size:12.5px;color:#94a3b8;text-align:center">Already joined and lost your pick link? <a href="#lostBox" onclick="document.getElementById('lostEmail').focus()" style="color:#ffd54a;font-weight:700">Get it emailed to you</a></p>
       <label>YOUR NAME</label>
-      <input type="text" id="name" placeholder="Your name" required>
+      <input type="text" id="name" placeholder="Your name" maxlength="40" required>
 
       <label>YOUR EMAIL</label>
-      <input type="email" id="email" placeholder="you@example.com" required>
+      <input type="email" id="email" placeholder="you@example.com" maxlength="254" required>
 
       <label>DISPLAY NAME <span class="hint">(optional — defaults to your initials)</span></label>
       <input type="text" id="displayName" placeholder="How you want to appear to others" maxlength="30">
@@ -75,7 +75,7 @@
         <div class="avatar-preview" id="avatarPreview" onclick="document.getElementById('avatarFile').click()">+</div>
         <div>
           <button type="button" class="avatar-pick-btn" onclick="document.getElementById('avatarFile').click()">Choose image</button>
-          <div class="avatar-hint">Any image you like, up to 400KB</div>
+          <div class="avatar-hint">Any image you like — we shrink it to a small square for you</div>
         </div>
       </div>
       <input type="file" id="avatarFile" accept="image/*" style="display:none">
@@ -265,19 +265,24 @@ document.getElementById('avatarFile').addEventListener('change', function(e){
     return;
   }
 
-  // Server caps the encoded string at 600000 chars (~400KB image) — resize and
-  // compress client-side first so a normal 2-5MB phone photo doesn't get rejected.
-  var MAX_LEN = 600000;
+  // Server caps the encoded string at 60000 chars — avatars live inside each
+  // player's record, and grading saves every player in one request, so they
+  // have to stay small. Resize and compress client-side first so a normal
+  // 2-5MB phone photo still fits comfortably.
+  var MAX_LEN = 60000;
   var objectUrl = URL.createObjectURL(file);
   var img = new Image();
   img.onload = function(){
     URL.revokeObjectURL(objectUrl);
 
-    var size = 200;
+    var size = 160;
     var canvas = document.createElement('canvas');
     canvas.width = size;
     canvas.height = size;
     var ctx = canvas.getContext('2d');
+    // JPEG has no transparency — fill first so transparent PNGs don't go black
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, size, size);
 
     // Center-crop to a square first so non-square photos aren't squashed into the circle
     var srcSize = Math.min(img.width, img.height);
@@ -285,14 +290,14 @@ document.getElementById('avatarFile').addEventListener('change', function(e){
     var srcY = (img.height - srcSize) / 2;
     ctx.drawImage(img, srcX, srcY, srcSize, srcSize, 0, 0, size, size);
 
-    var qualities = [0.7, 0.5, 0.3];
+    var qualities = [0.8, 0.6, 0.4];
     var dataUrl = canvas.toDataURL('image/jpeg', qualities[0]);
     for(var i = 1; i < qualities.length && dataUrl.length > MAX_LEN; i++){
       dataUrl = canvas.toDataURL('image/jpeg', qualities[i]);
     }
 
     if(dataUrl.length > MAX_LEN){
-      errEl.textContent = 'That image is too large — please use one under 400KB.';
+      errEl.textContent = 'That image is too detailed to fit — please try a different one.';
       errEl.style.display = 'block';
       return;
     }
