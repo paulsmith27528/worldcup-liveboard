@@ -4,6 +4,9 @@ import sgMail from "@sendgrid/mail";
 import { Redis } from "@upstash/redis";
 import { randomBytes } from "crypto";
 import { buffer } from "micro";
+import { escapeHtml } from "../../lib/escape-html";
+import { genPoolId, POOL_ID_ATTEMPTS } from "../../lib/lms-ids";
+import { poolPlayerLimit } from "../../lib/lms-limits";
 
 export const config = { api: { bodyParser: false } };
 
@@ -41,10 +44,6 @@ const PRICE_MAP: Record<string, { name: string; emoji: string; type: "sweepstake
 
 const LMS_TTL = 60 * 60 * 24 * 300; // 300 days — covers a full PL season
 
-function genPoolId(): string {
-  return Math.random().toString(36).substring(2, 8).toUpperCase();
-}
-
 function buildLmsSetupEmailHtml(setupUrl: string): string {
   return `<!DOCTYPE html>
 <html>
@@ -59,7 +58,7 @@ function buildLmsSetupEmailHtml(setupUrl: string): string {
     </div>
     <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">Payment received — one last step. Set your pool's name and buy-in amount, and we'll give you a link to share with everyone.</p>
     <div style="text-align:center;margin:24px 0">
-      <a href="${setupUrl}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">&#128128; Set Up Your Pool &rarr;</a>
+      <a href="${escapeHtml(setupUrl)}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">&#128128; Set Up Your Pool &rarr;</a>
     </div>
     <p style="color:#334155;font-size:11px;text-align:center;margin:0">Bookmark this link — it's yours until the game ends. Good luck! &#127942;</p>
   </div>
@@ -96,14 +95,14 @@ function buildEmailHtml(
   const isDash = product.type === "dashboard";
 
   const primaryBtn = (isSweep || isBundle)
-    ? `<a href="${sweepUrl}" style="display:block;background:#ffd54a;color:#000;text-decoration:none;text-align:center;font-weight:900;font-size:16px;padding:16px 24px;border-radius:50px;">&#127967; Open Sweepstake Organiser Hub &rarr;</a>`
-    : `<a href="${dashUrl}" style="display:block;background:#00e5ff;color:#000;text-decoration:none;text-align:center;font-weight:900;font-size:16px;padding:16px 24px;border-radius:50px;">&#128250; Open Live Dashboard &rarr;</a>`;
+    ? `<a href="${escapeHtml(sweepUrl)}" style="display:block;background:#ffd54a;color:#000;text-decoration:none;text-align:center;font-weight:900;font-size:16px;padding:16px 24px;border-radius:50px;">&#127967; Open Sweepstake Organiser Hub &rarr;</a>`
+    : `<a href="${escapeHtml(dashUrl)}" style="display:block;background:#00e5ff;color:#000;text-decoration:none;text-align:center;font-weight:900;font-size:16px;padding:16px 24px;border-radius:50px;">&#128250; Open Live Dashboard &rarr;</a>`;
 
   const bundleExtra = isBundle ? `
 <div style="margin-top:16px;padding:16px;background:rgba(255,213,74,.08);border:1px solid rgba(255,213,74,.2);border-radius:12px;">
 <p style="color:#00e5ff;font-size:13px;font-weight:700;margin:0 0 8px;">&#128250; Also included: Live Dashboard</p>
 <p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:0 0 12px;">Follow every match live &mdash; scores, bracket, group tables and squad cards.</p>
-<a href="${dashUrl}" style="display:block;background:rgba(0,229,255,.12);border:1px solid rgba(0,229,255,.25);color:#ffd54a;text-decoration:none;text-align:center;font-weight:700;font-size:14px;padding:12px 24px;border-radius:50px;">&#128250; Open Live Dashboard &rarr;</a>
+<a href="${escapeHtml(dashUrl)}" style="display:block;background:rgba(0,229,255,.12);border:1px solid rgba(0,229,255,.25);color:#ffd54a;text-decoration:none;text-align:center;font-weight:700;font-size:14px;padding:12px 24px;border-radius:50px;">&#128250; Open Live Dashboard &rarr;</a>
 </div>` : "";
 
   const bodyNote = isSweep
@@ -144,18 +143,18 @@ function buildProEmailHtml(
 <div style="max-width:520px;margin:0 auto;padding:32px 16px">
   <div style="background:linear-gradient(150deg,#051226,#020914);border:1px solid rgba(255,213,74,.3);border-radius:18px;padding:32px">
     <div style="text-align:center;margin-bottom:24px">
-      <div style="font-size:72px;margin-bottom:12px">${teamFlag}</div>
+      <div style="font-size:72px;margin-bottom:12px">${escapeHtml(teamFlag)}</div>
       <h1 style="color:#ffd54a;font-size:26px;font-weight:900;margin:0 0 6px">Your Pro Bracket is ready! &#127942;</h1>
-      <p style="color:#475569;font-size:13px;margin:0">${sweepstakeName}</p>
+      <p style="color:#475569;font-size:13px;margin:0">${escapeHtml(sweepstakeName)}</p>
     </div>
-    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 12px">Hi <strong style="color:#fff">${participantName}</strong>,</p>
-    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 24px">Your Pro Bracket is unlocked. You get the full live dashboard with your sweepstake built right in &mdash; <strong style="color:#ffd54a">${teamFlag} ${teamName}</strong> is highlighted throughout as you follow the tournament.</p>
+    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 12px">Hi <strong style="color:#fff">${escapeHtml(participantName)}</strong>,</p>
+    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 24px">Your Pro Bracket is unlocked. You get the full live dashboard with your sweepstake built right in &mdash; <strong style="color:#ffd54a">${escapeHtml(teamFlag)} ${escapeHtml(teamName)}</strong> is highlighted throughout as you follow the tournament.</p>
     <div style="text-align:center;margin:28px 0">
-      <a href="${proUrl}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif;mso-padding-alt:0">&#127942; Open My Pro Bracket &rarr;</a>
+      <a href="${escapeHtml(proUrl)}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif;mso-padding-alt:0">&#127942; Open My Pro Bracket &rarr;</a>
     </div>
     <div style="text-align:center;margin-bottom:16px">
       <p style="color:#475569;font-size:12px;margin:0 0 4px">Or copy this link into your browser:</p>
-      <a href="${proUrl}" style="color:#ffd54a;font-size:11px;word-break:break-all;font-family:Arial,sans-serif">${proUrl}</a>
+      <a href="${escapeHtml(proUrl)}" style="color:#ffd54a;font-size:11px;word-break:break-all;font-family:Arial,sans-serif">${escapeHtml(proUrl)}</a>
     </div>
     <div style="background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.12);border-radius:10px;padding:14px 16px">
       <p style="color:#22d3ee;font-size:11px;font-weight:700;margin:0 0 4px;letter-spacing:1px">&#128250; WHAT YOU GET</p>
@@ -344,30 +343,47 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // ── LAST MAN STANDING FLOW ───────────────────────────────────────────────
   if (product.type === "lms") {
-    const poolId = genPoolId();
+    // Stripe retries until it gets a 2xx, so claim this session first —
+    // a retry of a session that already made its pool must not make another.
+    // The claim is released if creation fails, so the retry can try again.
+    const sessionKey = `lms:stripesession:${session.id}`;
+    const claimed = await redis.set(sessionKey, "1", { nx: true, ex: LMS_TTL });
+    if (!claimed) {
+      console.log("LMS session already handled:", session.id);
+      return res.status(200).json({ received: true });
+    }
+
+    let poolId = "";
     const orgToken = generateToken();
 
     try {
-      await redis.set(`lms:pool:${poolId}`, JSON.stringify({
-        id: poolId,
-        name: null,
-        organiser: null,
-        organiserEmail: email,
-        orgToken,
-        buyIn: null,
-        firstGw: 1,
-        currentGameweek: 1,
-        lastGradedGw: 0,
-        wipeoutRule: "rollback",
-        wipeoutWeeks: [] as number[],
-        createdAt: Date.now(),
-        status: "pending_setup",
-      }), { ex: LMS_TTL });
+      // NX so a clash with an existing pool's id can never overwrite it.
+      for (let attempt = 0; attempt < POOL_ID_ATTEMPTS && !poolId; attempt++) {
+        const candidate = genPoolId();
+        const created = await redis.set(`lms:pool:${candidate}`, JSON.stringify({
+          id: candidate,
+          name: null,
+          organiser: null,
+          organiserEmail: email,
+          orgToken,
+          buyIn: null,
+          firstGw: 1,
+          currentGameweek: 1,
+          lastGradedGw: 0,
+          wipeoutRule: "rollback",
+          wipeoutWeeks: [] as number[],
+          createdAt: Date.now(),
+          status: "pending_setup",
+        }), { ex: LMS_TTL, nx: true });
+        if (created) poolId = candidate;
+      }
+      if (!poolId) throw new Error("Could not find a free pool id");
 
       await redis.set(`lms:orgtoken:${poolId}`, orgToken, { ex: LMS_TTL });
       await redis.sadd('lms:allpools', poolId);
     } catch (err) {
       console.error("Failed to create LMS pool:", err);
+      await redis.del(sessionKey).catch(() => {});
       return res.status(500).json({ error: "Failed to create pool" });
     }
 
@@ -386,8 +402,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
       console.log("LMS setup email sent to:", email, "pool:", poolId);
     } catch (mailErr: any) {
-      console.error("LMS mail error:", mailErr.message);
-      return res.status(500).json({ error: "Email failed", detail: mailErr.message });
+      // The pool exists now — a 500 here would make Stripe retry and the
+      // organiser end up with nothing new but a duplicate attempt, so just log.
+      console.error("LMS mail error:", mailErr.message, "pool:", poolId);
     }
 
     return res.status(200).json({ received: true });
@@ -433,7 +450,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     </div>
     <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">Thanks for upgrading — Pro features for this pool are unlocked on your account, starting with the Arena visual standings.</p>
     <div style="text-align:center">
-      <a href="${BASE_URL}/lms-pick.html?pool=${poolId}&t=${playerToken}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">Back to Your Pool &rarr;</a>
+      <a href="${escapeHtml(`${BASE_URL}/lms-pick.html?pool=${poolId}&t=${playerToken}`)}" style="display:inline-block;background:#ffd54a;color:#000;font-weight:900;font-size:15px;padding:14px 32px;border-radius:50px;text-decoration:none;font-family:Arial,sans-serif">Back to Your Pool &rarr;</a>
     </div>
   </div>
 </div>
@@ -467,13 +484,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).json({ received: true });
     }
 
-    const poolData = typeof poolRaw === "string" ? JSON.parse(poolRaw) : poolRaw as any;
-    poolData.organiserFeePaid = true;
+    // Re-read right before writing and only touch the fee fields, so a join
+    // or grade that saved the pool in the meantime isn't overwritten;
+    // keepTtl so paying never changes when the pool expires.
+    const latestRaw = await redis.get<string>(`lms:pool:${poolId}`);
+    const poolData = latestRaw
+      ? (typeof latestRaw === "string" ? JSON.parse(latestRaw) : latestRaw as any)
+      : (typeof poolRaw === "string" ? JSON.parse(poolRaw) : poolRaw as any);
     // Tier 1 = £5 (up to 100 players); a pool without a tier paid under the
-    // old "no limit" £5 and keeps that (see lib/lms-limits).
+    // old "no limit" £5 and keeps that (see lib/lms-limits). A £5 payment on
+    // a pool that's already paid must never downgrade it.
     if (isBig) poolData.organiserBigPoolPaid = true;
-    else poolData.organiserFeeTier = 1;
-    await redis.set(`lms:pool:${poolId}`, JSON.stringify(poolData));
+    else if (!poolData.organiserFeePaid) poolData.organiserFeeTier = 1;
+    poolData.organiserFeePaid = true;
+    await redis.set(`lms:pool:${poolId}`, JSON.stringify(poolData), { keepTtl: true });
+    const unlimited = !Number.isFinite(poolPlayerLimit(poolData));
 
     try {
       await sgMail.send({
@@ -489,9 +514,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     <div style="text-align:center;margin-bottom:20px">
       <div style="font-size:52px;margin-bottom:12px">&#9989;</div>
       <h1 style="color:#34d399;font-size:22px;font-weight:900;margin:0 0 6px">You're Upgraded!</h1>
-      <p style="color:#475569;font-size:13px;margin:0">${poolData.name || ""}</p>
+      <p style="color:#475569;font-size:13px;margin:0">${escapeHtml(poolData.name || "")}</p>
     </div>
-    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">${isBig ? "Thanks — your pool can now accept as many players as it needs, no limit." : "Thanks — your pool can now take up to 100 players. If it grows beyond that, a one-off £20 upgrade removes the limit completely."} Everyone who already joined is unaffected either way.</p>
+    <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px">${unlimited ? "Thanks — your pool can now accept as many players as it needs, no limit." : "Thanks — your pool can now take up to 100 players. If it grows beyond that, a one-off £20 upgrade removes the limit completely."} Everyone who already joined is unaffected either way.</p>
   </div>
 </div>
 </body>
