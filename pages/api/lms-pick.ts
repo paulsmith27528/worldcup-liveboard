@@ -58,6 +58,16 @@ async function repairUsedTeams(poolId: string, pool: any, player: any) {
   return a || b;
 }
 
+// The player's pick for an earlier week that has finished but isn't marked
+// yet. It's locked in, so its team can't be picked again, and if it carries
+// the joker the joker can't be played again either.
+function lockedInEarlierPick(player: any, round: Round, pool: any) {
+  return player.currentPick && player.currentPickGw && player.currentPickGw < round.gw
+    && player.currentPickGw > (pool.lastGradedGw ?? 0)
+    ? { gw: player.currentPickGw, team: player.currentPick as string, joker: !!player.currentPickJoker }
+    : null;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!API_KEY) return res.status(500).json({ error: "API_FOOTBALL_KEY not configured" });
   try {
@@ -85,7 +95,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   const poolData = poolRec.pool;
   const cfg = leagueConfigFor(poolData.league, poolData.season);
   const rounds = await getRounds(redis, cfg);
-  const round = currentRound(rounds);
+  const round = currentRound(rounds, poolData.lastGradedGw ?? 0);
   const locked = round ? await isLocked(redis, cfg, round) : true;
   const teams = await getTeams(cfg);
 
@@ -114,6 +124,9 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   if (!out) return res.status(404).json({ error: 'Player not found' });
   const { player, clearedPick } = out;
 
+  const earlier = round ? lockedInEarlierPick(player, round, poolData) : null;
+  const usedForDisplay = earlier && !player.usedTeams.includes(earlier.team) ? [...player.usedTeams, earlier.team] : player.usedTeams;
+  const jokerHeld = Object.values(player.pendingPicks || {}).some((x: any) => x && x.joker) || !!(earlier && earlier.joker);
   const next = round ? rounds[rounds.indexOf(round) + 1] : undefined;
   return res.status(200).json({
     clearedPick,
@@ -126,19 +139,17 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     player: {
       name: player.name,
       alive: player.alive,
-      usedTeams: player.usedTeams,
+      usedTeams: usedForDisplay,
       currentPick: player.currentPick,
       currentPickGw: player.currentPickGw,
       currentPickJoker: player.currentPickJoker || false,
       autoPicked: !!player.autoPicked,
       eliminatedWeek: player.eliminatedWeek,
       proPaid: player.proPaid || false,
-      hasJoker: player.hasJoker !== false,
+      // A joker riding on last week's pick (not marked yet) can't be played again.
+      hasJoker: player.hasJoker !== false && !jokerHeld,
       jokerUsedWeek: player.jokerUsedWeek ?? null,
     },
-    // Set when the pool hasn't started yet (it was created while this
-    // gameweek was already under way).
-    poolStartsGw: round && poolData.firstGw && round.gw < poolData.firstGw ? poolData.firstGw : null,
     gw: round ? round.gw : null,
     fixtures: round ? round.fixtures.map(fixtureView) : [],
     pickableTeams: round ? round.pickableTeams : [],
@@ -165,12 +176,9 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
   const cfg = leagueConfigFor(poolData.league, poolData.season);
   const rounds = await getRounds(redis, cfg);
-  const round = currentRound(rounds);
+  const round = currentRound(rounds, poolData.lastGradedGw ?? 0);
   if (!round) {
     return res.status(400).json({ error: 'No upcoming gameweek available to pick for.' });
-  }
-  if (poolData.firstGw && round.gw < poolData.firstGw) {
-    return res.status(403).json({ error: `Your pool starts in Gameweek ${poolData.firstGw}. Picks open once Gameweek ${round.gw} has finished.` });
   }
   if (await isLocked(redis, cfg, round)) {
     return res.status(403).json({ error: 'Picks have locked for this gameweek — the first match has kicked off.' });
@@ -186,6 +194,14 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     const player = rec.player;
     if (!player.alive) return { status: 403, error: 'You have already been eliminated from this pool.' };
 
+    // A pick for an earlier week that's locked in but not marked yet (its
+    // last match has finished, grading hasn't run) is kept aside, so picking
+    // for the new week can never wipe it out.
+    const earlier = lockedInEarlierPick(player, round, poolData);
+    if (earlier) {
+      player.pendingPicks = { ...(player.pendingPicks || {}), [String(earlier.gw)]: { team: earlier.team, joker: earlier.joker } };
+    }
+
     await repairUsedTeams(pool, poolData, player);
     if (player.usedTeams.includes(team)) {
       return { status: 409, error: 'You have already picked this team in a previous gameweek.' };
@@ -194,19 +210,9 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     // Playing the joker is a choice made alongside the pick, same as the pick
     // itself it can be changed right up until the deadline. Whatever it's set
     // to when the deadline passes is what grading acts on.
-    if (useJoker && player.hasJoker === false) {
-      return { status: 400, error: "You've already used your joker." };
-    }
-
-    // A pick for an earlier week that hasn't been marked yet (its last match
-    // has finished but grading hasn't run) is kept aside, so picking for the
-    // new week can never wipe it out.
-    if (player.currentPick && player.currentPickGw && player.currentPickGw < round.gw
-        && player.currentPickGw > (poolData.lastGradedGw ?? 0)) {
-      player.pendingPicks = {
-        ...(player.pendingPicks || {}),
-        [String(player.currentPickGw)]: { team: player.currentPick, joker: !!player.currentPickJoker },
-      };
+    const jokerHeld = Object.values(player.pendingPicks || {}).some((x: any) => x && x.joker);
+    if (useJoker && (player.hasJoker === false || jokerHeld)) {
+      return { status: 400, error: jokerHeld ? "Your joker is on last week's pick, which hasn't been marked yet." : "You've already used your joker." };
     }
 
     player.currentPick = team;

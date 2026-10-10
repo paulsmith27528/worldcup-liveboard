@@ -93,8 +93,14 @@ export function buildRounds(fixtures: Fixture[], roundPrefix: string, now = Date
   // First pass: which fixtures sit in each round's own window.
   const windows = gws.map(gw => {
     const all = groups[gw].slice().sort((a, b) => time(a.date) - time(b.date));
-    const middle = time(all[Math.floor(all.length / 2)].date);
-    const inside = all.filter(f => Math.abs(time(f.date) - middle) <= WINDOW_MS);
+    // The round's real weekend is where most of its matches are; if it's a
+    // tie (say half the round was moved), the earlier cluster wins.
+    let anchor = time(all[0].date), best = 0;
+    for (const f of all) {
+      const n = all.filter(g => Math.abs(time(g.date) - time(f.date)) <= WINDOW_MS).length;
+      if (n > best) { best = n; anchor = time(f.date); }
+    }
+    const inside = all.filter(f => Math.abs(time(f.date) - anchor) <= WINDOW_MS);
     return { gw, all, inside };
   });
 
@@ -110,7 +116,8 @@ export function buildRounds(fixtures: Fixture[], roundPrefix: string, now = Date
     const results: Record<string, 'W' | 'D' | 'L'> = {};
     const byeTeams = new Set<string>();
     for (const f of movedOut) { byeTeams.add(f.home.name); byeTeams.add(f.away.name); }
-    let over = fixturesIn.length > 0;
+    // A round whose every match was moved elsewhere is over: all byes.
+    let over = true;
     for (const f of fixturesIn) {
       if (BYE_STATUSES.includes(f.status)) {
         byeTeams.add(f.home.name);
@@ -179,8 +186,10 @@ export async function getRounds(redis: Redis, cfg: { id: number; season: number;
 
 // The gameweek players are on now: the earliest one that isn't over. Open
 // for picks until its deadline, then locked until it's over.
-export function currentRound(rounds: Round[]): Round | null {
-  return rounds.find(r => !r.over) || null;
+// For a pool, pass its lastGradedGw: weeks it has already marked are never
+// "current" again, even if a match in one is later rearranged.
+export function currentRound(rounds: Round[], afterGw = 0): Round | null {
+  return rounds.find(r => r.gw > afterGw && !r.over) || null;
 }
 
 export function roundByGw(rounds: Round[], gw: number): Round | null {
@@ -193,7 +202,8 @@ export async function lockedAt(redis: Redis, cfg: { id: number; season: number }
   const key = `lms:locked:${cfg.id}:${cfg.season}:${round.gw}`;
   const stored = await redis.get<string>(key).catch(() => null);
   if (stored) return stored;
-  if (Date.now() >= time(round.deadline)) {
+  const started = round.fixtures.some(f => f.status !== 'NS' && f.status !== 'TBD' && !BYE_STATUSES.includes(f.status));
+  if (Date.now() >= time(round.deadline) || started) {
     await redis.set(key, round.deadline, { ex: 400 * 24 * 60 * 60 }).catch(() => {});
     return round.deadline;
   }
@@ -207,9 +217,9 @@ export async function isLocked(redis: Redis, cfg: { id: number; season: number }
 // For pages that only need "which gameweek is it and are picks locked".
 // Never throws: if fixtures can't be fetched, locked is null (unknown), and
 // callers must then treat this week's picks as still secret.
-export async function upcomingRoundInfo(redis: Redis, cfg: { id: number; season: number; roundPrefix: string }): Promise<{ gw: number | null; deadline: string | null; locked: boolean | null }> {
+export async function upcomingRoundInfo(redis: Redis, cfg: { id: number; season: number; roundPrefix: string }, afterGw = 0): Promise<{ gw: number | null; deadline: string | null; locked: boolean | null }> {
   try {
-    const round = currentRound(await getRounds(redis, cfg));
+    const round = currentRound(await getRounds(redis, cfg), afterGw);
     if (!round) return { gw: null, deadline: null, locked: null };
     return { gw: round.gw, deadline: round.deadline, locked: await isLocked(redis, cfg, round) };
   } catch (err: any) {

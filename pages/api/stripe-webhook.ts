@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 import sgMail from "@sendgrid/mail";
 import { Redis } from "@upstash/redis";
+import { updatePool, updatePlayer } from "../../lib/lms-store";
 import { randomBytes } from "crypto";
 import { buffer } from "micro";
 import { escapeHtml } from "../../lib/escape-html";
@@ -345,9 +346,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (product.type === "lms") {
     // Stripe retries until it gets a 2xx, so claim this session first —
     // a retry of a session that already made its pool must not make another.
-    // The claim is released if creation fails, so the retry can try again.
+    // The claim is released if creation fails, and only lasts 10 minutes
+    // until the pool exists, so a run cut off midway can't block the retry.
     const sessionKey = `lms:stripesession:${session.id}`;
-    const claimed = await redis.set(sessionKey, "1", { nx: true, ex: LMS_TTL });
+    const claimed = await redis.set(sessionKey, "pending", { nx: true, ex: 600 });
     if (!claimed) {
       console.log("LMS session already handled:", session.id);
       return res.status(200).json({ received: true });
@@ -381,6 +383,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       await redis.set(`lms:orgtoken:${poolId}`, orgToken, { ex: LMS_TTL });
       await redis.sadd('lms:allpools', poolId);
+      await redis.set(sessionKey, poolId, { ex: LMS_TTL });
     } catch (err) {
       console.error("Failed to create LMS pool:", err);
       await redis.del(sessionKey).catch(() => {});
@@ -428,9 +431,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).json({ received: true });
     }
 
-    const player = typeof playerRaw === "string" ? JSON.parse(playerRaw) : playerRaw as any;
-    player.proPaid = true;
-    await redis.hset(playersKey, { [playerToken]: JSON.stringify(player) });
+    // Saved only if nothing else changed the player meanwhile (retries if so).
+    const player = await updatePlayer(poolId, playerToken, p => { p.proPaid = true; });
 
     try {
       await sgMail.send({
@@ -487,17 +489,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Re-read right before writing and only touch the fee fields, so a join
     // or grade that saved the pool in the meantime isn't overwritten;
     // keepTtl so paying never changes when the pool expires.
-    const latestRaw = await redis.get<string>(`lms:pool:${poolId}`);
-    const poolData = latestRaw
-      ? (typeof latestRaw === "string" ? JSON.parse(latestRaw) : latestRaw as any)
-      : (typeof poolRaw === "string" ? JSON.parse(poolRaw) : poolRaw as any);
     // Tier 1 = £5 (up to 100 players); a pool without a tier paid under the
     // old "no limit" £5 and keeps that (see lib/lms-limits). A £5 payment on
     // a pool that's already paid must never downgrade it.
-    if (isBig) poolData.organiserBigPoolPaid = true;
-    else if (!poolData.organiserFeePaid) poolData.organiserFeeTier = 1;
-    poolData.organiserFeePaid = true;
-    await redis.set(`lms:pool:${poolId}`, JSON.stringify(poolData), { keepTtl: true });
+    const poolData = await updatePool(poolId, pool => {
+      if (isBig) pool.organiserBigPoolPaid = true;
+      else if (!pool.organiserFeePaid) pool.organiserFeeTier = 1;
+      pool.organiserFeePaid = true;
+    });
+    if (!poolData) return res.status(200).json({ received: true });
     const unlimited = !Number.isFinite(poolPlayerLimit(poolData));
 
     try {

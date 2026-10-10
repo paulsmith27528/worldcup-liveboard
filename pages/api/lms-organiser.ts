@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Redis } from '@upstash/redis';
+import { updatePool, updatePlayer } from '../../lib/lms-store';
 import { leagueConfigFor, upcomingRoundInfo } from '../../lib/lms-rounds';
 import { poolPlayerLimit } from '../../lib/lms-limits';
 
@@ -34,12 +35,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!storedToken || storedToken !== k) {
       return res.status(401).json({ error: 'Invalid organiser link' });
     }
-    const poolRaw = await redis.get<string>(`lms:pool:${pool}`);
-    if (!poolRaw) return res.status(404).json({ error: 'Pool not found' });
-    const poolData = typeof poolRaw === 'string' ? JSON.parse(poolRaw) : poolRaw as any;
-    poolData.whatsappGroupUrl = url || null;
-    // keepTtl so saving this never changes when the pool expires.
-    await redis.set(`lms:pool:${pool}`, JSON.stringify(poolData), { keepTtl: true });
+    const poolData = await updatePool(pool, p => { p.whatsappGroupUrl = url || null; });
+    if (!poolData) return res.status(404).json({ error: 'Pool not found' });
     return res.status(200).json({ ok: true, whatsappGroupUrl: poolData.whatsappGroupUrl });
   }
 
@@ -54,13 +51,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(401).json({ error: 'Invalid organiser link' });
     }
 
-    const playersKey = `lms:pool:${pool}:players`;
-    const playerRaw = await redis.hget<string>(playersKey, playerToken);
-    if (!playerRaw) return res.status(404).json({ error: 'Player not found' });
-    const player = typeof playerRaw === 'string' ? JSON.parse(playerRaw) : playerRaw as any;
-
-    player.paid = paid;
-    await redis.hset(playersKey, { [playerToken]: JSON.stringify(player) });
+    const player = await updatePlayer(pool, playerToken, p => { p.paid = paid; });
+    if (!player) return res.status(404).json({ error: 'Player not found' });
 
     return res.status(200).json({ ok: true });
   }
@@ -90,11 +82,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Picks for the round still in progress must stay hidden here too, same as
     // everywhere else — an organiser link is not a way to see picks early.
-    const upcoming = poolData.status === 'active' ? await upcomingRoundInfo(redis, leagueConfigFor(poolData.league, poolData.season)) : { gw: null, deadline: null, locked: true };
+    const upcoming = poolData.status === 'active' ? await upcomingRoundInfo(redis, leagueConfigFor(poolData.league, poolData.season), poolData.lastGradedGw ?? 0) : { gw: null, deadline: null, locked: true };
     // If we can't tell (fixtures unavailable), keep this week's picks hidden.
     const deadlinePassed = upcoming.locked === true;
     const players = rawPlayers.map((p: any) => {
-      if (!deadlinePassed && p.currentPickGw === upcoming.gw) {
+      const secret = upcoming.gw === null
+        ? p.currentPickGw > (poolData.lastGradedGw ?? 0)
+        : p.currentPickGw >= upcoming.gw;
+      if (!deadlinePassed && secret) {
         // The joker flag gives the pick away just as much, so it goes too.
         const { currentPick, currentPickGw, currentPickJoker, ...rest } = p;
         return rest;

@@ -292,7 +292,8 @@ async function gradePool(poolId: string, gw: number, results: Record<string, 'W'
 
     const playersKey = `lms:pool:${poolId}:players`;
     const recs = await readPlayers(poolId);
-    const players: Player[] = recs.map(r => ({ ...r.player, token: r.player.token || r.token }));
+    // Always keyed by the record's own hash field.
+    const players: Player[] = recs.map(r => ({ ...r.player, token: r.token }));
     const rawByToken = new Map(recs.map(r => [r.token, r.raw]));
     const earlierWipeoutTeams = await wipeoutPicks(redis, poolId, pool);
 

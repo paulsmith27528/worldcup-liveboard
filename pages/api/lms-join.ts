@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Redis } from '@upstash/redis';
+import { updatePool } from '../../lib/lms-store';
 import { leagueConfigFor, upcomingRoundInfo } from '../../lib/lms-rounds';
 import sgMail from '@sendgrid/mail';
 import { randomBytes, randomInt } from 'crypto';
@@ -66,11 +67,7 @@ return {1, #vals}
 // change (grading, an upgrade payment) isn't overwritten with a stale copy;
 // keepTtl so the pool's expiry never moves.
 async function setPoolFlag(poolId: string, flag: string): Promise<void> {
-  const raw = await redis.get<string>(`lms:pool:${poolId}`);
-  if (!raw) return;
-  const latest = typeof raw === 'string' ? JSON.parse(raw) : raw as any;
-  latest[flag] = true;
-  await redis.set(`lms:pool:${poolId}`, JSON.stringify(latest), { keepTtl: true });
+  await updatePool(poolId, pool => { pool[flag] = true; });
 }
 
 
@@ -297,7 +294,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Don't fail the join if email fails — they're still registered
   }
 
-  const lockInfo = await upcomingRoundInfo(redis, leagueConfigFor(pool.league, pool.season));
+  const lockInfo = await upcomingRoundInfo(redis, leagueConfigFor(pool.league, pool.season), pool.lastGradedGw ?? 0);
 
   return res.status(200).json({
     ok: true,

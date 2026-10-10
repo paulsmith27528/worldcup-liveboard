@@ -69,7 +69,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!API_KEY) return res.status(500).json({ error: 'API_FOOTBALL_KEY not configured' });
 
   const poolIds = await redis.smembers('lms:allpools');
-  const roundByLeague: Record<string, { round: Round | null; locked: boolean } | null> = {};
+  const roundsByLeague: Record<string, Round[] | null> = {};
   const log: any[] = [];
   const problems: any[] = [];
 
@@ -83,22 +83,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const cfg = leagueConfigFor(pool.league, pool.season);
       const leagueKey = `${cfg.id}:${cfg.season}`;
-      if (!(leagueKey in roundByLeague)) {
+      if (!(leagueKey in roundsByLeague)) {
         try {
-          const round = currentRound(await getRounds(redis, cfg));
-          roundByLeague[leagueKey] = { round, locked: round ? await isLocked(redis, cfg, round) : false };
+          roundsByLeague[leagueKey] = await getRounds(redis, cfg);
         } catch (err: any) {
-          roundByLeague[leagueKey] = null;
+          roundsByLeague[leagueKey] = null;
           problems.push({ league: leagueKey, error: err.message });
         }
       }
-      const info = roundByLeague[leagueKey];
-      if (!info || !info.round || !info.locked) continue;
-      const round = info.round;
-      // Only the round this pool is about to be graded on, and only once.
-      if (round.gw !== (pool.lastGradedGw ?? ((pool.firstGw || 1) - 1)) + 1) continue;
-      const doneKey = `lms:pool:${poolId}:autopicked:${round.gw}`;
-      if (pool.autoPickedGw === round.gw || await redis.get(doneKey)) continue;
+      const rounds = roundsByLeague[leagueKey];
+      if (!rounds) continue;
+      const lastGraded = pool.lastGradedGw ?? ((pool.firstGw || 1) - 1);
+      const round = currentRound(rounds, lastGraded);
+      // Only the round this pool is about to be graded on, once it's locked.
+      // Runs every time until grading, so someone who joins after kickoff
+      // still gets a pick; anyone who already has one is left alone.
+      if (!round || round.gw !== lastGraded + 1) continue;
+      if (!(await isLocked(redis, cfg, round))) continue;
 
       // Only teams whose match hasn't kicked off yet, so nobody is handed a
       // team that's already playing or already lost.
@@ -115,12 +116,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (p.currentPickGw === round.gw && p.currentPick) continue;
         p.usedTeams = p.usedTeams || [];
         addUsedTeams(p, earlierWipeoutTeams(p));
-        addUsedTeams(p, historyTeams(p));
         // A pick for an earlier week that's still waiting to be marked is
         // kept aside, exactly as when a player picks for themselves.
-        if (p.currentPick && p.currentPickGw && p.currentPickGw < round.gw && p.currentPickGw > (pool.lastGradedGw ?? 0)) {
+        if (p.currentPick && p.currentPickGw && p.currentPickGw < round.gw && p.currentPickGw > lastGraded) {
           p.pendingPicks = { ...(p.pendingPicks || {}), [String(p.currentPickGw)]: { team: p.currentPick, joker: !!p.currentPickJoker } };
         }
+        addUsedTeams(p, historyTeams(p));
         const team = chooseAutoPick(stillToPlay, p.usedTeams);
         if (!team) continue;
         p.currentPick = team;
@@ -132,14 +133,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         else conflicts++;
       }
 
-      // A player whose record changed mid-run (they were saving something)
-      // is retried on the next run, 15 minutes later.
-      if (conflicts === 0) await redis.set(doneKey, '1', { ex: 60 * 60 * 24 * 300 });
-
       for (const { player, team } of picked) {
         await sendAutoPickEmail(player, poolId, pool.name || 'Last Man Standing', round.gw, team);
       }
-      log.push({ poolId, gw: round.gw, autoPicked: picked.map(x => ({ name: x.player.name, team: x.team })), conflicts });
+      if (picked.length || conflicts) log.push({ poolId, gw: round.gw, autoPicked: picked.map(x => ({ name: x.player.name, team: x.team })), conflicts });
     } catch (err: any) {
       console.error(`Auto-pick failed for pool ${poolId}:`, err.message);
       problems.push({ poolId, error: err.message });

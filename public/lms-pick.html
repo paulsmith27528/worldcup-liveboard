@@ -202,12 +202,6 @@ function render(d){
     return;
   }
 
-  if(d.poolStartsGw){
-    document.getElementById('subTitle').textContent = '';
-    showStateCard('⏳', 'Your pool starts in Gameweek ' + d.poolStartsGw, 'Gameweek ' + d.gw + ' is already under way. Picks for Gameweek ' + d.poolStartsGw + ' open as soon as it finishes.');
-    return;
-  }
-
   renderTabs(d);
 
   if(activeTab === 'next' && d.nextGw){

@@ -78,7 +78,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Picks stay secret until the gameweek's first kickoff, same as
     // everywhere else. If we can't tell, they stay hidden.
-    const upcoming = await upcomingRoundInfo(redis, cfg);
+    const upcoming = await upcomingRoundInfo(redis, cfg, poolData.lastGradedGw ?? 0);
     const picksVisible = upcoming.gw !== null && (gw < upcoming.gw || (gw === upcoming.gw && upcoming.locked === true));
     // A player's pick for this week: their current one, or one kept aside
     // because they've already picked for the following week.

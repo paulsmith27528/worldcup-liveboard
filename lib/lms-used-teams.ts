@@ -30,7 +30,11 @@ export function addUsedTeams(player: { usedTeams: string[] }, teams: string[]) {
   return changed;
 }
 
-// Teams from the player's permanent pick history.
-export function historyTeams(player: { pickHistory?: Record<string, string> }) {
-  return Object.values(player.pickHistory || {});
+// Teams from the player's permanent pick history, plus picks for earlier
+// weeks that are locked in but not marked yet (kept aside in pendingPicks).
+export function historyTeams(player: { pickHistory?: Record<string, string>; pendingPicks?: Record<string, { team: string }> }) {
+  return [
+    ...Object.values(player.pickHistory || {}),
+    ...Object.values(player.pendingPicks || {}).map(p => p && p.team).filter(Boolean),
+  ];
 }

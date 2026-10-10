@@ -85,7 +85,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       rounds.push({ gw: g, wipeout, totalPlayers: total, pickedCount: picked, popularity, picks: picksData.picks || null, noPick: picksData.noPick ?? 0 });
     }
 
-    const upcoming = poolData.status === 'active' ? await upcomingRoundInfo(redis, leagueConfigFor(poolData.league, poolData.season)) : { gw: null, deadline: null, locked: true };
+    const upcoming = poolData.status === 'active' ? await upcomingRoundInfo(redis, leagueConfigFor(poolData.league, poolData.season), poolData.lastGradedGw ?? 0) : { gw: null, deadline: null, locked: true };
     // true while this week's picks are still open (and so still secret)
     const locked = upcoming.locked !== true;
 
