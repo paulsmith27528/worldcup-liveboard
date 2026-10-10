@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Redis } from '@upstash/redis';
 import { randomBytes } from 'crypto';
+import { genPoolId, POOL_ID_ATTEMPTS } from '../../lib/lms-ids';
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -31,10 +32,6 @@ const API_KEY = (process.env.API_FOOTBALL_KEY || "").trim();
 // grade" — kept identical so a new pool's starting gameweek can never
 // disagree with when the cron considers a round finished.
 const FINISHED_STATUSES = ['FT', 'AET', 'PEN', 'AWD', 'WO'];
-
-function genPoolId(): string {
-  return Math.random().toString(36).substring(2, 8).toUpperCase();
-}
 
 function generateOrgToken(): string {
   return randomBytes(32).toString('hex');
@@ -92,32 +89,39 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const requestedLeague = typeof req.body?.league === 'string' ? req.body.league.toUpperCase() : 'PL';
   const league = VALID_LEAGUES.includes(requestedLeague) ? requestedLeague : 'PL';
 
-  const poolId = genPoolId();
+  let poolId = '';
   const orgToken = generateOrgToken();
   const startingGw = await getStartingGw(league);
 
   try {
-    await redis.set(`lms:pool:${poolId}`, JSON.stringify({
-      id: poolId,
-      league,
-      name: null,
-      organiser: null,
-      organiserEmail: null,
-      orgToken,
-      buyIn: null,
-      // Permanent record of the real gameweek this pool actually started
-      // on — currentGameweek/lastGradedGw both move forward as the season
-      // progresses, so this is the only place that fact is preserved.
-      firstGw: startingGw,
-      currentGameweek: startingGw,
-      lastGradedGw: startingGw - 1,
-      wipeoutRule: 'rollback',
-      wipeoutWeeks: [] as number[],
-      createdAt: Date.now(),
-      status: 'pending_setup',
-      organiserFeePaid: false,
-      organiserFeeNotified: false,
-    }), { ex: LMS_TTL });
+    // NX so a clash with an existing pool's id can never overwrite it —
+    // just try again with a fresh id.
+    for (let attempt = 0; attempt < POOL_ID_ATTEMPTS && !poolId; attempt++) {
+      const candidate = genPoolId();
+      const created = await redis.set(`lms:pool:${candidate}`, JSON.stringify({
+        id: candidate,
+        league,
+        name: null,
+        organiser: null,
+        organiserEmail: null,
+        orgToken,
+        buyIn: null,
+        // Permanent record of the real gameweek this pool actually started
+        // on — currentGameweek/lastGradedGw both move forward as the season
+        // progresses, so this is the only place that fact is preserved.
+        firstGw: startingGw,
+        currentGameweek: startingGw,
+        lastGradedGw: startingGw - 1,
+        wipeoutRule: 'rollback',
+        wipeoutWeeks: [] as number[],
+        createdAt: Date.now(),
+        status: 'pending_setup',
+        organiserFeePaid: false,
+        organiserFeeNotified: false,
+      }), { ex: LMS_TTL, nx: true });
+      if (created) poolId = candidate;
+    }
+    if (!poolId) throw new Error('Could not find a free pool id');
 
     await redis.set(`lms:orgtoken:${poolId}`, orgToken, { ex: LMS_TTL });
     await redis.sadd('lms:allpools', poolId);
