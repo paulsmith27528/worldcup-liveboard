@@ -199,7 +199,7 @@ var poolId = params.get('pool');
 var token = params.get('t');
 var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML.replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
 function initials(name){
   var parts = (name || '').trim().split(/\s+/);
